@@ -1,5 +1,26 @@
 # Rencana Pengembangan Skripsi (8 minggu)
 
+> **Posisi terakhir (2026-10-19, dijeda).** Fase 0 sedang dijalankan ulang,
+> Fase 1 belum dimulai.
+>
+> - Selesai: 4H seluruhnya; 1H main eval, PS study, leakage, leakage PS.
+> - Belum: 1H walk-forward (+ varian PS), bootstrap, forward persistence,
+>   sensitivitas ambang 1H dan 4H (4H gagal karena bug yang sudah diperbaiki di
+>   `0d1f041`), `make_figures`.
+> - Melanjutkan: `bash scripts/rerun_train_only.sh 1h`, lalu
+>   `python ml/src/run_threshold_sensitivity.py --timeframe 4h` dan
+>   `python ml/src/make_figures.py`. Artefak 1H yang sudah ada akan ditimpa
+>   dengan hasil yang sama protokolnya.
+> - Sesudahnya: baca hasil 1H terhadap skenario A/B/C di "Rencana cadangan",
+>   revisi Bab 4 (sisa item Fase 0), lalu tulis praregistrasi Fase 1 sebelum
+>   menjalankan benchmark sintetis.
+> - Hasil sementara 4H (`train_only`): Hybrid PS setara MLP (H5), kalah dari
+>   MLP di 4/5 fold walk-forward; attention dan urutan waktu tetap tidak
+>   membantu (H2, H3).
+> - Di luar skripsi inti, sudah ada: dashboard dengan login Firebase, halaman
+>   Regime → Strategi, notifikasi Telegram (menunggu kredensial Firebase dan
+>   bot), dan halaman presentasi `docs/presentasi/peta_regime_strategi.html`.
+
 Ditulis 2026-10-19. Fokus tetap **identifikasi** regime (nowcasting), dengan
 dua perubahan pokok:
 
