@@ -66,8 +66,9 @@ pun boleh masuk). Salin `frontend/.env.example` menjadi `frontend/.env.local`
 dan `backend/.env.example` menjadi `backend/.env`, lalu:
 
 1. **Buat project Firebase** di <https://console.firebase.google.com>.
-2. **Aktifkan login Google**: *Build → Authentication → Sign-in method →
-   Google → Enable*.
+2. **Aktifkan metode login**: *Build → Authentication → Sign-in method*, lalu
+   aktifkan **Google** dan **Email/Password** (dipakai form email, "Buat akun",
+   dan "Lupa password?" di halaman login).
 3. **Aktifkan Firestore**: *Build → Firestore Database → Create database*
    (mode production). Pasang aturan dari `firestore.rules` (menolak semua akses
    langsung dari browser; semua akses lewat server).

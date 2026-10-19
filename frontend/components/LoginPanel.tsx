@@ -1,40 +1,66 @@
 "use client";
 
-import { useState } from "react";
-import { signInWithGoogle } from "@/lib/firebase-client";
+import { useEffect, useState } from "react";
+import BrandMark from "@/components/login/BrandMark";
+import HeroChart from "@/components/login/HeroChart";
+import ParticleWave from "@/components/login/ParticleWave";
+import { api } from "@/lib/api-client";
+import { registerWithEmail, resetPassword, signInWithEmail, signInWithGoogle } from "@/lib/firebase-client";
 import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
 
-const ROWS: { regime: Regime; strategy: string }[] = [
-  { regime: "persistent", strategy: "Trend-following" },
-  { regime: "anti_persistent", strategy: "Mean-reversion" },
-  { regime: "random_like", strategy: "Tidak trading" },
-];
+const ERRORS: Record<string, string> = {
+  "auth/popup-closed-by-user": "Jendela login ditutup sebelum selesai.",
+  "auth/cancelled-popup-request": "Jendela login ditutup sebelum selesai.",
+  "auth/popup-blocked": "Browser memblokir jendela login. Izinkan pop-up untuk situs ini lalu coba lagi.",
+  "auth/network-request-failed": "Tidak bisa menghubungi server login. Periksa koneksi internet, atau pakai mode demo.",
+  "auth/unauthorized-domain": "Domain ini belum diizinkan di Firebase (Authentication > Settings > Authorized domains).",
+  "auth/invalid-credential": "Email atau password salah.",
+  "auth/wrong-password": "Email atau password salah.",
+  "auth/user-not-found": "Email atau password salah.",
+  "auth/invalid-email": "Format email tidak valid.",
+  "auth/email-already-in-use": "Email ini sudah terdaftar. Silakan masuk.",
+  "auth/weak-password": "Password minimal 6 karakter.",
+  "auth/too-many-requests": "Terlalu banyak percobaan. Tunggu beberapa menit lalu coba lagi.",
+  "auth/operation-not-allowed": "Login email belum diaktifkan di Firebase (Authentication > Sign-in method > Email/Password).",
+  "auth/missing-email": "Isi email terlebih dahulu.",
+};
 
-/** Garis harga kecil yang dibangkitkan deterministik untuk tiap regime. */
-function Glyph({ regime }: { regime: Regime }) {
-  const n = 48;
-  const phi = regime === "persistent" ? 0.85 : regime === "anti_persistent" ? -0.75 : 0;
-  let seed = regime.length * 9301 + 49297;
-  const rnd = () => {
-    seed = (seed * 9301 + 49297) % 233280;
-    return seed / 233280 - 0.5;
-  };
-  let y = 0;
-  let e = 0;
-  const pts: number[] = [];
-  for (let i = 0; i < n; i++) {
-    e = phi * e + rnd();
-    y += e;
-    pts.push(y);
-  }
-  const lo = Math.min(...pts);
-  const hi = Math.max(...pts);
-  const d = pts
-    .map((v, i) => `${i ? "L" : "M"}${((i / (n - 1)) * 88 + 2).toFixed(1)},${(26 - ((v - lo) / (hi - lo || 1)) * 22).toFixed(1)}`)
-    .join("");
+type Mode = "signin" | "register" | "reset";
+type Stats = { price: number; changePct: number; regime: Regime | null };
+
+function MailIcon() {
   return (
-    <svg viewBox="0 0 92 30" className="h-8 w-24 shrink-0" aria-hidden="true">
-      <path d={d} fill="none" stroke={REGIME_META[regime].color} strokeWidth="1.6" strokeLinejoin="round" />
+    <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+      <rect x="2.5" y="4.5" width="15" height="11" rx="2" />
+      <path d="m3 5.5 7 5 7-5" />
+    </svg>
+  );
+}
+
+function LockIcon() {
+  return (
+    <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+      <rect x="4" y="9" width="12" height="8" rx="2" />
+      <path d="M7 9V6.5a3 3 0 0 1 6 0V9" />
+    </svg>
+  );
+}
+
+function UserIcon() {
+  return (
+    <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+      <circle cx="10" cy="7" r="3.2" />
+      <path d="M3.8 17c.9-3 3.4-4.6 6.2-4.6s5.3 1.6 6.2 4.6" />
+    </svg>
+  );
+}
+
+function EyeIcon({ off }: { off: boolean }) {
+  return (
+    <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true">
+      <path d="M1.8 10S5 4.5 10 4.5 18.2 10 18.2 10 15 15.5 10 15.5 1.8 10 1.8 10Z" />
+      <circle cx="10" cy="10" r="2.5" />
+      {off && <path d="m3 3 14 14" />}
     </svg>
   );
 }
@@ -50,13 +76,47 @@ function GoogleMark() {
   );
 }
 
-const POPUP_ERRORS: Record<string, string> = {
-  "auth/popup-closed-by-user": "Jendela login ditutup sebelum selesai.",
-  "auth/cancelled-popup-request": "Jendela login ditutup sebelum selesai.",
-  "auth/popup-blocked": "Browser memblokir jendela login. Izinkan pop-up untuk situs ini lalu coba lagi.",
-  "auth/network-request-failed": "Tidak bisa menghubungi Google. Periksa koneksi internet, atau pakai mode demo.",
-  "auth/unauthorized-domain": "Domain ini belum diizinkan di Firebase (Authentication > Settings > Authorized domains).",
-};
+function Field({ id, label, icon, children }: { id: string; label: string; icon: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <div className="group relative">
+      <label htmlFor={id} className="sr-only">{label}</label>
+      <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9a948d] transition-colors group-focus-within:text-[#ff8a3d]">
+        {icon}
+      </span>
+      {children}
+    </div>
+  );
+}
+
+const inputClass =
+  "h-11 w-full rounded-lg border border-white/10 bg-black/35 pl-10 pr-10 text-[14px] text-[#f3efe9] placeholder:text-[#8d867e] outline-none transition focus:border-[#ff8a3d]/80 focus:bg-black/45 focus:shadow-[0_0_0_3px_rgba(255,122,26,0.18)] disabled:opacity-50";
+
+function useMarketStats() {
+  const [stats, setStats] = useState<Stats | null>(null);
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const [o, g] = await Promise.all([api.ohlcv("1h", 25), api.regime("1h").catch(() => null)]);
+        const c = o.candles;
+        if (!alive || c.length < 2) return;
+        const last = c[c.length - 1];
+        const ref = c[Math.max(0, c.length - 25)];
+        setStats({
+          price: last.close,
+          changePct: ref.close ? ((last.close - ref.close) / ref.close) * 100 : 0,
+          regime: (g?.current_regime as Regime) ?? null,
+        });
+      } catch {
+        // Backend mati: statistik disembunyikan, login tetap berfungsi.
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return stats;
+}
 
 export default function LoginPanel({
   callbackUrl,
@@ -67,122 +127,295 @@ export default function LoginPanel({
   googleConfigured: boolean;
   demoEnabled: boolean;
 }) {
-  const [pending, setPending] = useState<"google" | "demo" | null>(null);
+  const [mode, setMode] = useState<Mode>("signin");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPw, setShowPw] = useState(false);
+  const [remember, setRemember] = useState(true);
+  const [pending, setPending] = useState<"email" | "google" | "demo" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const stats = useMarketStats();
+  const ready = googleConfigured;
 
-  const go = async (provider: "google" | "demo") => {
-    setPending(provider);
+  const run = async (kind: "email" | "google" | "demo", fn: () => Promise<void>, redirect = true) => {
+    setPending(kind);
     setError(null);
+    setNotice(null);
     try {
-      if (provider === "google") {
-        await signInWithGoogle();
-      } else {
-        const res = await fetch("/api/session/demo", { method: "POST" });
-        if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? "Mode demo gagal.");
-      }
-      window.location.href = callbackUrl;
+      await fn();
+      if (redirect) window.location.href = callbackUrl;
+      else setPending(null);
     } catch (e) {
       const code = (e as { code?: string }).code;
-      setError((code && POPUP_ERRORS[code]) || (e as Error).message || "Masuk gagal. Coba lagi.");
+      setError((code && ERRORS[code]) || (e as Error).message || "Masuk gagal. Coba lagi.");
       setPending(null);
     }
   };
 
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (mode === "reset") {
+      void run("email", async () => {
+        await resetPassword(email.trim());
+        setNotice("Tautan reset password sudah dikirim. Cek kotak masuk email Anda.");
+        setMode("signin");
+      }, false);
+    } else if (mode === "register") {
+      void run("email", () => registerWithEmail(name, email.trim(), password, remember));
+    } else {
+      void run("email", () => signInWithEmail(email.trim(), password, remember));
+    }
+  };
+
+  const demo = () =>
+    run("demo", async () => {
+      const res = await fetch("/api/session/demo", { method: "POST" });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? "Mode demo gagal.");
+    });
+
+  const title = { signin: "Selamat datang kembali", register: "Buat akun", reset: "Reset password" }[mode];
+  const subtitle = {
+    signin: "Masuk untuk membuka dashboard",
+    register: "Daftar untuk mulai memantau regime pasar",
+    reset: "Kami kirim tautan reset ke email Anda",
+  }[mode];
+  const cta = { signin: "Masuk", register: "Buat akun", reset: "Kirim tautan reset" }[mode];
+  const up = (stats?.changePct ?? 0) >= 0;
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-panelAlt px-4 py-10">
-      <div className="grid w-full max-w-4xl overflow-hidden rounded-lg border border-edge bg-panel shadow-pop md:grid-cols-[1.15fr_1fr]">
-        <section className="flex flex-col gap-7 border-b border-edge p-7 md:border-b-0 md:border-r md:p-9">
-          <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-md bg-accent font-mono text-sm font-bold text-panelAlt">
-              R
-            </span>
-            <span className="text-[14px] font-semibold tracking-tight text-txt">
-              regimefraktal<span className="text-accent">VFK</span>
+    <div className="relative min-h-screen overflow-hidden bg-[#0a0b0d] font-sans text-[#f3efe9]">
+      {/* Cahaya latar */}
+      <div className="pointer-events-none absolute -left-40 bottom-[-12rem] h-[34rem] w-[34rem] rounded-full bg-[#ff6a00]/20 blur-[120px]" />
+      <div className="pointer-events-none absolute right-[-10rem] top-[-10rem] h-[30rem] w-[30rem] rounded-full bg-[#ff7a1a]/15 blur-[120px]" />
+
+      <div className="relative grid min-h-screen lg:grid-cols-2">
+        {/* Kiri: identitas + ilustrasi */}
+        <section className="relative hidden flex-col justify-between px-12 py-10 lg:flex xl:px-16">
+          <div className="flex items-center gap-3">
+            <BrandMark size={38} />
+            <span className="text-[19px] font-semibold tracking-[0.04em]">
+              regimefraktal<span className="text-[#ff8a3d]">VFK</span>
             </span>
           </div>
 
-          <div className="space-y-2.5">
-            <h1 className="text-balance text-[26px] font-semibold leading-tight tracking-tight text-txt">
-              Kenali sifat pasar sebelum memilih strategi
-            </h1>
-            <p className="max-w-md text-[13px] leading-relaxed text-txtDim">
-              Dashboard ini mengukur apakah gerakan BTC/USDT sedang cenderung berlanjut, berbalik, atau acak, lalu
-              memetakan kondisi itu ke strategi yang cocok.
-            </p>
-          </div>
+          <HeroChart />
 
-          <ul className="grid gap-2.5">
-            {ROWS.map(({ regime, strategy }) => (
-              <li key={regime} className="flex items-center gap-3 rounded-md border border-edge bg-surface/50 px-3 py-2">
-                <Glyph regime={regime} />
-                <div className="min-w-0">
-                  <div className="text-[13px] font-medium text-txt">{REGIME_PLAIN[regime].name}</div>
-                  <div className="text-2xs text-txtMuted">
-                    Strategi yang diuji: <span className="text-txtDim">{strategy}</span>
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <h1 className="max-w-xl text-balance text-[40px] font-medium leading-[1.1] tracking-tight xl:text-[44px]">
+                Kenali <span className="font-bold">sifat pasar</span> sebelum memilih strategi.
+              </h1>
+              <p className="max-w-lg text-[17px] leading-relaxed text-[#b9b2aa]">
+                Identifikasi regime persistensi untuk kripto, emas, dan saham Indonesia, dari sistem yang tidak dilatih
+                pada satu aset saja.
+              </p>
+            </div>
+
+            <dl className="flex flex-wrap items-stretch gap-x-6 gap-y-3 text-[12px]">
+              <div className="min-w-[9rem]">
+                <dt className="text-[#8d867e]">BTC/USDT</dt>
+                <dd className="mt-0.5 flex items-center gap-2">
+                  <span className="font-mono text-[14px] font-semibold tabular-nums">
+                    {stats ? stats.price.toLocaleString("en-US", { maximumFractionDigits: 2 }) : "–"}
+                  </span>
+                  {stats && (
+                    <span className={`rounded px-1.5 py-0.5 font-mono text-[11px] ${up ? "bg-emerald-500/15 text-emerald-400" : "bg-[#ff6a00]/15 text-[#ff8a3d]"}`}>
+                      {up ? "▲" : "▼"} {Math.abs(stats.changePct).toFixed(2)}%
+                    </span>
+                  )}
+                </dd>
+              </div>
+              <div className="border-l border-white/10 pl-6">
+                <dt className="text-[#8d867e]">Regime BTC 1H</dt>
+                <dd className="mt-0.5 flex items-center gap-2 text-[14px] font-semibold">
+                  {stats?.regime ? (
+                    <>
+                      <span className="h-2 w-2 rounded-full" style={{ background: REGIME_META[stats.regime].color }} />
+                      {REGIME_PLAIN[stats.regime].name}
+                    </>
+                  ) : (
+                    "–"
+                  )}
+                </dd>
+              </div>
+              <div className="border-l border-white/10 pl-6">
+                <dt className="text-[#8d867e]">Aset dipantau</dt>
+                <dd className="mt-0.5 text-[14px] font-semibold">
+                  20 <span className="font-normal text-[#8d867e]">· kripto, emas, IDX</span>
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </section>
+
+        {/* Kanan: kartu login */}
+        <section className="relative flex items-center justify-center px-4 py-10 sm:px-8">
+          <ParticleWave className="pointer-events-none absolute inset-0 h-full w-full opacity-80" />
+
+          <div className="relative w-full max-w-[420px] rounded-2xl border border-[#ff8a3d]/45 bg-white/[0.06] p-7 shadow-[0_0_0_1px_rgba(255,138,61,0.08),0_0_60px_-10px_rgba(255,106,0,0.45),0_30px_80px_-20px_rgba(0,0,0,0.8)] backdrop-blur-xl sm:p-9">
+            <div className="flex flex-col items-center text-center">
+              <BrandMark size={64} />
+              <div className="mt-2 text-[20px] font-semibold tracking-[0.04em]">
+                regimefraktal<span className="text-[#ff8a3d]">VFK</span>
+              </div>
+              <h2 className="mt-5 text-[26px] font-medium tracking-tight">{title}</h2>
+              <p className="mt-1 text-[13px] text-[#b9b2aa]">{subtitle}</p>
+            </div>
+
+            {!ready && (
+              <p className="mt-5 rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-2 text-[12px] leading-relaxed text-amber-300">
+                Login belum dikonfigurasi. Isi konfigurasi Firebase di <code className="font-mono">frontend/.env.local</code>{" "}
+                (panduan di README bagian Login).
+              </p>
+            )}
+
+            <form onSubmit={submit} className="mt-6 space-y-3.5" noValidate>
+              {mode === "register" && (
+                <Field id="login-name" label="Nama" icon={<UserIcon />}>
+                  <input
+                    id="login-name"
+                    type="text"
+                    autoComplete="name"
+                    placeholder="Nama"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    disabled={!ready || pending !== null}
+                    className={inputClass}
+                  />
+                </Field>
+              )}
+              <Field id="login-email" label="Email" icon={<MailIcon />}>
+                <input
+                  id="login-email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="Alamat email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={!ready || pending !== null}
+                  className={inputClass}
+                />
+              </Field>
+              {mode !== "reset" && (
+                <Field id="login-password" label="Password" icon={<LockIcon />}>
+                  <input
+                    id="login-password"
+                    type={showPw ? "text" : "password"}
+                    autoComplete={mode === "register" ? "new-password" : "current-password"}
+                    placeholder="Password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={!ready || pending !== null}
+                    className={inputClass}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPw((v) => !v)}
+                    aria-label={showPw ? "Sembunyikan password" : "Tampilkan password"}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-[#9a948d] transition hover:text-[#f3efe9] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#ff8a3d]"
+                  >
+                    <EyeIcon off={showPw} />
+                  </button>
+                </Field>
+              )}
+
+              {mode !== "reset" && (
+                <div className="flex items-center justify-between text-[12.5px]">
+                  <label htmlFor="login-remember" className="flex cursor-pointer items-center gap-2 text-[#cfc8bf]">
+                    <input
+                      id="login-remember"
+                      type="checkbox"
+                      checked={remember}
+                      onChange={(e) => setRemember(e.target.checked)}
+                      className="h-4 w-4 rounded border-white/20 bg-black/40 accent-[#ff7a1a]"
+                    />
+                    Ingat saya
+                  </label>
+                  {mode === "signin" && (
+                    <button type="button" onClick={() => { setMode("reset"); setError(null); }} className="text-[#ff8a3d] transition hover:text-[#ffb27a]">
+                      Lupa password?
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {error && (
+                <p role="alert" className="rounded-lg border border-red-400/30 bg-red-500/10 px-3 py-2 text-[12.5px] text-red-300">{error}</p>
+              )}
+              {notice && (
+                <p role="status" className="rounded-lg border border-emerald-400/30 bg-emerald-500/10 px-3 py-2 text-[12.5px] text-emerald-300">{notice}</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={!ready || pending !== null}
+                className="h-11 w-full rounded-lg bg-gradient-to-b from-[#ff8a3d] to-[#e2551b] text-[14px] font-semibold text-white shadow-[0_8px_30px_-6px_rgba(255,106,0,0.6)] transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff8a3d] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {pending === "email" ? "Memproses…" : cta}
+              </button>
+            </form>
+
+            {mode === "reset" ? (
+              <button type="button" onClick={() => { setMode("signin"); setError(null); }} className="mt-4 w-full text-center text-[12.5px] text-[#b9b2aa] transition hover:text-[#f3efe9]">
+                ← Kembali ke halaman masuk
+              </button>
+            ) : (
+              <>
+                <div className="my-5 text-center text-[12px] text-[#8d867e]">
+                  <div>– ATAU –</div>
+                  <div className="mt-1 flex items-center gap-3">
+                    <span className="h-px flex-1 bg-white/10" />
+                    atau lanjut dengan
+                    <span className="h-px flex-1 bg-white/10" />
                   </div>
                 </div>
-              </li>
-            ))}
-          </ul>
 
-          <p className="mt-auto text-2xs leading-relaxed text-txtMuted">
-            Penelitian skripsi, bukan saran investasi. Data historis Binance BTC/USDT 2019–2026.
-          </p>
-        </section>
+                <button
+                  type="button"
+                  onClick={() => void run("google", () => signInWithGoogle(remember))}
+                  disabled={!ready || pending !== null}
+                  className="flex h-11 w-full items-center justify-center gap-3 rounded-lg border border-white/12 bg-white/[0.08] text-[14px] font-medium text-[#f3efe9] transition hover:bg-white/[0.12] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff8a3d] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <GoogleMark />
+                  {pending === "google" ? "Mengalihkan ke Google…" : "Lanjut dengan Google"}
+                </button>
 
-        <section className="flex flex-col justify-center gap-5 p-7 md:p-9">
-          <div className="space-y-1">
-            <h2 className="text-[18px] font-semibold tracking-tight text-txt">Masuk</h2>
-            <p className="text-[12.5px] text-txtDim">Gunakan akun Google untuk membuka dashboard.</p>
-          </div>
+                <p className="mt-5 text-center text-[12.5px] text-[#b9b2aa]">
+                  {mode === "signin" ? "Belum punya akun? " : "Sudah punya akun? "}
+                  <button
+                    type="button"
+                    onClick={() => { setMode(mode === "signin" ? "register" : "signin"); setError(null); }}
+                    className="font-medium text-[#ff8a3d] transition hover:text-[#ffb27a]"
+                  >
+                    {mode === "signin" ? "Buat akun" : "Masuk"}
+                  </button>
+                </p>
+              </>
+            )}
 
-          {error && (
-            <div role="alert" className="rounded-md border border-bearish/40 bg-bearish/10 px-3 py-2 text-[12px] text-bearish">
-              {error}
-            </div>
-          )}
-
-          <button
-            type="button"
-            onClick={() => void go("google")}
-            disabled={!googleConfigured || pending !== null}
-            className="flex h-11 w-full items-center justify-center gap-3 rounded-md border border-[#dadce0] bg-white text-[14px] font-medium text-[#1f1f1f] transition hover:bg-[#f7f8f8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <GoogleMark />
-            {pending === "google" ? "Mengalihkan ke Google…" : "Masuk dengan Google"}
-          </button>
-
-          {!googleConfigured && (
-            <p className="rounded-md border border-warn/40 bg-warn/10 px-3 py-2 text-[11.5px] leading-relaxed text-warn">
-              Login Google belum dikonfigurasi. Isi konfigurasi Firebase (<code className="font-mono">NEXT_PUBLIC_FIREBASE_*</code>)
-              dan kunci service account di <code className="font-mono">frontend/.env.local</code>, lalu jalankan ulang
-              frontend. Panduan ada di README bagian Login.
-            </p>
-          )}
-
-          {demoEnabled && (
-            <>
-              <div className="flex items-center gap-3 text-2xs uppercase tracking-wider text-txtMuted">
-                <span className="h-px flex-1 bg-edge" />
-                atau
-                <span className="h-px flex-1 bg-edge" />
+            {demoEnabled && (
+              <div className="mt-5 border-t border-white/10 pt-4 text-center">
+                <button
+                  type="button"
+                  onClick={() => void demo()}
+                  disabled={pending !== null}
+                  className="text-[12.5px] text-[#b9b2aa] underline decoration-white/20 underline-offset-4 transition hover:text-[#f3efe9] disabled:opacity-50"
+                >
+                  {pending === "demo" ? "Membuka…" : "Masuk mode demo (tanpa internet)"}
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => void go("demo")}
-                disabled={pending !== null}
-                className="h-10 w-full rounded-md border border-edge bg-surface text-[13px] font-medium text-txt transition hover:border-edgeBright focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60"
-              >
-                {pending === "demo" ? "Membuka…" : "Masuk mode demo"}
-              </button>
-              <p className="text-2xs leading-relaxed text-txtMuted">
-                Mode demo hanya tersedia saat dashboard dijalankan di laptop ini (localhost), untuk sidang tanpa
-                internet.
-              </p>
-            </>
-          )}
+            )}
+          </div>
         </section>
       </div>
+
+      <p className="pointer-events-none absolute bottom-3 left-0 right-0 text-center text-[11px] text-[#6f6962] lg:left-auto lg:right-6 lg:text-right">
+        Penelitian skripsi, bukan saran investasi.
+      </p>
     </div>
   );
 }

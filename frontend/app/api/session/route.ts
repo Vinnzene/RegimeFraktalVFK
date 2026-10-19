@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       { status: 503 }
     );
   }
-  const { idToken } = await req.json().catch(() => ({ idToken: null }));
+  const { idToken, remember = true } = await req.json().catch(() => ({ idToken: null }));
   if (typeof idToken !== "string") return NextResponse.json({ error: "idToken wajib diisi" }, { status: 400 });
 
   let decoded;
@@ -44,12 +44,13 @@ export async function POST(req: NextRequest) {
   }
 
   const res = NextResponse.json({ ok: true });
+  // "Ingat saya" mati: cookie sesi browser, hilang saat browser ditutup.
   res.cookies.set(SESSION_COOKIE, sessionCookie, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: SESSION_MAX_AGE,
+    ...(remember === false ? {} : { maxAge: SESSION_MAX_AGE }),
   });
   return res;
 }
