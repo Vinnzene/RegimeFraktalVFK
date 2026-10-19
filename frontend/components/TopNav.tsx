@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import UserMenu from "@/components/UserMenu";
+import BrandMark from "@/components/login/BrandMark";
 
 /**
  * Navigasi horizontal di header, dikelompokkan menurut pertanyaan pengguna.
@@ -92,9 +93,7 @@ export default function TopNav() {
   return (
     <div ref={navRef} className="flex h-12 shrink-0 items-center gap-1 border-b border-edge bg-panel px-3">
       <Link href="/" className="mr-4 flex shrink-0 items-center gap-2">
-        <span className="flex h-7 w-7 items-center justify-center rounded-md bg-accent font-mono text-xs font-bold text-panelAlt">
-          R
-        </span>
+        <BrandMark size={26} />
         <span className="hidden font-sans text-[13px] font-semibold tracking-tight text-txt sm:inline">
           regimefraktal<span className="text-accent">VFK</span>
         </span>

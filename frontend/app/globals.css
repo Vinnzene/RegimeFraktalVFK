@@ -17,14 +17,14 @@ body {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0b0e11;
+  background: #0a0b0d;
 }
 ::-webkit-scrollbar-thumb {
-  background: #252c37;
+  background: #272b31;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #323b48;
+  background: #363b43;
 }
 
 /* Pola untuk dua jenis Uncertain — dibedakan supaya tidak tertukar. */
@@ -97,9 +97,9 @@ body {
   }
 
   .badge-up {
-    @apply rounded bg-bullish/15 px-1.5 py-0.5 font-mono text-2xs text-bullish;
+    @apply whitespace-nowrap rounded bg-bullish/15 px-1.5 py-0.5 font-mono text-2xs text-bullish;
   }
   .badge-down {
-    @apply rounded bg-bearish/15 px-1.5 py-0.5 font-mono text-2xs text-bearish;
+    @apply whitespace-nowrap rounded bg-bearish/15 px-1.5 py-0.5 font-mono text-2xs text-bearish;
   }
 }

@@ -1,8 +1,9 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Palet bergaya terminal data kripto: latar nyaris hitam, permukaan berlapis,
- * dan aksen hijau-merah yang tegas untuk arah harga.
+ * Palet bergaya terminal data kripto: latar nyaris hitam hangat, permukaan
+ * berlapis, aksen merek oranye (sama dengan halaman login), dan hijau-merah
+ * khusus untuk arah harga.
  *
  * Catatan penting soal warna regime: hijau/merah SENGAJA tidak dipakai untuk
  * kategori regime. Persistent bukan berarti naik dan anti-persistent bukan
@@ -15,21 +16,22 @@ const config: Config = {
     extend: {
       colors: {
         // Lapisan latar, dari paling dalam ke paling depan.
-        panelAlt: "#0b0e11",
-        panel: "#151a21",
-        surface: "#1b222b",
-        edge: "#252c37",
-        edgeBright: "#323b48",
+        panelAlt: "#0a0b0d",
+        panel: "#131518",
+        surface: "#1b1e22",
+        edge: "#272b31",
+        edgeBright: "#363b43",
 
         // Teks
-        txt: "#eaecef",
-        txtDim: "#8b949e",
-        txtMuted: "#5c6673",
+        txt: "#f1ede8",
+        txtDim: "#a8a29b",
+        txtMuted: "#6f6a64",
 
         // Arah harga
         bullish: "#2ebd85",
         bearish: "#f6465d",
-        accent: "#2ebd85",
+        // Aksen merek (navigasi, pilihan aktif). Bukan penanda naik/turun.
+        accent: "#ff7a1a",
         warn: "#f0b90b",
 
         // Kategori regime — biru/emas/ungu, bukan hijau/merah.

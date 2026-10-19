@@ -235,7 +235,7 @@ export default function NotifikasiPage() {
                         checked={tg.timeframes.includes(tf)}
                         disabled={busy !== null || !tg.enabled}
                         onChange={(e) => setTimeframe(tf, e.target.checked)}
-                        className="h-4 w-4 accent-[#2ebd85]"
+                        className="h-4 w-4 accent-[#ff7a1a]"
                       />
                       {TF_LABEL[tf]}
                     </label>

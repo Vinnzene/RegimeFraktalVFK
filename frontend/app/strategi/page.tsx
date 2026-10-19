@@ -7,6 +7,7 @@ import { useAppConfig } from "@/components/ConfigContext";
 import { ApiState, useApi } from "@/components/useApi";
 import { api, type RegimePoint } from "@/lib/api-client";
 import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
+import { STRATEGY_PLAN as PLAN } from "@/lib/strategy";
 
 /**
  * Regime → strategi.
@@ -19,41 +20,6 @@ import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
 
 const MOM = REGIME_META.persistent.color;
 const MR = REGIME_META.anti_persistent.color;
-
-type Plan = { strategy: string; tool: string; action: string; tone: "go" | "wait" };
-
-const PLAN: Record<Regime, Plan> = {
-  persistent: {
-    strategy: "Trend-following",
-    tool: "Trend bot, breakout, MA crossover",
-    action: "Ikuti arah gerakan. Masuk saat harga menembus level, keluar dengan trailing stop.",
-    tone: "go",
-  },
-  anti_persistent: {
-    strategy: "Mean-reversion",
-    tool: "Grid bot, fade Bollinger/RSI",
-    action: "Lawan gerakan ekstrem. Masuk di ujung range, ambil untung ke rata-rata, stop ketat.",
-    tone: "go",
-  },
-  random_like: {
-    strategy: "Tidak trading",
-    tool: "Matikan bot atau posisi minimal",
-    action: "Tidak ada pola yang bisa dimanfaatkan; biaya transaksi akan menggerus hasil.",
-    tone: "wait",
-  },
-  uncertain_rule: {
-    strategy: "Tunggu konfirmasi",
-    tool: "Kurangi posisi",
-    action: "Dua alat ukur tidak sepakat. Tunggu sampai kondisi terkonfirmasi beberapa window berturut-turut.",
-    tone: "wait",
-  },
-  uncertain_lowconf: {
-    strategy: "Tunggu konfirmasi",
-    tool: "Kurangi posisi",
-    action: "Model tidak cukup yakin. Tunggu sampai kondisi terkonfirmasi.",
-    tone: "wait",
-  },
-};
 
 const MAP_ROWS: { label: string; cells: [string, string, string] }[] = [
   { label: "Strategi", cells: ["Trend-following, breakout", "Mean-reversion, fade ekstrem", "Tidak trading / posisi minimal"] },
@@ -70,7 +36,7 @@ function formatDate(t: number) {
 }
 
 function formatSpan(seconds: number) {
-  const h = Math.round(seconds / 3600);
+  const h = Math.max(1, Math.round(seconds / 3600));
   return h >= 48 ? `${Math.round(h / 24)} hari` : `${h} jam`;
 }
 
@@ -290,15 +256,15 @@ export default function StrategiPage() {
             <tbody>
               {MAP_ROWS.map((row) => (
                 <tr key={row.label}>
-                  <td className="py-2 font-sans text-txtMuted">{row.label}</td>
+                  <td className="py-2 !font-sans text-txtMuted">{row.label}</td>
                   {row.cells.map((c, i) => (
-                    <td key={i} className="py-2 text-left font-sans text-[12px] text-txtDim">{c}</td>
+                    <td key={i} className="py-2 text-left !font-sans text-[12px] text-txtDim">{c}</td>
                   ))}
                 </tr>
               ))}
               <tr>
-                <td className="py-2 font-sans text-txtMuted">Saat transisi</td>
-                <td colSpan={3} className="py-2 text-left font-sans text-[12px] text-txtDim">
+                <td className="py-2 !font-sans text-txtMuted">Saat transisi</td>
+                <td colSpan={3} className="py-2 text-left !font-sans text-[12px] text-txtDim">
                   Kurangi posisi sampai regime baru terkonfirmasi beberapa window berturut-turut.
                 </td>
               </tr>

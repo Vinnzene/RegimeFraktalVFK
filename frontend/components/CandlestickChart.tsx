@@ -49,7 +49,7 @@ function hexToRgba(hex: string, alpha: number): string {
 function regimeBandColor(regime: string): string {
   const meta = REGIME_META[regime as Regime];
   if (!meta) return "rgba(51,65,85,0.10)";
-  const alpha = meta.pattern === "solid" ? 0.16 : 0.3;
+  const alpha = meta.pattern === "solid" ? 0.1 : 0.16;
   return hexToRgba(meta.color, alpha);
 }
 
@@ -105,14 +105,14 @@ export default function CandlestickChart({
     const chart = createChart(containerRef.current, {
       height,
       layout: {
-        background: { type: ColorType.Solid, color: "#151a21" },
-        textColor: "#8b949e",
+        background: { type: ColorType.Solid, color: "#131518" },
+        textColor: "#a8a29b",
         fontSize: 11,
         fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
       },
       grid: {
-        vertLines: { color: "rgba(37,44,55,0.5)" },
-        horzLines: { color: "rgba(37,44,55,0.5)" },
+        vertLines: { color: "rgba(39,43,49,0.45)" },
+        horzLines: { color: "rgba(39,43,49,0.45)" },
       },
       crosshair: {
         mode: CrosshairMode.Normal,
@@ -130,11 +130,11 @@ export default function CandlestickChart({
         },
       },
       rightPriceScale: {
-        borderColor: "#252c37",
+        borderColor: "#272b31",
         scaleMargins: { top: 0.08, bottom: 0.24 },
       },
       timeScale: {
-        borderColor: "#252c37",
+        borderColor: "#272b31",
         timeVisible: true,
         secondsVisible: false,
         rightOffset: 6,

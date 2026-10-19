@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo } from "react";
 import type { RegimePoint } from "@/lib/api-client";
 import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
+import { STRATEGY_PLAN } from "@/lib/strategy";
 
 const DAY = 24 * 3600;
 
@@ -14,150 +16,158 @@ function formatDuration(seconds: number): string {
 }
 
 function formatDate(t: number): string {
-  return new Date(t * 1000).toLocaleDateString("id-ID", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+  return new Date(t * 1000).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
+}
+
+/** Statistik 30 hari terakhir dari deret regime, dipakai kartu hero dan kartu komposisi. */
+export function useRecentRegimes(series: RegimePoint[]) {
+  return useMemo(() => {
+    if (!series.length) return null;
+    const last = series[series.length - 1];
+    let i = series.length - 1;
+    while (i > 0 && series[i - 1].regime === last.regime) i--;
+    const cutoff = last.time - 30 * DAY;
+    const recent = series.filter((p) => p.time >= cutoff);
+    const counts: Record<string, number> = {};
+    recent.forEach((p) => (counts[p.regime] = (counts[p.regime] ?? 0) + 1));
+    let switches = 0;
+    for (let k = 1; k < recent.length; k++) if (recent[k].regime !== recent[k - 1].regime) switches++;
+    return {
+      since: series[i].time,
+      lastTime: last.time,
+      switches,
+      recentShare: Object.entries(counts)
+        .map(([key, v]) => ({ key, share: v / recent.length }))
+        .sort((a, b) => b.share - a.share),
+    };
+  }, [series]);
 }
 
 /**
- * Ringkasan kondisi pasar dalam bahasa awam.
- *
- * Kartu utama yang dibaca pertama kali: nama kondisi, artinya, analogi, sejak
- * kapan berlangsung, dan komposisi 30 hari terakhir.
+ * Kartu pertama yang dibaca: kondisi pasar sekarang, apa artinya bagi
+ * pengguna (strategi yang cocok), dan dua alat ukur di baliknya.
  */
 export default function MarketSummary({
   current,
   series,
   loading,
+  symbol,
+  timeframe,
+  gauges,
 }: {
   current: string | null | undefined;
   series: RegimePoint[];
   loading: boolean;
+  symbol: string;
+  timeframe: string;
+  gauges: React.ReactNode;
 }) {
-  const info = useMemo(() => {
-    if (!series.length) return null;
-    const last = series[series.length - 1];
-    let i = series.length - 1;
-    while (i > 0 && series[i - 1].regime === last.regime) i--;
-    const since = series[i].time;
-
-    const cutoff = last.time - 30 * DAY;
-    const recent = series.filter((p) => p.time >= cutoff);
-    const counts: Record<string, number> = {};
-    recent.forEach((p) => (counts[p.regime] = (counts[p.regime] ?? 0) + 1));
-    const recentShare = Object.entries(counts)
-      .map(([k, v]) => ({ key: k, share: v / recent.length }))
-      .sort((a, b) => b.share - a.share);
-
-    let switches = 0;
-    for (let k = 1; k < recent.length; k++) {
-      if (recent[k].regime !== recent[k - 1].regime) switches++;
-    }
-
-    return { since, lastTime: last.time, recentShare, switches };
-  }, [series]);
+  const info = useRecentRegimes(series);
 
   if (loading) {
     return (
-      <div className="rounded-md border border-edge bg-panel p-4">
+      <div className="rounded-xl border border-edge bg-panel p-5">
         <div className="text-[13px] text-txtDim">Sedang menganalisis kondisi pasar…</div>
-        <div className="mt-3 h-8 w-64 animate-pulse rounded bg-surface" />
+        <div className="mt-3 h-10 w-72 animate-pulse rounded bg-surface" />
       </div>
     );
   }
 
   const key = (current ?? "") as Regime;
   const plain = REGIME_PLAIN[key];
+  const plan = STRATEGY_PLAN[key];
   const color = REGIME_META[key]?.color ?? "#8b949e";
 
-  if (!plain) {
-    return (
-      <div className="rounded-md border border-edge bg-panel p-4 text-[13px] text-txtDim">
-        Kondisi pasar belum tersedia.
-      </div>
-    );
+  if (!plain || !plan) {
+    return <div className="rounded-xl border border-edge bg-panel p-5 text-[13px] text-txtDim">Kondisi pasar belum tersedia.</div>;
   }
 
   return (
-    <div
-      className="rounded-md border bg-panel p-4"
-      style={{ borderColor: `${color}66`, boxShadow: `inset 4px 0 0 ${color}` }}
+    <section
+      className="relative overflow-hidden rounded-xl border border-edge bg-panel"
+      aria-label="Kondisi pasar saat ini"
     >
-      <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-        <div>
-          <div className="text-[12px] text-txtDim">Kondisi pasar BTC saat ini</div>
-          <div className="mt-1 flex items-center gap-3">
+      <div className="pointer-events-none absolute -left-24 -top-24 h-64 w-64 rounded-full blur-3xl" style={{ background: `${color}22` }} />
+      <div className="relative grid gap-px bg-edge lg:grid-cols-[1.15fr_1fr_300px]">
+        {/* 1. Kondisi sekarang */}
+        <div className="bg-panel p-5">
+          <div className="flex items-center gap-2 text-[12px] text-txtDim">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-60 motion-reduce:hidden" style={{ background: color }} />
+              <span className="relative inline-flex h-2 w-2 rounded-full" style={{ background: color }} />
+            </span>
+            Kondisi {symbol} saat ini · {timeframe.toUpperCase()}
+          </div>
+          <div className="mt-3 flex items-center gap-3">
             <span
-              className="flex h-10 w-10 items-center justify-center rounded-full text-xl font-bold"
-              style={{ backgroundColor: `${color}26`, color }}
+              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-2xl font-bold"
+              style={{ backgroundColor: `${color}1f`, color, boxShadow: `inset 0 0 0 1px ${color}55` }}
               aria-hidden
             >
               {plain.icon}
             </span>
-            <div>
-              <div className="text-2xl font-semibold leading-tight" style={{ color }}>
+            <div className="min-w-0">
+              <h2 className="text-[28px] font-semibold leading-none tracking-tight" style={{ color }}>
                 {plain.name}
-              </div>
-              <div className="text-[13px] text-txt">{plain.summary}</div>
+              </h2>
+              <p className="mt-1.5 text-[13.5px] text-txt">{plain.summary}</p>
             </div>
           </div>
-
-          <p className="mt-3 text-[13px] leading-relaxed text-txtDim">{plain.meaning}</p>
-          <p className="mt-1 text-[12px] italic leading-relaxed text-txtMuted">{plain.analogy}</p>
-
+          <p className="mt-4 max-w-prose text-[13px] leading-relaxed text-txtDim">{plain.meaning}</p>
           {info && (
-            <div className="mt-3 flex flex-wrap gap-2 text-[12px]">
-              <span className="rounded bg-surface px-2 py-1 text-txtDim">
-                Berlangsung sejak <span className="text-txt">{formatDate(info.since)}</span>{" "}
-                (± {formatDuration(info.lastTime - info.since)})
-              </span>
-              <span className="rounded bg-surface px-2 py-1 text-txtDim">
-                Berganti kondisi <span className="text-txt">{info.switches}×</span> dalam 30 hari
-              </span>
-            </div>
+            <dl className="mt-4 grid grid-cols-2 gap-2 text-[12px]">
+              <div className="rounded-lg bg-surface/70 px-3 py-2">
+                <dt className="text-txtMuted">Berlangsung sejak</dt>
+                <dd className="mt-0.5 font-medium text-txt">
+                  {formatDate(info.since)} <span className="font-normal text-txtDim">(± {formatDuration(info.lastTime - info.since)})</span>
+                </dd>
+              </div>
+              <div className="rounded-lg bg-surface/70 px-3 py-2">
+                <dt className="text-txtMuted">Pergantian kondisi</dt>
+                <dd className="mt-0.5 font-medium text-txt">
+                  {info.switches}× <span className="font-normal text-txtDim">dalam 30 hari</span>
+                </dd>
+              </div>
+            </dl>
           )}
         </div>
 
-        {info && (
-          <div className="rounded border border-edge bg-surface/40 p-3">
-            <div className="text-[12px] font-medium text-txt">Komposisi 30 hari terakhir</div>
-            <div className="mt-2 flex h-3 overflow-hidden rounded">
-              {info.recentShare.map((r) => (
-                <div
-                  key={r.key}
-                  style={{
-                    width: `${r.share * 100}%`,
-                    backgroundColor: REGIME_META[r.key as Regime]?.color ?? "#334155",
-                  }}
-                  title={`${REGIME_PLAIN[r.key as Regime]?.name ?? r.key}: ${(r.share * 100).toFixed(0)}%`}
-                />
-              ))}
-            </div>
-            <div className="mt-2 space-y-1">
-              {info.recentShare.map((r) => (
-                <div key={r.key} className="flex items-center gap-2 text-[12px]">
-                  <span
-                    className="h-2.5 w-2.5 shrink-0 rounded-sm"
-                    style={{ backgroundColor: REGIME_META[r.key as Regime]?.color ?? "#334155" }}
-                  />
-                  <span className="flex-1 text-txtDim">
-                    {REGIME_PLAIN[r.key as Regime]?.name ?? r.key}
-                  </span>
-                  <span className="font-mono text-txt">{(r.share * 100).toFixed(0)}%</span>
-                </div>
-              ))}
-            </div>
+        {/* 2. Apa artinya */}
+        <div className="flex flex-col bg-panel p-5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="text-[12px] text-txtDim">Apa artinya untuk Anda?</span>
+            <span className="rounded-full border border-warn/40 bg-warn/10 px-2 py-0.5 text-2xs font-medium text-warn">
+              Rancangan · belum teruji
+            </span>
           </div>
-        )}
-      </div>
+          <div className="mt-3 text-[11px] uppercase tracking-wider text-txtMuted">Strategi yang cocok</div>
+          <div className={`mt-1 text-[22px] font-semibold tracking-tight ${plan.tone === "go" ? "text-txt" : "text-txtDim"}`}>
+            {plan.strategy}
+          </div>
+          <p className="mt-2 text-[13px] leading-relaxed text-txtDim">{plan.action}</p>
+          <p className="mt-2 text-[12px] text-txtMuted">
+            Contoh alat: <span className="text-txtDim">{plan.tool}</span>
+          </p>
+          <div className="mt-auto pt-4">
+            <Link
+              href="/strategi"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-accent/40 bg-accent/10 px-3 py-2 text-[12.5px] font-medium text-accent transition hover:bg-accent/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+            >
+              Lihat peta strategi lengkap <span aria-hidden>→</span>
+            </Link>
+          </div>
+        </div>
 
-      <p className="mt-3 border-t border-edge pt-2 text-[11px] leading-relaxed text-txtMuted">
-        Kondisi ini menggambarkan <b>sifat gerakan</b> harga, bukan arah. &ldquo;Tren
-        Berlanjut&rdquo; bisa berarti naik terus atau turun terus. Informasi ini bukan saran
-        jual/beli.
+        {/* 3. Alat ukur */}
+        <div className="flex flex-col gap-3 bg-panel p-5">
+          <span className="text-[12px] text-txtDim">Dua alat ukur di baliknya</span>
+          {gauges}
+        </div>
+      </div>
+      <p className="relative border-t border-edge px-5 py-2.5 text-[11px] leading-relaxed text-txtMuted">
+        Kondisi menggambarkan <b className="text-txtDim">sifat gerakan</b>, bukan arah: &ldquo;Tren Berlanjut&rdquo; bisa naik
+        terus atau turun terus. Bukan saran jual/beli.
       </p>
-    </div>
+    </section>
   );
 }

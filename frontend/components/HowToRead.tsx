@@ -1,44 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
 
-const STORAGE_KEY = "howto-read-dismissed";
 const MAIN: Regime[] = ["persistent", "random_like", "anti_persistent", "uncertain_rule"];
 
 /**
- * Panduan singkat untuk pengunjung pertama kali.
- *
- * Terbuka otomatis pada kunjungan pertama, lalu ingat pilihan pengguna lewat
- * localStorage supaya tidak mengganggu pemakai yang sudah paham.
+ * Panduan singkat, tertutup secara bawaan sebagai satu baris ramping supaya
+ * layar pertama berisi kondisi pasar dan grafik, bukan teks panduan.
  */
 export default function HowToRead() {
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    setOpen(localStorage.getItem(STORAGE_KEY) !== "1");
-  }, []);
-
-  const toggle = () => {
-    setOpen((v) => {
-      localStorage.setItem(STORAGE_KEY, v ? "1" : "0");
-      return !v;
-    });
-  };
+  const toggle = () => setOpen((v) => !v);
 
   return (
-    <section className="rounded-md border border-persistent/30 bg-persistent/5">
+    <section className="rounded-xl border border-edge bg-panel">
       <button
         onClick={toggle}
-        className="flex w-full items-center gap-2 px-4 py-2.5 text-left text-[13px] font-medium text-txt"
+        aria-expanded={open}
+        className="flex w-full items-center gap-2.5 rounded-xl px-4 py-2.5 text-left text-[13px] font-medium text-txt transition hover:bg-surface/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
       >
-        <span className={`text-txtMuted transition-transform ${open ? "rotate-90" : ""}`}>▸</span>
+        <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent/15 text-[11px] font-bold text-accent" aria-hidden>?</span>
         Cara membaca dashboard ini
-        {!open && <span className="text-[11px] font-normal text-txtMuted">— klik untuk panduan singkat</span>}
+        {!open && <span className="hidden text-[12px] font-normal text-txtMuted sm:inline">· 1 menit</span>}
+        <span className={`ml-auto text-txtMuted transition-transform ${open ? "rotate-90" : ""}`} aria-hidden>▸</span>
       </button>
 
       {open && (
-        <div className="space-y-4 border-t border-persistent/20 px-4 pb-4 pt-3 text-[13px] leading-relaxed text-txtDim">
+        <div className="space-y-4 border-t border-edge px-4 pb-4 pt-3 text-[13px] leading-relaxed text-txtDim">
           <p>
             Dashboard ini <b className="text-txt">tidak menebak harga naik atau turun</b>. Yang diukur
             adalah <b className="text-txt">sifat gerakan</b> harga Bitcoin: apakah gerakannya cenderung

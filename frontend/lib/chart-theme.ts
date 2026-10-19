@@ -12,11 +12,11 @@ export const AXIS_TICK = {
   fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
 } as const;
 
-export const GRID_STROKE = "rgba(30,41,55,0.45)";
+export const GRID_STROKE = "rgba(39,43,49,0.5)";
 
 export const TOOLTIP_STYLE = {
-  background: "#0b1017",
-  border: "1px solid #1e2937",
+  background: "#0a0b0d",
+  border: "1px solid #272b31",
   borderRadius: 6,
   fontSize: 11,
   fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
