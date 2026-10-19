@@ -94,7 +94,8 @@ function TradingViewChart({ symbol, interval }: { symbol: string; interval: stri
 export default function AnalisaTeknikalPage() {
   const [asset, setAsset] = useState(ASSETS[0]);
   const [interval, setInterval] = useState("60");
-  const [height, setHeight] = useState(640);
+  const [full, setFull] = useState(false);
+  const shell = useRef<HTMLDivElement>(null);
   const dailyOnly = DAILY_ONLY_GROUPS.has(asset.group);
 
   const pickAsset = (a: Asset) => {
@@ -103,83 +104,98 @@ export default function AnalisaTeknikalPage() {
   };
 
   useEffect(() => {
-    const resize = () => setHeight(Math.max(480, window.innerHeight - 250));
-    resize();
-    window.addEventListener("resize", resize);
-    return () => window.removeEventListener("resize", resize);
+    const onChange = () => setFull(document.fullscreenElement === shell.current);
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
   }, []);
 
+  const toggleFull = () => {
+    if (document.fullscreenElement) void document.exitFullscreen().catch(() => undefined);
+    else void shell.current?.requestFullscreen().catch(() => undefined);
+  };
+
   return (
-    <div className="mx-auto max-w-[1600px] space-y-3 px-1 pb-6 sm:px-3">
-      <header className="flex flex-wrap items-end justify-between gap-3 pt-1">
-        <div>
-          <h1 className="text-[22px] font-semibold tracking-tight text-txt">Analisa teknikal</h1>
-          <p className="mt-0.5 max-w-3xl text-[13px] text-txtDim">
-            Tarik garis tren, fibonacci, channel, dan pasang indikator sesuka Anda. Alat gambar ada di sisi kiri grafik;
-            simbol lain bisa dicari lewat kolom simbol di kiri atas.
-          </p>
+    <div ref={shell} className={`flex h-full min-h-[560px] flex-col gap-2 ${full ? "bg-panelAlt p-2" : ""}`}>
+      <div className="flex items-center gap-2 rounded-xl border border-edge bg-panel px-2 py-1.5">
+        <h1 className="hidden shrink-0 px-1 text-[14px] font-semibold text-txt xl:block">Analisa teknikal</h1>
+        <div className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto [scrollbar-width:thin]" role="group" aria-label="Aset">
+          {GROUPS.map((g, gi) => (
+            <div key={g} className="flex shrink-0 items-center gap-1">
+              {gi > 0 && <span className="mx-1.5 h-4 w-px bg-edge" aria-hidden />}
+              <span className="mr-0.5 text-2xs uppercase tracking-wider text-txtMuted">{g}</span>
+              {ASSETS.filter((a) => a.group === g).map((a) => (
+                <button
+                  key={a.tv}
+                  type="button"
+                  aria-pressed={asset.tv === a.tv}
+                  onClick={() => pickAsset(a)}
+                  className={`shrink-0 rounded-md border px-2 py-0.5 text-[12px] font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent ${
+                    asset.tv === a.tv
+                      ? "border-accent/60 bg-accent/15 text-accent"
+                      : "border-transparent text-txtDim hover:border-edge hover:text-txt"
+                  }`}
+                >
+                  {a.label}
+                </button>
+              ))}
+            </div>
+          ))}
         </div>
-        <div className="flex items-center gap-1 rounded-lg border border-edge bg-panel p-1" role="group" aria-label="Rentang waktu">
+        <div className="flex shrink-0 items-center gap-0.5 rounded-lg border border-edge bg-panelAlt p-0.5" role="group" aria-label="Rentang waktu">
           {INTERVALS.map((i) => {
             const blocked = dailyOnly && !DAILY_INTERVALS.has(i.tv);
             return (
-            <button
-              key={i.tv}
-              type="button"
-              aria-pressed={interval === i.tv}
-              disabled={blocked}
-              title={blocked ? "Saham IDX hanya tersedia harian ke atas di TradingView gratis" : undefined}
-              onClick={() => setInterval(i.tv)}
-              className={`rounded-md px-2.5 py-1 font-mono text-[12px] transition disabled:cursor-not-allowed disabled:opacity-30 ${
-                interval === i.tv ? "bg-accent/20 text-accent" : "text-txtDim hover:bg-surface hover:text-txt"
-              }`}
-            >
-              {i.label}
-            </button>
+              <button
+                key={i.tv}
+                type="button"
+                aria-pressed={interval === i.tv}
+                disabled={blocked}
+                title={blocked ? "Saham IDX hanya tersedia harian ke atas di TradingView gratis" : undefined}
+                onClick={() => setInterval(i.tv)}
+                className={`rounded-md px-2 py-0.5 font-mono text-[12px] transition disabled:cursor-not-allowed disabled:opacity-30 ${
+                  interval === i.tv ? "bg-accent/20 text-accent" : "text-txtDim hover:bg-surface hover:text-txt"
+                }`}
+              >
+                {i.label}
+              </button>
             );
           })}
         </div>
-      </header>
-
-      <div className="flex flex-wrap gap-x-5 gap-y-2 rounded-xl border border-edge bg-panel px-3 py-2.5">
-        {GROUPS.map((g) => (
-          <div key={g} className="flex flex-wrap items-center gap-1.5">
-            <span className="mr-0.5 text-2xs uppercase tracking-wider text-txtMuted">{g}</span>
-            {ASSETS.filter((a) => a.group === g).map((a) => (
-              <button
-                key={a.tv}
-                type="button"
-                aria-pressed={asset.tv === a.tv}
-                onClick={() => pickAsset(a)}
-                className={`rounded-md border px-2 py-0.5 text-[12px] font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent ${
-                  asset.tv === a.tv
-                    ? "border-accent/60 bg-accent/15 text-accent"
-                    : "border-edge text-txtDim hover:border-edgeBright hover:text-txt"
-                }`}
-              >
-                {a.label}
-              </button>
-            ))}
-          </div>
-        ))}
+        <button
+          type="button"
+          onClick={toggleFull}
+          aria-pressed={full}
+          title={full ? "Keluar layar penuh (Esc)" : "Layar penuh"}
+          className="flex shrink-0 items-center gap-1.5 rounded-lg border border-edge px-2.5 py-1 text-[12px] text-txtDim transition hover:border-accent/60 hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
+        >
+          <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+            {full ? (
+              <path d="M8 3v5H3M12 3v5h5M8 17v-5H3M12 17v-5h5" />
+            ) : (
+              <path d="M3 8V3h5M17 8V3h-5M3 12v5h5M17 12v5h-5" />
+            )}
+          </svg>
+          <span className="hidden sm:inline">{full ? "Keluar" : "Layar penuh"}</span>
+        </button>
       </div>
 
       {dailyOnly && (
-        <p className="rounded-lg border border-edge bg-panel px-3 py-2 text-[12px] text-txtDim">
+        <p className="rounded-lg border border-edge bg-panel px-3 py-1.5 text-[12px] text-txtDim">
           Saham IDX di TradingView gratis hanya tersedia dalam interval harian, mingguan, dan bulanan.
         </p>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-edge bg-panel" style={{ height }}>
+      <div className="min-h-0 flex-1 overflow-hidden rounded-xl border border-edge bg-panel">
         <TradingViewChart symbol={asset.tv} interval={interval} />
       </div>
 
-      <p className="text-[11.5px] leading-relaxed text-txtMuted">
-        Grafik dan data di halaman ini disediakan TradingView, bukan hasil sistem identifikasi regime; gambar tidak tersimpan
-        setelah halaman ditutup. Kondisi regime dari sistem ada di{" "}
-        <Link href="/" className="text-accent hover:underline">Ringkasan pasar</Link> dan{" "}
-        <Link href="/strategi" className="text-accent hover:underline">Regime → Strategi</Link>. Bukan saran investasi.
-      </p>
+      {!full && (
+        <p className="shrink-0 truncate px-1 text-[11px] text-txtMuted" title="Data dan grafik milik TradingView; gambar tidak tersimpan setelah halaman ditutup.">
+          Grafik dan data dari TradingView, bukan hasil sistem regime; gambar tidak tersimpan. Hasil sistem ada di{" "}
+          <Link href="/" className="text-accent hover:underline">Ringkasan pasar</Link> dan{" "}
+          <Link href="/strategi" className="text-accent hover:underline">Regime → Strategi</Link>. Bukan saran investasi.
+        </p>
+      )}
     </div>
   );
 }
