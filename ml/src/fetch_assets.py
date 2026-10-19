@@ -23,7 +23,7 @@ import json
 import sys
 import time
 from pathlib import Path
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import numpy as np
 import pandas as pd
@@ -34,7 +34,7 @@ sys.path.insert(0, str(ROOT / "backend"))
 
 from app.core.config import ARTIFACTS_DIR, PROCESSED_DIR  # noqa: E402
 
-ASSETS: Dict[str, Dict[str, object]] = {
+ASSETS: Dict[str, Dict[str, Any]] = {
     # Kripto utama (Binance)
     "ETHUSDT": {"group": "kripto", "source": "binance", "tfs": ["1h", "4h"]},
     "BNBUSDT": {"group": "kripto", "source": "binance", "tfs": ["1h", "4h"]},
@@ -64,7 +64,7 @@ COLUMNS = ["time", "open", "high", "low", "close", "volume", "taker_buy_volume",
 
 
 def fetch_yahoo(ticker: str, tf: str) -> pd.DataFrame:
-    params: Dict[str, object] = {"interval": "60m" if tf == "1h" else "1d", "includePrePost": "false"}
+    params: Dict[str, str | int] = {"interval": "60m" if tf == "1h" else "1d", "includePrePost": "false"}
     if tf == "1h":
         params["range"] = "730d"
     else:
@@ -100,7 +100,7 @@ def main() -> None:
     args = p.parse_args()
 
     inv_path = ARTIFACTS_DIR / "asset_inventory.json"
-    inventory: Dict[str, Dict[str, object]] = json.loads(inv_path.read_text(encoding="utf-8")) if inv_path.exists() else {}
+    inventory: Dict[str, Dict[str, Any]] = json.loads(inv_path.read_text(encoding="utf-8")) if inv_path.exists() else {}
     failed: List[str] = []
     for symbol, spec in ASSETS.items():
         if args.only and symbol not in args.only:
