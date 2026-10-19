@@ -32,10 +32,51 @@ dapat dipakai memilih strategi yang tepat, setelah biaya transaksi?
 | RM4 | Apakah pemilihan strategi berdasarkan regime memberi kinerja bersih lebih baik daripada strategi tunggal? | Backtest walk-forward + uji SPA |
 | RM5 | Seberapa besar protokol evaluasi bocor menggelembungkan hasil? | Studi kebocoran (sudah ada) |
 
+## Posisi terhadap literatur
+
+Penelusuran 2026-10-19. Sebagian besar baru dibaca dari abstrak; periksa full
+text sebelum dikutip.
+
+### Landasan (bukan sumber novelty)
+
+| Rujukan | Temuan | Dipakai untuk |
+|---|---|---|
+| Bariviera (2017), *Economics Letters* | DFA sliding window: return BTC makin efisien, volatilitas tetap bermemori panjang | Dasar rolling window |
+| Takaishi & Adachi (2019), *Asia-Pacific Financial Markets* | H < 0,5 sebelum 2013, mendekati 0,5 sesudahnya, tetapi berulang kali turun di bawah 0,5 | Regime BTC berubah-ubah |
+| Kyriazis (2019), *JRFM* 12(2):67 (survei) | Kesimpulan efisiensi kripto saling bertentangan antar studi | Mendukung ketidaksepakatan R/S–DFA 47% (Bab 4 §4.1) |
+| Barunik & Kristoufek (2010), *Physica A* | Pada ekor tebal R/S menuju 0,5, DFA menaksir terlalu rendah | Menjelaskan ambang DFA (0,47–0,52) jauh di bawah R/S (0,57–0,60) |
+
+### Paling dekat dengan project ini
+
+| Rujukan | Isi | Selisih dengan project ini |
+|---|---|---|
+| Di Persio & Dufera (2024), *Mathematics* 12(22):3483 | Neural network dilatih dengan target R/S dan DFA, 446 saham S&P 500 | **Sama dengan desain lama** (model meniru label R/S-DFA). Wajib dikutip; alasan utama label tidak lagi berasal dari estimator |
+| Raubitzek dkk. (2023), *Entropy* 25(12):1671 | LightGBM/MLP/CatBoost dilatih pada fBm dan fractional Lévy motion, mengalahkan R/S dan DFA; diterapkan ke indeks saham AS | Tanpa volatility clustering dan lonjakan, bukan kripto, regresi H (bukan klasifikasi regime dengan abstain), tanpa strategi trading |
+| Mukherjee dkk. (2023), *IJCSE*; arXiv 2401.01789 (LSTM pada fBm) | Estimasi H dengan neural network; fokus kecepatan dan akurasi | Proses sintetis sederhana, tanpa aplikasi pasar |
+| Chang, Lizardi & Shah (2022), arXiv 2205.11122 (preprint) | Hurst > 0,5 → momentum, < 0,5 → mean-reversion; return lebih tinggi, risiko lebih tinggi | Bukan BTC; abstrak tidak menyebut biaya, out-of-sample, atau uji data snooping |
+| *Mathematics* 12(18):2911 (2024) | Pairs trading kripto: spread dengan Hurst anti-persisten lebih cepat kembali ke rata-rata | Pairs trading, bukan pemilihan strategi satu aset; mendukung hipotesis RM4 |
+| Martínez-Farías dkk. (2025), *Computational Economics* 66(5) | Kripto per menit: makin jauh H dari 0,5, makin kecil galat ramalan LSTM | Data 2 × 3 minggu; tugas forecasting |
+
+### Celah yang diisi skripsi ini
+
+1. Benchmark identifikasi regime pada data sintetis **berkarakter kripto**:
+   volatility clustering (GARCH), ekor tebal, lonjakan, dan H yang berganti di
+   dalam window (skenario S3–S5), dalam bentuk **klasifikasi tiga regime dengan
+   kelas abstain**, bukan regresi H. Raubitzek dkk. (2023) hanya menguji fBm
+   dan fLm.
+2. Pemilihan strategi berbasis regime pada **BTC** dengan walk-forward, biaya
+   transaksi nyata, uji Hansen SPA, dan praregistrasi. Studi terdekat (Chang
+   dkk., 2022) adalah preprint pada saham tanpa uji tersebut di abstraknya.
+3. Bukti kuantitatif bahwa protokol evaluasi membalik kesimpulan (studi
+   kebocoran, RM5).
+
+Klaim yang **tidak** boleh dipakai sebagai novelty: "Hurst BTC berubah-ubah",
+"neural network meniru R/S/DFA", dan "ML lebih akurat dari R/S/DFA pada fBm".
+
 ## Fase 0 — Perbaikan wajib (minggu 1)
 
 - [x] Satuan biaya Tabel 4.10 (USDT tertulis sebagai R) — `run_setup_sensitivity_grid.py`, `bab4_hasil.md`.
-- [ ] `threshold_source: train_only` menjadi konfigurasi utama; `full_history` jadi sensitivitas.
+- [x] `threshold_source: train_only` menjadi konfigurasi utama; `full_history` jadi sensitivitas (kode + adendum §5; run ulang berjalan).
 - [ ] Walk-forward dijadikan angka utama; hapus narasi "periode mudah" §4.4.1 atau buktikan dengan statistik per periode.
 - [ ] Seragamkan N uji (1.619/1.622, 257/262) dan laporkan p < 1/B, bukan 0,0000.
 - [ ] Baseline tambahan: regresi logistik, LightGBM (50 fitur), Statistical Jump Model, HMM.
@@ -55,6 +96,7 @@ Generator (`ml/src/synthetic.py` diperluas), H diketahui pasti:
 
 - Label kebenaran dari H pembangkit dengan **ambang absolut** (mis. H < 0,45 anti-persistent, 0,45–0,55 random-like, > 0,55 persistent), bukan kuantil.
 - Pembanding: R/S, R/S termodifikasi Lo (1991), DFA-1, uji VR Lo-MacKinlay, MLP, LightGBM, Hybrid PS.
+- Pembanding kunci untuk celah literatur: model yang **dilatih hanya pada fBm/fLm** (setara Raubitzek dkk., 2023) lalu diuji pada S3–S5. Bila model yang dilatih pada data berkarakter kripto tidak lebih baik dari ini, celah 1 tidak terbukti.
 - Metrik: BA dan Macro F1 terhadap regime sebenarnya, bias dan RMSE estimasi H, sebagai fungsi panjang window (128 / 256 / 500).
 - Set uji sintetis dibangkitkan dengan seed terpisah dan tidak pernah dipakai untuk tuning.
 
