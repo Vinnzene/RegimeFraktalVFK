@@ -168,6 +168,8 @@ def fig_walk_forward() -> None:
 
 
 PS_SHORT = {
+    "logreg": "Regresi logistik",
+    "lightgbm": "LightGBM",
     "structural_mlp": "MLP fitur",
     "swt_attention_bilstm": "SWT+Att-BiLSTM",
     "hybrid_swt": "Hybrid SWT",

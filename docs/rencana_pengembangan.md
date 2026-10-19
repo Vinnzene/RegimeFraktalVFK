@@ -190,6 +190,20 @@ data latih, walk-forward, studi kebocoran, block bootstrap + Holm.
 Ditulis 2026-10-19, SEBELUM hasil 1H dengan `train_only` keluar. Hasil 4H
 sudah ada: Hybrid PS setara MLP (H5), kalah dari MLP di 4/5 fold walk-forward.
 
+### Hasil 1H (2026-10-20): skenario B berlaku
+
+Run ulang Fase 0 dengan `train_only` selesai. Hybrid PS BA uji 0,698 (sebelumnya
+0,693), tetapi H5 (Hybrid PS > MLP) **tidak lagi terbukti**: p Holm 0,058,
+CI95 ΔF1 [+0,008; +0,127]. A1 (> LightGBM) terbukti; A2 (> regresi logistik)
+setara. Walk-forward: regresi logistik BA rata-rata fold 0,576, Hybrid PS 0,570;
+keduanya mengungguli MLP di 4/5 fold. H1 tetap terbukti (+0,28), H2 dan H3 tetap
+tidak terbukti. 4H: semua model setara (lihat artefak).
+
+Sesuai tabel skenario di bawah (ditulis sebelum hasil keluar), ini skenario B:
+model paling sederhana yang setara = **regresi logistik**. Konsekuensinya:
+D-BTC pada uji generalisasi = regresi logistik latih-BTC; Bab 4 melaporkan
+Hybrid PS sebagai "setara model sederhana", bukan "lebih unggul".
+
 ### Aturan yang tidak boleh dilanggar
 
 - Tidak mengubah model, seed, ambang, atau fitur lalu menjalankan ulang sampai

@@ -1,20 +1,20 @@
 ## Evaluasi utama identifikasi regime — 4H
 
-n train/val/test = 1473/340/257, seed [42, 43, 44], purge 500 bar, config `7a3bddc67d72`
+n train/val/test = 1446/354/261, seed [42, 43, 44], purge 500 bar, config `b2225bb25c4f`
 
 | Model | Balanced Acc | Macro F1 | MCC | Kappa | Recall persistent | Recall random_like | Recall anti_persistent |
 |---|---|---|---|---|---|---|---|
-| Baseline: kelas mayoritas | 0.333 ± 0.000 | 0.163 ± 0.000 | 0.000 ± 0.000 | 0.000 ± 0.000 | 1.000 | 0.000 | 0.000 |
-| Baseline: acak proporsional | 0.317 ± 0.008 | 0.311 ± 0.007 | -0.014 ± 0.018 | -0.014 ± 0.018 | 0.422 | 0.179 | 0.351 |
-| MLP fitur statistik | 0.552 ± 0.009 | 0.557 ± 0.009 | 0.430 ± 0.024 | 0.423 ± 0.022 | 0.574 | 0.228 | 0.855 |
-| SWT + BiLSTM | 0.382 ± 0.042 | 0.374 ± 0.035 | 0.112 ± 0.082 | 0.109 ± 0.079 | 0.470 | 0.073 | 0.604 |
-| SWT + Attention-BiLSTM | 0.387 ± 0.034 | 0.352 ± 0.011 | 0.127 ± 0.073 | 0.114 ± 0.058 | 0.606 | 0.041 | 0.514 |
-| **Hybrid Attention-BiLSTM (usulan)** | 0.574 ± 0.011 | 0.575 ± 0.011 | 0.441 ± 0.022 | 0.436 ± 0.024 | 0.623 | 0.333 | 0.767 |
+| Baseline: kelas mayoritas | 0.333 ± 0.000 | 0.235 ± 0.000 | 0.000 ± 0.000 | 0.000 ± 0.000 | 0.000 | 0.000 | 1.000 |
+| Baseline: acak proporsional | 0.342 ± 0.024 | 0.335 ± 0.020 | 0.014 ± 0.029 | 0.014 ± 0.029 | 0.371 | 0.231 | 0.425 |
+| MLP fitur statistik | 0.574 ± 0.024 | 0.576 ± 0.025 | 0.466 ± 0.039 | 0.462 ± 0.042 | 0.600 | 0.282 | 0.840 |
+| SWT + BiLSTM | 0.402 ± 0.021 | 0.387 ± 0.017 | 0.126 ± 0.060 | 0.121 ± 0.056 | 0.508 | 0.171 | 0.526 |
+| SWT + Attention-BiLSTM | 0.421 ± 0.054 | 0.380 ± 0.036 | 0.197 ± 0.112 | 0.162 ± 0.087 | 0.671 | 0.128 | 0.465 |
+| **Hybrid Attention-BiLSTM (usulan)** | 0.586 ± 0.031 | 0.584 ± 0.034 | 0.458 ± 0.038 | 0.451 ± 0.043 | 0.671 | 0.342 | 0.744 |
 
 Usulan vs pembanding (ΔF1 = usulan − pembanding, CI95 block bootstrap; McNemar p):
 
-- vs Baseline: kelas mayoritas: seed 42: ΔF1 +0.371 [+0.299, +0.432], p=0; seed 43: ΔF1 +0.375 [+0.277, +0.461], p=0; seed 44: ΔF1 +0.396 [+0.321, +0.462], p=0
-- vs Baseline: acak proporsional: seed 42: ΔF1 +0.204 [+0.117, +0.289], p=0; seed 43: ΔF1 +0.225 [+0.126, +0.297], p=0; seed 44: ΔF1 +0.242 [+0.174, +0.309], p=0
-- vs MLP fitur statistik: seed 42: ΔF1 +0.033 [-0.116, +0.157], p=0.59; seed 43: ΔF1 +0.002 [-0.087, +0.080], p=0.223; seed 44: ΔF1 +0.035 [-0.107, +0.155], p=0.658
-- vs SWT + BiLSTM: seed 42: ΔF1 +0.147 [+0.014, +0.271], p=0.0001; seed 43: ΔF1 +0.192 [+0.020, +0.332], p=0; seed 44: ΔF1 +0.130 [+0.041, +0.227], p=0.0002
-- vs SWT + Attention-BiLSTM: seed 42: ΔF1 +0.184 [+0.058, +0.294], p=0.0002; seed 43: ΔF1 +0.155 [+0.014, +0.276], p=0.0004; seed 44: ΔF1 +0.185 [+0.105, +0.277], p=0
+- vs Baseline: kelas mayoritas: seed 42: ΔF1 +0.290 [+0.101, +0.431], p=0.0031; seed 43: ΔF1 +0.325 [+0.120, +0.452], p=0; seed 44: ΔF1 +0.261 [+0.094, +0.392], p=0.115
+- vs Baseline: acak proporsional: seed 42: ΔF1 +0.197 [+0.115, +0.275], p=0; seed 43: ΔF1 +0.226 [+0.144, +0.295], p=0; seed 44: ΔF1 +0.204 [+0.095, +0.302], p=0
+- vs MLP fitur statistik: seed 42: ΔF1 +0.076 [-0.021, +0.156], p=0.371; seed 43: ΔF1 +0.050 [-0.049, +0.122], p=1; seed 44: ΔF1 -0.056 [-0.119, +0.003], p=0.0015
+- vs SWT + BiLSTM: seed 42: ΔF1 +0.137 [+0.049, +0.223], p=0; seed 43: ΔF1 +0.213 [+0.077, +0.331], p=0; seed 44: ΔF1 +0.140 [+0.070, +0.197], p=0.0017
+- vs SWT + Attention-BiLSTM: seed 42: ΔF1 +0.187 [+0.114, +0.276], p=0; seed 43: ΔF1 +0.150 [+0.049, +0.237], p=0; seed 44: ΔF1 +0.165 [+0.074, +0.258], p=0
