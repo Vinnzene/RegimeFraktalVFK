@@ -42,6 +42,7 @@ from persistence_sequence_study import (  # noqa: E402
     seq_kind,
     verdict,
 )
+from tabular_baselines import TABULAR, fit_predict_proba  # noqa: E402
 from train import class_weights  # noqa: E402
 from train_orderflow_ablation import (  # noqa: E402
     block_bootstrap_f1_diff,
@@ -102,25 +103,33 @@ def run_pipeline(
                 perm = np.argsort(rng.random((S.shape[0], S.shape[1])), axis=1)
                 S = np.take_along_axis(S, perm[:, :, None], axis=1)
             d = {k: (S[r], F[r], Y[r]) for k, r in rows.items()}
-            tf.keras.backend.clear_session()
-            tf.keras.utils.set_random_seed(seed)
-            model = build(key, S.shape[1:], F.shape[1], len(classes))
-            hist = model.fit(
-                inputs(key, d["train"][0], d["train"][1]),
-                d["train"][2],
-                validation_data=(inputs(key, d["validation"][0], d["validation"][1]), d["validation"][2]),
-                epochs=epochs,
-                batch_size=batch_size,
-                class_weight=class_weights(d["train"][2]),
-                shuffle=True,
-                callbacks=[
-                    tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=12, restore_best_weights=True),
-                    tf.keras.callbacks.ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=6, min_lr=1e-5),
-                ],
-                verbose=0,
-            )
-            pv = model.predict(inputs(key, d["validation"][0], d["validation"][1]), batch_size=512, verbose=0)
-            pt = model.predict(inputs(key, d["test"][0], d["test"][1]), batch_size=512, verbose=0)
+            if key in TABULAR:
+                pv, pt = fit_predict_proba(
+                    key, d["train"][1], d["train"][2], d["validation"][1], d["validation"][2],
+                    [d["validation"][1], d["test"][1]], seed,
+                )
+                epochs_ran = 0
+            else:
+                tf.keras.backend.clear_session()
+                tf.keras.utils.set_random_seed(seed)
+                model = build(key, S.shape[1:], F.shape[1], len(classes))
+                hist = model.fit(
+                    inputs(key, d["train"][0], d["train"][1]),
+                    d["train"][2],
+                    validation_data=(inputs(key, d["validation"][0], d["validation"][1]), d["validation"][2]),
+                    epochs=epochs,
+                    batch_size=batch_size,
+                    class_weight=class_weights(d["train"][2]),
+                    shuffle=True,
+                    callbacks=[
+                        tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=12, restore_best_weights=True),
+                        tf.keras.callbacks.ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=6, min_lr=1e-5),
+                    ],
+                    verbose=0,
+                )
+                pv = model.predict(inputs(key, d["validation"][0], d["validation"][1]), batch_size=512, verbose=0)
+                pt = model.predict(inputs(key, d["test"][0], d["test"][1]), batch_size=512, verbose=0)
+                epochs_ran = len(hist.history["loss"])
             pred_v = [classes[i] for i in pv.argmax(axis=1)]
             pred_t = [classes[i] for i in pt.argmax(axis=1)]
             mv = classification_metrics(true["validation"], pred_v, classes)
@@ -137,7 +146,7 @@ def run_pipeline(
                     extra["attention_entropy"] = round(float(ent), 4)
                 except Exception as exc:  # noqa: BLE001
                     extra["attention_entropy_error"] = str(exc)[:120]
-            per_seed.append({"seed": seed, "epochs_ran": len(hist.history["loss"]), "validation": mv, "test": mt, **extra})
+            per_seed.append({"seed": seed, "epochs_ran": epochs_ran, "validation": mv, "test": mt, **extra})
             preds[key][seed] = pred_t
 
         def agg(path):

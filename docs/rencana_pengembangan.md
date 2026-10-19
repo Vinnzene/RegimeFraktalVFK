@@ -144,3 +144,80 @@ tetap sah bila dipraregistrasi; regime dari estimator yang lebih akurat (Fase
 
 Pipeline data, fitur PS dan statistik, arsitektur model, purge, scaler dari
 data latih, walk-forward, studi kebocoran, block bootstrap + Holm.
+
+## Rencana cadangan bila hasil model tidak bagus
+
+Ditulis 2026-10-19, SEBELUM hasil 1H dengan `train_only` keluar. Hasil 4H
+sudah ada: Hybrid PS setara MLP (H5), kalah dari MLP di 4/5 fold walk-forward.
+
+### Aturan yang tidak boleh dilanggar
+
+- Tidak mengubah model, seed, ambang, atau fitur lalu menjalankan ulang sampai
+  angka uji membaik (p-hacking). Riwayat git dan praregistrasi akan
+  memperlihatkannya.
+- Tidak kembali ke `full_history` karena angkanya lebih bagus; alasan
+  perpindahan sudah tercatat di `praregistrasi_addendum.md` §5.
+- Semua hasil dilaporkan, termasuk yang negatif.
+- Perbaikan model hanya boleh bila (a) ditulis di praregistrasi baru sebelum
+  dijalankan, dan (b) seleksinya memakai validasi atau walk-forward, bukan data
+  uji. Hasilnya dilaporkan sebagai eksperimen lanjutan, terpisah dari hasil
+  utama.
+
+### Skenario hasil 1H
+
+| Hasil | Arti | Tindakan |
+|---|---|---|
+| A. Hybrid PS > MLP, setara LightGBM | Keunggulan dari fitur PS, bukan arsitektur | Klaim turun menjadi "kompetitif dengan model terkuat"; kontribusi model = fitur PS |
+| B. Hybrid PS setara MLP dan LightGBM | Arsitektur kompleks tidak menambah nilai | Model untuk Fase 2 dan bot = model paling sederhana yang setara (MLP/LightGBM), alasan ditulis terbuka |
+| C. Hybrid PS lebih buruk | Overfit pada data efektif yang kecil | Seperti B, ditambah pembahasan: N_eff kecil, sinyal ada di statistik ringkasan (H2, H3, H6) |
+
+Pada ketiga skenario, judul tidak menyebut arsitektur tertentu ("Model
+Pembelajaran Mesin" bila B/C).
+
+### Pusat kontribusi digeser
+
+Perbandingan Hybrid PS vs pembanding bukan lagi kontribusi utama. Kontribusi
+skripsi bertumpu pada:
+
+1. Benchmark sintetis (Fase 1): akurasi R/S, DFA, dan model ML pada kondisi
+   berkarakter kripto. Hasil apa pun bernilai: ML unggul memberi alasan
+   memakainya; estimator klasik unggul berarti "estimator klasik cukup untuk
+   kondisi X".
+2. Pemilihan strategi (Fase 2): positif atau negatif sama-sama dilaporkan.
+3. Studi kebocoran (RM5): tidak bergantung pada model mana yang menang.
+
+### Arah perbaikan model (urut dampak)
+
+1. Label yang benar: latih dan uji pada data sintetis dengan regime diketahui
+   (Fase 1), alih-alih meniru label R/S-DFA yang hanya sepakat 53%.
+2. Model paling sederhana yang setara.
+3. Kelas abstain terkalibrasi: model boleh menjawab "tidak yakin" dan bot diam.
+4. Arsitektur baru hanya bila ada alasan kuat.
+
+Tetap identifikasi (nowcasting). Peramalan harga tidak diambil (di luar
+pembatasan masalah Bab 1, novelty rendah, waktu tidak cukup). Peramalan regime
+tidak diambil karena baseline naif sudah mengalahkan model pada horizon pendek
+(Bab 4 Tabel 4.9e).
+
+### Perluasan cadangan: deteksi pergantian regime
+
+Diaktifkan bila skenario B/C terjadi, atau bila waktu Fase 1 memungkinkan.
+Tetap tugas identifikasi, dengan dimensi waktu.
+
+- Pertanyaan: saat regime berganti, seberapa cepat tiap metode mengenalinya
+  dan seberapa sering salah alarm?
+- Alasan: R/S dan DFA atas window 500 bar lambat secara alami. Di sini model
+  sekuens punya alasan dipakai, sedangkan pada tugas identifikasi statis urutan
+  waktu terbukti tidak membantu (H2).
+- Data: skenario S5 (H berganti di titik yang diketahui) ditambah urutan
+  regime panjang dengan beberapa titik ganti.
+- Metrik: keterlambatan deteksi (bar sejak titik ganti sampai metode
+  menyatakan regime baru), tingkat salah alarm per 1.000 bar, dan proporsi
+  pergantian yang tidak terdeteksi.
+- Pembanding: R/S dan DFA rolling dengan aturan konfirmasi yang sama, Jump
+  Model, HMM, MLP/LightGBM, model sekuens.
+- Kegunaan: menjadi dasar notifikasi Telegram "regime berganti" dan menjawab
+  kebutuhan pengguna grid bot yang perlu tahu secepat mungkin saat pasar mulai
+  trending.
+- Hipotesis dan aturan konfirmasi ditulis di praregistrasi Fase 1 sebelum
+  dijalankan.
