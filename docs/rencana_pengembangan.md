@@ -1,57 +1,70 @@
 # Rencana Pengembangan Skripsi (8 minggu)
 
-> **Posisi terakhir (2026-10-19, dijeda).** Fase 0 sedang dijalankan ulang,
-> Fase 1 belum dimulai.
->
-> - Selesai: 4H seluruhnya; 1H main eval, PS study, leakage, leakage PS.
-> - Belum: 1H walk-forward (+ varian PS), bootstrap, forward persistence,
->   sensitivitas ambang 1H dan 4H (4H gagal karena bug yang sudah diperbaiki di
->   `0d1f041`), `make_figures`.
-> - Melanjutkan: `bash scripts/rerun_train_only.sh 1h`, lalu
->   `python ml/src/run_threshold_sensitivity.py --timeframe 4h` dan
->   `python ml/src/make_figures.py`. Artefak 1H yang sudah ada akan ditimpa
->   dengan hasil yang sama protokolnya.
-> - Sesudahnya: baca hasil 1H terhadap skenario A/B/C di "Rencana cadangan",
->   revisi Bab 4 (sisa item Fase 0), lalu tulis praregistrasi Fase 1 sebelum
->   menjalankan benchmark sintetis.
-> - Hasil sementara 4H (`train_only`): Hybrid PS setara MLP (H5), kalah dari
->   MLP di 4/5 fold walk-forward; attention dan urutan waktu tetap tidak
->   membantu (H2, H3).
-> - Di luar skripsi inti, sudah ada: dashboard dengan login Firebase, halaman
->   Regime → Strategi, notifikasi Telegram (menunggu kredensial Firebase dan
->   bot), dan halaman presentasi `docs/presentasi/peta_regime_strategi.html`.
+> **Posisi terakhir (2026-10-20).** Ruang lingkup dikunci (lihat "Ruang
+> lingkup final"). Fase 0 sedang dijalankan ulang (1H walk-forward dst.).
+> Fase 1: praregistrasi dikunci, generator + kalibrasi + skrip benchmark
+> selesai, cache data selesai; pelatihan benchmark menunggu Fase 0. Data 19 aset
+> untuk uji generalisasi sudah diunduh; praregistrasi generalisasi dikunci.
+> Di luar skripsi inti: dashboard (login Firebase, Regime → Strategi,
+> notifikasi Telegram menunggu kredensial) dan halaman presentasi.
 
-Ditulis 2026-10-19. Fokus tetap **identifikasi** regime (nowcasting), dengan
-dua perubahan pokok:
+Ditulis 2026-10-19, ruang lingkup direvisi 2026-10-20. Fokus tetap
+**identifikasi** regime (nowcasting):
 
 1. Kebenaran regime tidak lagi didefinisikan sebagai keluaran Hurst-DFA.
    Regime dianggap laten; R/S, DFA, dan model sama-sama alat identifikasi yang
    diadu pada data sintetis dengan H diketahui.
-2. Identifikasi pada BTC dibuktikan bermakna lewat masalah nyata:
-   **pemilihan strategi** (momentum vs mean-reversion vs tidak trading).
+2. **Detektor dilatih pada data sintetis, bukan pada BTC**, sehingga tidak
+   bergantung pada satu aset, lalu diterapkan tanpa latih ulang ke 20 aset
+   kripto, emas, dan saham Indonesia (permintaan dosen: sistem tidak hanya
+   untuk BTC).
+3. Kegunaan dibuktikan lewat masalah nyata: **pemilihan strategi**
+   (momentum vs mean-reversion vs tidak trading) di semua aset.
 
 ## Usulan judul
 
-> Identifikasi Regime Persistensi Fraktal Bitcoin untuk Pemilihan Strategi
-> Trading: Model Deep Learning yang Divalidasi pada Data Sintetis dan Kinerja
-> Strategi Out-of-Sample
+> Sistem Identifikasi Regime Persistensi Lintas Aset untuk Pemilihan Strategi
+> Trading: Model Pembelajaran Mesin Berbasis Data Sintetis pada Kripto, Emas,
+> dan Saham Indonesia
 
 ## Masalah nyata
 
 Strategi momentum menguntungkan saat pasar persisten dan merugi saat pasar
-berbalik; mean-reversion sebaliknya. Trader umumnya memakai satu strategi di
-semua kondisi. Skripsi menjawab: apakah regime yang teridentifikasi saat ini
-dapat dipakai memilih strategi yang tepat, setelah biaya transaksi?
+berbalik; mean-reversion sebaliknya. Trader dan bot umumnya memakai satu
+strategi di semua kondisi dan di semua aset. Skripsi menjawab: apakah regime
+yang teridentifikasi saat ini, oleh sistem yang tidak dilatih pada aset
+tersebut, dapat dipakai memilih strategi yang tepat setelah biaya transaksi?
 
 ## Rumusan masalah
 
-| # | Rumusan | Bukti |
-|---|---|---|
-| RM1 | Seberapa akurat R/S dan DFA mengidentifikasi regime pada sampel terbatas dengan ekor tebal dan volatility clustering? | Benchmark sintetis |
-| RM2 | Apakah model yang diusulkan mengidentifikasi regime lebih akurat daripada R/S dan DFA pada kondisi tersebut? | Benchmark sintetis |
-| RM3 | Apakah regime BTC hasil identifikasi berbeda perilaku secara nyata (validasi konstruk)? | Statistik per regime pada BTC |
-| RM4 | Apakah pemilihan strategi berdasarkan regime memberi kinerja bersih lebih baik daripada strategi tunggal? | Backtest walk-forward + uji SPA |
-| RM5 | Seberapa besar protokol evaluasi bocor menggelembungkan hasil? | Studi kebocoran (sudah ada) |
+| # | Rumusan | Bukti | Praregistrasi |
+|---|---|---|---|
+| RM1 | Seberapa akurat R/S dan DFA mengidentifikasi regime pada sampel terbatas dengan ekor tebal dan volatility clustering? | Benchmark sintetis | `praregistrasi_fase1_sintetis.md` |
+| RM2 | Apakah model yang dilatih pada data sintetis berkarakter kripto lebih akurat daripada R/S dan DFA? | Benchmark sintetis | sama |
+| RM3 | Apakah regime yang dideteksi berbeda perilaku masa depannya secara nyata, di BTC dan aset lain? | Uji validitas ke depan lintas 20 aset | `praregistrasi_generalisasi_aset.md` |
+| RM4 | Apakah pemilihan strategi berdasarkan regime memberi kinerja bersih lebih baik daripada strategi tunggal, lintas aset? | Backtest walk-forward + uji SPA | Fase 2 (belum ditulis) |
+| RM5 | Seberapa besar protokol evaluasi bocor menggelembungkan hasil? | Studi kebocoran BTC (Bab 4 lama) | `praregistrasi_addendum.md` |
+
+## Ruang lingkup final (dikunci 2026-10-20)
+
+| Masuk skripsi | Dikeluarkan |
+|---|---|
+| Fase 1: benchmark sintetis | Pelatihan gabungan lintas aset (bocor waktu, aset kripto bergerak bersama) |
+| Detektor sintetis diterapkan ke 20 aset | Absorption / order flow → saran penelitian lanjutan |
+| Model lama latih-BTC sebagai pembanding | Setup engine → lampiran |
+| Fase 2: pemilihan strategi di semua aset | Deteksi pergantian regime → hanya bila waktu tersisa |
+| Studi kebocoran BTC (Bab 4 lama) | 4H untuk saham; 1H saham/emas berjangka (data gratis hanya ±2 tahun) |
+| Dashboard + Telegram sebagai alat demo | Fitur dashboard baru |
+
+## Jadwal sisa
+
+| Minggu | Pekerjaan |
+|---|---|
+| 1 | Selesaikan Fase 0 dan benchmark Fase 1 → detektor terpilih |
+| 2 | Uji generalisasi 20 aset (D-sintetis vs D-BTC vs D-konsensus) |
+| 3–4 | Praregistrasi lalu jalankan Fase 2 (pemilihan strategi lintas aset) |
+| 5–6 | Tulis Bab 3–5 |
+| 7–8 | Cadangan dan persiapan sidang |
 
 ## Posisi terhadap literatur
 
@@ -104,9 +117,9 @@ Klaim yang **tidak** boleh dipakai sebagai novelty: "Hurst BTC berubah-ubah",
 - [ ] Baseline tambahan: regresi logistik, LightGBM (50 fitur), Statistical Jump Model, HMM.
 - [ ] Repo git sendiri di folder project (saat ini repo git berada di folder home) dan commit praregistrasi sebelum eksperimen baru, agar waktunya dapat diverifikasi.
 
-## Fase 1 — Benchmark sintetis (minggu 2–4) → RM1, RM2
+## Fase 1 — Benchmark sintetis (minggu 1) → RM1, RM2
 
-Generator (`ml/src/synthetic.py` diperluas), H diketahui pasti:
+Generator `ml/src/synthetic_regimes.py`, H diketahui pasti (detail final dan kalibrasi di praregistrasi + adendum 1):
 
 | Skenario | Proses |
 |---|---|
@@ -122,14 +135,19 @@ Generator (`ml/src/synthetic.py` diperluas), H diketahui pasti:
 - Metrik: BA dan Macro F1 terhadap regime sebenarnya, bias dan RMSE estimasi H, sebagai fungsi panjang window (128 / 256 / 500).
 - Set uji sintetis dibangkitkan dengan seed terpisah dan tidak pernah dipakai untuk tuning.
 
-## Fase 2 — Validasi pada BTC (minggu 4–6) → RM3, RM4
+## Generalisasi lintas aset (minggu 2) → RM3
 
-**Validasi konstruk (RM3).** Per regime hasil identifikasi: autokorelasi
-return ke depan, VR ke depan, volatilitas, dan return strategi; uji beda antar
-regime dengan standar error HAC.
+Rancangan terkunci: `docs/praregistrasi_generalisasi_aset.md`. Detektor
+terpilih Fase 1 (dilatih sintetis) diterapkan tanpa latih ulang ke 20 aset
+(kripto 1H, PAXG 1H, emas berjangka dan saham IDX 1D), dibandingkan dengan
+model latih-BTC dan konsensus R/S–DFA. Ukuran: pemisahan perilaku masa depan
+(VR maju) antara regime persistent dan anti-persistent.
 
-**Pemilihan strategi (RM4).** Semua sinyal hanya memakai data ≤ t; posisi
-dibuka pada bar berikutnya.
+## Fase 2 — Pemilihan strategi lintas aset (minggu 3–4) → RM4
+
+Dijalankan pada seluruh aset di praregistrasi generalisasi §2, dengan aturan,
+parameter, dan biaya yang ditetapkan sebelum Fase 2 dimulai. Semua sinyal hanya
+memakai data ≤ t; posisi dibuka pada bar berikutnya.
 
 | Strategi | Aturan |
 |---|---|
@@ -150,17 +168,17 @@ menunjukkan persistensi tidak otomatis berarti momentum arah. Hasil negatif
 tetap sah bila dipraregistrasi; regime dari estimator yang lebih akurat (Fase
 1) juga bisa memberi gambaran berbeda.
 
-## Fase 3 — Penulisan dan dashboard (minggu 6–7)
+## Fase 3 — Penulisan dan dashboard (minggu 5–6)
 
 - Bab 3–5 ditulis ulang mengikuti RM1–RM5; setup engine dipindah ke lampiran.
 - Dashboard: halaman "Regime saat ini → strategi yang direkomendasikan" beserta
   bukti historis per regime (kinerja tiap strategi, interval kepercayaan).
 
-## Fase 4 — Cadangan dan persiapan sidang (minggu 8)
+## Fase 4 — Cadangan dan persiapan sidang (minggu 7–8)
 
 - Perbarui `tanya_jawab_sidang.md` dengan pertanyaan sirkularitas, N_eff, dan
   biaya transaksi.
-- Jika waktu tersisa: uji lintas aset (ETH/USDT) tanpa pelatihan ulang.
+- Jika waktu tersisa: deteksi pergantian regime (praregistrasi Fase 1 §8).
 
 ## Yang dipertahankan
 
