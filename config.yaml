@@ -36,6 +36,12 @@ analysis:
   threshold_quantiles: [0.3333, 0.6667]
   hurst_threshold: [0.45, 0.55]   # dipakai saat threshold_mode = fixed
   dfa_threshold: [0.45, 0.55]
+  # threshold_source (eksperimen ML):
+  #   train_only   — ambang kuantil dari data latih saja, dibekukan untuk
+  #                  validasi/uji; walk-forward mengkalibrasi ulang per fold.
+  #                  Konfigurasi utama: bebas lookahead distribusi.
+  #   full_history — ambang dari seluruh riwayat (uji sensitivitas).
+  threshold_source: train_only
   input: log_return    # WAJIB log_return; harga level punya unit root
 
 model:

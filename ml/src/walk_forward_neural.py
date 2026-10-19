@@ -13,11 +13,15 @@ Fold (expanding, kronologis, `app.services.walk_forward.generate_folds`):
     [ train_fit | purge | val ] purge [ test ]
      ^^^^^^^^^^^^^^^^^^^^^^^^^ = rentang latih fold
 
-- purge = L bar (dalam baris window) di DUA batas: train_fitâ†’val dan
-  latihâ†’test, sehingga tidak ada window yang berbagi bar lintas batas.
+- purge = L bar (dalam baris window) di DUA batas: train_fit→val dan
+  latih→test, sehingga tidak ada window yang berbagi bar lintas batas.
 - val = 15% akhir rentang latih, hanya untuk early stopping.
 - Scaler sekuens & fitur dipasang ulang dari train_fit fold itu saja.
-- Hurst/DFA tidak pernah menjadi input.
+- Bila `analysis.threshold_source = train_only`, ambang kuantil label juga
+  dikalibrasi ulang dari train_fit fold itu saja, lalu dibekukan untuk val
+  dan test fold tersebut. Ambang dari split tunggal (70% data) tidak dipakai
+  karena untuk fold awal itu berarti melihat distribusi masa depan.
+- Hurst/DFA tidak pernah menjadi input; nilainya hanya dipakai membentuk label.
 
 Keluaran:
     ml/artifacts/walk_forward_neural_{tf}.json
@@ -41,6 +45,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from app.core.config import ARTIFACTS_DIR, REGIME_CLASSES, get_config  # noqa: E402
 from app.services.feature_builder import apply_scaler, fit_scaler  # noqa: E402
+from app.services.regime_labeling import calibrate_thresholds, label_from_exponents  # noqa: E402
 from app.services.splitting import bars_to_rows  # noqa: E402
 from app.services.walk_forward import generate_folds  # noqa: E402
 from leakage_study import build_base  # noqa: E402
@@ -51,8 +56,9 @@ from persistence_sequence_study import build as build_model  # noqa: E402
 from app.db.repository import get_repository  # noqa: E402
 from app.services.hurst_dfa import to_log_return  # noqa: E402
 from app.services.persistence_sequence import build_persistence_sequences  # noqa: E402
+from tabular_baselines import TABULAR, fit_predict_proba  # noqa: E402
 
-LABELS = {**MAIN_LABELS, **PS_LABELS, "hybrid_attention_bilstm": MAIN_LABELS["hybrid_attention_bilstm"]}
+LABELS = {**MAIN_LABELS, **PS_LABELS, **TABULAR, "hybrid_attention_bilstm": MAIN_LABELS["hybrid_attention_bilstm"]}
 ALIASES: Dict[str, str] = {"hybrid_attention_bilstm": "hybrid_swt"}
 
 
@@ -65,14 +71,43 @@ DEFAULT_MODELS = ["structural_mlp", "hybrid_attention_bilstm"]
 VAL_FRACTION = 0.15
 
 
-def fold_rows(fold: Dict, mask: np.ndarray, purge: int) -> Dict[str, np.ndarray]:
+def fit_range(fold: Dict, purge: int) -> tuple[int, int, int]:
+    """(awal train_fit, akhir train_fit, awal val) dalam indeks baris window."""
     tr0, tr1 = fold["train"]
-    te0, te1 = fold["test"]
     n_val = int(round((tr1 - tr0) * VAL_FRACTION))
     va0 = tr1 - n_val
     fit_end = va0 - purge
     if fit_end - tr0 < 50 or n_val < 20:
         raise ValueError("fold terlalu kecil untuk dipisah train/val")
+    return tr0, fit_end, va0
+
+
+def fold_labels(base: Dict, fold: Dict, purge: int, classes: List[str], cfg) -> tuple[np.ndarray, np.ndarray, Dict]:
+    """Label (one-hot), mask, dan ambang untuk satu fold.
+
+    full_history: label global dari tabel regime. train_only: ambang kuantil
+    dihitung dari Hurst/DFA baris train_fit fold ini saja.
+    """
+    if base["threshold_source"] != "train_only" or cfg.analysis.threshold_mode != "quantile":
+        return base["y"], base["mask"], base["thresholds"]
+    tr0, fit_end, _ = fit_range(fold, purge)
+    q = cfg.analysis.threshold_quantiles
+    thr = {
+        "hurst": calibrate_thresholds(base["hurst"][tr0:fit_end], q),
+        "dfa": calibrate_thresholds(base["dfa"][tr0:fit_end], q),
+    }
+    labels = [label_from_exponents(h, a, thr["hurst"], thr["dfa"]) for h, a in zip(base["hurst"], base["dfa"])]
+    y = np.zeros((len(labels), len(classes)))
+    for i, lab in enumerate(labels):
+        if lab in classes:
+            y[i, classes.index(lab)] = 1.0
+    return y, np.array([lab in classes for lab in labels]), thr
+
+
+def fold_rows(fold: Dict, mask: np.ndarray, purge: int) -> Dict[str, np.ndarray]:
+    tr0, fit_end, va0 = fit_range(fold, purge)
+    tr1 = fold["train"][1]
+    te0, te1 = fold["test"]
     pick = lambda a, b: np.array([i for i in range(a, b) if mask[i]], dtype=int)  # noqa: E731
     return {"train": pick(tr0, fit_end), "validation": pick(va0, tr1), "test": pick(te0, te1)}
 
@@ -101,19 +136,18 @@ def main() -> None:
     if any(seq_kind(str(ALIASES.get(m, m))) == "ps" for m in args.models):
         log_ret = to_log_return(get_repository().get_ohlcv("BTCUSDT", args.timeframe)["close"].to_numpy())
         seq_raw["ps"] = build_persistence_sequences(log_ret, base["positions"], base["window"], SUB_WINDOW, args.seq_len)
-    X = base["X_causal"]
     F = np.hstack([base["F_struct"], base["F_mf"]])
-    Y = base["y"]
     mask = base["mask"]
     purge = bars_to_rows(cfg.analysis.L, base["stride"])
     folds = generate_folds(len(mask), n_splits=args.splits, purge=purge, scheme="expanding")
-    print(f"  {len(folds)} fold, purge {purge} baris, fitur {F.shape[1]}")
+    print(f"  {len(folds)} fold, purge {purge} baris, fitur {F.shape[1]}, ambang label {base['threshold_source']}")
 
     results: Dict[str, Dict] = {m: {"label": LABELS[m], "folds": []} for m in args.models}
     pooled: Dict[str, Dict[int, Dict[str, List[str]]]] = {m: {s: {"true": [], "pred": []} for s in seeds} for m in args.models}
 
     for fold in folds:
-        rows = fold_rows(fold, mask, purge)
+        Y, fmask, fold["thresholds"] = fold_labels(base, fold, purge, classes, cfg)
+        rows = fold_rows(fold, fmask, purge)
         seq_scaled = {k: apply_scaler(v, fit_scaler(v[rows["train"]])) for k, v in seq_raw.items()}
         mu, sd = F[rows["train"]].mean(axis=0), F[rows["train"]].std(axis=0)
         sd[sd < 1e-12] = 1.0
@@ -130,28 +164,35 @@ def main() -> None:
             canon = str(ALIASES.get(mkey, mkey))
             d = d_by_kind[seq_kind(canon)]
             for seed in seeds:
-                tf.keras.backend.clear_session()
-                tf.keras.utils.set_random_seed(seed)
                 ts = time.time()
-                model = build_model(canon, d["train"][0].shape[1:], F.shape[1], len(classes))
-                hist = model.fit(
-                    inputs_for(mkey, d["train"][0], d["train"][1]), d["train"][2],
-                    validation_data=(inputs_for(mkey, d["validation"][0], d["validation"][1]), d["validation"][2]),
-                    epochs=args.epochs, batch_size=args.batch_size,
-                    class_weight=class_weights(d["train"][2]), shuffle=True,
-                    callbacks=[
-                        tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=12, restore_best_weights=True),
-                        tf.keras.callbacks.ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=6, min_lr=1e-5),
-                    ],
-                    verbose=0,
-                )
-                prob = model.predict(inputs_for(mkey, d["test"][0], d["test"][1]), batch_size=512, verbose=0)
+                if mkey in TABULAR:
+                    (prob,) = fit_predict_proba(
+                        mkey, d["train"][1], d["train"][2], d["validation"][1], d["validation"][2], [d["test"][1]], seed
+                    )
+                    epochs_ran = 0
+                else:
+                    tf.keras.backend.clear_session()
+                    tf.keras.utils.set_random_seed(seed)
+                    model = build_model(canon, d["train"][0].shape[1:], F.shape[1], len(classes))
+                    hist = model.fit(
+                        inputs_for(mkey, d["train"][0], d["train"][1]), d["train"][2],
+                        validation_data=(inputs_for(mkey, d["validation"][0], d["validation"][1]), d["validation"][2]),
+                        epochs=args.epochs, batch_size=args.batch_size,
+                        class_weight=class_weights(d["train"][2]), shuffle=True,
+                        callbacks=[
+                            tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=12, restore_best_weights=True),
+                            tf.keras.callbacks.ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=6, min_lr=1e-5),
+                        ],
+                        verbose=0,
+                    )
+                    prob = model.predict(inputs_for(mkey, d["test"][0], d["test"][1]), batch_size=512, verbose=0)
+                    epochs_ran = len(hist.history["loss"])
                 pred = [classes[i] for i in prob.argmax(axis=1)]
                 m = classification_metrics(true, pred, classes)
-                per_seed.append({"seed": seed, "epochs_ran": len(hist.history["loss"]), "test": m, "pred": pred})
+                per_seed.append({"seed": seed, "epochs_ran": epochs_ran, "test": m, "pred": pred})
                 pooled[mkey][seed]["true"] += true
                 pooled[mkey][seed]["pred"] += pred
-                print(f"  {mkey:24s} seed {seed}: {len(hist.history['loss']):3d} ep {time.time() - ts:4.0f}s "
+                print(f"  {mkey:24s} seed {seed}: {epochs_ran:3d} ep {time.time() - ts:4.0f}s "
                       f"BA={m['balanced_accuracy']:.3f} F1={m['macro_f1']:.3f} MCC={m['mcc']:.3f}")
             ba = np.array([r["test"]["balanced_accuracy"] for r in per_seed])
             f1 = np.array([r["test"]["macro_f1"] for r in per_seed])
@@ -224,7 +265,7 @@ def to_markdown(out: Dict, classes: List[str]) -> str:
     models = out["models"]
     keys = list(models)
     lines = [
-        f"## Walk-forward (expanding) â€” {out['timeframe'].upper()}",
+        f"## Walk-forward (expanding) — {out['timeframe'].upper()}",
         "",
         f"{out['n_splits']} fold, seed {out['seeds']}, purge {out['purge_rows']} baris di setiap batas, config `{out['config_hash'][:12]}`",
         "",
@@ -232,9 +273,9 @@ def to_markdown(out: Dict, classes: List[str]) -> str:
         "|---|---|" + "---|" * len(keys),
     ]
     for i, f0 in enumerate(models[keys[0]]["folds"]):
-        cells = [f"{models[k]['folds'][i]['balanced_accuracy']['mean']:.3f} Â± {models[k]['folds'][i]['balanced_accuracy']['std']:.3f}" for k in keys]
+        cells = [f"{models[k]['folds'][i]['balanced_accuracy']['mean']:.3f} ± {models[k]['folds'][i]['balanced_accuracy']['std']:.3f}" for k in keys]
         lines.append(f"| {f0['fold']} | {f0['n']['test']} | " + " | ".join(cells) + " |")
-    lines += ["", "| Model | BA rata-rata fold | std antar fold | minâ€“maks | BA agregat | Macro F1 agregat | MCC agregat | "
+    lines += ["", "| Model | BA rata-rata fold | std antar fold | min–maks | BA agregat | Macro F1 agregat | MCC agregat | "
               + " | ".join(f"Recall {c}" for c in classes) + " |",
               "|---|---|---|---|---|---|---|" + "---|" * len(classes)]
     for k in keys:
@@ -242,14 +283,14 @@ def to_markdown(out: Dict, classes: List[str]) -> str:
         rec = " | ".join(f"{a['recall_per_class'][c]:.3f}" for c in classes)
         lines.append(
             f"| {models[k]['label']} | {s['ba_mean_over_folds']:.3f} | {s['ba_std_over_folds']:.3f} | "
-            f"{s['ba_min']:.3f}â€“{s['ba_max']:.3f} | {a['balanced_accuracy']['mean']:.3f} | "
+            f"{s['ba_min']:.3f}–{s['ba_max']:.3f} | {a['balanced_accuracy']['mean']:.3f} | "
             f"{a['macro_f1']['mean']:.3f} | {a['mcc']['mean']:.3f} | {rec} |"
         )
     for key, c in (out.get("comparison") or {}).items():
         lines += ["", f"{models[key]['label']} unggul atas MLP (Macro F1) di {c['better_than_mlp_folds']} dari {c['n_folds']} fold.", ""]
         for pf in c["per_fold"]:
             cis = ", ".join(f"[{x[0]:+.3f}, {x[1]:+.3f}]" for x in pf["ci95"] if x)
-            lines.append(f"- fold {pf['fold']}: Î”F1 vs MLP per seed {pf['delta_f1_vs_mlp']}, CI95 {cis}")
+            lines.append(f"- fold {pf['fold']}: ΔF1 vs MLP per seed {pf['delta_f1_vs_mlp']}, CI95 {cis}")
     return "\n".join(lines) + "\n"
 
 

@@ -81,7 +81,7 @@ def build_dataset(
     cvd_window: int | None = None,
     cvd_method: str = "zscore",
     purge_bars_override: int | None = None,
-    threshold_source: str = "full_history",
+    threshold_source: str | None = None,
 ) -> Dict[str, Any]:
     """Rakit X, Y, dan indeks split dari deret harga penutupan.
 
@@ -140,9 +140,11 @@ def build_dataset(
         model memakai split identik dengan purge yang menutup jangkauan input
         terpanjang (window CVD + seq_len).
     threshold_source
-        "full_history" (bawaan skripsi) atau "train_only" (uji sensitivitas bebas kebocoran).
+        "train_only" (ambang dari data latih saja) atau "full_history" (uji
+        sensitivitas). None = ikut `analysis.threshold_source` di config.
     """
     cfg = get_config()
+    threshold_source = threshold_source or cfg.analysis.threshold_source
     target_classes: List[str] = list(classes) if classes else list(REGIME_CLASSES)
     log_ret = to_log_return(close)
 

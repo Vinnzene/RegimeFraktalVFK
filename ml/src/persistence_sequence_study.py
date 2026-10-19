@@ -37,11 +37,14 @@ from app.services.feature_builder import apply_scaler, fit_scaler  # noqa: E402
 from app.services.hurst_dfa import to_log_return  # noqa: E402
 from app.services.persistence_sequence import PS_CHANNELS, build_persistence_sequences  # noqa: E402
 from leakage_study import VARIANTS, build_base, make_split  # noqa: E402
+from tabular_baselines import TABULAR, fit_predict_proba  # noqa: E402
 from train import class_weights  # noqa: E402
 from train_orderflow_ablation import block_bootstrap_f1_diff, classification_metrics, mcnemar  # noqa: E402
 
 SUB_WINDOW = 128
 MODELS = [
+    "logreg",
+    "lightgbm",
     "structural_mlp",
     "swt_attention_bilstm",
     "hybrid_swt",
@@ -51,6 +54,7 @@ MODELS = [
     "hybrid_ps",
 ]
 LABELS = {
+    **TABULAR,
     "structural_mlp": "MLP fitur statistik",
     "swt_attention_bilstm": "SWT + Attention-BiLSTM",
     "hybrid_swt": "Hybrid SWT (usulan lama)",
@@ -66,6 +70,13 @@ HYPOTHESES = [
     ("H4", "hybrid_swt", "hybrid_ps", "PS memperbaiki model hybrid?"),
     ("H5", "structural_mlp", "hybrid_ps", "Hybrid PS melampaui MLP?"),
     ("H6", "structural_mlp", "ps_attention_bilstm", "Model sekuens murni menyamai/melampaui MLP?"),
+]
+# Adendum 2026-10-19 (docs/praregistrasi_addendum.md): pembanding tabular
+# ditambahkan setelah praregistrasi, jadi dilaporkan TERPISAH dan tidak masuk
+# keluarga Holm H1-H6.
+ADDENDUM = [
+    ("A1", "lightgbm", "hybrid_ps", "Hybrid PS melampaui LightGBM fitur statistik?"),
+    ("A2", "logreg", "hybrid_ps", "Hybrid PS melampaui regresi logistik fitur statistik?"),
 ]
 CANDIDATES = ["hybrid_swt", "hybrid_ps", "ps_attention_bilstm"]
 
@@ -170,22 +181,30 @@ def main() -> None:
                 perm = np.argsort(rng.random((S.shape[0], S.shape[1])), axis=1)
                 S = np.take_along_axis(S, perm[:, :, None], axis=1)
             d = {k: (S[r], F[r], Y[r]) for k, r in rows.items()}
-            tf.keras.backend.clear_session()
-            tf.keras.utils.set_random_seed(seed)
             ts = time.time()
-            model = build(key, S.shape[1:], F.shape[1], len(classes))
-            hist = model.fit(
-                inputs(key, d["train"][0], d["train"][1]), d["train"][2],
-                validation_data=(inputs(key, d["validation"][0], d["validation"][1]), d["validation"][2]),
-                epochs=args.epochs, batch_size=args.batch_size, class_weight=class_weights(d["train"][2]), shuffle=True,
-                callbacks=[
-                    tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=12, restore_best_weights=True),
-                    tf.keras.callbacks.ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=6, min_lr=1e-5),
-                ],
-                verbose=0,
-            )
-            pv = model.predict(inputs(key, d["validation"][0], d["validation"][1]), batch_size=512, verbose=0)
-            pt = model.predict(inputs(key, d["test"][0], d["test"][1]), batch_size=512, verbose=0)
+            if key in TABULAR:
+                pv, pt = fit_predict_proba(
+                    key, d["train"][1], d["train"][2], d["validation"][1], d["validation"][2],
+                    [d["validation"][1], d["test"][1]], seed,
+                )
+                hist = None
+            else:
+                tf.keras.backend.clear_session()
+                tf.keras.utils.set_random_seed(seed)
+                model = build(key, S.shape[1:], F.shape[1], len(classes))
+                hist = model.fit(
+                    inputs(key, d["train"][0], d["train"][1]), d["train"][2],
+                    validation_data=(inputs(key, d["validation"][0], d["validation"][1]), d["validation"][2]),
+                    epochs=args.epochs, batch_size=args.batch_size, class_weight=class_weights(d["train"][2]), shuffle=True,
+                    callbacks=[
+                        tf.keras.callbacks.EarlyStopping(monitor="val_loss", patience=12, restore_best_weights=True),
+                        tf.keras.callbacks.ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=6, min_lr=1e-5),
+                    ],
+                    verbose=0,
+                )
+                pv = model.predict(inputs(key, d["validation"][0], d["validation"][1]), batch_size=512, verbose=0)
+                pt = model.predict(inputs(key, d["test"][0], d["test"][1]), batch_size=512, verbose=0)
+            epochs_ran = len(hist.history["loss"]) if hist is not None else 0
             pred_v = [classes[i] for i in pv.argmax(axis=1)]
             pred_t = [classes[i] for i in pt.argmax(axis=1)]
             mv = classification_metrics(true["validation"], pred_v, classes)
@@ -202,9 +221,9 @@ def main() -> None:
                     extra["attention_entropy"] = round(float(ent), 4)
                 except Exception as exc:  # noqa: BLE001
                     extra["attention_entropy_error"] = str(exc)[:120]
-            per_seed.append({"seed": seed, "epochs_ran": len(hist.history["loss"]), "validation": mv, "test": mt, **extra})
+            per_seed.append({"seed": seed, "epochs_ran": epochs_ran, "validation": mv, "test": mt, **extra})
             preds[key][seed] = pred_t
-            print(f"  seed {seed}: {len(hist.history['loss']):3d} ep {time.time() - ts:4.0f}s | val BA={mv['balanced_accuracy']:.3f} "
+            print(f"  seed {seed}: {epochs_ran:3d} ep {time.time() - ts:4.0f}s | val BA={mv['balanced_accuracy']:.3f} "
                   f"| test BA={mt['balanced_accuracy']:.3f} F1={mt['macro_f1']:.3f} MCC={mt['mcc']:.3f}"
                   + (f" attH={extra['attention_entropy']:.3f}" if "attention_entropy" in extra else ""))
 
@@ -222,7 +241,7 @@ def main() -> None:
         results[key] = {"label": LABELS[key], "summary": summ, "per_seed": per_seed}
 
     hyps = []
-    for hid, a, b, q in HYPOTHESES:
+    for hid, a, b, q in HYPOTHESES + ADDENDUM:
         if a not in preds or b not in preds:
             continue
         diffs = []
@@ -271,6 +290,8 @@ def to_md(out: Dict, classes: List[str]) -> str:
             f"{d['mean_diff']:+.3f} [{d['ci95'][0]:+.3f}, {d['ci95'][1]:+.3f}]" for d in h["diffs"] if d.get("ci95")
         )
         L.append(f"| {h['id']} | {h['question']} | {LABELS[h['b']]} vs {LABELS[h['a']]} | {cells} | **{h['verdict']}** |")
+    if any(h["id"].startswith("A") for h in out["hypotheses"]):
+        L += ["", "A1-A2 = adendum di luar praregistrasi awal (lihat docs/praregistrasi_addendum.md)."]
     L += ["", f"Pilihan model usulan berdasarkan BA VALIDASI: {out['selected_on_validation']} "
           f"({', '.join(f'{k}={v:.3f}' for k, v in out['selection_by_validation_ba'].items())})"]
     return "\n".join(L) + "\n"

@@ -3,5 +3,6 @@
 -r ../backend/requirements.txt
 tensorflow
 scikit-learn
+lightgbm
 matplotlib
 jupyter

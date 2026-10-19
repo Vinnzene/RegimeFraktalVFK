@@ -90,6 +90,7 @@ class AnalysisConfig(BaseModel):
     threshold_quantiles: List[float] = Field(default_factory=lambda: [1 / 3, 2 / 3])
     hurst_threshold: List[float] = Field(default_factory=lambda: [0.45, 0.55])
     dfa_threshold: List[float] = Field(default_factory=lambda: [0.45, 0.55])
+    threshold_source: str = "train_only"
     input: str = "log_return"
 
     @field_validator("threshold_mode")
@@ -97,6 +98,13 @@ class AnalysisConfig(BaseModel):
     def _known_mode(cls, v: str) -> str:
         if v not in {"fixed", "quantile"}:
             raise ValueError("analysis.threshold_mode harus 'fixed' atau 'quantile'")
+        return v
+
+    @field_validator("threshold_source")
+    @classmethod
+    def _known_source(cls, v: str) -> str:
+        if v not in {"train_only", "full_history"}:
+            raise ValueError("analysis.threshold_source harus 'train_only' atau 'full_history'")
         return v
 
     @field_validator("threshold_quantiles")

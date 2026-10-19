@@ -54,7 +54,7 @@ def evaluate_forward_persistence(timeframe: str) -> None:
     model_preds = ensemble_preds["hybrid_ps"]
 
     # Ambil deret kronologis regime untuk seluruh partisi
-    base = build_base(timeframe, 32, classes, threshold_source="full_history")
+    base = build_base(timeframe, 32, classes)
     rows = make_split(base, VARIANTS["clean"], None, cfg.model.seed)
 
     train_indices = rows["train"]

@@ -116,9 +116,10 @@ def build_base(
     timeframe: str,
     seq_len: int,
     classes: List[str],
-    threshold_source: str = "full_history",
+    threshold_source: str | None = None,
 ) -> Dict[str, Any]:
     cfg = get_config()
+    threshold_source = threshold_source or cfg.analysis.threshold_source
     repo = get_repository()
     close = repo.get_ohlcv("BTCUSDT", timeframe)["close"].to_numpy()
     log_ret = to_log_return(close)
@@ -176,6 +177,10 @@ def build_base(
         "labels": labels, "positions": positions, "mask": mask, "y": y,
         "X_causal": X_causal, "X_noncausal": X_noncausal, "F_struct": F_struct, "F_mf": F_mf,
         "window": window, "stride": stride,
+        # Eksponen kontinu disertakan hanya untuk kalibrasi ulang ambang per
+        # fold walk-forward; TIDAK boleh dipakai sebagai fitur.
+        "hurst": regime["hurst"].to_numpy(dtype=float),
+        "dfa": regime["dfa_alpha"].to_numpy(dtype=float),
         "threshold_source": threshold_source,
         "thresholds": resolved_thresholds,
     }

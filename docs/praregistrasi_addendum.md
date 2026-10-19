@@ -85,3 +85,33 @@ Untuk menguji apakah keunggulan model Hybrid Attention-BiLSTM benar-benar berasa
 - Model: `HistGradientBoostingClassifier` (scikit-learn) atau `LightGBM`.
 - Fitur input: 44 fitur struktural & multifraktal identik dengan MLP.
 - Protokol: Split kronologis identik, purge gap $L$ bar, standardisasi hanya dari data latih, 3 seed.
+
+---
+
+## 5. Adendum 2026-10-19: Ambang `train_only` sebagai konfigurasi utama dan pelaksanaan T2.4
+
+Ditulis dan di-commit SEBELUM run ulang dijalankan (lihat riwayat git).
+
+### 5.1 Perubahan protokol
+- `analysis.threshold_source = train_only` menjadi konfigurasi utama. Ambang
+  kuantil label dihitung hanya dari partisi latih lalu dibekukan untuk validasi
+  dan uji. `full_history` turun menjadi uji sensitivitas.
+- Walk-forward: ambang dikalibrasi ulang per fold dari bagian train_fit fold
+  tersebut saja. Ambang dari split tunggal (70% data) tidak dipakai karena bagi
+  fold awal itu berarti melihat distribusi masa depan.
+- Alasan: `full_history` mengandung lookahead distribusi; pada uji sensitivitas
+  sebelumnya BA uji bergeser −0,032 (1H) dan +0,071 (4H), sehingga tidak dapat
+  dianggap dapat diabaikan.
+
+### 5.2 Pelaksanaan T2.4 (pembanding non-neural)
+- A1: Hybrid PS vs LightGBM; A2: Hybrid PS vs regresi logistik. Input = 50
+  fitur statistik identik dengan MLP, scaler dari data latih, bobot kelas
+  seimbang, 3 seed, hyperparameter tetap (tidak disetel; lihat
+  `ml/src/tabular_baselines.py`). LightGBM memakai validasi hanya untuk early
+  stopping, setara dengan early stopping model neural.
+- Kriteria: TERBUKTI bila batas bawah CI95 ΔMacro F1 > 0 (moving-block
+  bootstrap, blok 125 window). A1–A2 dilaporkan terpisah dan TIDAK masuk
+  keluarga Holm H1–H6, agar keluarga hipotesis yang dipraregistrasi tidak
+  berubah.
+- Klaim "Hybrid PS lebih baik dari pembanding fitur statistik" hanya sah bila
+  H5 dan A1 sama-sama terbukti pada timeframe tersebut.

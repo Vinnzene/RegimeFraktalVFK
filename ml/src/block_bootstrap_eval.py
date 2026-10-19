@@ -38,6 +38,7 @@ from app.services.hurst_dfa import to_log_return  # noqa: E402
 from app.services.persistence_sequence import build_persistence_sequences  # noqa: E402
 from leakage_study import VARIANTS, build_base, make_split  # noqa: E402
 from persistence_sequence_study import (  # noqa: E402
+    ADDENDUM,
     HYPOTHESES,
     LABELS,
     MODELS,
@@ -46,6 +47,7 @@ from persistence_sequence_study import (  # noqa: E402
     inputs,
     seq_kind,
 )
+from tabular_baselines import TABULAR, fit_predict_proba  # noqa: E402
 from train import class_weights  # noqa: E402
 
 
@@ -157,10 +159,19 @@ def get_or_train_ensemble_predictions(
     meta_cache_file = ARTIFACTS_DIR / f"ensemble_test_meta_{timeframe}.json"
 
     # Periksa cache prediksi probabilitas jika ada
-    if prob_cache_file.exists() and meta_cache_file.exists():
+    # Cache hanya sah untuk config, sumber ambang, dan daftar model yang sama;
+    # selain itu prediksi lama akan dipakai diam-diam untuk label yang berbeda.
+    cache_key = {
+        "config_hash": cfg.config_hash,
+        "threshold_source": cfg.analysis.threshold_source,
+        "models": list(MODELS),
+        "seeds": list(seeds),
+        "epochs": epochs,
+    }
+    meta = json.loads(meta_cache_file.read_text(encoding="utf-8")) if meta_cache_file.exists() else {}
+    if prob_cache_file.exists() and all(meta.get(k) == v for k, v in cache_key.items()):
         print(f"Memuat ensemble test probabilities dari cache {prob_cache_file.name}...")
         df_probs = pd.read_parquet(prob_cache_file)
-        meta = json.loads(meta_cache_file.read_text(encoding="utf-8"))
         y_true = np.array(meta["y_true"])
         ensemble_preds = {k: np.array(df_probs[f"{k}_pred"]) for k in MODELS}
         ensemble_probs = {
@@ -169,7 +180,7 @@ def get_or_train_ensemble_predictions(
         return y_true, ensemble_preds, ensemble_probs
 
     print(f"\n--- Melatih model 3-seed untuk ensemble [{timeframe.upper()}] ---")
-    base = build_base(timeframe, seq_len, classes, threshold_source="full_history")
+    base = build_base(timeframe, seq_len, classes)
     close = get_repository().get_ohlcv("BTCUSDT", timeframe)["close"].to_numpy()
     log_ret = to_log_return(close)
     PS = build_persistence_sequences(log_ret, base["positions"], base["window"], SUB_WINDOW, seq_len)
@@ -198,6 +209,12 @@ def get_or_train_ensemble_predictions(
                 perm = np.argsort(rng.random((S.shape[0], S.shape[1])), axis=1)
                 S = np.take_along_axis(S, perm[:, :, None], axis=1)
             d = {k: (S[r], F[r], Y[r]) for k, r in rows.items()}
+            if key in TABULAR:
+                (prob_test,) = fit_predict_proba(
+                    key, d["train"][1], d["train"][2], d["validation"][1], d["validation"][2], [d["test"][1]], seed
+                )
+                raw_probs[key].append(prob_test)
+                continue
             tf.keras.backend.clear_session()
             tf.keras.utils.set_random_seed(seed)
             model = build(key, S.shape[1:], F.shape[1], len(classes))
@@ -230,7 +247,9 @@ def get_or_train_ensemble_predictions(
             cache_dict[f"{k}_prob_{c}"] = ensemble_probs[k][:, c_idx]
     df_cache = pd.DataFrame(cache_dict)
     df_cache.to_parquet(prob_cache_file, index=False)
-    meta_cache_file.write_text(json.dumps({"y_true": list(y_true), "timeframe": timeframe}, indent=2), encoding="utf-8")
+    meta_cache_file.write_text(
+        json.dumps({"y_true": list(y_true), "timeframe": timeframe, **cache_key}, indent=2), encoding="utf-8"
+    )
 
     return y_true, ensemble_preds, ensemble_probs
 
@@ -297,6 +316,19 @@ def run_block_bootstrap_evaluation(timeframe: str) -> None:
             else:
                 hr["verdict"] = "TIDAK TERBUKTI (setara)"
 
+        # Adendum A1-A2: dilaporkan terpisah, tidak ikut koreksi Holm H1-H6.
+        for hid, a, b, q in ADDENDUM:
+            if a not in ensemble_preds or b not in ensemble_preds:
+                continue
+            boot = moving_block_bootstrap_comparison(
+                y_true, ensemble_preds[a], ensemble_preds[b], classes=classes,
+                block_size=b_size, n_resamples=2000, seed=42,
+            )
+            ci = boot["f1"]["ci95"]
+            verdict = "TERBUKTI" if ci[0] > 0 else ("BERLAWANAN" if ci[1] < 0 else "TIDAK TERBUKTI (setara)")
+            hyp_results.append({"id": hid, "a": a, "b": b, "question": q, "bootstrap": boot,
+                                "verdict": verdict, "addendum": True})
+
         results_by_block[b_size] = hyp_results
 
     # Susun dokumen artefak
@@ -327,6 +359,11 @@ def run_block_bootstrap_evaluation(timeframe: str) -> None:
     print("\n" + md_content)
 
 
+def fmt_p(p: float, n_resamples: int) -> str:
+    """p bootstrap tidak pernah tepat 0; batas resolusinya 1/B."""
+    return f"< {1 / n_resamples:.4f}" if p <= 0 else f"{p:.4f}"
+
+
 def generate_markdown_report(out_data: Dict) -> str:
     tf = out_data["timeframe"].upper()
     blocks = [int(k) for k in out_data["results_by_block"]]
@@ -352,16 +389,36 @@ def generate_markdown_report(out_data: Dict) -> str:
         "|---|---|---|---|---|---|---|---|",
     ]
 
+    B = out_data["n_resamples"]
     primary_res = out_data["results_by_block"][primary_block]
-    for hr in primary_res:
+    for hr in [h for h in primary_res if not h.get("addendum")]:
         b_f1 = hr["bootstrap"]["f1"]
         b_ba = hr["bootstrap"]["balanced_accuracy"]
         f1_txt = f"{b_f1['mean_diff']:+.3f} [{b_f1['ci95'][0]:+.3f}, {b_f1['ci95'][1]:+.3f}]"
         ba_txt = f"{b_ba['mean_diff']:+.3f} [{b_ba['ci95'][0]:+.3f}, {b_ba['ci95'][1]:+.3f}]"
         lines.append(
             f"| **{hr['id']}** | {hr['question']} | {LABELS[hr['b']]} vs {LABELS[hr['a']]} | "
-            f"{f1_txt} | {ba_txt} | {b_f1['p_value_raw']:.4f} | {b_f1['p_value_adjusted']:.4f} | **{hr['verdict']}** |"
+            f"{f1_txt} | {ba_txt} | {fmt_p(b_f1['p_value_raw'], B)} | {fmt_p(b_f1['p_value_adjusted'], B)} | **{hr['verdict']}** |"
         )
+
+    addendum = [h for h in primary_res if h.get("addendum")]
+    if addendum:
+        lines += [
+            "",
+            "**Adendum (di luar praregistrasi, tanpa koreksi Holm):** pembanding tabular atas fitur statistik yang sama.",
+            "",
+            "| ID | Pertanyaan | Model B vs Model A | ΔMacro F1 [CI95] | ΔBalanced Acc [CI95] | p-value mentah | Keputusan |",
+            "|---|---|---|---|---|---|---|",
+        ]
+        for hr in addendum:
+            b_f1 = hr["bootstrap"]["f1"]
+            b_ba = hr["bootstrap"]["balanced_accuracy"]
+            lines.append(
+                f"| **{hr['id']}** | {hr['question']} | {LABELS[hr['b']]} vs {LABELS[hr['a']]} | "
+                f"{b_f1['mean_diff']:+.3f} [{b_f1['ci95'][0]:+.3f}, {b_f1['ci95'][1]:+.3f}] | "
+                f"{b_ba['mean_diff']:+.3f} [{b_ba['ci95'][0]:+.3f}, {b_ba['ci95'][1]:+.3f}] | "
+                f"{fmt_p(b_f1['p_value_raw'], B)} | **{hr['verdict']}** |"
+            )
 
     lines += [
         "",
