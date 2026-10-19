@@ -85,7 +85,7 @@ def sv_sigma(n: int, phi: float, eta: float, rng: np.random.Generator, burn: int
     """exp(h/2), h_t = phi*h_{t-1} + eta*e_t; dinormalkan agar E[sigma^2] = 1."""
     e = rng.normal(size=n + burn)
     e[0] /= np.sqrt(1 - phi**2)  # mulai dari sebaran stasioner
-    h = signal.lfilter([eta], [1.0, -phi], e)
+    h = np.asarray(signal.lfilter([eta], [1.0, -phi], e))
     s = np.exp(h[burn:] / 2)
     return s / np.sqrt(np.mean(s**2))
 

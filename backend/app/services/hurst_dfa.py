@@ -99,6 +99,60 @@ def hurst_rs(x: np.ndarray, min_scale: int = 8, count: int = 12) -> float:
     return float(slope)
 
 
+def andrews_lag(n: int, rho: float) -> int:
+    """Lag Newey-West optimal Andrews (1991) untuk proses AR(1) dengan koefisien rho."""
+    rho = float(np.clip(rho, -0.99, 0.99))
+    a = abs(2 * rho / (1 - rho**2))
+    q = int(np.floor((1.5 * n) ** (1 / 3) * a ** (2 / 3)))
+    return max(0, min(q, n // 4))
+
+
+def _lo_rs_statistic(x: np.ndarray, scale: int, rho: float) -> float:
+    """R/S termodifikasi Lo untuk satu ukuran segmen.
+
+    Penyebut memakai simpangan baku jangka panjang (Newey-West, bobot Bartlett)
+    sehingga autokorelasi jangka pendek tidak terbaca sebagai memori panjang.
+    """
+    n_seg = x.size // scale
+    if n_seg < 1:
+        return np.nan
+    segments = x[: n_seg * scale].reshape(n_seg, scale)
+    centered = segments - segments.mean(axis=1, keepdims=True)
+    cumdev = np.cumsum(centered, axis=1)
+    rng = cumdev.max(axis=1) - cumdev.min(axis=1)
+    s2 = np.mean(centered**2, axis=1)
+    q = andrews_lag(scale, rho)
+    for j in range(1, q + 1):
+        gamma = np.sum(centered[:, j:] * centered[:, :-j], axis=1) / scale
+        s2 = s2 + 2 * (1 - j / (q + 1)) * gamma
+    ok = s2 > 0
+    if not ok.any():
+        return np.nan
+    return float(np.mean(rng[ok] / np.sqrt(s2[ok])))
+
+
+def hurst_lo(x: np.ndarray, min_scale: int = 8, count: int = 12) -> float:
+    """Hurst via R/S termodifikasi Lo (1991), skala dan regresi sama dengan hurst_rs.
+
+    Lag q per skala dipilih dengan aturan Andrews dari autokorelasi lag-1 seluruh
+    deret. Dengan q = 0 hasilnya setara R/S klasik.
+    """
+    x = np.asarray(x, dtype=float)
+    x = x[np.isfinite(x)]
+    if x.size < 32:
+        return np.nan
+    scales = _log_scales(x.size, min_scale=min_scale, count=count)
+    if scales.size < 3:
+        return np.nan
+    c = x - x.mean()
+    rho = float((c[1:] * c[:-1]).sum() / (c * c).sum()) if np.any(c) else 0.0
+    rs = np.array([_lo_rs_statistic(x, int(s), rho) for s in scales])
+    ok = np.isfinite(rs) & (rs > 0)
+    if ok.sum() < 3:
+        return np.nan
+    return float(np.polyfit(np.log(scales[ok]), np.log(rs[ok]), 1)[0])
+
+
 def rolling_hurst_dfa(
     log_returns: np.ndarray,
     window: int,

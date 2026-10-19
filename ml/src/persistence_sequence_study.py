@@ -182,6 +182,7 @@ def main() -> None:
                 S = np.take_along_axis(S, perm[:, :, None], axis=1)
             d = {k: (S[r], F[r], Y[r]) for k, r in rows.items()}
             ts = time.time()
+            model = None
             if key in TABULAR:
                 pv, pt = fit_predict_proba(
                     key, d["train"][1], d["train"][2], d["validation"][1], d["validation"][2],
@@ -210,7 +211,7 @@ def main() -> None:
             mv = classification_metrics(true["validation"], pred_v, classes)
             mt = classification_metrics(true["test"], pred_t, classes)
             extra: Dict[str, Any] = {}
-            if "attention" in key or key.startswith("hybrid"):
+            if model is not None and ("attention" in key or key.startswith("hybrid")):
                 try:
                     att = model.get_layer("attention_pool")
                     sub = tf.keras.Model(model.inputs[0] if isinstance(model.inputs, list) else model.inputs, att.input)

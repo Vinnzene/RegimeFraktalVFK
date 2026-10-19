@@ -20,6 +20,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from scipy import stats
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "backend"))
@@ -47,7 +48,7 @@ def main() -> None:
     btc = pd.read_parquet(ROOT / "data" / "processed" / "ohlcv_btcusdt_1h.parquet")
     r_btc = np.diff(np.log(btc["close"].to_numpy()))
     target = abs_acf(r_btc)
-    kurt_btc = float(pd.Series(r_btc).kurt())
+    kurt_btc = float(stats.kurtosis(r_btc, bias=False))
     print(f"BTC |r| ACF {np.round(target, 3)} kurtosis {kurt_btc:.1f}")
 
     rows = []
@@ -58,7 +59,7 @@ def main() -> None:
         for _ in range(N_SERIES):
             r, _ = make_series("S4", LENGTH, 0.5, rng, p)
             acfs.append(abs_acf(r))
-            kurts.append(float(pd.Series(r).kurt()))
+            kurts.append(float(stats.kurtosis(r, bias=False)))
         acf = np.mean(acfs, axis=0)
         dev = float(np.max(np.abs(acf - target)))
         rows.append({"phi": phi, "eta": eta, "acf": np.round(acf, 4).tolist(),

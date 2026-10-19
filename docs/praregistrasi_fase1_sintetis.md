@@ -203,3 +203,36 @@ desain yang sudah dikunci tidak diubah. Konsekuensinya:
   eksploratif tanpa koreksi Holm; tidak menggantikan kesimpulan dari S4.
 - Model M-kripto tetap dilatih pada campuran S1–S4 sesuai §5; S4k tidak masuk
   data latih.
+
+### Adendum 2 (2026-10-20): detail implementasi, sebelum benchmark penuh
+
+Hal-hal yang tidak diatur §1–§10, ditetapkan sebelum benchmark penuh
+dijalankan (`ml/src/synthetic_benchmark.py`):
+
+1. **Hybrid PS hanya pada n = 500.** Definisi sekuens PS Bab 3 (sub-window 128,
+   32 langkah) mensyaratkan (n − 128) habis dibagi 31; hanya n = 500 yang
+   memenuhi. Pada n = 256 dan 128 model ML terdiri dari regresi logistik,
+   LightGBM, dan MLP. H1–H3 diuji pada n = 500 sehingga tidak terdampak; H4
+   (eksploratif) membandingkan model terpilih apa pun pada tiap n.
+2. **Satu seed (42)** untuk model neural dan LightGBM. Data latih sintetis
+   12.000–48.000 deret independen, jauh lebih besar dari data BTC; variasi antar
+   seed diperkirakan kecil. Hyperparameter, batch, epoch, early stopping, dan
+   bobot kelas sama dengan Bab 4.
+3. **Kalibrasi ambang estimator klasik**: dua ambang dicari pada grid persentil
+   1–99 nilai estimasi di set validasi campuran S1–S4 (n yang sama), memaksimalkan
+   BA. Estimator terkalibrasi "terbaik" dipilih dengan BA validasi yang sama.
+4. **Konsensus R/S–DFA**: bila kedua estimator tidak sepakat, prediksi = "tidak
+   pasti" dan dihitung salah untuk semua kelas (sama dengan perlakuan
+   `uncertain_rule` di BTC bila dipaksa menjawab). Versi terkalibrasi memakai
+   ambang terkalibrasi masing-masing estimator.
+5. **Estimator variance ratio**: H_VR2 = ½(1 + log₂ VR(2)); H_slope = ½(1 + kemiringan
+   log VR(q) terhadap log q) untuk q = 2…48 (horizon yang sama dengan fitur).
+6. **Rezim M-fBm** memakai validasi S1 untuk early stopping; seleksi model kedua
+   rezim tetap dengan BA validasi campuran S1–S4 sesuai §5.
+7. **H1** membandingkan dua set uji berbeda (S1 vs S4), sehingga bootstrap
+   dilakukan terpisah pada tiap set; H2 dan H3 berpasangan pada set uji S4.
+8. **Konfigurasi sensitivitas** (0,45/0,55): deret yang sama dilabel ulang, dan
+   seluruh kalibrasi serta pelatihan diulang dengan label tersebut.
+9. **Uji alur (smoke test)** dengan 300/150/150 deret dijalankan sekali untuk
+   memastikan kode tidak error. Keluarannya dibuang dan tidak dilaporkan; seed
+   dan ukuran data benchmark penuh tidak diubah setelahnya.

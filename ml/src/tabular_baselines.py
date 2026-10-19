@@ -13,7 +13,7 @@ Perlakuan disamakan dengan model neural:
 
 from __future__ import annotations
 
-from typing import List, Sequence
+from typing import Callable, List, Sequence
 
 import numpy as np
 
@@ -37,6 +37,19 @@ def fit_predict_proba(
     Y_* berbentuk one-hot (N, K) seperti target model neural. Kolom probabilitas
     selalu berurutan 0..K-1 walau suatu kelas tidak muncul di data latih.
     """
+    predict = fit_tabular(key, F_train, Y_train, F_val, Y_val, seed)
+    return [predict(F) for F in F_eval]
+
+
+def fit_tabular(
+    key: str,
+    F_train: np.ndarray,
+    Y_train: np.ndarray,
+    F_val: np.ndarray,
+    Y_val: np.ndarray,
+    seed: int,
+) -> Callable[[np.ndarray], np.ndarray]:
+    """Latih sekali; kembalikan fungsi F -> probabilitas kelas (N, K)."""
     n_classes = Y_train.shape[1]
     y_tr = Y_train.argmax(axis=1)
 
@@ -71,9 +84,9 @@ def fit_predict_proba(
     else:
         raise ValueError(key)
 
-    out = []
-    for F in F_eval:
+    def predict(F: np.ndarray) -> np.ndarray:
         prob = np.zeros((len(F), n_classes))
         prob[:, model.classes_] = model.predict_proba(F)
-        out.append(prob)
-    return out
+        return prob
+
+    return predict
