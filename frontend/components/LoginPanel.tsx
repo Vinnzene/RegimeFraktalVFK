@@ -1,7 +1,7 @@
 "use client";
 
-import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { signInWithGoogle } from "@/lib/firebase-client";
 import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
 
 const ROWS: { regime: Regime; strategy: string }[] = [
@@ -50,22 +50,42 @@ function GoogleMark() {
   );
 }
 
+const POPUP_ERRORS: Record<string, string> = {
+  "auth/popup-closed-by-user": "Jendela login ditutup sebelum selesai.",
+  "auth/cancelled-popup-request": "Jendela login ditutup sebelum selesai.",
+  "auth/popup-blocked": "Browser memblokir jendela login. Izinkan pop-up untuk situs ini lalu coba lagi.",
+  "auth/network-request-failed": "Tidak bisa menghubungi Google. Periksa koneksi internet, atau pakai mode demo.",
+  "auth/unauthorized-domain": "Domain ini belum diizinkan di Firebase (Authentication > Settings > Authorized domains).",
+};
+
 export default function LoginPanel({
   callbackUrl,
-  error,
   googleConfigured,
   demoEnabled,
 }: {
   callbackUrl: string;
-  error: string | null;
   googleConfigured: boolean;
   demoEnabled: boolean;
 }) {
   const [pending, setPending] = useState<"google" | "demo" | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const go = (provider: "google" | "demo") => {
+  const go = async (provider: "google" | "demo") => {
     setPending(provider);
-    void signIn(provider, { callbackUrl });
+    setError(null);
+    try {
+      if (provider === "google") {
+        await signInWithGoogle();
+      } else {
+        const res = await fetch("/api/session/demo", { method: "POST" });
+        if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? "Mode demo gagal.");
+      }
+      window.location.href = callbackUrl;
+    } catch (e) {
+      const code = (e as { code?: string }).code;
+      setError((code && POPUP_ERRORS[code]) || (e as Error).message || "Masuk gagal. Coba lagi.");
+      setPending(null);
+    }
   };
 
   return (
@@ -124,7 +144,7 @@ export default function LoginPanel({
 
           <button
             type="button"
-            onClick={() => go("google")}
+            onClick={() => void go("google")}
             disabled={!googleConfigured || pending !== null}
             className="flex h-11 w-full items-center justify-center gap-3 rounded-md border border-[#dadce0] bg-white text-[14px] font-medium text-[#1f1f1f] transition hover:bg-[#f7f8f8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:cursor-not-allowed disabled:opacity-60"
           >
@@ -134,9 +154,9 @@ export default function LoginPanel({
 
           {!googleConfigured && (
             <p className="rounded-md border border-warn/40 bg-warn/10 px-3 py-2 text-[11.5px] leading-relaxed text-warn">
-              Login Google belum dikonfigurasi. Isi <code className="font-mono">GOOGLE_CLIENT_ID</code> dan{" "}
-              <code className="font-mono">GOOGLE_CLIENT_SECRET</code> di <code className="font-mono">frontend/.env.local</code>,
-              lalu jalankan ulang frontend.
+              Login Google belum dikonfigurasi. Isi konfigurasi Firebase (<code className="font-mono">NEXT_PUBLIC_FIREBASE_*</code>)
+              dan kunci service account di <code className="font-mono">frontend/.env.local</code>, lalu jalankan ulang
+              frontend. Panduan ada di README bagian Login.
             </p>
           )}
 
@@ -149,7 +169,7 @@ export default function LoginPanel({
               </div>
               <button
                 type="button"
-                onClick={() => go("demo")}
+                onClick={() => void go("demo")}
                 disabled={pending !== null}
                 className="h-10 w-full rounded-md border border-edge bg-surface text-[13px] font-medium text-txt transition hover:border-edgeBright focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-60"
               >

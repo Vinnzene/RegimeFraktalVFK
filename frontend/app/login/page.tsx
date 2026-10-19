@@ -1,36 +1,25 @@
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
 import LoginPanel from "@/components/LoginPanel";
-import { authOptions, demoLoginEnabled, googleConfigured } from "@/lib/auth";
+import { adminApp } from "@/lib/firebase-admin";
+import { demoAllowed } from "@/lib/session";
+import { currentUser } from "@/lib/server-user";
 
 export const metadata = { title: "Masuk — regimefraktalVFK" };
 
-const ERRORS: Record<string, string> = {
-  OAuthSignin: "Gagal menghubungi Google. Periksa koneksi internet lalu coba lagi.",
-  OAuthCallback: "Google menolak permintaan masuk. Coba lagi, atau pakai akun Google lain.",
-  OAuthAccountNotLinked: "Akun ini sudah terhubung dengan cara masuk lain.",
-  AccessDenied: "Akses ditolak.",
-  Configuration: "Login belum dikonfigurasi di server. Lihat frontend/.env.example.",
-  CredentialsSignin: "Mode demo tidak dapat dipakai saat ini.",
-};
-
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: { callbackUrl?: string; error?: string };
-}) {
-  const session = await getServerSession(authOptions);
+export default async function LoginPage({ searchParams }: { searchParams: { callbackUrl?: string } }) {
   const callbackUrl = searchParams.callbackUrl?.startsWith("/") ? searchParams.callbackUrl : "/";
-  if (session) redirect(callbackUrl);
+  if (await currentUser()) redirect(callbackUrl);
 
-  const error = searchParams.error ? ERRORS[searchParams.error] ?? "Masuk gagal. Coba lagi." : null;
+  const googleReady = Boolean(
+    process.env.NEXT_PUBLIC_FIREBASE_API_KEY && process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID && adminApp()
+  );
 
   return (
     <LoginPanel
       callbackUrl={callbackUrl}
-      error={error}
-      googleConfigured={googleConfigured}
-      demoEnabled={demoLoginEnabled}
+      googleConfigured={googleReady}
+      demoEnabled={demoAllowed(headers().get("host"))}
     />
   );
 }

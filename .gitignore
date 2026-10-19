@@ -33,3 +33,7 @@ data/export/
 .env
 .env.local
 .DS_Store
+
+# Kunci service account Firebase dan rahasia lain.
+secrets/
+backend/.env

@@ -118,7 +118,34 @@ def warm_cache() -> List[Dict[str, object]]:
             )
 
     _record({"at": int(time.time()), "warm_cache": results})
+    # Catat keadaan regime awal untuk notifier (tanpa siaran) setelah regime siap.
+    notify_once()
     return results
+
+
+def notify_once() -> List[Dict[str, object]]:
+    """Kirim notifikasi Telegram bila regime berganti sejak pemeriksaan terakhir.
+
+    Tidak melakukan apa pun bila bot belum dikonfigurasi. Kegagalan dicatat,
+    tidak dilempar, agar penyegaran data tetap berjalan.
+    """
+    from app.services import regime_notifier, telegram_bot
+    from app.services.telegram_store import get_store
+
+    bot = telegram_bot.settings()
+    if not bot.configured:
+        return []
+    cfg = get_config()
+    repo = get_repository()
+    try:
+        regimes = {tf: repo.get_regime(cfg.data.symbol, tf) for tf in cfg.data.timeframes}
+        events = regime_notifier.check(regimes, get_store(), telegram_bot.send_message, bot.dashboard_url)
+    except Exception as exc:  # noqa: BLE001
+        _record({"at": int(time.time()), "notify_error": f"{type(exc).__name__}: {exc}"[:200]})
+        return []
+    if events:
+        _record({"at": int(time.time()), "notified": [{k: e[k] for k in ("timeframe", "from", "to", "sent")} for e in events]})
+    return cast(List[Dict[str, object]], events)
 
 
 def _loop(interval_seconds: int) -> None:
@@ -126,6 +153,7 @@ def _loop(interval_seconds: int) -> None:
         if _stop.wait(interval_seconds):
             break
         refresh_once()
+        notify_once()
 
 
 def start(warm: bool = True) -> Dict[str, object]:

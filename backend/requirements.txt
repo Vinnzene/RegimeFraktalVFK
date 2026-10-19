@@ -11,3 +11,9 @@ python-dotenv
 httpx
 pytest
 tensorflow-cpu
+# Notifikasi Telegram + Firestore. firebase-admin 7.x menarik pustaka Google
+# yang menuntut protobuf>=6, sedangkan tensorflow 2.19 menuntut protobuf<6.
+firebase-admin>=6.5,<7
+google-cloud-firestore<2.21
+google-api-core<2.25
+protobuf>=5.26,<6

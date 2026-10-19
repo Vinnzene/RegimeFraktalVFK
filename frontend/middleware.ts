@@ -1,13 +1,23 @@
-import { withAuth } from "next-auth/middleware";
+import { NextResponse, type NextRequest } from "next/server";
+import { readSession } from "@/lib/session";
 
 /**
- * Semua halaman wajib login, kecuali halaman login sendiri, endpoint auth,
- * dan berkas statis. Pengunjung yang belum login diarahkan ke /login.
+ * Semua halaman dan API wajib login, kecuali halaman login, endpoint pembuat
+ * sesi, dan berkas statis. Halaman diarahkan ke /login; API menjawab 401.
  */
-export default withAuth({
-  pages: { signIn: "/login" },
-});
+export async function middleware(req: NextRequest) {
+  const user = await readSession(req.cookies, req.headers.get("host"));
+  if (user) return NextResponse.next();
+
+  if (req.nextUrl.pathname.startsWith("/api/")) {
+    return NextResponse.json({ error: "Belum login" }, { status: 401 });
+  }
+  const url = req.nextUrl.clone();
+  url.pathname = "/login";
+  url.search = `?callbackUrl=${encodeURIComponent(req.nextUrl.pathname + req.nextUrl.search)}`;
+  return NextResponse.redirect(url);
+}
 
 export const config = {
-  matcher: ["/((?!login|api/auth|_next/static|_next/image|favicon.ico|icon.svg|data/|reports/).*)"],
+  matcher: ["/((?!login|api/session|_next/static|_next/image|favicon.ico|icon.svg|data/|reports/).*)"],
 };

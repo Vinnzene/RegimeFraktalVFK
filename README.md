@@ -61,22 +61,50 @@ python ml/src/run_threshold_sensitivity.py --timeframe all
 
 ### Login
 
-Semua halaman dashboard wajib login. Salin `frontend/.env.example` menjadi
-`frontend/.env.local` lalu isi:
+Semua halaman dashboard wajib login (Firebase Authentication, akun Google apa
+pun boleh masuk). Salin `frontend/.env.example` menjadi `frontend/.env.local`
+dan `backend/.env.example` menjadi `backend/.env`, lalu:
 
-1. **Google** (akun Google apa pun boleh masuk). Di Google Cloud Console buka
-   *APIs & Services → Credentials → Create credentials → OAuth client ID*, tipe
-   *Web application*. Tambahkan *Authorized redirect URI*
-   `http://localhost:3000/api/auth/callback/google` (ganti domain bila dipasang
-   online). Salin Client ID dan Client secret ke `GOOGLE_CLIENT_ID` dan
-   `GOOGLE_CLIENT_SECRET`.
-2. **`NEXTAUTH_SECRET`**: string acak, buat dengan
-   `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`.
-3. **Mode demo** (`DEMO_LOGIN=true`): tombol "Masuk mode demo" untuk sidang
-   tanpa internet. Hanya aktif bila `NEXTAUTH_URL` adalah localhost, sehingga
-   tidak bisa terbuka di server publik.
+1. **Buat project Firebase** di <https://console.firebase.google.com>.
+2. **Aktifkan login Google**: *Build → Authentication → Sign-in method →
+   Google → Enable*.
+3. **Aktifkan Firestore**: *Build → Firestore Database → Create database*
+   (mode production). Pasang aturan dari `firestore.rules` (menolak semua akses
+   langsung dari browser; semua akses lewat server).
+4. **Config web**: *Project settings → General → Your apps → Add app → Web*.
+   Salin `apiKey`, `authDomain`, `projectId`, `appId` ke
+   `NEXT_PUBLIC_FIREBASE_*` di `frontend/.env.local`.
+5. **Kunci service account**: *Project settings → Service accounts → Generate
+   new private key*. Simpan sebagai `secrets/firebase-service-account.json` di
+   root project (folder `secrets/` diabaikan git). Frontend dan backend sama-sama
+   membacanya lewat `FIREBASE_SERVICE_ACCOUNT`.
+6. **Domain**: `localhost` sudah diizinkan bawaan. Bila dipasang online, tambahkan
+   domainnya di *Authentication → Settings → Authorized domains*.
+7. **Mode demo** (`DEMO_LOGIN=true` + `SESSION_SECRET`): tombol "Masuk mode demo"
+   untuk sidang tanpa internet. Hanya berlaku bila dashboard dibuka lewat
+   localhost; dari alamat lain permintaan ditolak.
 
 Jalankan ulang `npm run dev` setelah mengubah `.env.local`.
+
+### Notifikasi Telegram
+
+Pengguna menautkan Telegram dari menu **Strategi → Notifikasi Telegram**:
+dashboard membuat kode sekali pakai (15 menit) dan membuka
+`t.me/<bot>?start=<kode>`; saat pengguna menekan Start, backend menyimpan chat
+ID-nya di Firestore. Pengguna tidak perlu mencari chat ID sendiri.
+
+1. Buat bot lewat **@BotFather** (`/newbot`), salin token dan username-nya.
+2. Isi `TELEGRAM_BOT_TOKEN` dan `TELEGRAM_BOT_USERNAME` di `backend/.env`, serta
+   `TELEGRAM_BOT_TOKEN` dan `NEXT_PUBLIC_TELEGRAM_BOT_USERNAME` di
+   `frontend/.env.local`.
+3. Jalankan ulang backend. Bot memakai long polling, jadi tidak perlu alamat
+   publik; jangan jalankan dua backend dengan token yang sama.
+
+Notifikasi dikirim saat regime berganti dan sudah stabil
+`NOTIFY_CONFIRM_WINDOWS` window berturut-turut (bawaan 3). Saat backend pertama
+kali menyala, regime terkini hanya dicatat tanpa siaran. Setiap notifikasi
+ditulis ke `data/signals/regime_notifications.jsonl` sebagai catatan uji maju.
+Perintah bot: `/status`, `/stop`.
 
 ## Konfigurasi
 

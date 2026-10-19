@@ -16,7 +16,7 @@ from fastapi.responses import JSONResponse
 from app.core.config import get_config
 from app.db.repository import InvalidIdentifier
 from app.routers import analysis, backtest, meta, model, ohlcv
-from app.services import scheduler
+from app.services import regime_notifier, scheduler, telegram_bot
 
 
 @asynccontextmanager
@@ -30,8 +30,13 @@ async def lifespan(_: FastAPI):
         scheduler.start()
     except Exception:  # noqa: BLE001
         pass
+    try:
+        telegram_bot.start(regime_notifier.status_text)
+    except Exception:  # noqa: BLE001
+        pass
     yield
     scheduler.stop()
+    telegram_bot.stop()
 
 
 app = FastAPI(
