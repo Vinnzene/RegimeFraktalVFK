@@ -179,4 +179,27 @@ memungkinkan (`rencana_pengembangan.md`, rencana cadangan).
 
 ## Adendum
 
-(belum ada)
+### Adendum 1 (2026-10-20): hasil kalibrasi, sebelum §5 dijalankan
+
+Belum ada estimator maupun model yang dijalankan pada data sintetis saat
+adendum ini ditulis.
+
+**Volatilitas stokastik S3/S4** (`ml/src/calibrate_synthetic.py`,
+`ml/artifacts/synthetic_calibration.json`): φ = 0,995, η = 0,20. Autokorelasi
+\|r\| S4 = 0,247 / 0,245 / 0,214 / 0,110 pada lag 1 / 5 / 24 / 100 (BTC: 0,286 /
+0,199 / 0,174 / 0,115); simpangan maksimum 0,046, lolos toleransi ±0,05.
+
+**Ketidaksesuaian ekor yang ditemukan.** Kurtosis per window 500 bar: BTC median
+7,8 (persentil 10–90: 3,5–27,4); S4 median 23,1 (8,1–110,7). Penyebab: Student-t
+ν = 3 dan lonjakan 10σ dari §3. Kurtosis bukan kriteria kalibrasi di §3, dan
+desain yang sudah dikunci tidak diubah. Konsekuensinya:
+
+- **S4 tetap persis seperti §3** dan dibaca sebagai **uji tekanan** yang lebih
+  berat dari BTC. H1–H3 tetap diuji pada S4.
+- **S4k ditambahkan sebagai skenario eksploratif**: Student-t ν = 4, lonjakan
+  peluang 0,002 dengan ukuran N(0, (3·σ_t)²), φ = 0,99, η = 0,18 (dipilih dengan
+  grid bersama). Kurtosis per window median 8,7; autokorelasi \|r\| simpangan
+  maksimum 0,041. H2 dan H3 diulang pada S4k dan dilaporkan sebagai temuan
+  eksploratif tanpa koreksi Holm; tidak menggantikan kesimpulan dari S4.
+- Model M-kripto tetap dilatih pada campuran S1–S4 sesuai §5; S4k tidak masuk
+  data latih.
