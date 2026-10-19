@@ -236,3 +236,26 @@ dijalankan (`ml/src/synthetic_benchmark.py`):
 9. **Uji alur (smoke test)** dengan 300/150/150 deret dijalankan sekali untuk
    memastikan kode tidak error. Keluarannya dibuang dan tidak dilaporkan; seed
    dan ukuran data benchmark penuh tidak diubah setelahnya.
+
+### Adendum 3 (2026-10-20): detektor yang dipasang di sistem selalu model AI
+
+Ditulis saat benchmark penuh sedang berjalan, **sebelum** hasil uji (H1–H4)
+tersedia. Yang sudah terlihat di log hanyalah BA **validasi** tahap seleksi
+model (dipakai §5 untuk memilih model M-fBm/M-kripto), bukan hasil uji.
+
+Alasan: syarat institusi (program studi informatika) mewajibkan sistem yang
+dihasilkan memakai metode AI. Baris "H2 tidak terbukti" pada tabel tafsir §7
+semula menyatakan dashboard dan Fase 2 memakai estimator klasik terkalibrasi;
+itu berarti sistem bisa berakhir tanpa komponen AI.
+
+Perubahan:
+
+1. Detektor yang dipasang di sistem (dashboard, notifikasi, uji generalisasi,
+   Fase 2) adalah **model M-kripto terpilih §5**, apa pun hasil H2.
+2. Estimator klasik terkalibrasi terbaik **tetap** menjadi pembanding wajib di
+   Fase 1, uji generalisasi, dan Fase 2. Bila H2 tidak terbukti, kesimpulan yang
+   ditulis tetap "model AI tidak lebih akurat daripada estimator klasik
+   terkalibrasi pada kondisi ini"; pemakaian model AI di sistem dibenarkan oleh
+   syarat institusi dan oleh keluaran probabilitasnya (dasar kelas abstain),
+   bukan oleh keunggulan akurasi.
+3. Hipotesis H1–H4, kriteria, dan data tidak berubah.

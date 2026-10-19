@@ -91,3 +91,13 @@ Fase 2). Daftar aset §2 mengikat Fase 2.
 ## Adendum
 
 (belum ada)
+
+### Adendum 1 (2026-10-20): definisi D-sintetis
+
+Mengikuti adendum 3 praregistrasi Fase 1 (ditulis sebelum hasil uji Fase 1
+tersedia): **D-sintetis = model M-kripto terpilih Fase 1, apa pun hasil H2**.
+Estimator klasik terkalibrasi terbaik Fase 1 ditambahkan sebagai detektor
+pembanding keempat, **D-klasik**, dengan perlakuan yang sama dengan D-BTC dan
+D-konsensus (§3–§4). Uji G2/G3 ditambah G4: D-sintetis vs D-klasik, dilaporkan
+dengan cara yang sama. Sesuai skenario B Fase 0 (`rencana_pengembangan.md`),
+D-BTC = regresi logistik latih-BTC.
