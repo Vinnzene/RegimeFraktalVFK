@@ -2,42 +2,96 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import UserMenu from "@/components/UserMenu";
 
 /**
- * Navigasi horizontal di header.
+ * Navigasi horizontal di header, dikelompokkan menurut pertanyaan pengguna.
  *
- * Menggantikan sidebar agar seluruh lebar layar tersedia untuk chart — penting
- * saat demo di proyektor, di mana ruang horizontal jauh lebih berharga daripada
- * daftar menu yang selalu terlihat.
- *
- * Label dibuat ringkas karena ruang mendatar terbatas; keterangan panjang
- * dipindahkan ke atribut title.
+ * Dua belas menu sejajar membuat pengunjung tidak tahu harus mulai dari mana.
+ * Kelompok mengikuti alur cerita dashboard: kondisi pasar sekarang, strategi
+ * yang cocok, bukti riset di baliknya, lalu metodologi. Seluruh lebar layar
+ * tetap tersedia untuk chart karena navigasi ada di header, bukan sidebar.
  */
 
-const NAV = [
-  { href: "/", label: "Ringkasan", hint: "Kondisi pasar saat ini + grafik harga" },
-  { href: "/regime-explorer", label: "Detail Kondisi", hint: "Hurst, DFA, perpindahan & durasi kondisi" },
-  { href: "/multifractal", label: "Multifraktal", hint: "Spektrum H(q) momen q=1,2,4 dan lebar ΔH" },
-  { href: "/model-comparison", label: "Perbandingan Model", hint: "Model usulan vs pembanding" },
-  { href: "/order-flow", label: "Order Flow", hint: "Ablation OFI & CVD (Model A–D)" },
-  { href: "/swt", label: "Wavelet", hint: "Dekomposisi multiskala SWT" },
-  { href: "/attention", label: "Fokus Model", hint: "Bagian data yang diperhatikan model (attention)" },
-  { href: "/timeframe-comparison", label: "1H vs 4H", hint: "Perbandingan skala waktu" },
-  { href: "/walk-forward-evaluation", label: "Walk-Forward", hint: "Evaluasi walk-forward out-of-sample" },
-  { href: "/backtest", label: "Uji Strategi", hint: "Backtest eksploratif vs Buy & Hold" },
-  { href: "/methodology", label: "Metodologi", hint: "Rumus & definisi" },
-  { href: "/about", label: "Tentang", hint: "Latar belakang & batasan" },
+type NavItem = { href: string; label: string; hint: string };
+type NavGroup = { label: string; items: NavItem[] };
+
+const GROUPS: NavGroup[] = [
+  {
+    label: "Pasar",
+    items: [
+      { href: "/", label: "Ringkasan", hint: "Kondisi pasar saat ini + grafik harga" },
+      { href: "/regime-explorer", label: "Detail Kondisi", hint: "Hurst, DFA, perpindahan & durasi kondisi" },
+      { href: "/timeframe-comparison", label: "1H vs 4H", hint: "Perbandingan skala waktu" },
+    ],
+  },
+  {
+    label: "Strategi",
+    items: [
+      { href: "/strategi", label: "Regime → Strategi", hint: "Strategi yang cocok untuk kondisi pasar saat ini" },
+      { href: "/backtest", label: "Uji Strategi", hint: "Backtest eksploratif vs Buy & Hold" },
+    ],
+  },
+  {
+    label: "Riset",
+    items: [
+      { href: "/model-comparison", label: "Perbandingan Model", hint: "Model usulan vs pembanding" },
+      { href: "/walk-forward-evaluation", label: "Walk-Forward", hint: "Evaluasi walk-forward out-of-sample" },
+      { href: "/multifractal", label: "Multifraktal", hint: "Spektrum H(q) momen q=1,2,4 dan lebar ΔH" },
+      { href: "/swt", label: "Wavelet", hint: "Dekomposisi multiskala SWT" },
+      { href: "/attention", label: "Fokus Model", hint: "Bagian data yang diperhatikan model (attention)" },
+      { href: "/order-flow", label: "Order Flow", hint: "Ablation OFI & CVD (Model A–D)" },
+    ],
+  },
+  {
+    label: "Tentang",
+    items: [
+      { href: "/methodology", label: "Metodologi", hint: "Rumus & definisi" },
+      { href: "/about", label: "Tentang", hint: "Latar belakang & batasan" },
+    ],
+  },
 ];
+
+const isActive = (pathname: string, href: string) => pathname === href;
 
 export default function TopNav() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
+  const [openGroup, setOpenGroup] = useState<string | null>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const navRef = useRef<HTMLDivElement>(null);
+
+  // Tutup semua menu saat pindah halaman atau klik di luar navigasi.
+  useEffect(() => {
+    setOpenGroup(null);
+    setMobileOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const onDown = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setOpenGroup(null);
+        setMobileOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpenGroup(null);
+        setMobileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, []);
 
   return (
-    <div className="flex h-11 shrink-0 items-center gap-1 border-b border-edge bg-panel px-3">
-      <Link href="/" className="mr-3 flex shrink-0 items-center gap-2">
-        <span className="flex h-6 w-6 items-center justify-center rounded bg-accent font-mono text-xs font-bold text-panelAlt">
+    <div ref={navRef} className="flex h-12 shrink-0 items-center gap-1 border-b border-edge bg-panel px-3">
+      <Link href="/" className="mr-4 flex shrink-0 items-center gap-2">
+        <span className="flex h-7 w-7 items-center justify-center rounded-md bg-accent font-mono text-xs font-bold text-panelAlt">
           R
         </span>
         <span className="hidden font-sans text-[13px] font-semibold tracking-tight text-txt sm:inline">
@@ -45,55 +99,90 @@ export default function TopNav() {
         </span>
       </Link>
 
-      {/* Menu mendatar untuk layar lebar. */}
-      <nav className="hidden flex-1 items-center gap-0.5 overflow-x-auto xl:flex">
-        {NAV.map((item) => {
-          const active = pathname === item.href;
+      {/* Menu berkelompok untuk layar lebar. */}
+      <nav className="hidden flex-1 items-center gap-0.5 lg:flex" aria-label="Navigasi utama">
+        {GROUPS.map((group) => {
+          const groupActive = group.items.some((i) => isActive(pathname, i.href));
+          const open = openGroup === group.label;
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              title={item.hint}
-              className={`relative whitespace-nowrap rounded px-2.5 py-1.5 text-[12px] font-medium transition-colors ${
-                active ? "text-txt" : "text-txtDim hover:bg-surface/60 hover:text-txt"
-              }`}
-            >
-              {item.label}
-              {active && (
-                <span className="absolute inset-x-2 -bottom-[9px] h-0.5 rounded-t bg-accent" />
+            <div key={group.label} className="relative">
+              <button
+                type="button"
+                aria-expanded={open}
+                aria-haspopup="true"
+                onClick={() => setOpenGroup(open ? null : group.label)}
+                className={`relative flex items-center gap-1 rounded-md px-3 py-1.5 text-[12.5px] font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent ${
+                  groupActive || open ? "text-txt" : "text-txtDim hover:bg-surface/60 hover:text-txt"
+                } ${open ? "bg-surface" : ""}`}
+              >
+                {group.label}
+                <span className={`text-[9px] text-txtMuted transition-transform ${open ? "rotate-180" : ""}`}>▼</span>
+                {groupActive && <span className="absolute inset-x-3 -bottom-[9px] h-0.5 rounded-t bg-accent" />}
+              </button>
+
+              {open && (
+                <div className="absolute left-0 top-full z-50 mt-2 w-72 rounded-md border border-edge bg-panel p-1.5 shadow-pop">
+                  {group.items.map((item) => {
+                    const active = isActive(pathname, item.href);
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        aria-current={active ? "page" : undefined}
+                        className={`block rounded px-3 py-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent ${
+                          active ? "bg-surface" : "hover:bg-surface/70"
+                        }`}
+                      >
+                        <div className={`flex items-center gap-2 text-[12.5px] font-medium ${active ? "text-accent" : "text-txt"}`}>
+                          {item.label}
+                        </div>
+                        <div className="mt-0.5 text-2xs leading-snug text-txtMuted">{item.hint}</div>
+                      </Link>
+                    );
+                  })}
+                </div>
               )}
-            </Link>
+            </div>
           );
         })}
       </nav>
 
-      {/* Tombol menu untuk layar sempit. */}
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="ml-auto rounded border border-edge px-2 py-1 text-[11px] text-txtDim xl:hidden"
-      >
-        Menu
-      </button>
+      <div className="ml-auto flex items-center gap-2">
+        <button
+          type="button"
+          aria-expanded={mobileOpen}
+          onClick={() => setMobileOpen((v) => !v)}
+          className="rounded-md border border-edge px-2.5 py-1 text-[12px] text-txtDim transition-colors hover:border-edgeBright hover:text-txt lg:hidden"
+        >
+          Menu
+        </button>
+        <UserMenu />
+      </div>
 
-      {open && (
-        <div className="absolute left-0 right-0 top-11 z-50 border-b border-edge bg-panel p-2 shadow-pop xl:hidden">
-          <div className="grid grid-cols-2 gap-1 sm:grid-cols-3">
-            {NAV.map((item) => {
-              const active = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setOpen(false)}
-                  className={`rounded px-3 py-2 text-[12px] transition-colors ${
-                    active ? "bg-surface text-txt" : "text-txtDim hover:bg-surface/60"
-                  }`}
-                >
-                  <div className="font-medium">{item.label}</div>
-                  <div className="mt-0.5 text-2xs text-txtMuted">{item.hint}</div>
-                </Link>
-              );
-            })}
+      {mobileOpen && (
+        <div className="absolute left-0 right-0 top-12 z-50 max-h-[75vh] overflow-y-auto border-b border-edge bg-panel p-3 shadow-pop lg:hidden">
+          <div className="grid gap-4 sm:grid-cols-2">
+            {GROUPS.map((group) => (
+              <div key={group.label}>
+                <div className="metric-label mb-1.5 px-2">{group.label}</div>
+                <div className="grid gap-0.5">
+                  {group.items.map((item) => {
+                    const active = isActive(pathname, item.href);
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        aria-current={active ? "page" : undefined}
+                        className={`rounded px-2 py-1.5 transition-colors ${active ? "bg-surface" : "hover:bg-surface/60"}`}
+                      >
+                        <div className={`text-[12.5px] font-medium ${active ? "text-accent" : "text-txt"}`}>{item.label}</div>
+                        <div className="text-2xs text-txtMuted">{item.hint}</div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}

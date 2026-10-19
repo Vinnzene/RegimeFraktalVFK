@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "katex/dist/katex.min.css";
-import TopBar from "@/components/TopBar";
-import TopNav from "@/components/TopNav";
-import { ConfigProvider } from "@/components/ConfigContext";
+import AppChrome from "@/components/AppChrome";
 
 export const metadata: Metadata = {
   title: "regimefraktalVFK — Identifikasi Regime Fraktal BTC/USDT",
   description:
-    "Dashboard riset identifikasi regime fraktal dinamis BTC/USDT multi-timeframe (Hurst-DFA + SWT + Attention-BiLSTM).",
+    "Dashboard riset identifikasi regime persistensi BTC/USDT dan pemilihan strategi trading berbasis regime.",
 };
 
 /**
@@ -22,15 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="id">
       <body>
-        <ConfigProvider>
-          <div className="flex h-screen flex-col overflow-hidden">
-            <div className="relative shrink-0">
-              <TopNav />
-              <TopBar />
-            </div>
-            <main className="flex-1 overflow-y-auto p-3">{children}</main>
-          </div>
-        </ConfigProvider>
+        <AppChrome>{children}</AppChrome>
       </body>
     </html>
   );

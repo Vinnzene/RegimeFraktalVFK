@@ -59,6 +59,25 @@ python ml/src/forward_persistence_analysis.py --timeframe all
 python ml/src/run_threshold_sensitivity.py --timeframe all
 ```
 
+### Login
+
+Semua halaman dashboard wajib login. Salin `frontend/.env.example` menjadi
+`frontend/.env.local` lalu isi:
+
+1. **Google** (akun Google apa pun boleh masuk). Di Google Cloud Console buka
+   *APIs & Services → Credentials → Create credentials → OAuth client ID*, tipe
+   *Web application*. Tambahkan *Authorized redirect URI*
+   `http://localhost:3000/api/auth/callback/google` (ganti domain bila dipasang
+   online). Salin Client ID dan Client secret ke `GOOGLE_CLIENT_ID` dan
+   `GOOGLE_CLIENT_SECRET`.
+2. **`NEXTAUTH_SECRET`**: string acak, buat dengan
+   `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`.
+3. **Mode demo** (`DEMO_LOGIN=true`): tombol "Masuk mode demo" untuk sidang
+   tanpa internet. Hanya aktif bila `NEXTAUTH_URL` adalah localhost, sehingga
+   tidak bisa terbuka di server publik.
+
+Jalankan ulang `npm run dev` setelah mengubah `.env.local`.
+
 ## Konfigurasi
 
 Seluruh parameter berada di `config.yaml` di root — tidak ada parameter tersembunyi

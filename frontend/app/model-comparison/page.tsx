@@ -72,7 +72,7 @@ export default function ModelComparisonPage() {
   return (
     <div className="space-y-4">
       <PageHeader
-        title="Model Comparison"
+        title="Perbandingan Model"
         description="Empat baris pembanding: Baseline Persistence (naif), Baseline 1 (rule-based), Baseline 2 (SWT+BiLSTM), dan model usulan (SWT+Attention-BiLSTM). Fokus penilaian ada pada kestabilan regime, pola transisi, dan konsistensi — bukan pada akurasi."
       />
 
@@ -125,7 +125,7 @@ export default function ModelComparisonPage() {
           <ConsistencyPanel timeframe={timeframe} />
 
           <Panel
-            title="Validation Loss per Model"
+            title="Loss validasi per model"
             subtitle={
               compare.data?.curves_from_artifact
                 ? "Kurva nyata dari metadata artefak training. Rule-based tidak punya kurva loss karena bukan model berbasis gradien."

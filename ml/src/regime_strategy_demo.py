@@ -22,7 +22,8 @@ Rancangan (tetap, tidak disetel):
 - Biaya: 0,075% fee + 0,01% slippage per perubahan posisi (per sisi).
 - Posisi diputuskan di akhir bar t dan berlaku untuk return bar t+1.
 
-Keluaran: ml/artifacts/regime_strategy_demo.json
+Keluaran: ml/artifacts/regime_strategy_demo.json, disalin ke
+frontend/public/data/ untuk halaman /strategi di dashboard.
 """
 
 from __future__ import annotations
@@ -147,7 +148,10 @@ def main() -> None:
     ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
     path = ARTIFACTS_DIR / "regime_strategy_demo.json"
     path.write_text(json.dumps(out), encoding="utf-8")
-    print(f"tersimpan: {path}")
+    public = ROOT / "frontend" / "public" / "data" / path.name
+    public.parent.mkdir(parents=True, exist_ok=True)
+    public.write_text(json.dumps(out), encoding="utf-8")
+    print(f"tersimpan: {path} dan {public}")
 
 
 if __name__ == "__main__":

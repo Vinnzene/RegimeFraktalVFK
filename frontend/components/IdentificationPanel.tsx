@@ -41,13 +41,20 @@ export default function IdentificationPanel({ timeframe }: { timeframe: string }
   }
 
   const modes = res.data.modes ?? {};
+  // Sorotan memakai tugas utama skripsi (tiga kelas) dan balanced accuracy.
+  // Mode biner lebih mudah dan akurasi biasa menggelembung pada kelas timpang,
+  // jadi keduanya tidak dipakai sebagai angka utama.
   const best = Object.values(modes)
     .flatMap((m: any) => m.models ?? [])
+    .filter((m: any) => (m.classes?.length ?? 3) === 3)
     .reduce(
       (acc: any, m: any) =>
-        acc === null || (m.test?.accuracy ?? 0) > (acc.test?.accuracy ?? 0) ? m : acc,
+        acc === null || (m.test?.balanced_accuracy ?? 0) > (acc.test?.balanced_accuracy ?? 0) ? m : acc,
       null
     );
+  const anyStale = Object.values(modes)
+    .flatMap((m: any) => m.models ?? [])
+    .some((m: any) => m.config_matches === false);
 
   return (
     <Panel
@@ -58,13 +65,20 @@ export default function IdentificationPanel({ timeframe }: { timeframe: string }
       {best && (
         <div className="mb-3 rounded border border-accent/40 bg-accent/10 px-3 py-2 text-[11px] leading-relaxed text-txtDim">
           <span className="font-semibold text-accent">
-            Akurasi tertinggi {((best.test?.accuracy ?? 0) * 100).toFixed(2)}%
+            Balanced accuracy tertinggi {((best.test?.balanced_accuracy ?? 0) * 100).toFixed(1)}%
           </span>{" "}
-          pada mode {best.classes?.length === 2 ? "biner" : "tiga kelas"} dengan model{" "}
+          pada tugas tiga kelas, model{" "}
           {best.model === "hybrid_attention_bilstm"
             ? "SWT + Attention-BiLSTM + fitur struktural"
             : "MLP fitur struktural"}
-          .
+          . Tebakan acak = 33,3%.
+        </div>
+      )}
+
+      {anyStale && (
+        <div className="mb-3 rounded border border-warn/40 bg-warn/10 px-3 py-2 text-[11px] leading-relaxed text-warn">
+          Sebagian artefak dilatih dengan konfigurasi lama (ditandai &ldquo;config berbeda&rdquo;). Angkanya tetap
+          ditampilkan sebagai arsip; hasil evaluasi terbaru ada di laporan Bab 4.
         </div>
       )}
 
