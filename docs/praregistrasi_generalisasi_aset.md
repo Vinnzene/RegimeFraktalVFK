@@ -101,3 +101,29 @@ pembanding keempat, **D-klasik**, dengan perlakuan yang sama dengan D-BTC dan
 D-konsensus (§3–§4). Uji G2/G3 ditambah G4: D-sintetis vs D-klasik, dilaporkan
 dengan cara yang sama. Sesuai skenario B Fase 0 (`rencana_pengembangan.md`),
 D-BTC = regresi logistik latih-BTC.
+
+### Adendum 2 (2026-10-20): detail implementasi, sebelum uji dijalankan
+
+Belum ada detektor yang diterapkan pada data aset §2 saat adendum ini ditulis.
+
+1. **Normalisasi per window**: return 500 bar tiap window diskalakan ke
+   simpangan baku 0,0066 sebelum fitur dihitung, sama seperti data latih
+   sintetis (setiap deret sintetis dinormalisasi ke angka itu). Fitur statistik
+   (autokorelasi, VR, energi SWT relatif, kurtosis, H(q), dll.) dan estimator
+   R/S, DFA, VR(2) tidak berubah oleh penskalaan; yang terpengaruh hanya kanal
+   log-volatilitas sekuens PS. Perlakuan yang sama dipakai untuk semua detektor.
+2. **Titik deteksi**: setiap 4 bar, mulai saat 500 return tersedia, sampai
+   M bar sebelum akhir data (M = 200 untuk 1H, 60 untuk 1D) agar horizon maju
+   lengkap. VR maju = VR(4) atas return bar t+1 … t+M (tanpa normalisasi).
+3. **D-BTC pada BTC** hanya dievaluasi pada titik deteksi setelah batas
+   latih+validasi BTC (`detector_meta.json: btc_train_end_time`); pada aset lain
+   semua titik dipakai. Detektor lain dievaluasi pada semua titik semua aset.
+4. **D-konsensus**: bila R/S dan DFA tidak sepakat, titik itu tidak termasuk
+   kelas persistent maupun anti-persistent (tidak ikut Δ).
+5. **Bootstrap**: moving-block atas urutan titik deteksi, panjang blok
+   ⌈(500 + M) / 4⌉ titik, B = 2.000, sampel ulang yang sama dipakai untuk semua
+   detektor (selisih berpasangan). Sampel ulang yang tidak memuat salah satu
+   kelas dibuang untuk Δ detektor tersebut; proporsi yang terbuang dilaporkan.
+6. Model yang dipakai adalah berkas hasil `ml/src/train_detector.py`
+   (hyperparameter dan seed sama dengan benchmark Fase 1); BA uji S4 hasil latih
+   ulang dicatat di `detector_meta.json` sebagai pemeriksaan kesetaraan.
