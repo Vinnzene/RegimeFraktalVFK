@@ -1,0 +1,564 @@
+{
+  "timeframe": "1h",
+  "timestamp": "2026-10-17T20:12:40Z",
+  "config_hash": "7a3bddc67d72b2a08c5bf5d4fb94fbbd9dbc7cb2d829125d5ed1d0b0890bb7c8",
+  "n_test_windows": 1622,
+  "effective_sample_size": 13.97,
+  "window_bars": 500,
+  "stride_bars": 4,
+  "l_min_theoretical": 125,
+  "block_sizes_tested": [
+    62,
+    125,
+    250
+  ],
+  "n_resamples": 2000,
+  "results_by_block": {
+    "62": [
+      {
+        "id": "H1",
+        "a": "swt_attention_bilstm",
+        "b": "ps_attention_bilstm",
+        "question": "Input PS lebih informatif dari SWT?",
+        "bootstrap": {
+          "block_size": 62,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": 0.2974,
+            "std_diff": 0.0433,
+            "ci95": [
+              0.2142,
+              0.3802
+            ],
+            "p_value_raw": 0.0,
+            "p_value_adjusted": 0.0
+          },
+          "balanced_accuracy": {
+            "mean_diff": 0.2881,
+            "std_diff": 0.0414,
+            "ci95": [
+              0.2066,
+              0.367
+            ],
+            "p_value_raw": 0.0
+          }
+        },
+        "verdict": "TERBUKTI"
+      },
+      {
+        "id": "H2",
+        "a": "ps_attention_bilstm_shuffled",
+        "b": "ps_attention_bilstm",
+        "question": "Urutan waktu persistensi membawa informasi?",
+        "bootstrap": {
+          "block_size": 62,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": 0.0148,
+            "std_diff": 0.0205,
+            "ci95": [
+              -0.025,
+              0.0568
+            ],
+            "p_value_raw": 0.2345,
+            "p_value_adjusted": 0.469
+          },
+          "balanced_accuracy": {
+            "mean_diff": 0.0201,
+            "std_diff": 0.0206,
+            "ci95": [
+              -0.0194,
+              0.062
+            ],
+            "p_value_raw": 0.1625
+          }
+        },
+        "verdict": "TIDAK TERBUKTI (setara)"
+      },
+      {
+        "id": "H3",
+        "a": "ps_bilstm",
+        "b": "ps_attention_bilstm",
+        "question": "Attention menambah nilai?",
+        "bootstrap": {
+          "block_size": 62,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": -0.0042,
+            "std_diff": 0.0174,
+            "ci95": [
+              -0.0384,
+              0.0309
+            ],
+            "p_value_raw": 0.6015,
+            "p_value_adjusted": 0.6015
+          },
+          "balanced_accuracy": {
+            "mean_diff": -0.0013,
+            "std_diff": 0.0176,
+            "ci95": [
+              -0.0348,
+              0.0361
+            ],
+            "p_value_raw": 0.544
+          }
+        },
+        "verdict": "TIDAK TERBUKTI (setara)"
+      },
+      {
+        "id": "H4",
+        "a": "hybrid_swt",
+        "b": "hybrid_ps",
+        "question": "PS memperbaiki model hybrid?",
+        "bootstrap": {
+          "block_size": 62,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": 0.0581,
+            "std_diff": 0.0307,
+            "ci95": [
+              -0.0035,
+              0.1187
+            ],
+            "p_value_raw": 0.0325,
+            "p_value_adjusted": 0.13
+          },
+          "balanced_accuracy": {
+            "mean_diff": 0.058,
+            "std_diff": 0.0319,
+            "ci95": [
+              -0.0058,
+              0.1203
+            ],
+            "p_value_raw": 0.0375
+          }
+        },
+        "verdict": "TIDAK TERBUKTI (setara)"
+      },
+      {
+        "id": "H5",
+        "a": "structural_mlp",
+        "b": "hybrid_ps",
+        "question": "Hybrid PS melampaui MLP?",
+        "bootstrap": {
+          "block_size": 62,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": 0.0835,
+            "std_diff": 0.0358,
+            "ci95": [
+              0.0124,
+              0.1537
+            ],
+            "p_value_raw": 0.0095,
+            "p_value_adjusted": 0.0475
+          },
+          "balanced_accuracy": {
+            "mean_diff": 0.0767,
+            "std_diff": 0.0379,
+            "ci95": [
+              0.0031,
+              0.1507
+            ],
+            "p_value_raw": 0.0205
+          }
+        },
+        "verdict": "TERBUKTI"
+      },
+      {
+        "id": "H6",
+        "a": "structural_mlp",
+        "b": "ps_attention_bilstm",
+        "question": "Model sekuens murni menyamai/melampaui MLP?",
+        "bootstrap": {
+          "block_size": 62,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": 0.0564,
+            "std_diff": 0.0424,
+            "ci95": [
+              -0.0271,
+              0.1424
+            ],
+            "p_value_raw": 0.088,
+            "p_value_adjusted": 0.264
+          },
+          "balanced_accuracy": {
+            "mean_diff": 0.0517,
+            "std_diff": 0.044,
+            "ci95": [
+              -0.0359,
+              0.1373
+            ],
+            "p_value_raw": 0.1095
+          }
+        },
+        "verdict": "TIDAK TERBUKTI (setara)"
+      }
+    ],
+    "125": [
+      {
+        "id": "H1",
+        "a": "swt_attention_bilstm",
+        "b": "ps_attention_bilstm",
+        "question": "Input PS lebih informatif dari SWT?",
+        "bootstrap": {
+          "block_size": 125,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": 0.2972,
+            "std_diff": 0.0501,
+            "ci95": [
+              0.1885,
+              0.3875
+            ],
+            "p_value_raw": 0.0,
+            "p_value_adjusted": 0.0
+          },
+          "balanced_accuracy": {
+            "mean_diff": 0.2868,
+            "std_diff": 0.0491,
+            "ci95": [
+              0.1786,
+              0.3718
+            ],
+            "p_value_raw": 0.0
+          }
+        },
+        "verdict": "TERBUKTI"
+      },
+      {
+        "id": "H2",
+        "a": "ps_attention_bilstm_shuffled",
+        "b": "ps_attention_bilstm",
+        "question": "Urutan waktu persistensi membawa informasi?",
+        "bootstrap": {
+          "block_size": 125,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": 0.0159,
+            "std_diff": 0.0183,
+            "ci95": [
+              -0.0207,
+              0.0516
+            ],
+            "p_value_raw": 0.188,
+            "p_value_adjusted": 0.376
+          },
+          "balanced_accuracy": {
+            "mean_diff": 0.0214,
+            "std_diff": 0.0188,
+            "ci95": [
+              -0.0157,
+              0.0581
+            ],
+            "p_value_raw": 0.123
+          }
+        },
+        "verdict": "TIDAK TERBUKTI (setara)"
+      },
+      {
+        "id": "H3",
+        "a": "ps_bilstm",
+        "b": "ps_attention_bilstm",
+        "question": "Attention menambah nilai?",
+        "bootstrap": {
+          "block_size": 125,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": -0.0026,
+            "std_diff": 0.0205,
+            "ci95": [
+              -0.0402,
+              0.0371
+            ],
+            "p_value_raw": 0.5595,
+            "p_value_adjusted": 0.5595
+          },
+          "balanced_accuracy": {
+            "mean_diff": 0.0006,
+            "std_diff": 0.0203,
+            "ci95": [
+              -0.036,
+              0.0425
+            ],
+            "p_value_raw": 0.5005
+          }
+        },
+        "verdict": "TIDAK TERBUKTI (setara)"
+      },
+      {
+        "id": "H4",
+        "a": "hybrid_swt",
+        "b": "hybrid_ps",
+        "question": "PS memperbaiki model hybrid?",
+        "bootstrap": {
+          "block_size": 125,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": 0.057,
+            "std_diff": 0.0318,
+            "ci95": [
+              -0.0084,
+              0.1153
+            ],
+            "p_value_raw": 0.04,
+            "p_value_adjusted": 0.16
+          },
+          "balanced_accuracy": {
+            "mean_diff": 0.055,
+            "std_diff": 0.0351,
+            "ci95": [
+              -0.0205,
+              0.1183
+            ],
+            "p_value_raw": 0.0585
+          }
+        },
+        "verdict": "TIDAK TERBUKTI (setara)"
+      },
+      {
+        "id": "H5",
+        "a": "structural_mlp",
+        "b": "hybrid_ps",
+        "question": "Hybrid PS melampaui MLP?",
+        "bootstrap": {
+          "block_size": 125,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": 0.0852,
+            "std_diff": 0.0343,
+            "ci95": [
+              0.018,
+              0.1508
+            ],
+            "p_value_raw": 0.007,
+            "p_value_adjusted": 0.035
+          },
+          "balanced_accuracy": {
+            "mean_diff": 0.077,
+            "std_diff": 0.0394,
+            "ci95": [
+              -0.0017,
+              0.1521
+            ],
+            "p_value_raw": 0.027
+          }
+        },
+        "verdict": "TERBUKTI"
+      },
+      {
+        "id": "H6",
+        "a": "structural_mlp",
+        "b": "ps_attention_bilstm",
+        "question": "Model sekuens murni menyamai/melampaui MLP?",
+        "bootstrap": {
+          "block_size": 125,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": 0.059,
+            "std_diff": 0.0405,
+            "ci95": [
+              -0.023,
+              0.1371
+            ],
+            "p_value_raw": 0.072,
+            "p_value_adjusted": 0.216
+          },
+          "balanced_accuracy": {
+            "mean_diff": 0.0535,
+            "std_diff": 0.046,
+            "ci95": [
+              -0.0396,
+              0.1374
+            ],
+            "p_value_raw": 0.117
+          }
+        },
+        "verdict": "TIDAK TERBUKTI (setara)"
+      }
+    ],
+    "250": [
+      {
+        "id": "H1",
+        "a": "swt_attention_bilstm",
+        "b": "ps_attention_bilstm",
+        "question": "Input PS lebih informatif dari SWT?",
+        "bootstrap": {
+          "block_size": 250,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": 0.3016,
+            "std_diff": 0.0556,
+            "ci95": [
+              0.1797,
+              0.3959
+            ],
+            "p_value_raw": 0.0,
+            "p_value_adjusted": 0.0
+          },
+          "balanced_accuracy": {
+            "mean_diff": 0.2911,
+            "std_diff": 0.0537,
+            "ci95": [
+              0.171,
+              0.3838
+            ],
+            "p_value_raw": 0.0
+          }
+        },
+        "verdict": "TERBUKTI"
+      },
+      {
+        "id": "H2",
+        "a": "ps_attention_bilstm_shuffled",
+        "b": "ps_attention_bilstm",
+        "question": "Urutan waktu persistensi membawa informasi?",
+        "bootstrap": {
+          "block_size": 250,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": 0.0188,
+            "std_diff": 0.0171,
+            "ci95": [
+              -0.0141,
+              0.0531
+            ],
+            "p_value_raw": 0.132,
+            "p_value_adjusted": 0.264
+          },
+          "balanced_accuracy": {
+            "mean_diff": 0.0239,
+            "std_diff": 0.0176,
+            "ci95": [
+              -0.0096,
+              0.0569
+            ],
+            "p_value_raw": 0.081
+          }
+        },
+        "verdict": "TIDAK TERBUKTI (setara)"
+      },
+      {
+        "id": "H3",
+        "a": "ps_bilstm",
+        "b": "ps_attention_bilstm",
+        "question": "Attention menambah nilai?",
+        "bootstrap": {
+          "block_size": 250,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": 0.0025,
+            "std_diff": 0.0237,
+            "ci95": [
+              -0.0442,
+              0.0477
+            ],
+            "p_value_raw": 0.452,
+            "p_value_adjusted": 0.452
+          },
+          "balanced_accuracy": {
+            "mean_diff": 0.006,
+            "std_diff": 0.0231,
+            "ci95": [
+              -0.0365,
+              0.0551
+            ],
+            "p_value_raw": 0.413
+          }
+        },
+        "verdict": "TIDAK TERBUKTI (setara)"
+      },
+      {
+        "id": "H4",
+        "a": "hybrid_swt",
+        "b": "hybrid_ps",
+        "question": "PS memperbaiki model hybrid?",
+        "bootstrap": {
+          "block_size": 250,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": 0.0522,
+            "std_diff": 0.0308,
+            "ci95": [
+              -0.0108,
+              0.1121
+            ],
+            "p_value_raw": 0.0455,
+            "p_value_adjusted": 0.182
+          },
+          "balanced_accuracy": {
+            "mean_diff": 0.0488,
+            "std_diff": 0.0334,
+            "ci95": [
+              -0.0256,
+              0.1057
+            ],
+            "p_value_raw": 0.076
+          }
+        },
+        "verdict": "TIDAK TERBUKTI (setara)"
+      },
+      {
+        "id": "H5",
+        "a": "structural_mlp",
+        "b": "hybrid_ps",
+        "question": "Hybrid PS melampaui MLP?",
+        "bootstrap": {
+          "block_size": 250,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": 0.0839,
+            "std_diff": 0.0356,
+            "ci95": [
+              0.016,
+              0.1595
+            ],
+            "p_value_raw": 0.0115,
+            "p_value_adjusted": 0.0575
+          },
+          "balanced_accuracy": {
+            "mean_diff": 0.0751,
+            "std_diff": 0.0409,
+            "ci95": [
+              -0.0097,
+              0.1545
+            ],
+            "p_value_raw": 0.036
+          }
+        },
+        "verdict": "TIDAK TERBUKTI (setara)"
+      },
+      {
+        "id": "H6",
+        "a": "structural_mlp",
+        "b": "ps_attention_bilstm",
+        "question": "Model sekuens murni menyamai/melampaui MLP?",
+        "bootstrap": {
+          "block_size": 250,
+          "n_resamples": 2000,
+          "f1": {
+            "mean_diff": 0.0673,
+            "std_diff": 0.0442,
+            "ci95": [
+              -0.0208,
+              0.1511
+            ],
+            "p_value_raw": 0.0605,
+            "p_value_adjusted": 0.182
+          },
+          "balanced_accuracy": {
+            "mean_diff": 0.0617,
+            "std_diff": 0.0491,
+            "ci95": [
+              -0.0401,
+              0.1495
+            ],
+            "p_value_raw": 0.1055
+          }
+        },
+        "verdict": "TIDAK TERBUKTI (setara)"
+      }
+    ]
+  }
+}

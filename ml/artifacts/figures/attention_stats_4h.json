@@ -1,0 +1,14 @@
+{
+  "timeframe": "4h",
+  "seed": 42,
+  "epochs_ran": 17,
+  "best_epoch": 5,
+  "test_accuracy": 0.6265,
+  "attention_normalized_entropy": 0.9397,
+  "attention_last8_share": 0.2816,
+  "attention_peak_step_by_class": {
+    "persistent": 0,
+    "random_like": -4,
+    "anti_persistent": 0
+  }
+}

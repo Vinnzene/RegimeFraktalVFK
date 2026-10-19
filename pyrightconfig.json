@@ -1,0 +1,5 @@
+{
+  "include": ["backend", "ml"],
+  "extraPaths": ["backend", "ml/src"],
+  "pythonVersion": "3.12"
+}

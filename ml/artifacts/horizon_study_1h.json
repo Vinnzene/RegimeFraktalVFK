@@ -1,0 +1,89 @@
+{
+  "timeframe": "1h",
+  "model": "swt_attention_bilstm",
+  "config_hash": "7a3bddc67d72b2a08c5bf5d4fb94fbbd9dbc7cb2d829125d5ed1d0b0890bb7c8",
+  "seq_len": 32,
+  "bars_per_day": 24,
+  "results": [
+    {
+      "h_bars": 125,
+      "h_days": 5.21,
+      "h_windows": 31,
+      "n_train": 5791,
+      "n_test": 1565,
+      "test": {
+        "n": 1565,
+        "balanced_accuracy": 0.3925,
+        "mcc": 0.1351,
+        "mean_max_prob": 0.4099999964237213
+      },
+      "baseline": {
+        "n": 5168,
+        "balanced_accuracy": 0.638,
+        "mcc": 0.5081
+      },
+      "lift_over_baseline": -0.2455,
+      "seconds": 51.9
+    },
+    {
+      "h_bars": 250,
+      "h_days": 10.42,
+      "h_windows": 62,
+      "n_train": 5786,
+      "n_test": 1537,
+      "test": {
+        "n": 1537,
+        "balanced_accuracy": 0.3698,
+        "mcc": 0.0928,
+        "mean_max_prob": 0.3874000012874603
+      },
+      "baseline": {
+        "n": 4857,
+        "balanced_accuracy": 0.4925,
+        "mcc": 0.2693
+      },
+      "lift_over_baseline": -0.1227,
+      "seconds": 47.2
+    },
+    {
+      "h_bars": 500,
+      "h_days": 20.83,
+      "h_windows": 125,
+      "n_train": 5763,
+      "n_test": 1480,
+      "test": {
+        "n": 1480,
+        "balanced_accuracy": 0.3463,
+        "mcc": 0.0119,
+        "mean_max_prob": 0.3643999993801117
+      },
+      "baseline": {
+        "n": 4662,
+        "balanced_accuracy": 0.2709,
+        "mcc": -0.1075
+      },
+      "lift_over_baseline": 0.0754,
+      "seconds": 43.4
+    },
+    {
+      "h_bars": 1000,
+      "h_days": 41.67,
+      "h_windows": 250,
+      "n_train": 5805,
+      "n_test": 1398,
+      "test": {
+        "n": 1398,
+        "balanced_accuracy": 0.3229,
+        "mcc": -0.0089,
+        "mean_max_prob": 0.3490000069141388
+      },
+      "baseline": {
+        "n": 4503,
+        "balanced_accuracy": 0.3482,
+        "mcc": 0.019
+      },
+      "lift_over_baseline": -0.0253,
+      "seconds": 41.7
+    }
+  ]
+}

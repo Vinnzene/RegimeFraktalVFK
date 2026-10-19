@@ -1,0 +1,13 @@
+{
+  "python.defaultInterpreterPath": "C:\\Users\\62812\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+  "python.analysis.extraPaths": ["./backend", "./ml/src"],
+  "python.autoComplete.extraPaths": ["./backend", "./ml/src"],
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": ["tests"],
+  "python.testing.cwd": "${workspaceFolder}/backend",
+  "pyrefly.pythonInterpreter": "C:\\Users\\62812\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+  "pyrefly.pythonPath": "C:\\Users\\62812\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+  "python.analysis.autoSearchPaths": true,
+  "css.lint.unknownAtRules": "ignore",
+  "typescript.tsdk": "frontend/node_modules/typescript/lib"
+}

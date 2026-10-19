@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+pydantic>=2
+pyyaml
+pandas
+numpy
+pyarrow
+PyWavelets
+requests
+python-dotenv
+httpx
+pytest
+tensorflow-cpu

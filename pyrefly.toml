@@ -1,0 +1,22 @@
+# Konfigurasi type checker untuk editor.
+#
+# `backend` didaftarkan sebagai search path karena kode mengimpor dengan prefix
+# `app.` (mis. `from app.core.config import get_config`), sedangkan folder `app`
+# berada di dalam `backend/`. Tanpa ini editor menandai seluruh impor internal
+# sebagai unresolved meski runtime dan pytest berjalan normal.
+project-includes = ["backend", "ml"]
+project-excludes = [
+    "**/node_modules/**",
+    "**/.next/**",
+    "**/__pycache__/**",
+    "**/.venv/**",
+]
+search-path = ["backend", "ml/src"]
+python-interpreter = "C:/Users/62812/AppData/Local/Programs/Python/Python312/python.exe"
+
+[errors]
+# Banyak int()/str() membungkus skalar numpy atau input mentah; menghapusnya
+# mengubah perilaku (mis. serialisasi JSON), jadi peringatan ini dimatikan.
+unnecessary-type-conversion = false
+# tensorflow tidak menyediakan stub tipe.
+untyped-import = false

@@ -1,0 +1,35 @@
+node_modules/
+.next/
+out/
+build.log
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Model (.keras) dan prediksi (.parquet) dibangkitkan ulang; laporan hasil
+# (.md/.json) dan gambar di-commit sebagai bukti angka Bab 4.
+ml/artifacts/*
+!ml/artifacts/.gitkeep
+!ml/artifacts/*.md
+!ml/artifacts/*.json
+!ml/artifacts/figures/
+
+data/export/
+**/reports/**/*.html
+
+.ruff_cache/
+.kilo/
+*.tsbuildinfo
+*.log
+
+.env
+.env.local
+.DS_Store

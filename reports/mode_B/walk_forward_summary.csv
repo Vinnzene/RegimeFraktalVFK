@@ -1,0 +1,5 @@
+n,n_small_sample,total_setup,total_long,total_short,tp,sl,timeout,ambiguous,win_rate,total_r,average_r,median_r,profit_factor,max_drawdown,losing_streak,average_holding_time,setup_frequency_per_month,window_id
+2,True,2,1,1,1,0,1,0,0.5,1.6471413345945658,0.8235706672972829,0.8235706672972829,5.667991737434028,0.3528586654054342,1,0 days 04:00:00,0.17828401634270147,67
+1,True,1,0,1,1,0,0,0,1.0,2.0,2.0,2.0,inf,0.0,0,0 days 04:00:00,0.08914200817135073,69
+0,True,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0,0 days,0.0,78
+0,True,0,0,0,0,0,0,0,0.0,0.0,0.0,0.0,0.0,0.0,0,0 days,0.0,79

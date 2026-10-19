@@ -1,0 +1,209 @@
+{
+  "config_hash": "7a3bddc67d72b2a08c5bf5d4fb94fbbd9dbc7cb2d829125d5ed1d0b0890bb7c8",
+  "results": [
+    {
+      "timeframe": "1h",
+      "n_windows": 16857,
+      "window_bars": 500,
+      "stride_bars": 4,
+      "threshold_mode": "quantile",
+      "thresholds": {
+        "hurst": [
+          0.5719,
+          0.5995
+        ],
+        "dfa": [
+          0.4727,
+          0.5181
+        ]
+      },
+      "hurst": {
+        "mean": 0.5854,
+        "std": 0.0324
+      },
+      "dfa": {
+        "mean": 0.4945,
+        "std": 0.0554
+      },
+      "corr_pearson": 0.5726,
+      "corr_spearman": 0.5614,
+      "agreement_share": 0.5263,
+      "disagreement_share": 0.4737,
+      "opposite_share": 0.0733,
+      "cross_table": {
+        "persistent": {
+          "persistent": 3204,
+          "random_like": 1801,
+          "anti_persistent": 623
+        },
+        "random_like": {
+          "persistent": 1805,
+          "random_like": 2234,
+          "anti_persistent": 1565
+        },
+        "anti_persistent": {
+          "persistent": 613,
+          "random_like": 1579,
+          "anti_persistent": 3433
+        }
+      },
+      "label_distribution": {
+        "persistent": 3204,
+        "random_like": 2234,
+        "anti_persistent": 3433,
+        "uncertain_rule": 7986
+      },
+      "label_share": {
+        "persistent": 0.1901,
+        "random_like": 0.1325,
+        "anti_persistent": 0.2037,
+        "uncertain_rule": 0.4737
+      },
+      "mean_run_length_windows": 3.319,
+      "per_year": [
+        {
+          "year": 2019,
+          "n": 2058,
+          "uncertain_share": 0.5005
+        },
+        {
+          "year": 2020,
+          "n": 2192,
+          "uncertain_share": 0.4941
+        },
+        {
+          "year": 2021,
+          "n": 2187,
+          "uncertain_share": 0.5249
+        },
+        {
+          "year": 2022,
+          "n": 2190,
+          "uncertain_share": 0.442
+        },
+        {
+          "year": 2023,
+          "n": 2189,
+          "uncertain_share": 0.5153
+        },
+        {
+          "year": 2024,
+          "n": 2196,
+          "uncertain_share": 0.4791
+        },
+        {
+          "year": 2025,
+          "n": 2190,
+          "uncertain_share": 0.4753
+        },
+        {
+          "year": 2026,
+          "n": 1655,
+          "uncertain_share": 0.3239
+        }
+      ]
+    },
+    {
+      "timeframe": "4h",
+      "n_windows": 4123,
+      "window_bars": 500,
+      "stride_bars": 4,
+      "threshold_mode": "quantile",
+      "thresholds": {
+        "hurst": [
+          0.5877,
+          0.6124
+        ],
+        "dfa": [
+          0.4741,
+          0.5225
+        ]
+      },
+      "hurst": {
+        "mean": 0.5998,
+        "std": 0.0295
+      },
+      "dfa": {
+        "mean": 0.4998,
+        "std": 0.0551
+      },
+      "corr_pearson": 0.5496,
+      "corr_spearman": 0.5515,
+      "agreement_share": 0.5268,
+      "disagreement_share": 0.4732,
+      "opposite_share": 0.0711,
+      "cross_table": {
+        "persistent": {
+          "persistent": 768,
+          "random_like": 447,
+          "anti_persistent": 159
+        },
+        "random_like": {
+          "persistent": 472,
+          "random_like": 548,
+          "anti_persistent": 358
+        },
+        "anti_persistent": {
+          "persistent": 134,
+          "random_like": 381,
+          "anti_persistent": 856
+        }
+      },
+      "label_distribution": {
+        "persistent": 768,
+        "random_like": 548,
+        "anti_persistent": 856,
+        "uncertain_rule": 1951
+      },
+      "label_share": {
+        "persistent": 0.1863,
+        "random_like": 0.1329,
+        "anti_persistent": 0.2076,
+        "uncertain_rule": 0.4732
+      },
+      "mean_run_length_windows": 3.169,
+      "per_year": [
+        {
+          "year": 2019,
+          "n": 422,
+          "uncertain_share": 0.6896
+        },
+        {
+          "year": 2020,
+          "n": 549,
+          "uncertain_share": 0.4845
+        },
+        {
+          "year": 2021,
+          "n": 547,
+          "uncertain_share": 0.3437
+        },
+        {
+          "year": 2022,
+          "n": 548,
+          "uncertain_share": 0.3595
+        },
+        {
+          "year": 2023,
+          "n": 547,
+          "uncertain_share": 0.4406
+        },
+        {
+          "year": 2024,
+          "n": 549,
+          "uncertain_share": 0.5046
+        },
+        {
+          "year": 2025,
+          "n": 548,
+          "uncertain_share": 0.427
+        },
+        {
+          "year": 2026,
+          "n": 413,
+          "uncertain_share": 0.6223
+        }
+      ]
+    }
+  ]
+}

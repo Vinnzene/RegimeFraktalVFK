@@ -1,0 +1,184 @@
+{
+  "timeframe": "1h",
+  "mode": "multiclass",
+  "labeling": "threshold",
+  "jump_penalty": null,
+  "classes": [
+    "anti_persistent",
+    "random_like",
+    "persistent"
+  ],
+  "config_hash": "7a3bddc67d72b2a08c5bf5d4fb94fbbd9dbc7cb2d829125d5ed1d0b0890bb7c8",
+  "purge_rows": 125,
+  "n_windows": 16831,
+  "schemes": {
+    "expanding": {
+      "available": true,
+      "scheme": "expanding",
+      "n_splits": 5,
+      "purge": 125,
+      "folds": [
+        {
+          "fold": 1,
+          "train": [
+            0,
+            2806
+          ],
+          "purge": [
+            2806,
+            2931
+          ],
+          "test": [
+            2931,
+            5736
+          ],
+          "n_train": 1330,
+          "n_test": 1437,
+          "accuracy": 0.4516,
+          "balanced_accuracy": 0.4155,
+          "macro_f1": 0.3853
+        },
+        {
+          "fold": 2,
+          "train": [
+            0,
+            5611
+          ],
+          "purge": [
+            5611,
+            5736
+          ],
+          "test": [
+            5736,
+            8541
+          ],
+          "n_train": 2754,
+          "n_test": 1505,
+          "accuracy": 0.6179,
+          "balanced_accuracy": 0.5924,
+          "macro_f1": 0.5724
+        },
+        {
+          "fold": 3,
+          "train": [
+            0,
+            8416
+          ],
+          "purge": [
+            8416,
+            8541
+          ],
+          "test": [
+            8541,
+            11346
+          ],
+          "n_train": 4272,
+          "n_test": 1399,
+          "accuracy": 0.6305,
+          "balanced_accuracy": 0.5787,
+          "macro_f1": 0.5667
+        },
+        {
+          "fold": 4,
+          "train": [
+            0,
+            11221
+          ],
+          "purge": [
+            11221,
+            11346
+          ],
+          "test": [
+            11346,
+            14151
+          ],
+          "n_train": 5687,
+          "n_test": 1383,
+          "accuracy": 0.6045,
+          "balanced_accuracy": 0.5681,
+          "macro_f1": 0.5349
+        },
+        {
+          "fold": 5,
+          "train": [
+            0,
+            14026
+          ],
+          "purge": [
+            14026,
+            14151
+          ],
+          "test": [
+            14151,
+            16831
+          ],
+          "n_train": 7073,
+          "n_test": 1744,
+          "accuracy": 0.7013,
+          "balanced_accuracy": 0.6211,
+          "macro_f1": 0.6191
+        }
+      ],
+      "aggregate": {
+        "classes": [
+          "anti_persistent",
+          "random_like",
+          "persistent"
+        ],
+        "matrix": [
+          [
+            2462,
+            235,
+            253
+          ],
+          [
+            942,
+            398,
+            553
+          ],
+          [
+            487,
+            478,
+            1660
+          ]
+        ],
+        "per_class": [
+          {
+            "regime": "anti_persistent",
+            "support": 2950,
+            "precision": 0.6327,
+            "recall": 0.8346,
+            "f1": 0.7198
+          },
+          {
+            "regime": "random_like",
+            "support": 1893,
+            "precision": 0.3582,
+            "recall": 0.2102,
+            "f1": 0.265
+          },
+          {
+            "regime": "persistent",
+            "support": 2625,
+            "precision": 0.6732,
+            "recall": 0.6324,
+            "f1": 0.6521
+          }
+        ],
+        "accuracy": 0.6052,
+        "balanced_accuracy": 0.5591,
+        "macro_f1": 0.5456,
+        "n": 7468
+      },
+      "stability": {
+        "accuracy_mean": 0.6012,
+        "accuracy_std": 0.0819,
+        "accuracy_min": 0.4516,
+        "accuracy_max": 0.7013,
+        "macro_f1_mean": 0.5357,
+        "macro_f1_std": 0.0799,
+        "catatan": "Simpangan baku antar-fold menunjukkan kestabilan model. Nilai besar berarti performa sangat bergantung periode, sehingga angka rata-rata saja tidak cukup untuk menyimpulkan."
+      }
+    }
+  }
+}

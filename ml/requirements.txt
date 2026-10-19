@@ -1,0 +1,7 @@
+# Dependensi training (terpisah dari backend serving).
+# Backend TIDAK pernah mengimpor tensorflow — hanya memuat artefak hasil training.
+-r ../backend/requirements.txt
+tensorflow
+scikit-learn
+matplotlib
+jupyter

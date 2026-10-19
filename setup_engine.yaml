@@ -1,0 +1,90 @@
+# Walk-Forward Setup Engine — parameter simulasi setup entry historis.
+#
+# File ini TERPISAH dari config.yaml dengan sengaja: config.yaml menentukan
+# config_hash model regime existing. Menaruh parameter setup di sana akan
+# mengubah hash itu dan membuat artefak model terlihat "tidak cocok" padahal
+# modelnya tidak berubah. Engine ini memiliki hash sendiri (setup_hash).
+#
+# ATURAN: nilai di bawah ditetapkan SEBELUM melihat hasil test. Jangan
+# menyetelnya ulang berdasarkan hasil simulasi (rule 8).
+
+timeframes:
+  regime: 4h        # konteks regime (model existing)
+  bias: 1h          # directional bias (model existing + struktur + order flow)
+  setup: 30m        # deteksi setup & entry trigger
+  resolution: 5m    # penentu TP/SL mana yang tersentuh lebih dulu
+
+risk:
+  rr: 2.0                     # reward:risk tetap; TP = entry ± rr × risk
+  sl_buffer: 0.0              # jarak tambahan di luar swing (unit harga, USDT)
+  min_risk_distance_pct: 0.001   # risk < 0.1% harga entry -> INVALID_STOP
+  max_risk_distance_pct: 0.05    # risk > 5% harga entry  -> INVALID_STOP
+
+execution:
+  max_open_positions: 1
+  max_setup_wait_bars: 6      # bar 30M menunggu trigger sebelum SETUP_EXPIRED
+  max_holding_bars: 8         # bar 30M maksimum posisi terbuka sebelum TIMEOUT
+  taker_fee_pct: 0.00075      # 0.075% per sisi (total round-trip 0.15%)
+  slippage_ticks: 1           # 1 tick slippage per eksekusi
+  tick_size: 0.01             # tick size BTCUSDT (USDT)
+
+structure:
+  swing_lookback: 3           # pivot: k bar kiri & k bar kanan (konfirmasi telat k bar)
+
+confirmation:
+  use_ofi: false              # Mode A standar: OFI dinonaktifkan (arsip spot 404)
+  use_cvd: false              # Mode A standar: CVD dinonaktifkan
+  required: false             # false = Mode A standar; Mode B ditolak jika data tidak valid
+  ofi_threshold: 0.0          # LONG: OFI >= +thr ; SHORT: OFI <= -thr
+  ofi_lookback: 3             # rata-rata OFI atas N bar terakhir yang sudah close
+  cvd_lookback: 6             # bar untuk menghitung kemiringan CVD
+  cvd_slope_threshold: 0.0    # LONG: slope >= +thr ; SHORT: slope <= -thr (unit: porsi volume)
+
+regime:
+  source: model_A             # kolom prediksi: model_A..D atau hurst_dfa
+  min_confidence: 0.0         # prediksi dengan max(P) < nilai ini dianggap tidak pasti
+  allow_entry_during_transition: false
+
+# Regime context: baris = regime 4H, kolom = regime 1H.
+# Disetujui 2026-10-03 (tahap 3), sebelum simulasi trade dijalankan.
+context:
+  table:
+    PERSISTENT:      {PERSISTENT: SUPPORTIVE, RANDOM_LIKE: NEUTRAL, ANTI_PERSISTENT: CONFLICT, UNCERTAIN: NEUTRAL}
+    RANDOM_LIKE:     {PERSISTENT: NEUTRAL,    RANDOM_LIKE: NEUTRAL, ANTI_PERSISTENT: NEUTRAL,  UNCERTAIN: NEUTRAL}
+    ANTI_PERSISTENT: {PERSISTENT: CONFLICT,   RANDOM_LIKE: NEUTRAL, ANTI_PERSISTENT: NEUTRAL,  UNCERTAIN: NEUTRAL}
+    UNCERTAIN:       {PERSISTENT: NEUTRAL,    RANDOM_LIKE: NEUTRAL, ANTI_PERSISTENT: NEUTRAL,  UNCERTAIN: NEUTRAL}
+  bias_allowed_contexts: [SUPPORTIVE]   # context yang boleh menghasilkan bias arah
+
+# Status selama transisi FROM->TO belum terkonfirmasi.
+# NORMAL | BLOCK_LONG | BLOCK_SHORT | BLOCK_ALL | WAIT_NEW_BIAS
+transition:
+  confirm_predictions: 2      # regime baru sah setelah 2 prediksi berturut-turut
+  timeframes: [regime, bias]  # pantau transisi 4H dan 1H
+  rules:
+    PERSISTENT->RANDOM_LIKE: BLOCK_ALL
+    PERSISTENT->ANTI_PERSISTENT: BLOCK_LONG
+    ANTI_PERSISTENT->PERSISTENT: WAIT_NEW_BIAS
+    RANDOM_LIKE->PERSISTENT: WAIT_NEW_BIAS
+    RANDOM_LIKE->ANTI_PERSISTENT: BLOCK_ALL
+    ANTI_PERSISTENT->RANDOM_LIKE: BLOCK_ALL
+    PERSISTENT->UNCERTAIN: BLOCK_ALL
+    RANDOM_LIKE->UNCERTAIN: BLOCK_ALL
+    ANTI_PERSISTENT->UNCERTAIN: BLOCK_ALL
+    UNCERTAIN->PERSISTENT: WAIT_NEW_BIAS
+    UNCERTAIN->RANDOM_LIKE: BLOCK_ALL
+    UNCERTAIN->ANTI_PERSISTENT: BLOCK_ALL
+    NONE->PERSISTENT: WAIT_NEW_BIAS
+    NONE->RANDOM_LIKE: WAIT_NEW_BIAS
+    NONE->ANTI_PERSISTENT: WAIT_NEW_BIAS
+    NONE->UNCERTAIN: WAIT_NEW_BIAS
+
+bias:
+  use_ofi: false    # OFI dinonaktifkan untuk Mode A
+  use_cvd: false    # CVD dinonaktifkan untuk Mode A
+
+walk_forward:
+  train_period: 12M           # informasi; model TIDAK dilatih ulang
+  validation_period: 3M
+  test_period: 1M
+  step_period: 1M
+  anchor: oos                 # oos = jendela test hanya di rentang out-of-sample model

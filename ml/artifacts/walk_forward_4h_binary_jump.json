@@ -1,0 +1,128 @@
+{
+  "timeframe": "4h",
+  "mode": "binary",
+  "labeling": "jump",
+  "jump_penalty": 0.5,
+  "classes": [
+    "anti_persistent",
+    "persistent"
+  ],
+  "config_hash": "7a3bddc67d72b2a08c5bf5d4fb94fbbd9dbc7cb2d829125d5ed1d0b0890bb7c8",
+  "purge_rows": 125,
+  "n_windows": 4120,
+  "schemes": {
+    "rolling": {
+      "available": true,
+      "scheme": "rolling",
+      "n_splits": 3,
+      "purge": 125,
+      "folds": [
+        {
+          "fold": 1,
+          "train": [
+            0,
+            1030
+          ],
+          "purge": [
+            1030,
+            1155
+          ],
+          "test": [
+            1155,
+            2185
+          ],
+          "n_train": 535,
+          "n_test": 655,
+          "accuracy": 0.6702,
+          "balanced_accuracy": 0.6234,
+          "macro_f1": 0.5932
+        },
+        {
+          "fold": 2,
+          "train": [
+            1030,
+            2060
+          ],
+          "purge": [
+            2060,
+            2185
+          ],
+          "test": [
+            2185,
+            3215
+          ],
+          "n_train": 637,
+          "n_test": 573,
+          "accuracy": 0.644,
+          "balanced_accuracy": 0.6817,
+          "macro_f1": 0.6404
+        },
+        {
+          "fold": 3,
+          "train": [
+            2060,
+            3090
+          ],
+          "purge": [
+            3090,
+            3215
+          ],
+          "test": [
+            3215,
+            4120
+          ],
+          "n_train": 617,
+          "n_test": 559,
+          "accuracy": 0.7245,
+          "balanced_accuracy": 0.6957,
+          "macro_f1": 0.6989
+        }
+      ],
+      "aggregate": {
+        "classes": [
+          "anti_persistent",
+          "persistent"
+        ],
+        "matrix": [
+          [
+            517,
+            286
+          ],
+          [
+            288,
+            696
+          ]
+        ],
+        "per_class": [
+          {
+            "regime": "anti_persistent",
+            "support": 803,
+            "precision": 0.6422,
+            "recall": 0.6438,
+            "f1": 0.643
+          },
+          {
+            "regime": "persistent",
+            "support": 984,
+            "precision": 0.7088,
+            "recall": 0.7073,
+            "f1": 0.708
+          }
+        ],
+        "accuracy": 0.6788,
+        "balanced_accuracy": 0.6756,
+        "macro_f1": 0.6755,
+        "n": 1787
+      },
+      "stability": {
+        "accuracy_mean": 0.6796,
+        "accuracy_std": 0.0335,
+        "accuracy_min": 0.644,
+        "accuracy_max": 0.7245,
+        "macro_f1_mean": 0.6442,
+        "macro_f1_std": 0.0432,
+        "catatan": "Simpangan baku antar-fold menunjukkan kestabilan model. Nilai besar berarti performa sangat bergantung periode, sehingga angka rata-rata saja tidak cukup untuk menyimpulkan."
+      }
+    }
+  }
+}

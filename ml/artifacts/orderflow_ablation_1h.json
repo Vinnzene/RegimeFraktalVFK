@@ -1,0 +1,3079 @@
+{
+  "timeframe": "1h",
+  "task": "identification",
+  "classes": [
+    "persistent",
+    "random_like",
+    "anti_persistent"
+  ],
+  "config_hash": "7a3bddc67d72b2a08c5bf5d4fb94fbbd9dbc7cb2d829125d5ed1d0b0890bb7c8",
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "seq_len": 32,
+  "epochs_max": 60,
+  "batch_size": 64,
+  "effective_window": 500,
+  "stride_bars": 4,
+  "purge_bars": 536,
+  "cvd_window": 500,
+  "cvd_method": "zscore",
+  "orderflow_scaler": {
+    "mean": [
+      -0.010152985551108783,
+      -0.6834668331252972
+    ],
+    "std": [
+      0.0974332021978051,
+      1.4897308645262615
+    ]
+  },
+  "n": {
+    "train": 5840,
+    "validation": 1219,
+    "test": 1616
+  },
+  "split_time": {
+    "train": [
+      1548691200,
+      1715356800
+    ],
+    "validation": [
+      1717329600,
+      1753113600
+    ],
+    "test": [
+      1755057600,
+      1790870400
+    ]
+  },
+  "hurst_dfa_test_range_sequence": {
+    "n": 2488,
+    "distribution": {
+      "persistent": {
+        "count": 632,
+        "share": 0.254
+      },
+      "random_like": {
+        "count": 259,
+        "share": 0.1041
+      },
+      "anti_persistent": {
+        "count": 725,
+        "share": 0.2914
+      },
+      "uncertain_rule": {
+        "count": 872,
+        "share": 0.3505
+      },
+      "uncertain_lowconf": {
+        "count": 0,
+        "share": 0.0
+      }
+    },
+    "n_transitions": 655,
+    "transitions_per_100": 26.337,
+    "mean_duration": 3.793,
+    "median_duration": 2.0,
+    "duration_by_regime": {
+      "persistent": {
+        "mean": 5.402,
+        "n_runs": 117
+      },
+      "random_like": {
+        "mean": 1.727,
+        "n_runs": 150
+      },
+      "anti_persistent": {
+        "mean": 8.056,
+        "n_runs": 90
+      },
+      "uncertain_rule": {
+        "mean": 2.916,
+        "n_runs": 299
+      }
+    },
+    "stay_probability": 0.7366
+  },
+  "hurst_dfa_test_evaluated_sequence": {
+    "n": 1616,
+    "distribution": {
+      "persistent": {
+        "count": 632,
+        "share": 0.3911
+      },
+      "random_like": {
+        "count": 259,
+        "share": 0.1603
+      },
+      "anti_persistent": {
+        "count": 725,
+        "share": 0.4486
+      },
+      "uncertain_rule": {
+        "count": 0,
+        "share": 0.0
+      },
+      "uncertain_lowconf": {
+        "count": 0,
+        "share": 0.0
+      }
+    },
+    "n_transitions": 157,
+    "transitions_per_100": 9.721,
+    "mean_duration": 10.228,
+    "median_duration": 3.0,
+    "duration_by_regime": {
+      "persistent": {
+        "mean": 12.392,
+        "n_runs": 51
+      },
+      "random_like": {
+        "mean": 3.321,
+        "n_runs": 78
+      },
+      "anti_persistent": {
+        "mean": 25.0,
+        "n_runs": 29
+      }
+    },
+    "stay_probability": 0.9028
+  },
+  "models": {
+    "A": {
+      "name": "SWT + Attention-BiLSTM",
+      "ofi": false,
+      "cvd": false,
+      "channels": [],
+      "summary": {
+        "accuracy": {
+          "mean": 0.4542,
+          "std": 0.0179
+        },
+        "balanced_accuracy": {
+          "mean": 0.3926,
+          "std": 0.0146
+        },
+        "precision_macro": {
+          "mean": 0.3992,
+          "std": 0.013
+        },
+        "recall_macro": {
+          "mean": 0.3926,
+          "std": 0.0146
+        },
+        "macro_f1": {
+          "mean": 0.3648,
+          "std": 0.0094
+        },
+        "kappa": {
+          "mean": 0.1019,
+          "std": 0.0089
+        },
+        "mcc": {
+          "mean": 0.1104,
+          "std": 0.0109
+        },
+        "val_macro_f1": {
+          "mean": 0.3726,
+          "std": 0.0185
+        },
+        "transitions_per_100": {
+          "mean": 12.6257,
+          "std": 1.7473
+        },
+        "mean_duration": {
+          "mean": 8.0673,
+          "std": 1.2266
+        },
+        "uncertain_lowconf_share": {
+          "mean": 0.6892,
+          "std": 0.1443
+        },
+        "per_class_f1": {
+          "persistent": {
+            "mean": 0.3103,
+            "std": 0.0736
+          },
+          "random_like": {
+            "mean": 0.1853,
+            "std": 0.0818
+          },
+          "anti_persistent": {
+            "mean": 0.5988,
+            "std": 0.0025
+          }
+        }
+      },
+      "confusion_matrix_sum_seeds": [
+        [
+          466,
+          314,
+          1116
+        ],
+        [
+          223,
+          162,
+          392
+        ],
+        [
+          328,
+          273,
+          1574
+        ]
+      ],
+      "per_seed": [
+        {
+          "seed": 42,
+          "epochs_ran": 13,
+          "best_val_loss": 1.0801,
+          "validation": {
+            "n": 1219,
+            "accuracy": 0.4307,
+            "balanced_accuracy": 0.4014,
+            "precision_macro": 0.4116,
+            "recall_macro": 0.4014,
+            "macro_f1": 0.3963,
+            "kappa": 0.1054,
+            "mcc": 0.1089,
+            "confusion_matrix": [
+              [
+                118,
+                67,
+                167
+              ],
+              [
+                65,
+                83,
+                211
+              ],
+              [
+                86,
+                98,
+                324
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4387,
+                "recall": 0.3352,
+                "f1": 0.38,
+                "support": 352
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.3347,
+                "recall": 0.2312,
+                "f1": 0.2735,
+                "support": 359
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.4615,
+                "recall": 0.6378,
+                "f1": 0.5355,
+                "support": 508
+              }
+            ]
+          },
+          "test": {
+            "n": 1616,
+            "accuracy": 0.4579,
+            "balanced_accuracy": 0.3881,
+            "precision_macro": 0.3882,
+            "recall_macro": 0.3881,
+            "macro_f1": 0.377,
+            "kappa": 0.1034,
+            "mcc": 0.1078,
+            "confusion_matrix": [
+              [
+                182,
+                100,
+                350
+              ],
+              [
+                89,
+                43,
+                127
+              ],
+              [
+                136,
+                74,
+                515
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4472,
+                "recall": 0.288,
+                "f1": 0.3503,
+                "support": 632
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.1982,
+                "recall": 0.166,
+                "f1": 0.1807,
+                "support": 259
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.5192,
+                "recall": 0.7103,
+                "f1": 0.5999,
+                "support": 725
+              }
+            ]
+          },
+          "tau": 0.4,
+          "uncertain_lowconf_share": 0.7024,
+          "test_confident": {
+            "n": 481,
+            "accuracy": 0.4927,
+            "balanced_accuracy": 0.364,
+            "precision_macro": 0.3745,
+            "recall_macro": 0.364,
+            "macro_f1": 0.3296,
+            "kappa": 0.0737,
+            "mcc": 0.0848,
+            "confusion_matrix": [
+              [
+                35,
+                7,
+                117
+              ],
+              [
+                28,
+                3,
+                53
+              ],
+              [
+                36,
+                3,
+                199
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.3535,
+                "recall": 0.2201,
+                "f1": 0.2713,
+                "support": 159
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.2308,
+                "recall": 0.0357,
+                "f1": 0.0619,
+                "support": 84
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.5393,
+                "recall": 0.8361,
+                "f1": 0.6557,
+                "support": 238
+              }
+            ]
+          },
+          "test_range_sequence": {
+            "n": 2488,
+            "distribution": {
+              "persistent": {
+                "count": 665,
+                "share": 0.2673
+              },
+              "random_like": {
+                "count": 356,
+                "share": 0.1431
+              },
+              "anti_persistent": {
+                "count": 1467,
+                "share": 0.5896
+              },
+              "uncertain_rule": {
+                "count": 0,
+                "share": 0.0
+              },
+              "uncertain_lowconf": {
+                "count": 0,
+                "share": 0.0
+              }
+            },
+            "n_transitions": 351,
+            "transitions_per_100": 14.113,
+            "mean_duration": 7.068,
+            "median_duration": 4.0,
+            "duration_by_regime": {
+              "persistent": {
+                "mean": 5.038,
+                "n_runs": 132
+              },
+              "random_like": {
+                "mean": 3.207,
+                "n_runs": 111
+              },
+              "anti_persistent": {
+                "mean": 13.459,
+                "n_runs": 109
+              }
+            },
+            "stay_probability": 0.8589
+          },
+          "mean_max_prob": 0.388
+        },
+        {
+          "seed": 43,
+          "epochs_ran": 13,
+          "best_val_loss": 1.079,
+          "validation": {
+            "n": 1219,
+            "accuracy": 0.4061,
+            "balanced_accuracy": 0.3753,
+            "precision_macro": 0.3856,
+            "recall_macro": 0.3753,
+            "macro_f1": 0.3703,
+            "kappa": 0.0699,
+            "mcc": 0.0718,
+            "confusion_matrix": [
+              [
+                93,
+                94,
+                165
+              ],
+              [
+                76,
+                86,
+                197
+              ],
+              [
+                51,
+                141,
+                316
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4227,
+                "recall": 0.2642,
+                "f1": 0.3252,
+                "support": 352
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.2679,
+                "recall": 0.2396,
+                "f1": 0.2529,
+                "support": 359
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.4661,
+                "recall": 0.622,
+                "f1": 0.5329,
+                "support": 508
+              }
+            ]
+          },
+          "test": {
+            "n": 1616,
+            "accuracy": 0.4307,
+            "balanced_accuracy": 0.4124,
+            "precision_macro": 0.4174,
+            "recall_macro": 0.4124,
+            "macro_f1": 0.3634,
+            "kappa": 0.112,
+            "mcc": 0.1248,
+            "confusion_matrix": [
+              [
+                82,
+                189,
+                361
+              ],
+              [
+                39,
+                105,
+                115
+              ],
+              [
+                39,
+                177,
+                509
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.5125,
+                "recall": 0.1297,
+                "f1": 0.2071,
+                "support": 632
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.2229,
+                "recall": 0.4054,
+                "f1": 0.2877,
+                "support": 259
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.5168,
+                "recall": 0.7021,
+                "f1": 0.5953,
+                "support": 725
+              }
+            ]
+          },
+          "tau": 0.4,
+          "uncertain_lowconf_share": 0.5062,
+          "test_confident": {
+            "n": 798,
+            "accuracy": 0.4837,
+            "balanced_accuracy": 0.3872,
+            "precision_macro": 0.4178,
+            "recall_macro": 0.3872,
+            "macro_f1": 0.3388,
+            "kappa": 0.1007,
+            "mcc": 0.1248,
+            "confusion_matrix": [
+              [
+                30,
+                48,
+                226
+              ],
+              [
+                21,
+                21,
+                67
+              ],
+              [
+                5,
+                45,
+                335
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.5357,
+                "recall": 0.0987,
+                "f1": 0.1667,
+                "support": 304
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.1842,
+                "recall": 0.1927,
+                "f1": 0.1883,
+                "support": 109
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.5334,
+                "recall": 0.8701,
+                "f1": 0.6614,
+                "support": 385
+              }
+            ]
+          },
+          "test_range_sequence": {
+            "n": 2488,
+            "distribution": {
+              "persistent": {
+                "count": 273,
+                "share": 0.1097
+              },
+              "random_like": {
+                "count": 746,
+                "share": 0.2998
+              },
+              "anti_persistent": {
+                "count": 1469,
+                "share": 0.5904
+              },
+              "uncertain_rule": {
+                "count": 0,
+                "share": 0.0
+              },
+              "uncertain_lowconf": {
+                "count": 0,
+                "share": 0.0
+              }
+            },
+            "n_transitions": 338,
+            "transitions_per_100": 13.591,
+            "mean_duration": 7.339,
+            "median_duration": 5.0,
+            "duration_by_regime": {
+              "persistent": {
+                "mean": 4.964,
+                "n_runs": 55
+              },
+              "random_like": {
+                "mean": 4.813,
+                "n_runs": 155
+              },
+              "anti_persistent": {
+                "mean": 11.388,
+                "n_runs": 129
+              }
+            },
+            "stay_probability": 0.8641
+          },
+          "mean_max_prob": 0.4013
+        },
+        {
+          "seed": 44,
+          "epochs_ran": 12,
+          "best_val_loss": 1.076,
+          "validation": {
+            "n": 1219,
+            "accuracy": 0.4413,
+            "balanced_accuracy": 0.3999,
+            "precision_macro": 0.3898,
+            "recall_macro": 0.3999,
+            "macro_f1": 0.3512,
+            "kappa": 0.108,
+            "mcc": 0.1217,
+            "confusion_matrix": [
+              [
+                148,
+                7,
+                197
+              ],
+              [
+                111,
+                14,
+                234
+              ],
+              [
+                106,
+                26,
+                376
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4055,
+                "recall": 0.4205,
+                "f1": 0.4128,
+                "support": 352
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.2979,
+                "recall": 0.039,
+                "f1": 0.069,
+                "support": 359
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.4659,
+                "recall": 0.7402,
+                "f1": 0.5719,
+                "support": 508
+              }
+            ]
+          },
+          "test": {
+            "n": 1616,
+            "accuracy": 0.474,
+            "balanced_accuracy": 0.3774,
+            "precision_macro": 0.392,
+            "recall_macro": 0.3774,
+            "macro_f1": 0.354,
+            "kappa": 0.0904,
+            "mcc": 0.0986,
+            "confusion_matrix": [
+              [
+                202,
+                25,
+                405
+              ],
+              [
+                95,
+                14,
+                150
+              ],
+              [
+                153,
+                22,
+                550
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4489,
+                "recall": 0.3196,
+                "f1": 0.3734,
+                "support": 632
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.2295,
+                "recall": 0.0541,
+                "f1": 0.0875,
+                "support": 259
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.4977,
+                "recall": 0.7586,
+                "f1": 0.6011,
+                "support": 725
+              }
+            ]
+          },
+          "tau": 0.4,
+          "uncertain_lowconf_share": 0.8589,
+          "test_confident": {
+            "n": 228,
+            "accuracy": 0.3684,
+            "balanced_accuracy": 0.3077,
+            "precision_macro": 0.239,
+            "recall_macro": 0.3077,
+            "macro_f1": 0.2648,
+            "kappa": -0.0511,
+            "mcc": -0.0573,
+            "confusion_matrix": [
+              [
+                59,
+                0,
+                37
+              ],
+              [
+                37,
+                0,
+                14
+              ],
+              [
+                56,
+                0,
+                25
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.3882,
+                "recall": 0.6146,
+                "f1": 0.4758,
+                "support": 96
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 51
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.3289,
+                "recall": 0.3086,
+                "f1": 0.3185,
+                "support": 81
+              }
+            ]
+          },
+          "test_range_sequence": {
+            "n": 2488,
+            "distribution": {
+              "persistent": {
+                "count": 729,
+                "share": 0.293
+              },
+              "random_like": {
+                "count": 104,
+                "share": 0.0418
+              },
+              "anti_persistent": {
+                "count": 1655,
+                "share": 0.6652
+              },
+              "uncertain_rule": {
+                "count": 0,
+                "share": 0.0
+              },
+              "uncertain_lowconf": {
+                "count": 0,
+                "share": 0.0
+              }
+            },
+            "n_transitions": 253,
+            "transitions_per_100": 10.173,
+            "mean_duration": 9.795,
+            "median_duration": 7.0,
+            "duration_by_regime": {
+              "persistent": {
+                "mean": 7.515,
+                "n_runs": 97
+              },
+              "random_like": {
+                "mean": 2.08,
+                "n_runs": 50
+              },
+              "anti_persistent": {
+                "mean": 15.467,
+                "n_runs": 107
+              }
+            },
+            "stay_probability": 0.8983
+          },
+          "mean_max_prob": 0.3784
+        }
+      ]
+    },
+    "B": {
+      "name": "SWT + Attention-BiLSTM + OFI",
+      "ofi": true,
+      "cvd": false,
+      "channels": [
+        0
+      ],
+      "summary": {
+        "accuracy": {
+          "mean": 0.4408,
+          "std": 0.0197
+        },
+        "balanced_accuracy": {
+          "mean": 0.3736,
+          "std": 0.0185
+        },
+        "precision_macro": {
+          "mean": 0.3959,
+          "std": 0.0274
+        },
+        "recall_macro": {
+          "mean": 0.3736,
+          "std": 0.0185
+        },
+        "macro_f1": {
+          "mean": 0.3187,
+          "std": 0.023
+        },
+        "kappa": {
+          "mean": 0.0701,
+          "std": 0.0224
+        },
+        "mcc": {
+          "mean": 0.0863,
+          "std": 0.0209
+        },
+        "val_macro_f1": {
+          "mean": 0.354,
+          "std": 0.0171
+        },
+        "transitions_per_100": {
+          "mean": 9.7307,
+          "std": 2.8171
+        },
+        "mean_duration": {
+          "mean": 11.4307,
+          "std": 4.1355
+        },
+        "uncertain_lowconf_share": {
+          "mean": 0.4094,
+          "std": 0.1285
+        },
+        "per_class_f1": {
+          "persistent": {
+            "mean": 0.1866,
+            "std": 0.0852
+          },
+          "random_like": {
+            "mean": 0.1602,
+            "std": 0.0792
+          },
+          "anti_persistent": {
+            "mean": 0.6092,
+            "std": 0.0102
+          }
+        }
+      },
+      "confusion_matrix_sum_seeds": [
+        [
+          245,
+          341,
+          1310
+        ],
+        [
+          140,
+          147,
+          490
+        ],
+        [
+          175,
+          255,
+          1745
+        ]
+      ],
+      "per_seed": [
+        {
+          "seed": 42,
+          "epochs_ran": 12,
+          "best_val_loss": 1.0777,
+          "validation": {
+            "n": 1219,
+            "accuracy": 0.4356,
+            "balanced_accuracy": 0.3945,
+            "precision_macro": 0.3996,
+            "recall_macro": 0.3945,
+            "macro_f1": 0.3685,
+            "kappa": 0.1001,
+            "mcc": 0.1093,
+            "confusion_matrix": [
+              [
+                120,
+                36,
+                196
+              ],
+              [
+                89,
+                41,
+                229
+              ],
+              [
+                93,
+                45,
+                370
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.3974,
+                "recall": 0.3409,
+                "f1": 0.367,
+                "support": 352
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.3361,
+                "recall": 0.1142,
+                "f1": 0.1705,
+                "support": 359
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.4654,
+                "recall": 0.7283,
+                "f1": 0.5679,
+                "support": 508
+              }
+            ]
+          },
+          "test": {
+            "n": 1616,
+            "accuracy": 0.4474,
+            "balanced_accuracy": 0.3641,
+            "precision_macro": 0.3604,
+            "recall_macro": 0.3641,
+            "macro_f1": 0.3424,
+            "kappa": 0.0675,
+            "mcc": 0.0734,
+            "confusion_matrix": [
+              [
+                150,
+                81,
+                401
+              ],
+              [
+                81,
+                26,
+                152
+              ],
+              [
+                125,
+                53,
+                547
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4213,
+                "recall": 0.2373,
+                "f1": 0.3036,
+                "support": 632
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.1625,
+                "recall": 0.1004,
+                "f1": 0.1241,
+                "support": 259
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.4973,
+                "recall": 0.7545,
+                "f1": 0.5995,
+                "support": 725
+              }
+            ]
+          },
+          "tau": 0.4,
+          "uncertain_lowconf_share": 0.5377,
+          "test_confident": {
+            "n": 747,
+            "accuracy": 0.5154,
+            "balanced_accuracy": 0.3469,
+            "precision_macro": 0.3514,
+            "recall_macro": 0.3469,
+            "macro_f1": 0.3025,
+            "kappa": 0.0388,
+            "mcc": 0.0505,
+            "confusion_matrix": [
+              [
+                30,
+                7,
+                212
+              ],
+              [
+                26,
+                3,
+                74
+              ],
+              [
+                36,
+                7,
+                352
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.3261,
+                "recall": 0.1205,
+                "f1": 0.176,
+                "support": 249
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.1765,
+                "recall": 0.0291,
+                "f1": 0.05,
+                "support": 103
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.5517,
+                "recall": 0.8911,
+                "f1": 0.6815,
+                "support": 395
+              }
+            ]
+          },
+          "test_range_sequence": {
+            "n": 2488,
+            "distribution": {
+              "persistent": {
+                "count": 590,
+                "share": 0.2371
+              },
+              "random_like": {
+                "count": 272,
+                "share": 0.1093
+              },
+              "anti_persistent": {
+                "count": 1626,
+                "share": 0.6535
+              },
+              "uncertain_rule": {
+                "count": 0,
+                "share": 0.0
+              },
+              "uncertain_lowconf": {
+                "count": 0,
+                "share": 0.0
+              }
+            },
+            "n_transitions": 288,
+            "transitions_per_100": 11.58,
+            "mean_duration": 8.609,
+            "median_duration": 5.0,
+            "duration_by_regime": {
+              "persistent": {
+                "mean": 6.484,
+                "n_runs": 91
+              },
+              "random_like": {
+                "mean": 3.163,
+                "n_runs": 86
+              },
+              "anti_persistent": {
+                "mean": 14.518,
+                "n_runs": 112
+              }
+            },
+            "stay_probability": 0.8842
+          },
+          "mean_max_prob": 0.3993
+        },
+        {
+          "seed": 43,
+          "epochs_ran": 12,
+          "best_val_loss": 1.0769,
+          "validation": {
+            "n": 1219,
+            "accuracy": 0.4061,
+            "balanced_accuracy": 0.3727,
+            "precision_macro": 0.3847,
+            "recall_macro": 0.3727,
+            "macro_f1": 0.3636,
+            "kappa": 0.0686,
+            "mcc": 0.071,
+            "confusion_matrix": [
+              [
+                71,
+                112,
+                169
+              ],
+              [
+                67,
+                100,
+                192
+              ],
+              [
+                39,
+                145,
+                324
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4011,
+                "recall": 0.2017,
+                "f1": 0.2684,
+                "support": 352
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.2801,
+                "recall": 0.2786,
+                "f1": 0.2793,
+                "support": 359
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.473,
+                "recall": 0.6378,
+                "f1": 0.5432,
+                "support": 508
+              }
+            ]
+          },
+          "test": {
+            "n": 1616,
+            "accuracy": 0.414,
+            "balanced_accuracy": 0.3994,
+            "precision_macro": 0.4271,
+            "recall_macro": 0.3994,
+            "macro_f1": 0.3261,
+            "kappa": 0.0987,
+            "mcc": 0.1158,
+            "confusion_matrix": [
+              [
+                36,
+                243,
+                353
+              ],
+              [
+                18,
+                108,
+                133
+              ],
+              [
+                10,
+                190,
+                525
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.5625,
+                "recall": 0.057,
+                "f1": 0.1034,
+                "support": 632
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.1996,
+                "recall": 0.417,
+                "f1": 0.27,
+                "support": 259
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.5193,
+                "recall": 0.7241,
+                "f1": 0.6048,
+                "support": 725
+              }
+            ]
+          },
+          "tau": 0.4,
+          "uncertain_lowconf_share": 0.4567,
+          "test_confident": {
+            "n": 878,
+            "accuracy": 0.4487,
+            "balanced_accuracy": 0.3856,
+            "precision_macro": 0.3477,
+            "recall_macro": 0.3856,
+            "macro_f1": 0.3123,
+            "kappa": 0.0803,
+            "mcc": 0.0963,
+            "confusion_matrix": [
+              [
+                8,
+                93,
+                221
+              ],
+              [
+                13,
+                42,
+                73
+              ],
+              [
+                5,
+                79,
+                344
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.3077,
+                "recall": 0.0248,
+                "f1": 0.046,
+                "support": 322
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.1963,
+                "recall": 0.3281,
+                "f1": 0.2456,
+                "support": 128
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.5392,
+                "recall": 0.8037,
+                "f1": 0.6454,
+                "support": 428
+              }
+            ]
+          },
+          "test_range_sequence": {
+            "n": 2488,
+            "distribution": {
+              "persistent": {
+                "count": 115,
+                "share": 0.0462
+              },
+              "random_like": {
+                "count": 914,
+                "share": 0.3674
+              },
+              "anti_persistent": {
+                "count": 1459,
+                "share": 0.5864
+              },
+              "uncertain_rule": {
+                "count": 0,
+                "share": 0.0
+              },
+              "uncertain_lowconf": {
+                "count": 0,
+                "share": 0.0
+              }
+            },
+            "n_transitions": 295,
+            "transitions_per_100": 11.862,
+            "mean_duration": 8.405,
+            "median_duration": 6.0,
+            "duration_by_regime": {
+              "persistent": {
+                "mean": 4.792,
+                "n_runs": 24
+              },
+              "random_like": {
+                "mean": 6.303,
+                "n_runs": 145
+              },
+              "anti_persistent": {
+                "mean": 11.488,
+                "n_runs": 127
+              }
+            },
+            "stay_probability": 0.8814
+          },
+          "mean_max_prob": 0.4041
+        },
+        {
+          "seed": 44,
+          "epochs_ran": 12,
+          "best_val_loss": 1.0637,
+          "validation": {
+            "n": 1219,
+            "accuracy": 0.4495,
+            "balanced_accuracy": 0.3871,
+            "precision_macro": 0.4205,
+            "recall_macro": 0.3871,
+            "macro_f1": 0.33,
+            "kappa": 0.0926,
+            "mcc": 0.1238,
+            "confusion_matrix": [
+              [
+                76,
+                19,
+                257
+              ],
+              [
+                54,
+                20,
+                285
+              ],
+              [
+                39,
+                17,
+                452
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4497,
+                "recall": 0.2159,
+                "f1": 0.2917,
+                "support": 352
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.3571,
+                "recall": 0.0557,
+                "f1": 0.0964,
+                "support": 359
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.4547,
+                "recall": 0.8898,
+                "f1": 0.6019,
+                "support": 508
+              }
+            ]
+          },
+          "test": {
+            "n": 1616,
+            "accuracy": 0.461,
+            "balanced_accuracy": 0.3573,
+            "precision_macro": 0.4001,
+            "recall_macro": 0.3573,
+            "macro_f1": 0.2876,
+            "kappa": 0.0441,
+            "mcc": 0.0698,
+            "confusion_matrix": [
+              [
+                59,
+                17,
+                556
+              ],
+              [
+                41,
+                13,
+                205
+              ],
+              [
+                40,
+                12,
+                673
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4214,
+                "recall": 0.0934,
+                "f1": 0.1528,
+                "support": 632
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.3095,
+                "recall": 0.0502,
+                "f1": 0.0864,
+                "support": 259
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.4693,
+                "recall": 0.9283,
+                "f1": 0.6234,
+                "support": 725
+              }
+            ]
+          },
+          "tau": 0.4,
+          "uncertain_lowconf_share": 0.2339,
+          "test_confident": {
+            "n": 1238,
+            "accuracy": 0.4903,
+            "balanced_accuracy": 0.336,
+            "precision_macro": 0.2673,
+            "recall_macro": 0.336,
+            "macro_f1": 0.2386,
+            "kappa": 0.0092,
+            "mcc": 0.0226,
+            "confusion_matrix": [
+              [
+                14,
+                0,
+                436
+              ],
+              [
+                18,
+                0,
+                163
+              ],
+              [
+                14,
+                0,
+                593
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.3043,
+                "recall": 0.0311,
+                "f1": 0.0565,
+                "support": 450
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 181
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.4975,
+                "recall": 0.9769,
+                "f1": 0.6593,
+                "support": 607
+              }
+            ]
+          },
+          "test_range_sequence": {
+            "n": 2488,
+            "distribution": {
+              "persistent": {
+                "count": 260,
+                "share": 0.1045
+              },
+              "random_like": {
+                "count": 72,
+                "share": 0.0289
+              },
+              "anti_persistent": {
+                "count": 2156,
+                "share": 0.8666
+              },
+              "uncertain_rule": {
+                "count": 0,
+                "share": 0.0
+              },
+              "uncertain_lowconf": {
+                "count": 0,
+                "share": 0.0
+              }
+            },
+            "n_transitions": 143,
+            "transitions_per_100": 5.75,
+            "mean_duration": 17.278,
+            "median_duration": 6.0,
+            "duration_by_regime": {
+              "persistent": {
+                "mean": 5.652,
+                "n_runs": 46
+              },
+              "random_like": {
+                "mean": 2.057,
+                "n_runs": 35
+              },
+              "anti_persistent": {
+                "mean": 34.222,
+                "n_runs": 63
+              }
+            },
+            "stay_probability": 0.9425
+          },
+          "mean_max_prob": 0.4381
+        }
+      ]
+    },
+    "C": {
+      "name": "SWT + Attention-BiLSTM + CVD",
+      "ofi": false,
+      "cvd": true,
+      "channels": [
+        1
+      ],
+      "summary": {
+        "accuracy": {
+          "mean": 0.4381,
+          "std": 0.012
+        },
+        "balanced_accuracy": {
+          "mean": 0.3743,
+          "std": 0.0052
+        },
+        "precision_macro": {
+          "mean": 0.3723,
+          "std": 0.0056
+        },
+        "recall_macro": {
+          "mean": 0.3743,
+          "std": 0.0052
+        },
+        "macro_f1": {
+          "mean": 0.3606,
+          "std": 0.0053
+        },
+        "kappa": {
+          "mean": 0.0826,
+          "std": 0.0025
+        },
+        "mcc": {
+          "mean": 0.0861,
+          "std": 0.0018
+        },
+        "val_macro_f1": {
+          "mean": 0.3964,
+          "std": 0.0093
+        },
+        "transitions_per_100": {
+          "mean": 14.6493,
+          "std": 1.3335
+        },
+        "mean_duration": {
+          "mean": 6.8637,
+          "std": 0.5872
+        },
+        "uncertain_lowconf_share": {
+          "mean": 0.5887,
+          "std": 0.1649
+        },
+        "per_class_f1": {
+          "persistent": {
+            "mean": 0.3325,
+            "std": 0.0362
+          },
+          "random_like": {
+            "mean": 0.1663,
+            "std": 0.0391
+          },
+          "anti_persistent": {
+            "mean": 0.5831,
+            "std": 0.0119
+          }
+        }
+      },
+      "confusion_matrix_sum_seeds": [
+        [
+          513,
+          376,
+          1007
+        ],
+        [
+          239,
+          135,
+          403
+        ],
+        [
+          416,
+          283,
+          1476
+        ]
+      ],
+      "per_seed": [
+        {
+          "seed": 42,
+          "epochs_ran": 15,
+          "best_val_loss": 1.0783,
+          "validation": {
+            "n": 1219,
+            "accuracy": 0.4274,
+            "balanced_accuracy": 0.3976,
+            "precision_macro": 0.4084,
+            "recall_macro": 0.3976,
+            "macro_f1": 0.3899,
+            "kappa": 0.097,
+            "mcc": 0.1013,
+            "confusion_matrix": [
+              [
+                126,
+                39,
+                187
+              ],
+              [
+                76,
+                70,
+                213
+              ],
+              [
+                80,
+                103,
+                325
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4468,
+                "recall": 0.358,
+                "f1": 0.3975,
+                "support": 352
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.3302,
+                "recall": 0.195,
+                "f1": 0.2452,
+                "support": 359
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.4483,
+                "recall": 0.6398,
+                "f1": 0.5272,
+                "support": 508
+              }
+            ]
+          },
+          "test": {
+            "n": 1616,
+            "accuracy": 0.4517,
+            "balanced_accuracy": 0.374,
+            "precision_macro": 0.3722,
+            "recall_macro": 0.374,
+            "macro_f1": 0.3652,
+            "kappa": 0.0861,
+            "mcc": 0.0886,
+            "confusion_matrix": [
+              [
+                213,
+                81,
+                338
+              ],
+              [
+                97,
+                29,
+                133
+              ],
+              [
+                171,
+                66,
+                488
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4428,
+                "recall": 0.337,
+                "f1": 0.3827,
+                "support": 632
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.1648,
+                "recall": 0.112,
+                "f1": 0.1333,
+                "support": 259
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.5089,
+                "recall": 0.6731,
+                "f1": 0.5796,
+                "support": 725
+              }
+            ]
+          },
+          "tau": 0.4,
+          "uncertain_lowconf_share": 0.3868,
+          "test_confident": {
+            "n": 991,
+            "accuracy": 0.4924,
+            "balanced_accuracy": 0.3818,
+            "precision_macro": 0.385,
+            "recall_macro": 0.3818,
+            "macro_f1": 0.3643,
+            "kappa": 0.1078,
+            "mcc": 0.1144,
+            "confusion_matrix": [
+              [
+                127,
+                28,
+                223
+              ],
+              [
+                52,
+                8,
+                85
+              ],
+              [
+                105,
+                10,
+                353
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4472,
+                "recall": 0.336,
+                "f1": 0.3837,
+                "support": 378
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.1739,
+                "recall": 0.0552,
+                "f1": 0.0838,
+                "support": 145
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.534,
+                "recall": 0.7543,
+                "f1": 0.6253,
+                "support": 468
+              }
+            ]
+          },
+          "test_range_sequence": {
+            "n": 2488,
+            "distribution": {
+              "persistent": {
+                "count": 769,
+                "share": 0.3091
+              },
+              "random_like": {
+                "count": 290,
+                "share": 0.1166
+              },
+              "anti_persistent": {
+                "count": 1429,
+                "share": 0.5744
+              },
+              "uncertain_rule": {
+                "count": 0,
+                "share": 0.0
+              },
+              "uncertain_lowconf": {
+                "count": 0,
+                "share": 0.0
+              }
+            },
+            "n_transitions": 337,
+            "transitions_per_100": 13.55,
+            "mean_duration": 7.361,
+            "median_duration": 5.0,
+            "duration_by_regime": {
+              "persistent": {
+                "mean": 6.746,
+                "n_runs": 114
+              },
+              "random_like": {
+                "mean": 3.118,
+                "n_runs": 93
+              },
+              "anti_persistent": {
+                "mean": 10.908,
+                "n_runs": 131
+              }
+            },
+            "stay_probability": 0.8645
+          },
+          "mean_max_prob": 0.4212
+        },
+        {
+          "seed": 43,
+          "epochs_ran": 13,
+          "best_val_loss": 1.0783,
+          "validation": {
+            "n": 1219,
+            "accuracy": 0.4307,
+            "balanced_accuracy": 0.4065,
+            "precision_macro": 0.4398,
+            "recall_macro": 0.4065,
+            "macro_f1": 0.4095,
+            "kappa": 0.1071,
+            "mcc": 0.1104,
+            "confusion_matrix": [
+              [
+                115,
+                56,
+                181
+              ],
+              [
+                53,
+                105,
+                201
+              ],
+              [
+                41,
+                162,
+                305
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.5502,
+                "recall": 0.3267,
+                "f1": 0.41,
+                "support": 352
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.3251,
+                "recall": 0.2925,
+                "f1": 0.3079,
+                "support": 359
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.444,
+                "recall": 0.6004,
+                "f1": 0.5105,
+                "support": 508
+              }
+            ]
+          },
+          "test": {
+            "n": 1616,
+            "accuracy": 0.4226,
+            "balanced_accuracy": 0.3808,
+            "precision_macro": 0.3792,
+            "recall_macro": 0.3808,
+            "macro_f1": 0.3635,
+            "kappa": 0.0807,
+            "mcc": 0.0846,
+            "confusion_matrix": [
+              [
+                143,
+                163,
+                326
+              ],
+              [
+                61,
+                69,
+                129
+              ],
+              [
+                121,
+                133,
+                471
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.44,
+                "recall": 0.2263,
+                "f1": 0.2989,
+                "support": 632
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.189,
+                "recall": 0.2664,
+                "f1": 0.2212,
+                "support": 259
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.5086,
+                "recall": 0.6497,
+                "f1": 0.5706,
+                "support": 725
+              }
+            ]
+          },
+          "tau": 0.4,
+          "uncertain_lowconf_share": 0.7908,
+          "test_confident": {
+            "n": 338,
+            "accuracy": 0.4231,
+            "balanced_accuracy": 0.3535,
+            "precision_macro": 0.3265,
+            "recall_macro": 0.3535,
+            "macro_f1": 0.3331,
+            "kappa": 0.0561,
+            "mcc": 0.0576,
+            "confusion_matrix": [
+              [
+                59,
+                14,
+                67
+              ],
+              [
+                30,
+                2,
+                31
+              ],
+              [
+                43,
+                10,
+                82
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.447,
+                "recall": 0.4214,
+                "f1": 0.4338,
+                "support": 140
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.0769,
+                "recall": 0.0317,
+                "f1": 0.0449,
+                "support": 63
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.4556,
+                "recall": 0.6074,
+                "f1": 0.5206,
+                "support": 135
+              }
+            ]
+          },
+          "test_range_sequence": {
+            "n": 2488,
+            "distribution": {
+              "persistent": {
+                "count": 505,
+                "share": 0.203
+              },
+              "random_like": {
+                "count": 593,
+                "share": 0.2383
+              },
+              "anti_persistent": {
+                "count": 1390,
+                "share": 0.5587
+              },
+              "uncertain_rule": {
+                "count": 0,
+                "share": 0.0
+              },
+              "uncertain_lowconf": {
+                "count": 0,
+                "share": 0.0
+              }
+            },
+            "n_transitions": 411,
+            "transitions_per_100": 16.526,
+            "mean_duration": 6.039,
+            "median_duration": 4.0,
+            "duration_by_regime": {
+              "persistent": {
+                "mean": 5.872,
+                "n_runs": 86
+              },
+              "random_like": {
+                "mean": 3.509,
+                "n_runs": 169
+              },
+              "anti_persistent": {
+                "mean": 8.854,
+                "n_runs": 157
+              }
+            },
+            "stay_probability": 0.8347
+          },
+          "mean_max_prob": 0.3798
+        },
+        {
+          "seed": 44,
+          "epochs_ran": 13,
+          "best_val_loss": 1.0752,
+          "validation": {
+            "n": 1219,
+            "accuracy": 0.443,
+            "balanced_accuracy": 0.4072,
+            "precision_macro": 0.4204,
+            "recall_macro": 0.4072,
+            "macro_f1": 0.3898,
+            "kappa": 0.115,
+            "mcc": 0.1235,
+            "confusion_matrix": [
+              [
+                132,
+                13,
+                207
+              ],
+              [
+                95,
+                53,
+                211
+              ],
+              [
+                72,
+                81,
+                355
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4415,
+                "recall": 0.375,
+                "f1": 0.4055,
+                "support": 352
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.3605,
+                "recall": 0.1476,
+                "f1": 0.2095,
+                "support": 359
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.4592,
+                "recall": 0.6988,
+                "f1": 0.5543,
+                "support": 508
+              }
+            ]
+          },
+          "test": {
+            "n": 1616,
+            "accuracy": 0.44,
+            "balanced_accuracy": 0.3681,
+            "precision_macro": 0.3655,
+            "recall_macro": 0.3681,
+            "macro_f1": 0.3532,
+            "kappa": 0.081,
+            "mcc": 0.0852,
+            "confusion_matrix": [
+              [
+                157,
+                132,
+                343
+              ],
+              [
+                81,
+                37,
+                141
+              ],
+              [
+                124,
+                84,
+                517
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4337,
+                "recall": 0.2484,
+                "f1": 0.3159,
+                "support": 632
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.1462,
+                "recall": 0.1429,
+                "f1": 0.1445,
+                "support": 259
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.5165,
+                "recall": 0.7131,
+                "f1": 0.5991,
+                "support": 725
+              }
+            ]
+          },
+          "tau": 0.4,
+          "uncertain_lowconf_share": 0.5885,
+          "test_confident": {
+            "n": 665,
+            "accuracy": 0.5278,
+            "balanced_accuracy": 0.3827,
+            "precision_macro": 0.3325,
+            "recall_macro": 0.3827,
+            "macro_f1": 0.3427,
+            "kappa": 0.1205,
+            "mcc": 0.1382,
+            "confusion_matrix": [
+              [
+                69,
+                0,
+                162
+              ],
+              [
+                38,
+                0,
+                64
+              ],
+              [
+                49,
+                1,
+                282
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4423,
+                "recall": 0.2987,
+                "f1": 0.3566,
+                "support": 231
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 102
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.5551,
+                "recall": 0.8494,
+                "f1": 0.6714,
+                "support": 332
+              }
+            ]
+          },
+          "test_range_sequence": {
+            "n": 2488,
+            "distribution": {
+              "persistent": {
+                "count": 592,
+                "share": 0.2379
+              },
+              "random_like": {
+                "count": 383,
+                "share": 0.1539
+              },
+              "anti_persistent": {
+                "count": 1513,
+                "share": 0.6081
+              },
+              "uncertain_rule": {
+                "count": 0,
+                "share": 0.0
+              },
+              "uncertain_lowconf": {
+                "count": 0,
+                "share": 0.0
+              }
+            },
+            "n_transitions": 345,
+            "transitions_per_100": 13.872,
+            "mean_duration": 7.191,
+            "median_duration": 4.0,
+            "duration_by_regime": {
+              "persistent": {
+                "mean": 6.435,
+                "n_runs": 92
+              },
+              "random_like": {
+                "mean": 3.302,
+                "n_runs": 116
+              },
+              "anti_persistent": {
+                "mean": 10.964,
+                "n_runs": 138
+              }
+            },
+            "stay_probability": 0.8613
+          },
+          "mean_max_prob": 0.3979
+        }
+      ]
+    },
+    "D": {
+      "name": "SWT + Attention-BiLSTM + OFI + CVD",
+      "ofi": true,
+      "cvd": true,
+      "channels": [
+        0,
+        1
+      ],
+      "summary": {
+        "accuracy": {
+          "mean": 0.427,
+          "std": 0.0355
+        },
+        "balanced_accuracy": {
+          "mean": 0.3658,
+          "std": 0.0082
+        },
+        "precision_macro": {
+          "mean": 0.3738,
+          "std": 0.0097
+        },
+        "recall_macro": {
+          "mean": 0.3658,
+          "std": 0.0082
+        },
+        "macro_f1": {
+          "mean": 0.3252,
+          "std": 0.0088
+        },
+        "kappa": {
+          "mean": 0.0623,
+          "std": 0.0079
+        },
+        "mcc": {
+          "mean": 0.072,
+          "std": 0.0078
+        },
+        "val_macro_f1": {
+          "mean": 0.357,
+          "std": 0.0035
+        },
+        "transitions_per_100": {
+          "mean": 11.312,
+          "std": 1.7268
+        },
+        "mean_duration": {
+          "mean": 9.0273,
+          "std": 1.4238
+        },
+        "uncertain_lowconf_share": {
+          "mean": 0.6207,
+          "std": 0.1524
+        },
+        "per_class_f1": {
+          "persistent": {
+            "mean": 0.2435,
+            "std": 0.077
+          },
+          "random_like": {
+            "mean": 0.1483,
+            "std": 0.0712
+          },
+          "anti_persistent": {
+            "mean": 0.5837,
+            "std": 0.0183
+          }
+        }
+      },
+      "confusion_matrix_sum_seeds": [
+        [
+          334,
+          362,
+          1200
+        ],
+        [
+          169,
+          149,
+          459
+        ],
+        [
+          237,
+          351,
+          1587
+        ]
+      ],
+      "per_seed": [
+        {
+          "seed": 42,
+          "epochs_ran": 11,
+          "best_val_loss": 1.0766,
+          "validation": {
+            "n": 1219,
+            "accuracy": 0.4372,
+            "balanced_accuracy": 0.3927,
+            "precision_macro": 0.3969,
+            "recall_macro": 0.3927,
+            "macro_f1": 0.3521,
+            "kappa": 0.096,
+            "mcc": 0.1093,
+            "confusion_matrix": [
+              [
+                127,
+                16,
+                209
+              ],
+              [
+                88,
+                22,
+                249
+              ],
+              [
+                94,
+                30,
+                384
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.411,
+                "recall": 0.3608,
+                "f1": 0.3843,
+                "support": 352
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.3235,
+                "recall": 0.0613,
+                "f1": 0.103,
+                "support": 359
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.4561,
+                "recall": 0.7559,
+                "f1": 0.5689,
+                "support": 508
+              }
+            ]
+          },
+          "test": {
+            "n": 1616,
+            "accuracy": 0.4542,
+            "balanced_accuracy": 0.3617,
+            "precision_macro": 0.3649,
+            "recall_macro": 0.3617,
+            "macro_f1": 0.3376,
+            "kappa": 0.0604,
+            "mcc": 0.0667,
+            "confusion_matrix": [
+              [
+                175,
+                37,
+                420
+              ],
+              [
+                76,
+                15,
+                168
+              ],
+              [
+                147,
+                34,
+                544
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4397,
+                "recall": 0.2769,
+                "f1": 0.3398,
+                "support": 632
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.1744,
+                "recall": 0.0579,
+                "f1": 0.087,
+                "support": 259
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.4806,
+                "recall": 0.7503,
+                "f1": 0.5859,
+                "support": 725
+              }
+            ]
+          },
+          "tau": 0.4,
+          "uncertain_lowconf_share": 0.7531,
+          "test_confident": {
+            "n": 399,
+            "accuracy": 0.4812,
+            "balanced_accuracy": 0.3597,
+            "precision_macro": 0.302,
+            "recall_macro": 0.3597,
+            "macro_f1": 0.3266,
+            "kappa": 0.0682,
+            "mcc": 0.0722,
+            "confusion_matrix": [
+              [
+                50,
+                0,
+                91
+              ],
+              [
+                35,
+                0,
+                27
+              ],
+              [
+                54,
+                0,
+                142
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.3597,
+                "recall": 0.3546,
+                "f1": 0.3571,
+                "support": 141
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 62
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.5462,
+                "recall": 0.7245,
+                "f1": 0.6228,
+                "support": 196
+              }
+            ]
+          },
+          "test_range_sequence": {
+            "n": 2488,
+            "distribution": {
+              "persistent": {
+                "count": 671,
+                "share": 0.2697
+              },
+              "random_like": {
+                "count": 140,
+                "share": 0.0563
+              },
+              "anti_persistent": {
+                "count": 1677,
+                "share": 0.674
+              },
+              "uncertain_rule": {
+                "count": 0,
+                "share": 0.0
+              },
+              "uncertain_lowconf": {
+                "count": 0,
+                "share": 0.0
+              }
+            },
+            "n_transitions": 285,
+            "transitions_per_100": 11.46,
+            "mean_duration": 8.699,
+            "median_duration": 6.0,
+            "duration_by_regime": {
+              "persistent": {
+                "mean": 6.33,
+                "n_runs": 106
+              },
+              "random_like": {
+                "mean": 2.258,
+                "n_runs": 62
+              },
+              "anti_persistent": {
+                "mean": 14.212,
+                "n_runs": 118
+              }
+            },
+            "stay_probability": 0.8854
+          },
+          "mean_max_prob": 0.3819
+        },
+        {
+          "seed": 43,
+          "epochs_ran": 12,
+          "best_val_loss": 1.0766,
+          "validation": {
+            "n": 1219,
+            "accuracy": 0.3839,
+            "balanced_accuracy": 0.3606,
+            "precision_macro": 0.3783,
+            "recall_macro": 0.3606,
+            "macro_f1": 0.359,
+            "kappa": 0.0452,
+            "mcc": 0.0461,
+            "confusion_matrix": [
+              [
+                82,
+                113,
+                157
+              ],
+              [
+                74,
+                109,
+                176
+              ],
+              [
+                41,
+                190,
+                277
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4162,
+                "recall": 0.233,
+                "f1": 0.2987,
+                "support": 352
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.2646,
+                "recall": 0.3036,
+                "f1": 0.2827,
+                "support": 359
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.4541,
+                "recall": 0.5453,
+                "f1": 0.4955,
+                "support": 508
+              }
+            ]
+          },
+          "test": {
+            "n": 1616,
+            "accuracy": 0.3769,
+            "balanced_accuracy": 0.3773,
+            "precision_macro": 0.3873,
+            "recall_macro": 0.3773,
+            "macro_f1": 0.3199,
+            "kappa": 0.0728,
+            "mcc": 0.083,
+            "confusion_matrix": [
+              [
+                57,
+                276,
+                299
+              ],
+              [
+                42,
+                113,
+                104
+              ],
+              [
+                23,
+                263,
+                439
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4672,
+                "recall": 0.0902,
+                "f1": 0.1512,
+                "support": 632
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.1733,
+                "recall": 0.4363,
+                "f1": 0.2481,
+                "support": 259
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.5214,
+                "recall": 0.6055,
+                "f1": 0.5603,
+                "support": 725
+              }
+            ]
+          },
+          "tau": 0.4,
+          "uncertain_lowconf_share": 0.7017,
+          "test_confident": {
+            "n": 482,
+            "accuracy": 0.4025,
+            "balanced_accuracy": 0.3447,
+            "precision_macro": 0.3536,
+            "recall_macro": 0.3447,
+            "macro_f1": 0.3087,
+            "kappa": 0.0712,
+            "mcc": 0.0795,
+            "confusion_matrix": [
+              [
+                20,
+                79,
+                93
+              ],
+              [
+                21,
+                14,
+                24
+              ],
+              [
+                10,
+                61,
+                160
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.3922,
+                "recall": 0.1042,
+                "f1": 0.1646,
+                "support": 192
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.0909,
+                "recall": 0.2373,
+                "f1": 0.1315,
+                "support": 59
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.5776,
+                "recall": 0.6926,
+                "f1": 0.6299,
+                "support": 231
+              }
+            ]
+          },
+          "test_range_sequence": {
+            "n": 2488,
+            "distribution": {
+              "persistent": {
+                "count": 240,
+                "share": 0.0965
+              },
+              "random_like": {
+                "count": 1024,
+                "share": 0.4116
+              },
+              "anti_persistent": {
+                "count": 1224,
+                "share": 0.492
+              },
+              "uncertain_rule": {
+                "count": 0,
+                "share": 0.0
+              },
+              "uncertain_lowconf": {
+                "count": 0,
+                "share": 0.0
+              }
+            },
+            "n_transitions": 332,
+            "transitions_per_100": 13.349,
+            "mean_duration": 7.471,
+            "median_duration": 6.0,
+            "duration_by_regime": {
+              "persistent": {
+                "mean": 5.854,
+                "n_runs": 41
+              },
+              "random_like": {
+                "mean": 6.564,
+                "n_runs": 156
+              },
+              "anti_persistent": {
+                "mean": 9.0,
+                "n_runs": 136
+              }
+            },
+            "stay_probability": 0.8665
+          },
+          "mean_max_prob": 0.3879
+        },
+        {
+          "seed": 44,
+          "epochs_ran": 12,
+          "best_val_loss": 1.0739,
+          "validation": {
+            "n": 1219,
+            "accuracy": 0.461,
+            "balanced_accuracy": 0.4095,
+            "precision_macro": 0.417,
+            "recall_macro": 0.4095,
+            "macro_f1": 0.36,
+            "kappa": 0.1268,
+            "mcc": 0.1507,
+            "confusion_matrix": [
+              [
+                124,
+                14,
+                214
+              ],
+              [
+                84,
+                17,
+                258
+              ],
+              [
+                66,
+                21,
+                421
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4526,
+                "recall": 0.3523,
+                "f1": 0.3962,
+                "support": 352
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.3269,
+                "recall": 0.0474,
+                "f1": 0.0827,
+                "support": 359
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.4714,
+                "recall": 0.8287,
+                "f1": 0.601,
+                "support": 508
+              }
+            ]
+          },
+          "test": {
+            "n": 1616,
+            "accuracy": 0.4499,
+            "balanced_accuracy": 0.3585,
+            "precision_macro": 0.3693,
+            "recall_macro": 0.3585,
+            "macro_f1": 0.318,
+            "kappa": 0.0537,
+            "mcc": 0.0664,
+            "confusion_matrix": [
+              [
+                102,
+                49,
+                481
+              ],
+              [
+                51,
+                21,
+                187
+              ],
+              [
+                67,
+                54,
+                604
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.4636,
+                "recall": 0.1614,
+                "f1": 0.2394,
+                "support": 632
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.1694,
+                "recall": 0.0811,
+                "f1": 0.1097,
+                "support": 259
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.4748,
+                "recall": 0.8331,
+                "f1": 0.6049,
+                "support": 725
+              }
+            ]
+          },
+          "tau": 0.4,
+          "uncertain_lowconf_share": 0.4072,
+          "test_confident": {
+            "n": 958,
+            "accuracy": 0.5125,
+            "balanced_accuracy": 0.3432,
+            "precision_macro": 0.286,
+            "recall_macro": 0.3432,
+            "macro_f1": 0.2682,
+            "kappa": 0.0317,
+            "mcc": 0.0531,
+            "confusion_matrix": [
+              [
+                26,
+                0,
+                313
+              ],
+              [
+                30,
+                0,
+                101
+              ],
+              [
+                23,
+                0,
+                465
+              ]
+            ],
+            "per_class": [
+              {
+                "regime": "persistent",
+                "precision": 0.3291,
+                "recall": 0.0767,
+                "f1": 0.1244,
+                "support": 339
+              },
+              {
+                "regime": "random_like",
+                "precision": 0.0,
+                "recall": 0.0,
+                "f1": 0.0,
+                "support": 131
+              },
+              {
+                "regime": "anti_persistent",
+                "precision": 0.529,
+                "recall": 0.9529,
+                "f1": 0.6803,
+                "support": 488
+              }
+            ]
+          },
+          "test_range_sequence": {
+            "n": 2488,
+            "distribution": {
+              "persistent": {
+                "count": 386,
+                "share": 0.1551
+              },
+              "random_like": {
+                "count": 205,
+                "share": 0.0824
+              },
+              "anti_persistent": {
+                "count": 1897,
+                "share": 0.7625
+              },
+              "uncertain_rule": {
+                "count": 0,
+                "share": 0.0
+              },
+              "uncertain_lowconf": {
+                "count": 0,
+                "share": 0.0
+              }
+            },
+            "n_transitions": 227,
+            "transitions_per_100": 9.127,
+            "mean_duration": 10.912,
+            "median_duration": 5.0,
+            "duration_by_regime": {
+              "persistent": {
+                "mean": 6.031,
+                "n_runs": 64
+              },
+              "random_like": {
+                "mean": 2.628,
+                "n_runs": 78
+              },
+              "anti_persistent": {
+                "mean": 22.058,
+                "n_runs": 86
+              }
+            },
+            "stay_probability": 0.9087
+          },
+          "mean_max_prob": 0.416
+        }
+      ]
+    }
+  },
+  "comparisons_vs_A": {
+    "B": [
+      {
+        "seed": 42,
+        "mcnemar": {
+          "n01": 121,
+          "n10": 104,
+          "chi2": 1.1378,
+          "p_value": 0.2861
+        },
+        "bootstrap_macro_f1_diff": {
+          "mean_diff": -0.037,
+          "ci95": [
+            -0.0633,
+            -0.0082
+          ],
+          "p_le_0": 0.993
+        }
+      },
+      {
+        "seed": 43,
+        "mcnemar": {
+          "n01": 138,
+          "n10": 111,
+          "chi2": 2.7149,
+          "p_value": 0.0994
+        },
+        "bootstrap_macro_f1_diff": {
+          "mean_diff": -0.04,
+          "ci95": [
+            -0.0702,
+            -0.0122
+          ],
+          "p_le_0": 0.997
+        }
+      },
+      {
+        "seed": 44,
+        "mcnemar": {
+          "n01": 155,
+          "n10": 134,
+          "chi2": 1.3841,
+          "p_value": 0.2394
+        },
+        "bootstrap_macro_f1_diff": {
+          "mean_diff": -0.0619,
+          "ci95": [
+            -0.108,
+            -0.0088
+          ],
+          "p_le_0": 0.99
+        }
+      }
+    ],
+    "C": [
+      {
+        "seed": 42,
+        "mcnemar": {
+          "n01": 144,
+          "n10": 134,
+          "chi2": 0.2914,
+          "p_value": 0.5893
+        },
+        "bootstrap_macro_f1_diff": {
+          "mean_diff": -0.0076,
+          "ci95": [
+            -0.0481,
+            0.032
+          ],
+          "p_le_0": 0.646
+        }
+      },
+      {
+        "seed": 43,
+        "mcnemar": {
+          "n01": 213,
+          "n10": 200,
+          "chi2": 0.3487,
+          "p_value": 0.5549
+        },
+        "bootstrap_macro_f1_diff": {
+          "mean_diff": -0.0047,
+          "ci95": [
+            -0.0541,
+            0.0434
+          ],
+          "p_le_0": 0.568
+        }
+      },
+      {
+        "seed": 44,
+        "mcnemar": {
+          "n01": 132,
+          "n10": 77,
+          "chi2": 13.9522,
+          "p_value": 0.0002
+        },
+        "bootstrap_macro_f1_diff": {
+          "mean_diff": 0.0,
+          "ci95": [
+            -0.0279,
+            0.0245
+          ],
+          "p_le_0": 0.492
+        }
+      }
+    ],
+    "D": [
+      {
+        "seed": 42,
+        "mcnemar": {
+          "n01": 142,
+          "n10": 136,
+          "chi2": 0.0899,
+          "p_value": 0.7643
+        },
+        "bootstrap_macro_f1_diff": {
+          "mean_diff": -0.0366,
+          "ci95": [
+            -0.0733,
+            0.0014
+          ],
+          "p_le_0": 0.971
+        }
+      },
+      {
+        "seed": 43,
+        "mcnemar": {
+          "n01": 161,
+          "n10": 74,
+          "chi2": 31.4723,
+          "p_value": 0.0
+        },
+        "bootstrap_macro_f1_diff": {
+          "mean_diff": -0.0466,
+          "ci95": [
+            -0.0732,
+            -0.0195
+          ],
+          "p_le_0": 1.0
+        }
+      },
+      {
+        "seed": 44,
+        "mcnemar": {
+          "n01": 138,
+          "n10": 99,
+          "chi2": 6.0928,
+          "p_value": 0.0136
+        },
+        "bootstrap_macro_f1_diff": {
+          "mean_diff": -0.0386,
+          "ci95": [
+            -0.0783,
+            0.0022
+          ],
+          "p_le_0": 0.969
+        }
+      }
+    ]
+  },
+  "catatan": "Hurst dan DFA hanya membentuk label; input model = sekuens SWT (+ OFI/CVD). Metrik = rata-rata \u00b1 std atas seed. Window uncertain_rule dikeluarkan dari training/evaluasi, tetapi ikut diprediksi untuk statistik stabilitas dan timeline."
+}

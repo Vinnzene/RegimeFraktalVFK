@@ -1,0 +1,385 @@
+{
+  "timeframe": "4h",
+  "window": 500,
+  "n_windows": 4120,
+  "per_regime": {
+    "persistent": {
+      "n": 767,
+      "ofi_mean": {
+        "mean": -0.0128,
+        "median": -0.0094,
+        "std": 0.0198,
+        "q25": -0.0259,
+        "q75": -0.0042,
+        "share_positive": 0.1199
+      },
+      "ofi_abs_mean": {
+        "mean": 0.0505,
+        "median": 0.0522,
+        "std": 0.0264,
+        "q25": 0.0248,
+        "q75": 0.0694,
+        "share_positive": 1.0
+      },
+      "ofi_sign_persist": {
+        "mean": 0.5789,
+        "median": 0.5651,
+        "std": 0.0438,
+        "q25": 0.5451,
+        "q75": 0.6052,
+        "share_positive": 1.0
+      },
+      "ofi_ac1": {
+        "mean": 0.1266,
+        "median": 0.1294,
+        "std": 0.0594,
+        "q25": 0.0817,
+        "q75": 0.1699,
+        "share_positive": 0.9909
+      },
+      "ofi_ret_agree": {
+        "mean": 0.6935,
+        "median": 0.692,
+        "std": 0.0356,
+        "q25": 0.674,
+        "q75": 0.718,
+        "share_positive": 1.0
+      },
+      "cvd_norm_end": {
+        "mean": -1.0508,
+        "median": -1.5233,
+        "std": 1.2314,
+        "q25": -1.78,
+        "q75": -0.7906,
+        "share_positive": 0.1838
+      },
+      "cvd_slope": {
+        "mean": -0.0109,
+        "median": -0.0081,
+        "std": 0.0165,
+        "q25": -0.0207,
+        "q75": -0.0029,
+        "share_positive": 0.1343
+      }
+    },
+    "random_like": {
+      "n": 545,
+      "ofi_mean": {
+        "mean": -0.0135,
+        "median": -0.0154,
+        "std": 0.0235,
+        "q25": -0.03,
+        "q75": -0.0022,
+        "share_positive": 0.1798
+      },
+      "ofi_abs_mean": {
+        "mean": 0.0571,
+        "median": 0.0559,
+        "std": 0.0183,
+        "q25": 0.0466,
+        "q75": 0.0665,
+        "share_positive": 1.0
+      },
+      "ofi_sign_persist": {
+        "mean": 0.5952,
+        "median": 0.5952,
+        "std": 0.0496,
+        "q25": 0.5551,
+        "q75": 0.6333,
+        "share_positive": 1.0
+      },
+      "ofi_ac1": {
+        "mean": 0.1357,
+        "median": 0.141,
+        "std": 0.0525,
+        "q25": 0.104,
+        "q75": 0.1711,
+        "share_positive": 0.9963
+      },
+      "ofi_ret_agree": {
+        "mean": 0.6833,
+        "median": 0.682,
+        "std": 0.0425,
+        "q25": 0.6633,
+        "q75": 0.712,
+        "share_positive": 1.0
+      },
+      "cvd_norm_end": {
+        "mean": -1.0396,
+        "median": -1.4988,
+        "std": 1.3657,
+        "q25": -1.8643,
+        "q75": -0.9451,
+        "share_positive": 0.1908
+      },
+      "cvd_slope": {
+        "mean": -0.0121,
+        "median": -0.0165,
+        "std": 0.0207,
+        "q25": -0.0254,
+        "q75": -0.0015,
+        "share_positive": 0.211
+      }
+    },
+    "anti_persistent": {
+      "n": 856,
+      "ofi_mean": {
+        "mean": -0.0225,
+        "median": -0.0198,
+        "std": 0.0146,
+        "q25": -0.0367,
+        "q75": -0.012,
+        "share_positive": 0.0257
+      },
+      "ofi_abs_mean": {
+        "mean": 0.0605,
+        "median": 0.0586,
+        "std": 0.0192,
+        "q25": 0.0421,
+        "q75": 0.0819,
+        "share_positive": 1.0
+      },
+      "ofi_sign_persist": {
+        "mean": 0.5855,
+        "median": 0.5832,
+        "std": 0.044,
+        "q25": 0.5531,
+        "q75": 0.6212,
+        "share_positive": 1.0
+      },
+      "ofi_ac1": {
+        "mean": 0.1269,
+        "median": 0.1261,
+        "std": 0.0583,
+        "q25": 0.0915,
+        "q75": 0.1653,
+        "share_positive": 0.9755
+      },
+      "ofi_ret_agree": {
+        "mean": 0.6766,
+        "median": 0.68,
+        "std": 0.0372,
+        "q25": 0.654,
+        "q75": 0.704,
+        "share_positive": 1.0
+      },
+      "cvd_norm_end": {
+        "mean": -1.4141,
+        "median": -1.5463,
+        "std": 0.8945,
+        "q25": -1.9073,
+        "q75": -1.2173,
+        "share_positive": 0.0783
+      },
+      "cvd_slope": {
+        "mean": -0.0211,
+        "median": -0.0222,
+        "std": 0.0129,
+        "q25": -0.0328,
+        "q75": -0.0112,
+        "share_positive": 0.0444
+      }
+    },
+    "uncertain_rule": {
+      "n": 1952,
+      "ofi_mean": {
+        "mean": -0.0119,
+        "median": -0.0143,
+        "std": 0.0234,
+        "q25": -0.0297,
+        "q75": -0.0026,
+        "share_positive": 0.2167
+      },
+      "ofi_abs_mean": {
+        "mean": 0.0623,
+        "median": 0.0613,
+        "std": 0.0214,
+        "q25": 0.051,
+        "q75": 0.0833,
+        "share_positive": 1.0
+      },
+      "ofi_sign_persist": {
+        "mean": 0.5885,
+        "median": 0.5812,
+        "std": 0.0459,
+        "q25": 0.5531,
+        "q75": 0.6152,
+        "share_positive": 1.0
+      },
+      "ofi_ac1": {
+        "mean": 0.1393,
+        "median": 0.1403,
+        "std": 0.0513,
+        "q25": 0.106,
+        "q75": 0.1684,
+        "share_positive": 0.998
+      },
+      "ofi_ret_agree": {
+        "mean": 0.6859,
+        "median": 0.686,
+        "std": 0.0374,
+        "q25": 0.664,
+        "q75": 0.712,
+        "share_positive": 1.0
+      },
+      "cvd_norm_end": {
+        "mean": -0.9483,
+        "median": -1.4694,
+        "std": 1.4416,
+        "q25": -1.8756,
+        "q75": -0.2422,
+        "share_positive": 0.2326
+      },
+      "cvd_slope": {
+        "mean": -0.0114,
+        "median": -0.0142,
+        "std": 0.0197,
+        "q25": -0.0261,
+        "q75": -0.0013,
+        "share_positive": 0.2141
+      }
+    }
+  },
+  "tests": {
+    "ofi_mean": {
+      "kruskal_H": 141.214,
+      "p_value_naive": 2.17e-31,
+      "p_value_block_permutation": 0.014,
+      "epsilon_squared": 0.0652,
+      "pairwise": {
+        "persistent_vs_random_like": {
+          "rank_biserial": 0.0941,
+          "p_value": 0.00365
+        },
+        "persistent_vs_anti_persistent": {
+          "rank_biserial": 0.3475,
+          "p_value": 1.04e-33
+        },
+        "random_like_vs_anti_persistent": {
+          "rank_biserial": 0.2045,
+          "p_value": 1.03e-10
+        }
+      }
+    },
+    "ofi_abs_mean": {
+      "kruskal_H": 37.332,
+      "p_value_naive": 7.82e-09,
+      "p_value_block_permutation": 0.7106,
+      "epsilon_squared": 0.0172,
+      "pairwise": {
+        "persistent_vs_random_like": {
+          "rank_biserial": -0.1362,
+          "p_value": 2.57e-05
+        },
+        "persistent_vs_anti_persistent": {
+          "rank_biserial": -0.1712,
+          "p_value": 2.47e-09
+        },
+        "random_like_vs_anti_persistent": {
+          "rank_biserial": -0.0123,
+          "p_value": 0.697
+        }
+      }
+    },
+    "ofi_sign_persist": {
+      "kruskal_H": 40.672,
+      "p_value_naive": 1.47e-09,
+      "p_value_block_permutation": 0.475,
+      "epsilon_squared": 0.0188,
+      "pairwise": {
+        "persistent_vs_random_like": {
+          "rank_biserial": -0.2007,
+          "p_value": 5.56e-10
+        },
+        "persistent_vs_anti_persistent": {
+          "rank_biserial": -0.1095,
+          "p_value": 0.000136
+        },
+        "random_like_vs_anti_persistent": {
+          "rank_biserial": 0.1004,
+          "p_value": 0.00151
+        }
+      }
+    },
+    "ofi_ac1": {
+      "kruskal_H": 11.2,
+      "p_value_naive": 0.0037,
+      "p_value_block_permutation": 0.6208,
+      "epsilon_squared": 0.0052,
+      "pairwise": {
+        "persistent_vs_random_like": {
+          "rank_biserial": -0.0896,
+          "p_value": 0.00563
+        },
+        "persistent_vs_anti_persistent": {
+          "rank_biserial": 0.0037,
+          "p_value": 0.898
+        },
+        "random_like_vs_anti_persistent": {
+          "rank_biserial": 0.1008,
+          "p_value": 0.00144
+        }
+      }
+    },
+    "ofi_ret_agree": {
+      "kruskal_H": 74.723,
+      "p_value_naive": 5.94e-17,
+      "p_value_block_permutation": 0.3154,
+      "epsilon_squared": 0.0345,
+      "pairwise": {
+        "persistent_vs_random_like": {
+          "rank_biserial": 0.1516,
+          "p_value": 2.78e-06
+        },
+        "persistent_vs_anti_persistent": {
+          "rank_biserial": 0.2489,
+          "p_value": 4.34e-18
+        },
+        "random_like_vs_anti_persistent": {
+          "rank_biserial": 0.0895,
+          "p_value": 0.0047
+        }
+      }
+    },
+    "cvd_norm_end": {
+      "kruskal_H": 23.897,
+      "p_value_naive": 6.47e-06,
+      "p_value_block_permutation": 0.4671,
+      "epsilon_squared": 0.011,
+      "pairwise": {
+        "persistent_vs_random_like": {
+          "rank_biserial": 0.0413,
+          "p_value": 0.202
+        },
+        "persistent_vs_anti_persistent": {
+          "rank_biserial": 0.1368,
+          "p_value": 1.88e-06
+        },
+        "random_like_vs_anti_persistent": {
+          "rank_biserial": 0.0957,
+          "p_value": 0.00251
+        }
+      }
+    },
+    "cvd_slope": {
+      "kruskal_H": 185.288,
+      "p_value_naive": 5.82e-41,
+      "p_value_block_permutation": 0.018,
+      "epsilon_squared": 0.0855,
+      "pairwise": {
+        "persistent_vs_random_like": {
+          "rank_biserial": 0.1106,
+          "p_value": 0.000629
+        },
+        "persistent_vs_anti_persistent": {
+          "rank_biserial": 0.3939,
+          "p_value": 7.81e-43
+        },
+        "random_like_vs_anti_persistent": {
+          "rank_biserial": 0.2417,
+          "p_value": 2.25e-14
+        }
+      }
+    }
+  }
+}

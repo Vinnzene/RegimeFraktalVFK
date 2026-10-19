@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-panelAlt text-txt antialiased;
+  font-feature-settings: "tnum" 1, "zero" 1;
+}
+
+/* Scrollbar tipis agar tidak memotong ruang data. */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0e11;
+}
+::-webkit-scrollbar-thumb {
+  background: #252c37;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #323b48;
+}
+
+/* Pola untuk dua jenis Uncertain — dibedakan supaya tidak tertukar. */
+.pattern-diagonal {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(139, 148, 158, 0.55) 0 3px,
+    transparent 3px 7px
+  );
+}
+
+.pattern-dots {
+  background-image: radial-gradient(rgba(176, 124, 245, 0.75) 1.2px, transparent 1.3px);
+  background-size: 6px 6px;
+}
+
+@layer components {
+  .panel {
+    @apply rounded-md border border-edge bg-panel shadow-panel;
+    padding: 14px 16px;
+  }
+  .panel-title {
+    @apply text-[13px] font-semibold tracking-tight text-txt;
+  }
+  .panel-sub {
+    @apply mt-0.5 text-2xs leading-relaxed text-txtMuted;
+  }
+
+  /* Angka selalu monospace dengan lebar digit tetap supaya kolom tidak bergoyang. */
+  .metric-value {
+    @apply font-mono text-[22px] font-semibold leading-tight text-txt tabular-nums;
+  }
+  .metric-label {
+    @apply text-2xs font-medium uppercase tracking-wider text-txtMuted;
+  }
+
+  .chip {
+    @apply rounded border border-edge bg-surface px-1.5 py-0.5 font-mono text-2xs text-txtDim tabular-nums;
+  }
+
+  .stat-card {
+    @apply rounded border border-edge bg-surface px-3 py-2.5;
+  }
+
+  /* Tabel padat ala terminal data. */
+  .data-table {
+    @apply w-full text-[11px] tabular-nums;
+  }
+  .data-table thead tr {
+    @apply border-b border-edge;
+  }
+  .data-table th {
+    @apply py-1.5 text-2xs font-medium uppercase tracking-wider text-txtMuted;
+  }
+  .data-table tbody tr {
+    @apply border-b border-edge/50 transition-colors hover:bg-surface/60;
+  }
+  .data-table td {
+    @apply py-1.5 font-mono text-txtDim;
+  }
+
+  .btn {
+    @apply rounded border border-edge bg-surface px-3 py-1.5 text-[11px] font-medium
+           text-txtDim transition hover:border-edgeBright hover:text-txt
+           disabled:cursor-not-allowed disabled:opacity-40;
+  }
+  .btn-primary {
+    @apply rounded bg-accent px-4 py-1.5 text-[11px] font-semibold text-panelAlt
+           transition hover:brightness-110 disabled:opacity-40;
+  }
+
+  .badge-up {
+    @apply rounded bg-bullish/15 px-1.5 py-0.5 font-mono text-2xs text-bullish;
+  }
+  .badge-down {
+    @apply rounded bg-bearish/15 px-1.5 py-0.5 font-mono text-2xs text-bearish;
+  }
+}

@@ -1,0 +1,59 @@
+# regimefraktalVFK — sumber tunggal seluruh parameter analisis.
+# Setiap perubahan file ini mengubah config_hash yang tampil di footer
+# setiap panel frontend. Jangan hardcode parameter di tempat lain.
+
+data:
+  symbol: BTCUSDT
+  timeframes: [1h, 4h]
+  start: "2019-01-01"  # awal dataset; mencakup siklus bull-bear 2019-2026
+  end: null
+
+source:
+  provider: binance
+  # data-api.binance.vision adalah mirror data pasar resmi Binance.
+  # api.binance.com dipakai sebagai cadangan, tetapi umumnya dicegat filter ISP
+  # Indonesia sehingga verifikasi TLS-nya gagal.
+  base_urls:
+    - https://data-api.binance.vision
+    - https://api.binance.com
+  years: 3.0           # panjang riwayat yang ditarik saat refresh penuh
+  drop_open_bar: true  # WAJIB true: bar berjalan membuat regime berkedip
+  auto_refresh: true
+  refresh_minutes: 15
+
+analysis:
+  L: 500               # ukuran rolling window Hurst-DFA (dalam bar)
+  J: 4                 # level dekomposisi SWT
+  stride_bars: 4       # jarak antar window analisis (bar). Makin kecil = makin
+                       # banyak window, tapi komputasi makin lama.
+  # threshold_mode:
+  #   fixed    — ambang tetap di bawah, sesuai rancangan awal Bab 3
+  #   quantile — ambang dihitung dari kuantil distribusi tiap estimator.
+  #              Dipakai karena R/S dan DFA punya bias ke arah berbeda: pada
+  #              BTC/USDT, Hurst R/S nyaris tak pernah < 0.45 sehingga kelas
+  #              anti-persistent kosong dan >80% window jadi uncertain_rule.
+  threshold_mode: quantile
+  threshold_quantiles: [0.3333, 0.6667]
+  hurst_threshold: [0.45, 0.55]   # dipakai saat threshold_mode = fixed
+  dfa_threshold: [0.45, 0.55]
+  input: log_return    # WAJIB log_return; harga level punya unit root
+
+model:
+  h: 500               # horizon target (default = L)
+  stride: 1            # jarak antar sampel training
+  purge_gap: 1000      # = L + h, gap dibuang di batas split
+  # Confidence threshold untuk uncertain_lowconf.
+  # 0.40 dipilih setelah melihat distribusi keluaran model terlatih: max(P)
+  # berpusat di ~0.34 (tebakan seragam 3 kelas). Dengan tau=0.5 seluruh window
+  # menjadi uncertain_lowconf sehingga panel kehilangan daya beda. Angka ini
+  # bagian dari analisis sensitivitas, bukan ketetapan — slider di halaman
+  # Model Comparison memang disediakan untuk mengujinya.
+  tau: 0.40
+  seed: 42
+
+split:
+  ratios: [0.7, 0.15, 0.15]   # time-based, tanpa shuffle
+
+runtime:
+  use_mock: false      # false = pakai data Binance asli
+  storage: parquet     # parquet | postgres

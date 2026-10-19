@@ -1,0 +1,2 @@
+n,n_small_sample,total_setup,total_long,total_short,tp,sl,timeout,ambiguous,win_rate,total_r,average_r,median_r,profit_factor,max_drawdown,losing_streak,average_holding_time,setup_frequency_per_month
+3,True,3,1,2,2,0,1,0,0.6666666666666666,3.647141334594566,1.2157137781981886,2.0,11.335983474868057,0.3528586654054342,1,0 days 04:00:00,0.26742602451405223

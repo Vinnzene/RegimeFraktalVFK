@@ -1,0 +1,35 @@
+# Fase 1: hanya frontend + backend.
+# TIDAK ada service database — penyimpanan memakai Parquet di data/processed/.
+# Postgres/TimescaleDB baru ditambahkan pada fase M1+ saat data exchange asli
+# dan scheduler mulai dipakai (lihat backend/app/db/repository.py).
+
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.backend
+    container_name: regimefraktal-backend
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../config.yaml:/app/config.yaml:ro
+      - ../data:/app/data
+      - ../ml/artifacts:/app/ml/artifacts:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.frontend
+      args:
+        - NEXT_PUBLIC_API_BASE=${NEXT_PUBLIC_API_BASE:-}
+    container_name: regimefraktal-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_BASE=${NEXT_PUBLIC_API_BASE:-}
+    depends_on:
+      - backend
