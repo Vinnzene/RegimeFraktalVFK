@@ -1,0 +1,2786 @@
+{
+  "preregistration": "docs/praregistrasi_fase2_strategi.md",
+  "assets": [
+    {
+      "symbol": "BTCUSDT",
+      "group": "kripto",
+      "tf": "1h",
+      "bars": 67612,
+      "cost_per_side": 0.00085,
+      "long_only": false,
+      "best_single": "MR",
+      "strategies": {
+        "MOM": {
+          "total_return": -1.0,
+          "sharpe": -2.391,
+          "max_drawdown": -1.0,
+          "exposure": 1.0,
+          "turnover_per_year": 1785.5
+        },
+        "MR": {
+          "total_return": -1.0,
+          "sharpe": -2.035,
+          "max_drawdown": -1.0,
+          "exposure": 0.779,
+          "turnover_per_year": 953.5
+        },
+        "BH": {
+          "total_return": 22.5217,
+          "sharpe": 0.973,
+          "max_drawdown": -0.772,
+          "exposure": 1.0,
+          "turnover_per_year": 0.1
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": -0.9889,
+          "sharpe": -2.183,
+          "max_drawdown": -0.989,
+          "exposure": 0.191,
+          "turnover_per_year": 336.1
+        },
+        "SW(D-BTC)": {
+          "total_return": -0.7616,
+          "sharpe": -3.376,
+          "max_drawdown": -0.7678,
+          "exposure": 0.623,
+          "turnover_per_year": 1283.3
+        },
+        "SW(D-klasik)": {
+          "total_return": -0.9959,
+          "sharpe": -1.747,
+          "max_drawdown": -0.9962,
+          "exposure": 0.361,
+          "turnover_per_year": 606.4
+        },
+        "SW(D-konsensus)": {
+          "total_return": -0.9999,
+          "sharpe": -3.174,
+          "max_drawdown": -0.9999,
+          "exposure": 0.357,
+          "turnover_per_year": 873.4
+        },
+        "E2:MOM@random": {
+          "total_return": -1.0,
+          "sharpe": -2.458,
+          "max_drawdown": -1.0,
+          "exposure": 0.759,
+          "turnover_per_year": 1485.7
+        },
+        "E2:MR@random": {
+          "total_return": -0.9987,
+          "sharpe": -1.468,
+          "max_drawdown": -0.9988,
+          "exposure": 0.59,
+          "turnover_per_year": 830.6
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MR",
+          "diff_sharpe": -0.148,
+          "ci95": [
+            -0.793,
+            0.477
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": -3.156,
+          "ci95": [
+            -4.15,
+            -2.194
+          ],
+          "verdict": "lebih buruk"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": -0.436,
+          "ci95": [
+            -1.181,
+            0.249
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": 0.991,
+          "ci95": [
+            0.191,
+            1.782
+          ],
+          "verdict": "lebih baik"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": 1.084,
+          "ci95": [
+            -1.326,
+            3.545
+          ],
+          "verdict": "setara"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": 0.0045
+    },
+    {
+      "symbol": "ETHUSDT",
+      "group": "kripto",
+      "tf": "1h",
+      "bars": 67608,
+      "cost_per_side": 0.00085,
+      "long_only": false,
+      "best_single": "MOM",
+      "strategies": {
+        "MOM": {
+          "total_return": -1.0,
+          "sharpe": -1.847,
+          "max_drawdown": -1.0,
+          "exposure": 1.0,
+          "turnover_per_year": 1718.5
+        },
+        "MR": {
+          "total_return": -1.0,
+          "sharpe": -2.085,
+          "max_drawdown": -1.0,
+          "exposure": 0.782,
+          "turnover_per_year": 940.4
+        },
+        "BH": {
+          "total_return": 20.5215,
+          "sharpe": 0.901,
+          "max_drawdown": -0.8134,
+          "exposure": 1.0,
+          "turnover_per_year": 0.1
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": -0.9889,
+          "sharpe": -2.07,
+          "max_drawdown": -0.99,
+          "exposure": 0.151,
+          "turnover_per_year": 262.8
+        },
+        "SW(D-BTC)": {
+          "total_return": -1.0,
+          "sharpe": -3.27,
+          "max_drawdown": -1.0,
+          "exposure": 0.562,
+          "turnover_per_year": 1445.2
+        },
+        "SW(D-klasik)": {
+          "total_return": -0.9996,
+          "sharpe": -2.036,
+          "max_drawdown": -0.9997,
+          "exposure": 0.347,
+          "turnover_per_year": 580.9
+        },
+        "SW(D-konsensus)": {
+          "total_return": -1.0,
+          "sharpe": -2.81,
+          "max_drawdown": -1.0,
+          "exposure": 0.372,
+          "turnover_per_year": 933.8
+        },
+        "E2:MOM@random": {
+          "total_return": -1.0,
+          "sharpe": -1.875,
+          "max_drawdown": -1.0,
+          "exposure": 0.807,
+          "turnover_per_year": 1468.9
+        },
+        "E2:MR@random": {
+          "total_return": -1.0,
+          "sharpe": -1.635,
+          "max_drawdown": -1.0,
+          "exposure": 0.631,
+          "turnover_per_year": 837.3
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MOM",
+          "diff_sharpe": -0.223,
+          "ci95": [
+            -1.302,
+            0.884
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": -2.971,
+          "ci95": [
+            -3.938,
+            -1.99
+          ],
+          "verdict": "lebih buruk"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": -0.034,
+          "ci95": [
+            -0.772,
+            0.761
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": 0.74,
+          "ci95": [
+            -0.115,
+            1.62
+          ],
+          "verdict": "setara"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": 1.2,
+          "ci95": [
+            0.342,
+            2.062
+          ],
+          "verdict": "lebih baik"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": 0.0199
+    },
+    {
+      "symbol": "BNBUSDT",
+      "group": "kripto",
+      "tf": "1h",
+      "bars": 67608,
+      "cost_per_side": 0.00085,
+      "long_only": false,
+      "best_single": "MOM",
+      "strategies": {
+        "MOM": {
+          "total_return": -1.0,
+          "sharpe": -1.738,
+          "max_drawdown": -1.0,
+          "exposure": 0.997,
+          "turnover_per_year": 1712.5
+        },
+        "MR": {
+          "total_return": -1.0,
+          "sharpe": -2.134,
+          "max_drawdown": -1.0,
+          "exposure": 0.784,
+          "turnover_per_year": 943.9
+        },
+        "BH": {
+          "total_return": 114.6423,
+          "sharpe": 1.171,
+          "max_drawdown": -0.8052,
+          "exposure": 1.0,
+          "turnover_per_year": 0.1
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": -0.9834,
+          "sharpe": -1.53,
+          "max_drawdown": -0.9862,
+          "exposure": 0.187,
+          "turnover_per_year": 317.7
+        },
+        "SW(D-BTC)": {
+          "total_return": -1.0,
+          "sharpe": -2.507,
+          "max_drawdown": -1.0,
+          "exposure": 0.495,
+          "turnover_per_year": 1270.2
+        },
+        "SW(D-klasik)": {
+          "total_return": -0.9997,
+          "sharpe": -1.911,
+          "max_drawdown": -0.9997,
+          "exposure": 0.395,
+          "turnover_per_year": 624.8
+        },
+        "SW(D-konsensus)": {
+          "total_return": -1.0,
+          "sharpe": -2.218,
+          "max_drawdown": -1.0,
+          "exposure": 0.386,
+          "turnover_per_year": 880.0
+        },
+        "E2:MOM@random": {
+          "total_return": -1.0,
+          "sharpe": -1.679,
+          "max_drawdown": -1.0,
+          "exposure": 0.761,
+          "turnover_per_year": 1408.8
+        },
+        "E2:MR@random": {
+          "total_return": -1.0,
+          "sharpe": -1.856,
+          "max_drawdown": -1.0,
+          "exposure": 0.601,
+          "turnover_per_year": 807.4
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MOM",
+          "diff_sharpe": 0.208,
+          "ci95": [
+            -0.847,
+            1.262
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": -2.701,
+          "ci95": [
+            -3.701,
+            -1.725
+          ],
+          "verdict": "lebih buruk"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": 0.381,
+          "ci95": [
+            -0.3,
+            1.053
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": 0.688,
+          "ci95": [
+            -0.236,
+            1.684
+          ],
+          "verdict": "setara"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": 0.977,
+          "ci95": [
+            0.057,
+            1.903
+          ],
+          "verdict": "lebih baik"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": 0.0246
+    },
+    {
+      "symbol": "SOLUSDT",
+      "group": "kripto",
+      "tf": "1h",
+      "bars": 53532,
+      "cost_per_side": 0.00085,
+      "long_only": false,
+      "best_single": "MOM",
+      "strategies": {
+        "MOM": {
+          "total_return": -1.0,
+          "sharpe": -0.888,
+          "max_drawdown": -1.0,
+          "exposure": 0.998,
+          "turnover_per_year": 1606.1
+        },
+        "MR": {
+          "total_return": -1.0,
+          "sharpe": -1.567,
+          "max_drawdown": -1.0,
+          "exposure": 0.794,
+          "turnover_per_year": 925.1
+        },
+        "BH": {
+          "total_return": 22.4337,
+          "sharpe": 1.025,
+          "max_drawdown": -0.968,
+          "exposure": 1.0,
+          "turnover_per_year": 0.2
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": -0.9775,
+          "sharpe": -0.885,
+          "max_drawdown": -0.9812,
+          "exposure": 0.118,
+          "turnover_per_year": 215.4
+        },
+        "SW(D-BTC)": {
+          "total_return": -1.0,
+          "sharpe": -2.103,
+          "max_drawdown": -1.0,
+          "exposure": 0.473,
+          "turnover_per_year": 1139.3
+        },
+        "SW(D-klasik)": {
+          "total_return": -0.9999,
+          "sharpe": -1.54,
+          "max_drawdown": -0.9999,
+          "exposure": 0.383,
+          "turnover_per_year": 597.3
+        },
+        "SW(D-konsensus)": {
+          "total_return": -0.9999,
+          "sharpe": -1.556,
+          "max_drawdown": -0.9999,
+          "exposure": 0.411,
+          "turnover_per_year": 893.8
+        },
+        "E2:MOM@random": {
+          "total_return": -1.0,
+          "sharpe": -1.125,
+          "max_drawdown": -1.0,
+          "exposure": 0.857,
+          "turnover_per_year": 1459.8
+        },
+        "E2:MR@random": {
+          "total_return": -1.0,
+          "sharpe": -1.338,
+          "max_drawdown": -1.0,
+          "exposure": 0.681,
+          "turnover_per_year": 860.9
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MOM",
+          "diff_sharpe": 0.003,
+          "ci95": [
+            -0.919,
+            0.903
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": -1.91,
+          "ci95": [
+            -2.865,
+            -1.039
+          ],
+          "verdict": "lebih buruk"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": 0.655,
+          "ci95": [
+            -0.045,
+            1.379
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": 0.671,
+          "ci95": [
+            -0.06,
+            1.405
+          ],
+          "verdict": "setara"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": 1.218,
+          "ci95": [
+            0.435,
+            1.987
+          ],
+          "verdict": "lebih baik"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": 0.075
+    },
+    {
+      "symbol": "XRPUSDT",
+      "group": "kripto",
+      "tf": "1h",
+      "bars": 67608,
+      "cost_per_side": 0.00085,
+      "long_only": false,
+      "best_single": "MOM",
+      "strategies": {
+        "MOM": {
+          "total_return": -1.0,
+          "sharpe": -1.23,
+          "max_drawdown": -1.0,
+          "exposure": 0.999,
+          "turnover_per_year": 1756.6
+        },
+        "MR": {
+          "total_return": -1.0,
+          "sharpe": -1.627,
+          "max_drawdown": -1.0,
+          "exposure": 0.772,
+          "turnover_per_year": 939.8
+        },
+        "BH": {
+          "total_return": 3.3947,
+          "sharpe": 0.684,
+          "max_drawdown": -0.8483,
+          "exposure": 1.0,
+          "turnover_per_year": 0.1
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": -0.9982,
+          "sharpe": -1.382,
+          "max_drawdown": -0.9983,
+          "exposure": 0.26,
+          "turnover_per_year": 418.5
+        },
+        "SW(D-BTC)": {
+          "total_return": -1.0,
+          "sharpe": -1.972,
+          "max_drawdown": -1.0,
+          "exposure": 0.537,
+          "turnover_per_year": 1261.8
+        },
+        "SW(D-klasik)": {
+          "total_return": -0.9997,
+          "sharpe": -1.32,
+          "max_drawdown": -0.9997,
+          "exposure": 0.418,
+          "turnover_per_year": 672.5
+        },
+        "SW(D-konsensus)": {
+          "total_return": -0.9999,
+          "sharpe": -1.669,
+          "max_drawdown": -0.9999,
+          "exposure": 0.38,
+          "turnover_per_year": 837.8
+        },
+        "E2:MOM@random": {
+          "total_return": -1.0,
+          "sharpe": -1.243,
+          "max_drawdown": -1.0,
+          "exposure": 0.665,
+          "turnover_per_year": 1281.6
+        },
+        "E2:MR@random": {
+          "total_return": -0.9999,
+          "sharpe": -1.321,
+          "max_drawdown": -0.9999,
+          "exposure": 0.515,
+          "turnover_per_year": 723.9
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MOM",
+          "diff_sharpe": -0.152,
+          "ci95": [
+            -1.415,
+            1.063
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": -2.066,
+          "ci95": [
+            -3.184,
+            -1.049
+          ],
+          "verdict": "lebih buruk"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": -0.062,
+          "ci95": [
+            -0.838,
+            0.643
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": 0.287,
+          "ci95": [
+            -0.438,
+            1.018
+          ],
+          "verdict": "setara"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": 0.59,
+          "ci95": [
+            -0.19,
+            1.393
+          ],
+          "verdict": "setara"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": 0.0683
+    },
+    {
+      "symbol": "ADAUSDT",
+      "group": "kripto",
+      "tf": "1h",
+      "bars": 67608,
+      "cost_per_side": 0.00085,
+      "long_only": false,
+      "best_single": "MR",
+      "strategies": {
+        "MOM": {
+          "total_return": -1.0,
+          "sharpe": -1.689,
+          "max_drawdown": -1.0,
+          "exposure": 0.998,
+          "turnover_per_year": 1712.5
+        },
+        "MR": {
+          "total_return": -1.0,
+          "sharpe": -1.241,
+          "max_drawdown": -1.0,
+          "exposure": 0.781,
+          "turnover_per_year": 952.7
+        },
+        "BH": {
+          "total_return": 4.8068,
+          "sharpe": 0.729,
+          "max_drawdown": -0.9551,
+          "exposure": 1.0,
+          "turnover_per_year": 0.1
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": -0.9871,
+          "sharpe": -0.924,
+          "max_drawdown": -0.9879,
+          "exposure": 0.189,
+          "turnover_per_year": 327.3
+        },
+        "SW(D-BTC)": {
+          "total_return": -1.0,
+          "sharpe": -2.199,
+          "max_drawdown": -1.0,
+          "exposure": 0.513,
+          "turnover_per_year": 1261.5
+        },
+        "SW(D-klasik)": {
+          "total_return": -0.9968,
+          "sharpe": -0.747,
+          "max_drawdown": -0.9973,
+          "exposure": 0.402,
+          "turnover_per_year": 633.7
+        },
+        "SW(D-konsensus)": {
+          "total_return": -1.0,
+          "sharpe": -2.152,
+          "max_drawdown": -1.0,
+          "exposure": 0.398,
+          "turnover_per_year": 867.1
+        },
+        "E2:MOM@random": {
+          "total_return": -1.0,
+          "sharpe": -1.622,
+          "max_drawdown": -1.0,
+          "exposure": 0.759,
+          "turnover_per_year": 1391.7
+        },
+        "E2:MR@random": {
+          "total_return": -0.9999,
+          "sharpe": -1.111,
+          "max_drawdown": -0.9999,
+          "exposure": 0.594,
+          "turnover_per_year": 801.9
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MR",
+          "diff_sharpe": 0.317,
+          "ci95": [
+            -0.265,
+            0.866
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": -1.653,
+          "ci95": [
+            -2.599,
+            -0.792
+          ],
+          "verdict": "lebih buruk"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": -0.177,
+          "ci95": [
+            -0.736,
+            0.374
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": 1.228,
+          "ci95": [
+            0.448,
+            1.989
+          ],
+          "verdict": "lebih baik"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": 1.275,
+          "ci95": [
+            0.495,
+            2.063
+          ],
+          "verdict": "lebih baik"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": 0.0506
+    },
+    {
+      "symbol": "DOGEUSDT",
+      "group": "kripto",
+      "tf": "1h",
+      "bars": 63172,
+      "cost_per_side": 0.00085,
+      "long_only": false,
+      "best_single": "MOM",
+      "strategies": {
+        "MOM": {
+          "total_return": -1.0,
+          "sharpe": -0.907,
+          "max_drawdown": -1.0,
+          "exposure": 0.999,
+          "turnover_per_year": 1796.5
+        },
+        "MR": {
+          "total_return": -1.0,
+          "sharpe": -1.571,
+          "max_drawdown": -1.0,
+          "exposure": 0.774,
+          "turnover_per_year": 954.5
+        },
+        "BH": {
+          "total_return": 28.8554,
+          "sharpe": 0.98,
+          "max_drawdown": -0.9318,
+          "exposure": 1.0,
+          "turnover_per_year": 0.1
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": -0.9997,
+          "sharpe": -1.308,
+          "max_drawdown": -0.9998,
+          "exposure": 0.315,
+          "turnover_per_year": 507.8
+        },
+        "SW(D-BTC)": {
+          "total_return": -1.0,
+          "sharpe": -1.136,
+          "max_drawdown": -1.0,
+          "exposure": 0.555,
+          "turnover_per_year": 1244.0
+        },
+        "SW(D-klasik)": {
+          "total_return": -0.9995,
+          "sharpe": -0.637,
+          "max_drawdown": -0.9998,
+          "exposure": 0.481,
+          "turnover_per_year": 755.5
+        },
+        "SW(D-konsensus)": {
+          "total_return": -0.9996,
+          "sharpe": -1.112,
+          "max_drawdown": -0.9997,
+          "exposure": 0.429,
+          "turnover_per_year": 895.9
+        },
+        "E2:MOM@random": {
+          "total_return": -0.9998,
+          "sharpe": -0.746,
+          "max_drawdown": -1.0,
+          "exposure": 0.589,
+          "turnover_per_year": 1106.2
+        },
+        "E2:MR@random": {
+          "total_return": -1.0,
+          "sharpe": -1.187,
+          "max_drawdown": -1.0,
+          "exposure": 0.46,
+          "turnover_per_year": 633.0
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MOM",
+          "diff_sharpe": -0.401,
+          "ci95": [
+            -1.783,
+            1.206
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": -2.288,
+          "ci95": [
+            -3.507,
+            -0.995
+          ],
+          "verdict": "lebih buruk"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": -0.671,
+          "ci95": [
+            -1.721,
+            0.442
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": -0.196,
+          "ci95": [
+            -0.995,
+            0.688
+          ],
+          "verdict": "setara"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": -0.172,
+          "ci95": [
+            -1.272,
+            1.107
+          ],
+          "verdict": "setara"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": 0.0871
+    },
+    {
+      "symbol": "PAXGUSDT",
+      "group": "emas",
+      "tf": "1h",
+      "bars": 53116,
+      "cost_per_side": 0.00085,
+      "long_only": false,
+      "best_single": "MR",
+      "strategies": {
+        "MOM": {
+          "total_return": -1.0,
+          "sharpe": -10.018,
+          "max_drawdown": -1.0,
+          "exposure": 0.974,
+          "turnover_per_year": 2214.1
+        },
+        "MR": {
+          "total_return": -0.9753,
+          "sharpe": -2.822,
+          "max_drawdown": -0.9829,
+          "exposure": 0.754,
+          "turnover_per_year": 1178.0
+        },
+        "BH": {
+          "total_return": 1.1363,
+          "sharpe": 0.662,
+          "max_drawdown": -0.2923,
+          "exposure": 1.0,
+          "turnover_per_year": 0.2
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": -0.8751,
+          "sharpe": -2.688,
+          "max_drawdown": -0.9114,
+          "exposure": 0.329,
+          "turnover_per_year": 648.0
+        },
+        "SW(D-BTC)": {
+          "total_return": -0.9931,
+          "sharpe": -4.646,
+          "max_drawdown": -0.9944,
+          "exposure": 0.576,
+          "turnover_per_year": 1307.5
+        },
+        "SW(D-klasik)": {
+          "total_return": -0.9604,
+          "sharpe": -2.913,
+          "max_drawdown": -0.9717,
+          "exposure": 0.549,
+          "turnover_per_year": 965.5
+        },
+        "SW(D-konsensus)": {
+          "total_return": -0.9825,
+          "sharpe": -4.594,
+          "max_drawdown": -0.9872,
+          "exposure": 0.464,
+          "turnover_per_year": 1048.6
+        },
+        "E2:MOM@random": {
+          "total_return": -0.9994,
+          "sharpe": -6.518,
+          "max_drawdown": -0.9994,
+          "exposure": 0.559,
+          "turnover_per_year": 1301.6
+        },
+        "E2:MR@random": {
+          "total_return": -0.9465,
+          "sharpe": -2.772,
+          "max_drawdown": -0.9508,
+          "exposure": 0.435,
+          "turnover_per_year": 721.0
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MR",
+          "diff_sharpe": 0.134,
+          "ci95": [
+            -0.717,
+            1.087
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": -3.35,
+          "ci95": [
+            -4.434,
+            -2.4
+          ],
+          "verdict": "lebih buruk"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": 0.225,
+          "ci95": [
+            -0.532,
+            0.969
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": 1.906,
+          "ci95": [
+            1.158,
+            2.639
+          ],
+          "verdict": "lebih baik"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": 1.958,
+          "ci95": [
+            0.835,
+            3.034
+          ],
+          "verdict": "lebih baik"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": 0.1493
+    },
+    {
+      "symbol": "GCF",
+      "group": "emas",
+      "tf": "1d",
+      "bars": 6000,
+      "cost_per_side": 0.0003,
+      "long_only": false,
+      "best_single": "MR",
+      "strategies": {
+        "MOM": {
+          "total_return": -0.6369,
+          "sharpe": -0.142,
+          "max_drawdown": -0.8143,
+          "exposure": 0.999,
+          "turnover_per_year": 45.1
+        },
+        "MR": {
+          "total_return": -0.051,
+          "sharpe": 0.067,
+          "max_drawdown": -0.3818,
+          "exposure": 0.791,
+          "turnover_per_year": 27.0
+        },
+        "BH": {
+          "total_return": 11.6885,
+          "sharpe": 0.678,
+          "max_drawdown": -0.4436,
+          "exposure": 1.0,
+          "turnover_per_year": 0.0
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": -0.2386,
+          "sharpe": -0.106,
+          "max_drawdown": -0.2885,
+          "exposure": 0.178,
+          "turnover_per_year": 8.2
+        },
+        "SW(D-BTC)": {
+          "total_return": -0.7665,
+          "sharpe": -0.402,
+          "max_drawdown": -0.7875,
+          "exposure": 0.49,
+          "turnover_per_year": 35.8
+        },
+        "SW(D-klasik)": {
+          "total_return": -0.2032,
+          "sharpe": -0.035,
+          "max_drawdown": -0.4322,
+          "exposure": 0.365,
+          "turnover_per_year": 14.6
+        },
+        "SW(D-konsensus)": {
+          "total_return": -0.4943,
+          "sharpe": -0.189,
+          "max_drawdown": -0.6109,
+          "exposure": 0.376,
+          "turnover_per_year": 25.5
+        },
+        "E2:MOM@random": {
+          "total_return": -0.589,
+          "sharpe": -0.152,
+          "max_drawdown": -0.7365,
+          "exposure": 0.776,
+          "turnover_per_year": 36.3
+        },
+        "E2:MR@random": {
+          "total_return": 0.2103,
+          "sharpe": 0.127,
+          "max_drawdown": -0.3246,
+          "exposure": 0.613,
+          "turnover_per_year": 22.8
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MR",
+          "diff_sharpe": -0.173,
+          "ci95": [
+            -0.574,
+            0.221
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": -0.784,
+          "ci95": [
+            -1.323,
+            -0.278
+          ],
+          "verdict": "lebih buruk"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": -0.071,
+          "ci95": [
+            -0.444,
+            0.3
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": 0.083,
+          "ci95": [
+            -0.43,
+            0.592
+          ],
+          "verdict": "setara"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": 0.296,
+          "ci95": [
+            -0.202,
+            0.798
+          ],
+          "verdict": "setara"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": 0.0077
+    },
+    {
+      "symbol": "JKSE",
+      "group": "saham_idx",
+      "tf": "1d",
+      "bars": 5936,
+      "cost_per_side": 0.0025,
+      "long_only": true,
+      "best_single": "MOM",
+      "strategies": {
+        "MOM": {
+          "total_return": 5.1625,
+          "sharpe": 0.645,
+          "max_drawdown": -0.3788,
+          "exposure": 0.619,
+          "turnover_per_year": 18.7
+        },
+        "MR": {
+          "total_return": -0.5025,
+          "sharpe": -0.132,
+          "max_drawdown": -0.5981,
+          "exposure": 0.282,
+          "turnover_per_year": 11.4
+        },
+        "BH": {
+          "total_return": 13.5736,
+          "sharpe": 0.653,
+          "max_drawdown": -0.6073,
+          "exposure": 1.0,
+          "turnover_per_year": 0.0
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": 5.3338,
+          "sharpe": 0.808,
+          "max_drawdown": -0.2038,
+          "exposure": 0.255,
+          "turnover_per_year": 7.1
+        },
+        "SW(D-BTC)": {
+          "total_return": 3.1827,
+          "sharpe": 0.563,
+          "max_drawdown": -0.3734,
+          "exposure": 0.39,
+          "turnover_per_year": 18.3
+        },
+        "SW(D-klasik)": {
+          "total_return": 7.3162,
+          "sharpe": 0.862,
+          "max_drawdown": -0.2606,
+          "exposure": 0.36,
+          "turnover_per_year": 10.2
+        },
+        "SW(D-konsensus)": {
+          "total_return": 0.9359,
+          "sharpe": 0.311,
+          "max_drawdown": -0.3748,
+          "exposure": 0.284,
+          "turnover_per_year": 13.0
+        },
+        "E2:MOM@random": {
+          "total_return": -0.1069,
+          "sharpe": -0.012,
+          "max_drawdown": -0.4493,
+          "exposure": 0.343,
+          "turnover_per_year": 13.0
+        },
+        "E2:MR@random": {
+          "total_return": -0.5979,
+          "sharpe": -0.291,
+          "max_drawdown": -0.6799,
+          "exposure": 0.17,
+          "turnover_per_year": 8.2
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MOM",
+          "diff_sharpe": 0.163,
+          "ci95": [
+            -0.165,
+            0.504
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": 0.155,
+          "ci95": [
+            -0.301,
+            0.592
+          ],
+          "verdict": "setara"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": -0.054,
+          "ci95": [
+            -0.302,
+            0.19
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": 0.497,
+          "ci95": [
+            0.022,
+            0.961
+          ],
+          "verdict": "lebih baik"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": 0.245,
+          "ci95": [
+            -0.138,
+            0.64
+          ],
+          "verdict": "setara"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": -0.0173
+    },
+    {
+      "symbol": "BBCAJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "bars": 4948,
+      "cost_per_side": 0.0025,
+      "long_only": true,
+      "best_single": "MR",
+      "strategies": {
+        "MOM": {
+          "total_return": -0.4103,
+          "sharpe": -0.029,
+          "max_drawdown": -0.5476,
+          "exposure": 0.592,
+          "turnover_per_year": 27.3
+        },
+        "MR": {
+          "total_return": 2.9717,
+          "sharpe": 0.453,
+          "max_drawdown": -0.4902,
+          "exposure": 0.289,
+          "turnover_per_year": 13.2
+        },
+        "BH": {
+          "total_return": 14.8744,
+          "sharpe": 0.609,
+          "max_drawdown": -0.5571,
+          "exposure": 1.0,
+          "turnover_per_year": 0.0
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": -0.0067,
+          "sharpe": 0.068,
+          "max_drawdown": -0.4902,
+          "exposure": 0.213,
+          "turnover_per_year": 9.2
+        },
+        "SW(D-BTC)": {
+          "total_return": 0.9116,
+          "sharpe": 0.271,
+          "max_drawdown": -0.4513,
+          "exposure": 0.274,
+          "turnover_per_year": 16.4
+        },
+        "SW(D-klasik)": {
+          "total_return": 0.1362,
+          "sharpe": 0.12,
+          "max_drawdown": -0.4902,
+          "exposure": 0.253,
+          "turnover_per_year": 10.8
+        },
+        "SW(D-konsensus)": {
+          "total_return": 0.7998,
+          "sharpe": 0.258,
+          "max_drawdown": -0.4342,
+          "exposure": 0.224,
+          "turnover_per_year": 12.3
+        },
+        "E2:MOM@random": {
+          "total_return": -0.3446,
+          "sharpe": -0.055,
+          "max_drawdown": -0.5008,
+          "exposure": 0.358,
+          "turnover_per_year": 17.2
+        },
+        "E2:MR@random": {
+          "total_return": 1.566,
+          "sharpe": 0.375,
+          "max_drawdown": -0.2768,
+          "exposure": 0.155,
+          "turnover_per_year": 8.0
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MR",
+          "diff_sharpe": -0.385,
+          "ci95": [
+            -0.798,
+            0.004
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": -0.541,
+          "ci95": [
+            -0.896,
+            -0.167
+          ],
+          "verdict": "lebih buruk"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": -0.052,
+          "ci95": [
+            -0.383,
+            0.274
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": -0.19,
+          "ci95": [
+            -0.623,
+            0.237
+          ],
+          "verdict": "setara"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": -0.203,
+          "ci95": [
+            -0.639,
+            0.24
+          ],
+          "verdict": "setara"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": 0.1199
+    },
+    {
+      "symbol": "BBRIJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "bars": 5100,
+      "cost_per_side": 0.0025,
+      "long_only": true,
+      "best_single": "MR",
+      "strategies": {
+        "MOM": {
+          "total_return": -0.3787,
+          "sharpe": 0.032,
+          "max_drawdown": -0.7072,
+          "exposure": 0.582,
+          "turnover_per_year": 22.3
+        },
+        "MR": {
+          "total_return": 1.3041,
+          "sharpe": 0.283,
+          "max_drawdown": -0.5248,
+          "exposure": 0.31,
+          "turnover_per_year": 13.2
+        },
+        "BH": {
+          "total_return": 12.3886,
+          "sharpe": 0.517,
+          "max_drawdown": -0.6958,
+          "exposure": 1.0,
+          "turnover_per_year": 0.0
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": 0.3232,
+          "sharpe": 0.167,
+          "max_drawdown": -0.5314,
+          "exposure": 0.362,
+          "turnover_per_year": 14.6
+        },
+        "SW(D-BTC)": {
+          "total_return": -0.1263,
+          "sharpe": 0.061,
+          "max_drawdown": -0.6003,
+          "exposure": 0.217,
+          "turnover_per_year": 13.3
+        },
+        "SW(D-klasik)": {
+          "total_return": 0.3663,
+          "sharpe": 0.174,
+          "max_drawdown": -0.5158,
+          "exposure": 0.306,
+          "turnover_per_year": 13.7
+        },
+        "SW(D-konsensus)": {
+          "total_return": 1.4149,
+          "sharpe": 0.308,
+          "max_drawdown": -0.5013,
+          "exposure": 0.207,
+          "turnover_per_year": 12.4
+        },
+        "E2:MOM@random": {
+          "total_return": -0.6987,
+          "sharpe": -0.348,
+          "max_drawdown": -0.7995,
+          "exposure": 0.197,
+          "turnover_per_year": 10.7
+        },
+        "E2:MR@random": {
+          "total_return": -0.0555,
+          "sharpe": 0.066,
+          "max_drawdown": -0.525,
+          "exposure": 0.146,
+          "turnover_per_year": 7.4
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MR",
+          "diff_sharpe": -0.116,
+          "ci95": [
+            -0.645,
+            0.401
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": -0.35,
+          "ci95": [
+            -0.736,
+            0.037
+          ],
+          "verdict": "setara"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": -0.007,
+          "ci95": [
+            -0.322,
+            0.307
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": -0.141,
+          "ci95": [
+            -0.646,
+            0.329
+          ],
+          "verdict": "setara"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": 0.106,
+          "ci95": [
+            -0.43,
+            0.622
+          ],
+          "verdict": "setara"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": 0.0825
+    },
+    {
+      "symbol": "BMRIJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "bars": 5184,
+      "cost_per_side": 0.0025,
+      "long_only": true,
+      "best_single": "MR",
+      "strategies": {
+        "MOM": {
+          "total_return": -0.1831,
+          "sharpe": 0.084,
+          "max_drawdown": -0.7031,
+          "exposure": 0.563,
+          "turnover_per_year": 24.3
+        },
+        "MR": {
+          "total_return": 0.1794,
+          "sharpe": 0.154,
+          "max_drawdown": -0.5264,
+          "exposure": 0.318,
+          "turnover_per_year": 12.0
+        },
+        "BH": {
+          "total_return": 11.0391,
+          "sharpe": 0.498,
+          "max_drawdown": -0.7025,
+          "exposure": 1.0,
+          "turnover_per_year": 0.0
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": 3.0442,
+          "sharpe": 0.456,
+          "max_drawdown": -0.3185,
+          "exposure": 0.169,
+          "turnover_per_year": 6.9
+        },
+        "SW(D-BTC)": {
+          "total_return": -0.5709,
+          "sharpe": -0.113,
+          "max_drawdown": -0.6821,
+          "exposure": 0.241,
+          "turnover_per_year": 13.4
+        },
+        "SW(D-klasik)": {
+          "total_return": 1.3143,
+          "sharpe": 0.326,
+          "max_drawdown": -0.3688,
+          "exposure": 0.181,
+          "turnover_per_year": 8.6
+        },
+        "SW(D-konsensus)": {
+          "total_return": -0.1025,
+          "sharpe": 0.084,
+          "max_drawdown": -0.6229,
+          "exposure": 0.267,
+          "turnover_per_year": 13.4
+        },
+        "E2:MOM@random": {
+          "total_return": -0.7937,
+          "sharpe": -0.345,
+          "max_drawdown": -0.8076,
+          "exposure": 0.393,
+          "turnover_per_year": 18.6
+        },
+        "E2:MR@random": {
+          "total_return": -0.5816,
+          "sharpe": -0.105,
+          "max_drawdown": -0.7091,
+          "exposure": 0.24,
+          "turnover_per_year": 9.9
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MR",
+          "diff_sharpe": 0.302,
+          "ci95": [
+            -0.196,
+            0.804
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": -0.042,
+          "ci95": [
+            -0.456,
+            0.343
+          ],
+          "verdict": "setara"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": 0.13,
+          "ci95": [
+            -0.222,
+            0.509
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": 0.372,
+          "ci95": [
+            -0.088,
+            0.809
+          ],
+          "verdict": "setara"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": 0.569,
+          "ci95": [
+            0.056,
+            1.093
+          ],
+          "verdict": "lebih baik"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": 0.0088
+    },
+    {
+      "symbol": "BBNIJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "bars": 5068,
+      "cost_per_side": 0.0025,
+      "long_only": true,
+      "best_single": "MOM",
+      "strategies": {
+        "MOM": {
+          "total_return": 1.6524,
+          "sharpe": 0.308,
+          "max_drawdown": -0.6196,
+          "exposure": 0.543,
+          "turnover_per_year": 19.7
+        },
+        "MR": {
+          "total_return": -0.727,
+          "sharpe": -0.116,
+          "max_drawdown": -0.8315,
+          "exposure": 0.344,
+          "turnover_per_year": 12.7
+        },
+        "BH": {
+          "total_return": 4.5605,
+          "sharpe": 0.405,
+          "max_drawdown": -0.8544,
+          "exposure": 1.0,
+          "turnover_per_year": 0.0
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": 3.5737,
+          "sharpe": 0.43,
+          "max_drawdown": -0.6196,
+          "exposure": 0.377,
+          "turnover_per_year": 16.2
+        },
+        "SW(D-BTC)": {
+          "total_return": 0.1295,
+          "sharpe": 0.131,
+          "max_drawdown": -0.5648,
+          "exposure": 0.283,
+          "turnover_per_year": 16.2
+        },
+        "SW(D-klasik)": {
+          "total_return": -0.7339,
+          "sharpe": -0.379,
+          "max_drawdown": -0.7691,
+          "exposure": 0.236,
+          "turnover_per_year": 9.9
+        },
+        "SW(D-konsensus)": {
+          "total_return": 0.799,
+          "sharpe": 0.235,
+          "max_drawdown": -0.631,
+          "exposure": 0.299,
+          "turnover_per_year": 14.0
+        },
+        "E2:MOM@random": {
+          "total_return": -0.5618,
+          "sharpe": -0.289,
+          "max_drawdown": -0.6732,
+          "exposure": 0.166,
+          "turnover_per_year": 8.8
+        },
+        "E2:MR@random": {
+          "total_return": -0.5529,
+          "sharpe": -0.247,
+          "max_drawdown": -0.6694,
+          "exposure": 0.12,
+          "turnover_per_year": 6.1
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MOM",
+          "diff_sharpe": 0.122,
+          "ci95": [
+            -0.084,
+            0.344
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": 0.025,
+          "ci95": [
+            -0.417,
+            0.44
+          ],
+          "verdict": "setara"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": 0.809,
+          "ci95": [
+            0.321,
+            1.316
+          ],
+          "verdict": "lebih baik"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": 0.195,
+          "ci95": [
+            -0.185,
+            0.57
+          ],
+          "verdict": "setara"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": 0.299,
+          "ci95": [
+            -0.113,
+            0.707
+          ],
+          "verdict": "setara"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": NaN
+    },
+    {
+      "symbol": "TLKMJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "bars": 4868,
+      "cost_per_side": 0.0025,
+      "long_only": true,
+      "best_single": "MR",
+      "strategies": {
+        "MOM": {
+          "total_return": -0.6636,
+          "sharpe": -0.154,
+          "max_drawdown": -0.769,
+          "exposure": 0.515,
+          "turnover_per_year": 23.2
+        },
+        "MR": {
+          "total_return": 2.5599,
+          "sharpe": 0.41,
+          "max_drawdown": -0.3713,
+          "exposure": 0.363,
+          "turnover_per_year": 13.3
+        },
+        "BH": {
+          "total_return": 0.6729,
+          "sharpe": 0.237,
+          "max_drawdown": -0.6047,
+          "exposure": 1.0,
+          "turnover_per_year": 0.0
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": 0.1208,
+          "sharpe": 0.132,
+          "max_drawdown": -0.1954,
+          "exposure": 0.055,
+          "turnover_per_year": 2.2
+        },
+        "SW(D-BTC)": {
+          "total_return": 2.367,
+          "sharpe": 0.431,
+          "max_drawdown": -0.3165,
+          "exposure": 0.291,
+          "turnover_per_year": 13.2
+        },
+        "SW(D-klasik)": {
+          "total_return": 0.5596,
+          "sharpe": 0.251,
+          "max_drawdown": -0.2713,
+          "exposure": 0.179,
+          "turnover_per_year": 7.8
+        },
+        "SW(D-konsensus)": {
+          "total_return": 0.8605,
+          "sharpe": 0.263,
+          "max_drawdown": -0.3317,
+          "exposure": 0.286,
+          "turnover_per_year": 11.9
+        },
+        "E2:MOM@random": {
+          "total_return": -0.7586,
+          "sharpe": -0.259,
+          "max_drawdown": -0.8005,
+          "exposure": 0.439,
+          "turnover_per_year": 21.3
+        },
+        "E2:MR@random": {
+          "total_return": 2.2119,
+          "sharpe": 0.39,
+          "max_drawdown": -0.3714,
+          "exposure": 0.322,
+          "turnover_per_year": 12.3
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MR",
+          "diff_sharpe": -0.278,
+          "ci95": [
+            -0.754,
+            0.232
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": -0.105,
+          "ci95": [
+            -0.582,
+            0.371
+          ],
+          "verdict": "setara"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": -0.119,
+          "ci95": [
+            -0.625,
+            0.395
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": -0.131,
+          "ci95": [
+            -0.601,
+            0.398
+          ],
+          "verdict": "setara"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": -0.299,
+          "ci95": [
+            -0.752,
+            0.183
+          ],
+          "verdict": "setara"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": -0.0678
+    },
+    {
+      "symbol": "ASIIJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "bars": 5900,
+      "cost_per_side": 0.0025,
+      "long_only": true,
+      "best_single": "MR",
+      "strategies": {
+        "MOM": {
+          "total_return": 2.1801,
+          "sharpe": 0.309,
+          "max_drawdown": -0.7675,
+          "exposure": 0.542,
+          "turnover_per_year": 24.9
+        },
+        "MR": {
+          "total_return": 2.1964,
+          "sharpe": 0.319,
+          "max_drawdown": -0.6743,
+          "exposure": 0.328,
+          "turnover_per_year": 13.5
+        },
+        "BH": {
+          "total_return": 19.4045,
+          "sharpe": 0.515,
+          "max_drawdown": -0.7601,
+          "exposure": 1.0,
+          "turnover_per_year": 0.0
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": 7.7887,
+          "sharpe": 0.515,
+          "max_drawdown": -0.4875,
+          "exposure": 0.253,
+          "turnover_per_year": 9.5
+        },
+        "SW(D-BTC)": {
+          "total_return": 1.3024,
+          "sharpe": 0.282,
+          "max_drawdown": -0.522,
+          "exposure": 0.224,
+          "turnover_per_year": 12.1
+        },
+        "SW(D-klasik)": {
+          "total_return": 1.3021,
+          "sharpe": 0.267,
+          "max_drawdown": -0.577,
+          "exposure": 0.208,
+          "turnover_per_year": 8.3
+        },
+        "SW(D-konsensus)": {
+          "total_return": 3.4338,
+          "sharpe": 0.408,
+          "max_drawdown": -0.3854,
+          "exposure": 0.264,
+          "turnover_per_year": 14.6
+        },
+        "E2:MOM@random": {
+          "total_return": -0.7158,
+          "sharpe": -0.239,
+          "max_drawdown": -0.7878,
+          "exposure": 0.278,
+          "turnover_per_year": 16.3
+        },
+        "E2:MR@random": {
+          "total_return": 0.0713,
+          "sharpe": 0.103,
+          "max_drawdown": -0.6711,
+          "exposure": 0.217,
+          "turnover_per_year": 9.8
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MR",
+          "diff_sharpe": 0.196,
+          "ci95": [
+            -0.359,
+            0.716
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": 0.0,
+          "ci95": [
+            -0.365,
+            0.361
+          ],
+          "verdict": "setara"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": 0.248,
+          "ci95": [
+            -0.005,
+            0.538
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": 0.107,
+          "ci95": [
+            -0.374,
+            0.557
+          ],
+          "verdict": "setara"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": 0.233,
+          "ci95": [
+            -0.328,
+            0.746
+          ],
+          "verdict": "setara"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": 0.0383
+    },
+    {
+      "symbol": "ANTMJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "bars": 4616,
+      "cost_per_side": 0.0025,
+      "long_only": true,
+      "best_single": "MR",
+      "strategies": {
+        "MOM": {
+          "total_return": -0.9365,
+          "sharpe": 0.156,
+          "max_drawdown": -0.9961,
+          "exposure": 0.412,
+          "turnover_per_year": 17.6
+        },
+        "MR": {
+          "total_return": 29.8889,
+          "sharpe": 0.434,
+          "max_drawdown": -0.9001,
+          "exposure": 0.367,
+          "turnover_per_year": 10.2
+        },
+        "BH": {
+          "total_return": 0.5629,
+          "sharpe": 0.448,
+          "max_drawdown": -0.9323,
+          "exposure": 1.0,
+          "turnover_per_year": 0.1
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": 0.5479,
+          "sharpe": 0.276,
+          "max_drawdown": -0.8099,
+          "exposure": 0.269,
+          "turnover_per_year": 12.4
+        },
+        "SW(D-BTC)": {
+          "total_return": 84.405,
+          "sharpe": 0.507,
+          "max_drawdown": -0.6833,
+          "exposure": 0.246,
+          "turnover_per_year": 13.5
+        },
+        "SW(D-klasik)": {
+          "total_return": 26.614,
+          "sharpe": 0.419,
+          "max_drawdown": -0.7519,
+          "exposure": 0.123,
+          "turnover_per_year": 6.6
+        },
+        "SW(D-konsensus)": {
+          "total_return": 28.0993,
+          "sharpe": 0.662,
+          "max_drawdown": -0.6527,
+          "exposure": 0.249,
+          "turnover_per_year": 13.5
+        },
+        "E2:MOM@random": {
+          "total_return": -0.8178,
+          "sharpe": 0.13,
+          "max_drawdown": -0.9514,
+          "exposure": 0.132,
+          "turnover_per_year": 8.0
+        },
+        "E2:MR@random": {
+          "total_return": 8.3474,
+          "sharpe": 0.338,
+          "max_drawdown": -0.7984,
+          "exposure": 0.093,
+          "turnover_per_year": 5.0
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MR",
+          "diff_sharpe": -0.158,
+          "ci95": [
+            -0.726,
+            0.578
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": -0.172,
+          "ci95": [
+            -0.617,
+            0.331
+          ],
+          "verdict": "setara"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": -0.143,
+          "ci95": [
+            -0.605,
+            0.424
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": -0.386,
+          "ci95": [
+            -0.769,
+            0.033
+          ],
+          "verdict": "setara"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": -0.231,
+          "ci95": [
+            -0.658,
+            0.224
+          ],
+          "verdict": "setara"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": 1.0138
+    },
+    {
+      "symbol": "UNVRJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "bars": 5148,
+      "cost_per_side": 0.0025,
+      "long_only": true,
+      "best_single": "MR",
+      "strategies": {
+        "MOM": {
+          "total_return": -0.7013,
+          "sharpe": -0.123,
+          "max_drawdown": -0.8508,
+          "exposure": 0.487,
+          "turnover_per_year": 28.4
+        },
+        "MR": {
+          "total_return": 1.2819,
+          "sharpe": 0.287,
+          "max_drawdown": -0.7473,
+          "exposure": 0.356,
+          "turnover_per_year": 14.9
+        },
+        "BH": {
+          "total_return": 0.9661,
+          "sharpe": 0.261,
+          "max_drawdown": -0.9092,
+          "exposure": 1.0,
+          "turnover_per_year": 0.0
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": -0.3545,
+          "sharpe": -0.107,
+          "max_drawdown": -0.5662,
+          "exposure": 0.111,
+          "turnover_per_year": 6.1
+        },
+        "SW(D-BTC)": {
+          "total_return": 0.3632,
+          "sharpe": 0.171,
+          "max_drawdown": -0.7465,
+          "exposure": 0.292,
+          "turnover_per_year": 17.9
+        },
+        "SW(D-klasik)": {
+          "total_return": -0.0372,
+          "sharpe": 0.047,
+          "max_drawdown": -0.585,
+          "exposure": 0.15,
+          "turnover_per_year": 8.2
+        },
+        "SW(D-konsensus)": {
+          "total_return": 1.4207,
+          "sharpe": 0.318,
+          "max_drawdown": -0.6066,
+          "exposure": 0.261,
+          "turnover_per_year": 13.9
+        },
+        "E2:MOM@random": {
+          "total_return": -0.6044,
+          "sharpe": -0.123,
+          "max_drawdown": -0.8113,
+          "exposure": 0.364,
+          "turnover_per_year": 24.1
+        },
+        "E2:MR@random": {
+          "total_return": 1.3497,
+          "sharpe": 0.32,
+          "max_drawdown": -0.553,
+          "exposure": 0.233,
+          "turnover_per_year": 12.9
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MR",
+          "diff_sharpe": -0.394,
+          "ci95": [
+            -0.813,
+            0.021
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": -0.368,
+          "ci95": [
+            -0.811,
+            0.033
+          ],
+          "verdict": "setara"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": -0.154,
+          "ci95": [
+            -0.571,
+            0.291
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": -0.425,
+          "ci95": [
+            -0.805,
+            -0.048
+          ],
+          "verdict": "lebih buruk"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": -0.278,
+          "ci95": [
+            -0.671,
+            0.117
+          ],
+          "verdict": "setara"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": 0.0563
+    },
+    {
+      "symbol": "ICBPJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "bars": 5908,
+      "cost_per_side": 0.0025,
+      "long_only": true,
+      "best_single": "MR",
+      "strategies": {
+        "MOM": {
+          "total_return": 0.0727,
+          "sharpe": 0.133,
+          "max_drawdown": -0.8774,
+          "exposure": 0.518,
+          "turnover_per_year": 25.4
+        },
+        "MR": {
+          "total_return": 1.175,
+          "sharpe": 0.254,
+          "max_drawdown": -0.7252,
+          "exposure": 0.345,
+          "turnover_per_year": 14.2
+        },
+        "BH": {
+          "total_return": 14.5144,
+          "sharpe": 0.493,
+          "max_drawdown": -0.7354,
+          "exposure": 1.0,
+          "turnover_per_year": 0.0
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": 3.2151,
+          "sharpe": 0.415,
+          "max_drawdown": -0.3978,
+          "exposure": 0.216,
+          "turnover_per_year": 8.9
+        },
+        "SW(D-BTC)": {
+          "total_return": 2.1708,
+          "sharpe": 0.35,
+          "max_drawdown": -0.3945,
+          "exposure": 0.282,
+          "turnover_per_year": 15.7
+        },
+        "SW(D-klasik)": {
+          "total_return": 0.7545,
+          "sharpe": 0.253,
+          "max_drawdown": -0.2493,
+          "exposure": 0.117,
+          "turnover_per_year": 5.7
+        },
+        "SW(D-konsensus)": {
+          "total_return": 5.682,
+          "sharpe": 0.496,
+          "max_drawdown": -0.3955,
+          "exposure": 0.283,
+          "turnover_per_year": 15.0
+        },
+        "E2:MOM@random": {
+          "total_return": -0.6716,
+          "sharpe": -0.199,
+          "max_drawdown": -0.8514,
+          "exposure": 0.29,
+          "turnover_per_year": 17.6
+        },
+        "E2:MR@random": {
+          "total_return": 1.1634,
+          "sharpe": 0.289,
+          "max_drawdown": -0.47,
+          "exposure": 0.193,
+          "turnover_per_year": 9.2
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MR",
+          "diff_sharpe": 0.161,
+          "ci95": [
+            -0.364,
+            0.684
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": -0.078,
+          "ci95": [
+            -0.493,
+            0.287
+          ],
+          "verdict": "setara"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": 0.162,
+          "ci95": [
+            -0.325,
+            0.626
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": -0.081,
+          "ci95": [
+            -0.521,
+            0.346
+          ],
+          "verdict": "setara"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": 0.065,
+          "ci95": [
+            -0.38,
+            0.497
+          ],
+          "verdict": "setara"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": -0.1816
+    },
+    {
+      "symbol": "ADROJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "bars": 3916,
+      "cost_per_side": 0.0025,
+      "long_only": true,
+      "best_single": "MOM",
+      "strategies": {
+        "MOM": {
+          "total_return": -0.3893,
+          "sharpe": 0.054,
+          "max_drawdown": -0.6974,
+          "exposure": 0.501,
+          "turnover_per_year": 24.4
+        },
+        "MR": {
+          "total_return": -0.5828,
+          "sharpe": -0.041,
+          "max_drawdown": -0.8779,
+          "exposure": 0.378,
+          "turnover_per_year": 13.3
+        },
+        "BH": {
+          "total_return": 0.2512,
+          "sharpe": 0.255,
+          "max_drawdown": -0.848,
+          "exposure": 1.0,
+          "turnover_per_year": 0.1
+        },
+        "FLAT": {
+          "total_return": 0.0,
+          "sharpe": 0.0,
+          "max_drawdown": 0.0,
+          "exposure": 0.0,
+          "turnover_per_year": 0.0
+        },
+        "SW(D-sintetis)": {
+          "total_return": -0.4486,
+          "sharpe": -0.146,
+          "max_drawdown": -0.5881,
+          "exposure": 0.143,
+          "turnover_per_year": 9.0
+        },
+        "SW(D-BTC)": {
+          "total_return": -0.7374,
+          "sharpe": -0.309,
+          "max_drawdown": -0.7627,
+          "exposure": 0.206,
+          "turnover_per_year": 18.4
+        },
+        "SW(D-klasik)": {
+          "total_return": -0.8152,
+          "sharpe": -0.42,
+          "max_drawdown": -0.8504,
+          "exposure": 0.197,
+          "turnover_per_year": 10.3
+        },
+        "SW(D-konsensus)": {
+          "total_return": -0.4916,
+          "sharpe": -0.147,
+          "max_drawdown": -0.6299,
+          "exposure": 0.161,
+          "turnover_per_year": 13.3
+        },
+        "E2:MOM@random": {
+          "total_return": 0.0377,
+          "sharpe": 0.139,
+          "max_drawdown": -0.5724,
+          "exposure": 0.358,
+          "turnover_per_year": 17.0
+        },
+        "E2:MR@random": {
+          "total_return": -0.7621,
+          "sharpe": -0.249,
+          "max_drawdown": -0.8555,
+          "exposure": 0.253,
+          "turnover_per_year": 10.9
+        }
+      },
+      "hypotheses": {
+        "F1": {
+          "a": "SW(D-sintetis)",
+          "b": "MOM",
+          "diff_sharpe": -0.2,
+          "ci95": [
+            -0.664,
+            0.24
+          ],
+          "verdict": "setara"
+        },
+        "F2": {
+          "a": "SW(D-sintetis)",
+          "b": "BH",
+          "diff_sharpe": -0.401,
+          "ci95": [
+            -0.98,
+            0.161
+          ],
+          "verdict": "setara"
+        },
+        "F3": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-klasik)",
+          "diff_sharpe": 0.274,
+          "ci95": [
+            -0.297,
+            0.892
+          ],
+          "verdict": "setara"
+        },
+        "F4": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-konsensus)",
+          "diff_sharpe": 0.001,
+          "ci95": [
+            -0.551,
+            0.511
+          ],
+          "verdict": "setara"
+        },
+        "F5": {
+          "a": "SW(D-sintetis)",
+          "b": "SW(D-BTC)",
+          "diff_sharpe": 0.163,
+          "ci95": [
+            -0.379,
+            0.661
+          ],
+          "verdict": "setara"
+        }
+      },
+      "E1_random_minus_anti_fwd_log_vr": NaN
+    }
+  ],
+  "summary": {
+    "kripto": {
+      "F1": {
+        "better": 0,
+        "worse": 0,
+        "assets": 7,
+        "holds": false
+      },
+      "F2": {
+        "better": 0,
+        "worse": 7,
+        "assets": 7,
+        "holds": false
+      },
+      "F3": {
+        "better": 0,
+        "worse": 0,
+        "assets": 7,
+        "holds": false
+      },
+      "F4": {
+        "better": 2,
+        "worse": 0,
+        "assets": 7,
+        "holds": false
+      },
+      "F5": {
+        "better": 4,
+        "worse": 0,
+        "assets": 7,
+        "holds": false
+      },
+      "drawdown_smaller_than_best_single": 7
+    },
+    "emas": {
+      "F1": {
+        "better": 0,
+        "worse": 0,
+        "assets": 2,
+        "holds": false
+      },
+      "F2": {
+        "better": 0,
+        "worse": 2,
+        "assets": 2,
+        "holds": false
+      },
+      "F3": {
+        "better": 0,
+        "worse": 0,
+        "assets": 2,
+        "holds": false
+      },
+      "F4": {
+        "better": 1,
+        "worse": 0,
+        "assets": 2,
+        "holds": false
+      },
+      "F5": {
+        "better": 1,
+        "worse": 0,
+        "assets": 2,
+        "holds": false
+      },
+      "drawdown_smaller_than_best_single": 2
+    },
+    "saham_idx": {
+      "F1": {
+        "better": 0,
+        "worse": 0,
+        "assets": 11,
+        "holds": false
+      },
+      "F2": {
+        "better": 0,
+        "worse": 1,
+        "assets": 11,
+        "holds": false
+      },
+      "F3": {
+        "better": 1,
+        "worse": 0,
+        "assets": 11,
+        "holds": false
+      },
+      "F4": {
+        "better": 1,
+        "worse": 1,
+        "assets": 11,
+        "holds": false
+      },
+      "F5": {
+        "better": 1,
+        "worse": 0,
+        "assets": 11,
+        "holds": false
+      },
+      "drawdown_smaller_than_best_single": 8
+    }
+  }
+}
