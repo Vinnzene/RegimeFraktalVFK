@@ -1,0 +1,452 @@
+<title>Peta Regime Strategi</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,500..800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: satu kolom baca 72rem, tiap bagian = satu argumen ke dosen; grafik small multiples di dalam kolom. */
+:root {
+  --bg: #f5f7f9;
+  --surface: #ffffff;
+  --ink: #0f1a24;
+  --ink-2: #44515e;
+  --ink-3: #6b7784;
+  --rule: #d9e0e7;
+  --grid: #e8edf2;
+  --accent: #0b5d7a;
+  --accent-soft: #e2eff4;
+  --mom: #2a78d6;
+  --mr: #eb6834;
+  --good: #0f7a3d;
+  --good-soft: #e3f3e9;
+  --bad: #b3261e;
+  --bad-soft: #fbe7e5;
+  --f-display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e141a; --surface: #151d25; --ink: #e8edf1; --ink-2: #b4bfc9; --ink-3: #8a96a2;
+    --rule: #2a3540; --grid: #1f2a34; --accent: #5fb4d4; --accent-soft: #16303c;
+    --mom: #3987e5; --mr: #d95926; --good: #4cc27c; --good-soft: #143222; --bad: #f08a80; --bad-soft: #3a1c1a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e141a; --surface: #151d25; --ink: #e8edf1; --ink-2: #b4bfc9; --ink-3: #8a96a2;
+  --rule: #2a3540; --grid: #1f2a34; --accent: #5fb4d4; --accent-soft: #16303c;
+  --mom: #3987e5; --mr: #d95926; --good: #4cc27c; --good-soft: #143222; --bad: #f08a80; --bad-soft: #3a1c1a;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 400 1rem/1.6 var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 2.5rem 4rem;
+}
+.wrap { max-width: 72rem; margin: 0 auto; display: grid; gap: 3.5rem; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(2rem, 5vw, 3.25rem); font-weight: 800; font-stretch: 85%; line-height: 1.05; }
+h2 { font-size: clamp(1.4rem, 3vw, 1.85rem); font-weight: 700; font-stretch: 90%; line-height: 1.15; }
+h3 { font-size: 1.05rem; font-weight: 700; }
+p { margin: 0; max-width: 65ch; }
+.eyebrow { font: 500 0.75rem/1 var(--f-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); }
+.muted { color: var(--ink-2); }
+.small { font-size: 0.875rem; }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+section { display: grid; gap: 1.25rem; min-width: 0; }
+.head { display: grid; gap: 0.6rem; }
+
+header.top { display: grid; gap: 1rem; border-bottom: 1px solid var(--rule); padding-bottom: 2rem; }
+.thesis { font-size: 1.15rem; color: var(--ink); max-width: 60ch; }
+.meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; font: 400 0.8rem/1.4 var(--f-mono); color: var(--ink-3); }
+
+/* Kuis */
+.quiz { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1rem; }
+.qcard { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 1rem; display: grid; gap: 0.75rem; min-width: 0; }
+.qcard .qtitle { display: flex; justify-content: space-between; align-items: baseline; }
+.qcard .qtitle b { font: 700 1.1rem/1 var(--f-display); }
+.choices { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.choices button {
+  font: 500 0.8rem/1 var(--f-body); color: var(--ink); background: transparent;
+  border: 1px solid var(--rule); border-radius: 999px; padding: 0.45rem 0.75rem; cursor: pointer;
+}
+.choices button:hover { border-color: var(--accent); }
+.choices button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.answer { font-size: 0.85rem; border-top: 1px dashed var(--rule); padding-top: 0.6rem; display: grid; gap: 0.3rem; }
+.verdict { font-weight: 600; }
+.verdict.ok { color: var(--good); }
+.verdict.no { color: var(--bad); }
+.quizbar { display: flex; flex-wrap: wrap; gap: 0.75rem 1.25rem; align-items: center; }
+.btn {
+  font: 600 0.875rem/1 var(--f-body); background: var(--ink); color: var(--bg);
+  border: 0; border-radius: 4px; padding: 0.7rem 1rem; cursor: pointer;
+}
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--rule); }
+.callout { background: var(--accent-soft); border-radius: 6px; padding: 1rem 1.15rem; display: grid; gap: 0.35rem; }
+.callout p { max-width: none; }
+
+/* Grafik */
+.legend { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; font-size: 0.85rem; color: var(--ink-2); align-items: center; }
+.key { display: inline-flex; align-items: center; gap: 0.45rem; }
+.swatch { width: 18px; height: 3px; border-radius: 2px; display: inline-block; }
+.swatch.band { height: 10px; opacity: 0.25; }
+.rowlabel { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem 1rem; align-items: baseline; }
+.multiples { display: grid; grid-template-columns: repeat(auto-fit, minmax(14.5rem, 1fr)); gap: 0.75rem; }
+.panel { background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 0.75rem 0.75rem 0.5rem; min-width: 0; position: relative; }
+.panel h3 { font-size: 0.95rem; display: flex; justify-content: space-between; gap: 0.5rem; }
+.panel h3 span { font: 400 0.75rem/1.4 var(--f-mono); color: var(--ink-3); }
+.panel svg { display: block; width: 100%; height: auto; overflow: visible; }
+.tip {
+  position: absolute; pointer-events: none; background: var(--ink); color: var(--bg);
+  font: 400 0.75rem/1.45 var(--f-mono); padding: 0.4rem 0.55rem; border-radius: 4px; white-space: nowrap; z-index: 2;
+}
+.tbl-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.875rem; }
+th, td { text-align: left; padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { font: 600 0.75rem/1.3 var(--f-body); text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-2); background: var(--bg); }
+td.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+th.num { text-align: right; }
+.pill { display: inline-block; font: 600 0.72rem/1 var(--f-body); padding: 0.3rem 0.5rem; border-radius: 999px; white-space: nowrap; }
+.pill.good { background: var(--good-soft); color: var(--good); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 0.4rem; vertical-align: 0.05em; }
+
+/* Peta keputusan */
+.map th:first-child, .map td:first-child { font-weight: 600; color: var(--ink-2); width: 9rem; }
+.map thead th { font: 700 0.95rem/1.2 var(--f-display); text-transform: none; letter-spacing: 0; color: var(--ink); }
+.map thead th small { display: block; font: 400 0.75rem/1.4 var(--f-mono); color: var(--ink-3); }
+
+.takeaways { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1rem; }
+.take { border-top: 3px solid var(--ink); padding-top: 0.75rem; display: grid; gap: 0.4rem; align-content: start; }
+.take.warn { border-top-color: var(--mr); }
+ul.limits { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.4rem; max-width: 70ch; }
+footer { border-top: 1px solid var(--rule); padding-top: 1.25rem; font-size: 0.8rem; color: var(--ink-3); display: grid; gap: 0.4rem; }
+code { font-family: var(--f-mono); font-size: 0.85em; background: var(--surface); border: 1px solid var(--rule); border-radius: 3px; padding: 0.05rem 0.3rem; overflow-wrap: anywhere; }
+@media (prefers-reduced-motion: no-preference) {
+  .answer:not([hidden]) { animation: rise 0.25s ease-out; }
+  @keyframes rise { from { transform: translateY(4px); opacity: 0.4; } to { transform: none; opacity: 1; } }
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">Skripsi · Identifikasi regime persistensi BTC/USDT</div>
+    <h1>Regime yang tepat menentukan strategi yang tepat</h1>
+    <p class="thesis">Trader dan bot memakai satu strategi di semua kondisi pasar. Halaman ini memperlihatkan kenapa itu mahal: strategi yang cocok di pasar persisten justru rugi di pasar anti-persisten, dan sebaliknya. Karakteristik ini tidak terlihat oleh mata, sehingga perlu diukur.</p>
+    <div class="meta">
+      <span>Data: sintetis (fGn, H diketahui)</span>
+      <span>300 jalur × 2.000 bar per skenario</span>
+      <span>Biaya 0,085% per sisi</span>
+      <span>Data BTC belum dipakai (Fase 2)</span>
+    </div>
+  </header>
+
+  <section id="kuis" aria-labelledby="kuis-h">
+    <div class="head">
+      <div class="eyebrow">Bagian 1 · Coba tebak</div>
+      <h2 id="kuis-h">Mana yang persisten, acak, dan anti-persisten?</h2>
+      <p class="muted">Tiga harga di bawah dibangkitkan dengan eksponen Hurst yang berbeda: 0,40, 0,50, dan 0,60. Nilai ini berada dalam rentang yang wajar untuk BTC. Urutannya diacak dan jalurnya tidak dipilih-pilih.</p>
+    </div>
+    <div class="quiz" id="quiz"></div>
+    <div class="quizbar">
+      <button class="btn" id="reveal" type="button">Tunjukkan jawaban</button>
+      <button class="btn ghost" id="reset" type="button">Ulangi</button>
+      <span class="small muted" id="score" aria-live="polite"></span>
+    </div>
+    <div class="callout" id="quiz-callout" hidden>
+      <b>Yang ditunjukkan kuis ini</b>
+      <p>Persistensi adalah sifat statistik, bukan pola visual. Estimator klasik pun meleset: R/S menaksir jalur dengan H = 0,50 sebagai <span class="mono" id="rs-random"></span>, yang akan terbaca sebagai persisten. Bias ini menjadi alasan Fase 1 membandingkan model dengan R/S dan DFA pada data yang regime aslinya diketahui.</p>
+    </div>
+  </section>
+
+  <section id="simulasi" aria-labelledby="sim-h">
+    <div class="head">
+      <div class="eyebrow">Bagian 2 · Simulasi</div>
+      <h2 id="sim-h">Strategi yang sama, hasil berlawanan di regime berbeda</h2>
+      <p class="muted">Dua strategi dijalankan tanpa perubahan di setiap regime. <b>Momentum</b> mengikuti arah return 24 bar terakhir. <b>Mean-reversion</b> melawan harga yang menyimpang lebih dari satu simpangan baku dari rata-rata 24 bar. Garis menunjukkan median ekuitas dari 300 jalur, pita menunjukkan kuartil 25–75%. Sumbu tegak memakai skala log, dan garis putus-putus adalah modal awal.</p>
+    </div>
+    <div class="legend" aria-hidden="true">
+      <span class="key"><span class="swatch" style="background:var(--mom)"></span>Momentum</span>
+      <span class="key"><span class="swatch" style="background:var(--mr)"></span>Mean-reversion</span>
+      <span class="key"><span class="swatch band" style="background:var(--ink-3)"></span>Kuartil 25–75%</span>
+    </div>
+
+    <div class="rowlabel">
+      <h3>A. Mekanisme</h3>
+      <span class="small muted">Autokorelasi lag-1 sekitar ±0,14, jauh lebih kuat dari BTC. Besarnya hasil dilebih-lebihkan.</span>
+    </div>
+    <div class="multiples" id="row-mech"></div>
+
+    <div class="rowlabel">
+      <h3>B. Setara BTC</h3>
+      <span class="small muted">Autokorelasi lag-1 sekitar ±0,03, sebanding dengan BTC 1H (−0,03).</span>
+    </div>
+    <div class="multiples" id="row-btc"></div>
+
+    <div class="tbl-wrap">
+      <table id="sum-table">
+        <caption class="small muted" style="caption-side:bottom;text-align:left;padding:0.6rem 0.8rem">Return total median setelah biaya selama 2.000 bar (±83 hari pada 1H). Pill menandai strategi yang lebih baik di regime tersebut.</caption>
+        <thead><tr><th>Regime (H)</th><th class="num">Autokorelasi lag-1</th><th class="num">Momentum</th><th class="num">Jalur untung</th><th class="num">Mean-reversion</th><th class="num">Jalur untung</th><th>Strategi lebih baik</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="take-h">
+    <div class="head">
+      <div class="eyebrow">Bagian 3 · Artinya bagi pengguna</div>
+      <h2 id="take-h">Nilai praktisnya: tahu strategi mana yang jangan dijalankan</h2>
+    </div>
+    <div class="takeaways">
+      <div class="take">
+        <h3>Arah keunggulan mengikuti regime</h3>
+        <p class="small muted">Momentum unggul di regime persisten, mean-reversion di regime anti-persisten. Di regime acak keduanya kalah oleh biaya.</p>
+      </div>
+      <div class="take warn">
+        <h3>Di kondisi setara BTC, biaya dominan</h3>
+        <p class="small muted" id="take-btc"></p>
+      </div>
+      <div class="take">
+        <h3>Yang diuji di Fase 2</h3>
+        <p class="small muted">Apakah pola ini muncul pada BTC 2019–2026 dengan regime hasil identifikasi, biaya nyata, walk-forward, dan uji SPA. Hipotesis dikunci di praregistrasi sebelum data BTC dilihat.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="map-h">
+    <div class="head">
+      <div class="eyebrow">Bagian 4 · Peta keputusan</div>
+      <h2 id="map-h">Dari regime ke aturan trading</h2>
+      <p class="muted">Rancangan aturan yang akan diuji. Regime tidak hanya memilih strategi, tetapi juga cara menjalankannya. Pada window 500 bar di 1H (±3 minggu), horizon yang cocok adalah intraday sampai swing.</p>
+    </div>
+    <div class="tbl-wrap">
+      <table class="map">
+        <thead>
+          <tr><th></th>
+            <th>Persistent<small>H &gt; ambang atas</small></th>
+            <th>Anti-persistent<small>H &lt; ambang bawah</small></th>
+            <th>Random-like<small>di antara ambang</small></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Sifat pasar</td><td>Gerakan cenderung berlanjut</td><td>Gerakan cenderung berbalik</td><td>Tidak ada pola yang dapat dimanfaatkan</td></tr>
+          <tr><td>Strategi</td><td>Trend-following, breakout</td><td>Mean-reversion, fade ekstrem</td><td>Tidak trading atau posisi minimal</td></tr>
+          <tr><td>Contoh alat</td><td>Trend bot, MA crossover</td><td>Grid bot, fade Bollinger/RSI</td><td>Bot dimatikan</td></tr>
+          <tr><td>Entry</td><td>Saat harga menembus level</td><td>Saat harga di ujung range</td><td>–</td></tr>
+          <tr><td>Take profit</td><td>Trailing stop</td><td>Target tetap ke rata-rata</td><td>–</td></tr>
+          <tr><td>Stop loss</td><td>Lebih lebar</td><td>Ketat; gagal berbalik berarti regime keliru</td><td>–</td></tr>
+          <tr><td>Lama posisi</td><td>Lebih panjang</td><td>Pendek</td><td>–</td></tr>
+          <tr><td>Ukuran posisi</td><td>Sebanding keyakinan model</td><td>Sebanding keyakinan model</td><td>Kecil atau nol</td></tr>
+          <tr><td>Saat transisi</td><td colspan="3">Kurangi posisi sampai regime baru terkonfirmasi beberapa window berturut-turut</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="lim-h">
+    <div class="head">
+      <div class="eyebrow">Batasan</div>
+      <h2 id="lim-h">Yang belum dibuktikan halaman ini</h2>
+    </div>
+    <ul class="limits small">
+      <li>Seluruh data sintetis. Proses fGn memusatkan autokorelasi pada lag pendek, sedangkan BTC juga memiliki ekor tebal, volatility clustering, dan lonjakan.</li>
+      <li>Simulasi memakai H yang diketahui. Di pasar nyata H harus ditaksir, dan taksiran itu bias (lihat kuis). Kesalahan identifikasi akan mengurangi manfaatnya.</li>
+      <li>Dua strategi dengan parameter tetap, tidak dioptimasi. Strategi dengan perputaran posisi lebih rendah bisa menekan biaya.</li>
+      <li>Kinerja pada BTC baru diuji di Fase 2 dan bisa saja negatif. Hasil negatif tetap dilaporkan.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <span>Reproduksi: <code>python ml/src/regime_strategy_demo.py</code> → <code>ml/artifacts/regime_strategy_demo.json</code></span>
+    <span>Generator fGn: Davies–Harte (<code>backend/app/services/hurst_dfa.py</code>). Seed tetap; jalur kuis tidak dipilih.</span>
+  </footer>
+</div>
+
+<script>
+const DATA = __DATA__;
+const NS = "http://www.w3.org/2000/svg";
+const fmtPct = v => (v >= 0 ? "+" : "−") + Math.abs(v * 100).toLocaleString("id-ID", { maximumFractionDigits: 0 }) + "%";
+const fmtNum = (v, d = 2) => v.toLocaleString("id-ID", { minimumFractionDigits: d, maximumFractionDigits: d });
+const fmtSigned = (v, d = 3) => (v >= 0 ? "+" : "−") + fmtNum(Math.abs(v), d);
+const LABEL = { 0.4: "Anti-persistent", 0.5: "Random-like", 0.6: "Persistent" };
+
+function el(tag, attrs = {}, parent) {
+  const e = document.createElementNS(NS, tag);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+
+/* ---------- Kuis ---------- */
+const quizEl = document.getElementById("quiz");
+const guesses = {};
+const OPTIONS = [["persistent", "Persistent"], ["random", "Acak"], ["anti", "Anti-persistent"]];
+const truthKey = h => (h > 0.55 ? "persistent" : h < 0.45 ? "anti" : "random");
+
+DATA.quiz.forEach(q => {
+  const card = document.createElement("div");
+  card.className = "qcard";
+  card.innerHTML = `<div class="qtitle"><b>Harga ${q.label}</b><span class="small muted mono">${q.price.length} bar</span></div>`;
+  const W = 300, H = 130, P = { l: 4, r: 4, t: 6, b: 6 };
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `Grafik harga ${q.label}` });
+  const lo = Math.min(...q.price), hi = Math.max(...q.price);
+  const x = i => P.l + (i / (q.price.length - 1)) * (W - P.l - P.r);
+  const y = v => P.t + (1 - (v - lo) / (hi - lo)) * (H - P.t - P.b);
+  for (let k = 1; k < 4; k++) el("line", { x1: P.l, x2: W - P.r, y1: P.t + k * (H - P.t - P.b) / 4, y2: P.t + k * (H - P.t - P.b) / 4, stroke: "var(--grid)", "stroke-width": 1 }, svg);
+  el("path", { d: q.price.map((v, i) => (i ? "L" : "M") + x(i).toFixed(1) + "," + y(v).toFixed(1)).join(""), fill: "none", stroke: "var(--ink)", "stroke-width": 1.5, "stroke-linejoin": "round" }, svg);
+  card.appendChild(svg);
+  const choices = document.createElement("div");
+  choices.className = "choices";
+  choices.setAttribute("role", "group");
+  choices.setAttribute("aria-label", `Tebakan untuk harga ${q.label}`);
+  OPTIONS.forEach(([key, text]) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.textContent = text; b.id = `q-${q.label}-${key}`;
+    b.setAttribute("aria-pressed", "false");
+    b.addEventListener("click", () => {
+      guesses[q.label] = key;
+      choices.querySelectorAll("button").forEach(o => o.setAttribute("aria-pressed", String(o === b)));
+    });
+    choices.appendChild(b);
+  });
+  card.appendChild(choices);
+  const ans = document.createElement("div");
+  ans.className = "answer"; ans.hidden = true; ans.dataset.label = q.label;
+  ans.innerHTML = `<span class="verdict"></span>
+    <span>H sebenarnya <b class="mono">${fmtNum(q.true_h)}</b> · ${LABEL[q.true_h]}</span>
+    <span class="muted">Taksiran R/S <span class="mono">${fmtNum(q.est_hurst_rs, 3)}</span> · DFA <span class="mono">${fmtNum(q.est_dfa, 3)}</span></span>`;
+  card.appendChild(ans);
+  quizEl.appendChild(card);
+});
+document.getElementById("rs-random").textContent = fmtNum(DATA.quiz.find(q => q.true_h === 0.5).est_hurst_rs, 3);
+
+document.getElementById("reveal").addEventListener("click", () => {
+  let right = 0, answered = 0;
+  DATA.quiz.forEach(q => {
+    const ans = quizEl.querySelector(`.answer[data-label="${q.label}"]`);
+    const g = guesses[q.label];
+    const v = ans.querySelector(".verdict");
+    if (g) { answered++; if (g === truthKey(q.true_h)) right++; }
+    v.textContent = !g ? "Belum ditebak" : g === truthKey(q.true_h) ? "Tebakan benar" : "Tebakan keliru";
+    v.className = "verdict " + (!g ? "" : g === truthKey(q.true_h) ? "ok" : "no");
+    ans.hidden = false;
+  });
+  document.getElementById("score").textContent = answered ? `${right} dari 3 benar` : "Jawaban ditampilkan tanpa tebakan";
+  document.getElementById("quiz-callout").hidden = false;
+});
+document.getElementById("reset").addEventListener("click", () => {
+  Object.keys(guesses).forEach(k => delete guesses[k]);
+  quizEl.querySelectorAll("button[aria-pressed]").forEach(b => b.setAttribute("aria-pressed", "false"));
+  quizEl.querySelectorAll(".answer").forEach(a => (a.hidden = true));
+  document.getElementById("score").textContent = "";
+  document.getElementById("quiz-callout").hidden = true;
+});
+
+/* ---------- Small multiples ---------- */
+const STEP = DATA.design.equity_step;
+const TITLES = { "0.40": "Anti-persistent", "0.48": "Agak anti-persistent", "0.50": "Acak", "0.52": "Agak persistent", "0.60": "Persistent" };
+
+function drawRow(containerId, keys, yTicks) {
+  const host = document.getElementById(containerId);
+  const all = keys.flatMap(k => ["momentum", "mean_reversion"].flatMap(s => [...DATA.results[k][s].equity.p25, ...DATA.results[k][s].equity.p75]));
+  const yMin = Math.min(...all, ...yTicks) * 0.97, yMax = Math.max(...all, ...yTicks) * 1.03;
+  keys.forEach(k => {
+    const r = DATA.results[k];
+    const panel = document.createElement("div");
+    panel.className = "panel";
+    panel.innerHTML = `<h3>${TITLES[k]}<span>H = ${k.replace(".", ",")}</span></h3>`;
+    const W = 320, H = 210, P = { l: 38, r: 54, t: 10, b: 26 };
+    const n = r.momentum.equity.median.length;
+    const x = i => P.l + (i / (n - 1)) * (W - P.l - P.r);
+    const ly = v => Math.log(v);
+    const y = v => P.t + (1 - (ly(v) - ly(yMin)) / (ly(yMax) - ly(yMin))) * (H - P.t - P.b);
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img",
+      "aria-label": `Ekuitas median H ${k}: momentum ${fmtPct(r.momentum.median_total_return)}, mean-reversion ${fmtPct(r.mean_reversion.median_total_return)}` });
+    yTicks.forEach(t => {
+      el("line", { x1: P.l, x2: W - P.r, y1: y(t), y2: y(t), stroke: t === 1 ? "var(--ink-3)" : "var(--grid)", "stroke-width": 1, "stroke-dasharray": t === 1 ? "4 3" : "" }, svg);
+      const tx = el("text", { x: P.l - 6, y: y(t) + 4, "text-anchor": "end", "font-size": 10, fill: "var(--ink-3)", "font-family": "var(--f-mono)" }, svg);
+      tx.textContent = fmtNum(t, t < 1 && t * 100 % 10 ? 2 : 1);
+    });
+    const days = (n - 1) * STEP / 24;
+    [0, 20, 40, 60, 80].filter(d => d <= days).forEach(d => {
+      const xi = x(d * 24 / STEP);
+      const tx = el("text", { x: xi, y: H - 8, "text-anchor": "middle", "font-size": 10, fill: "var(--ink-3)", "font-family": "var(--f-mono)" }, svg);
+      tx.textContent = d === 80 ? "80 hari" : d;
+    });
+    const series = [["momentum", "var(--mom)", "Momentum"], ["mean_reversion", "var(--mr)", "Mean-rev"]];
+    series.forEach(([s, color]) => {
+      const e = r[s].equity;
+      const top = e.p75.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`);
+      const bot = e.p25.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).reverse();
+      el("path", { d: "M" + top.join("L") + "L" + bot.join("L") + "Z", fill: color, "fill-opacity": 0.14, stroke: "none" }, svg);
+    });
+    const ends = [];
+    series.forEach(([s, color, name]) => {
+      const m = r[s].equity.median;
+      el("path", { d: m.map((v, i) => (i ? "L" : "M") + x(i).toFixed(1) + "," + y(v).toFixed(1)).join(""), fill: "none", stroke: color, "stroke-width": 2, "stroke-linejoin": "round" }, svg);
+      el("circle", { cx: x(n - 1), cy: y(m[n - 1]), r: 3.5, fill: color, stroke: "var(--surface)", "stroke-width": 2 }, svg);
+      ends.push({ yy: y(m[n - 1]), text: fmtPct(r[s].median_total_return) });
+    });
+    if (Math.abs(ends[0].yy - ends[1].yy) < 13) {
+      const mid = (ends[0].yy + ends[1].yy) / 2, sgn = ends[0].yy <= ends[1].yy ? -1 : 1;
+      ends[0].yy = mid + sgn * 7; ends[1].yy = mid - sgn * 7;
+    }
+    ends.forEach(e => {
+      const t = el("text", { x: W - P.r + 7, y: e.yy + 4, "font-size": 11, "font-weight": 600, fill: "var(--ink)", "font-family": "var(--f-mono)" }, svg);
+      t.textContent = e.text;
+    });
+    // Hover: crosshair + tooltip
+    const cross = el("line", { y1: P.t, y2: H - P.b, stroke: "var(--ink-3)", "stroke-width": 1, visibility: "hidden" }, svg);
+    const hit = el("rect", { x: P.l, y: P.t, width: W - P.l - P.r, height: H - P.t - P.b, fill: "transparent" }, svg);
+    const tip = document.createElement("div");
+    tip.className = "tip"; tip.hidden = true;
+    panel.appendChild(svg); panel.appendChild(tip);
+    const move = ev => {
+      const box = svg.getBoundingClientRect();
+      const sx = (ev.clientX - box.left) * (W / box.width);
+      const i = Math.max(0, Math.min(n - 1, Math.round((sx - P.l) / (W - P.l - P.r) * (n - 1))));
+      cross.setAttribute("x1", x(i)); cross.setAttribute("x2", x(i)); cross.setAttribute("visibility", "visible");
+      const day = (i * STEP / 24).toFixed(0);
+      tip.innerHTML = `Hari ${day}<br>Momentum ${fmtNum(r.momentum.equity.median[i])}<br>Mean-rev ${fmtNum(r.mean_reversion.equity.median[i])}`;
+      tip.hidden = false;
+      const px = (x(i) / W) * box.width + (svg.getBoundingClientRect().left - panel.getBoundingClientRect().left);
+      const left = px + 12 + tip.offsetWidth > panel.clientWidth ? px - tip.offsetWidth - 12 : px + 12;
+      tip.style.left = left + "px"; tip.style.top = "2.4rem";
+    };
+    hit.addEventListener("pointermove", move);
+    hit.addEventListener("pointerleave", () => { tip.hidden = true; cross.setAttribute("visibility", "hidden"); });
+    host.appendChild(panel);
+  });
+}
+drawRow("row-mech", ["0.40", "0.50", "0.60"], [0.25, 0.5, 1, 2]);
+drawRow("row-btc", ["0.48", "0.50", "0.52"], [0.5, 0.75, 1]);
+
+/* ---------- Tabel ringkas ---------- */
+const tbody = document.querySelector("#sum-table tbody");
+Object.entries(DATA.results).forEach(([k, r]) => {
+  const m = r.momentum, mr = r.mean_reversion;
+  const better = m.median_total_return > mr.median_total_return ? ["Momentum", "var(--mom)"] : ["Mean-reversion", "var(--mr)"];
+  const bothLose = m.median_total_return < 0 && mr.median_total_return < 0;
+  const tr = document.createElement("tr");
+  tr.innerHTML = `<td><b>${TITLES[k]}</b> <span class="mono muted">(${k.replace(".", ",")})</span></td>
+    <td class="num">${fmtSigned(r.lag1_autocorr)}</td>
+    <td class="num">${fmtPct(m.median_total_return)}</td><td class="num">${Math.round(m.share_profitable * 100)}%</td>
+    <td class="num">${fmtPct(mr.median_total_return)}</td><td class="num">${Math.round(mr.share_profitable * 100)}%</td>
+    <td><span class="dot" style="background:${better[1]}"></span>${better[0]} ${bothLose ? '<span class="pill bad">keduanya rugi</span>' : '<span class="pill good">untung</span>'}</td>`;
+  tbody.appendChild(tr);
+});
+
+const b48 = DATA.results["0.48"], b52 = DATA.results["0.52"];
+document.getElementById("take-btc").textContent =
+  `Pada H = 0,48 momentum rugi ${fmtPct(b48.momentum.median_total_return)} sedangkan mean-reversion ${fmtPct(b48.mean_reversion.median_total_return)}. ` +
+  `Pada H = 0,52 mean-reversion rugi ${fmtPct(b52.mean_reversion.median_total_return)} sedangkan momentum ${fmtPct(b52.momentum.median_total_return)}. ` +
+  `Keduanya rugi setelah biaya, tetapi salah memilih strategi membuat kerugian beberapa kali lebih besar.`;
+</script>
