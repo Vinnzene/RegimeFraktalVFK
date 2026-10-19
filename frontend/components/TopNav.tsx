@@ -25,6 +25,7 @@ const GROUPS: NavGroup[] = [
       { href: "/", label: "Ringkasan", hint: "Kondisi pasar saat ini + grafik harga" },
       { href: "/regime-explorer", label: "Detail Kondisi", hint: "Hurst, DFA, perpindahan & durasi kondisi" },
       { href: "/timeframe-comparison", label: "1H vs 4H", hint: "Perbandingan skala waktu" },
+      { href: "/analisa-teknikal", label: "Analisa Teknikal", hint: "Tarik garis, fibonacci, dan indikator (TradingView)" },
     ],
   },
   {
