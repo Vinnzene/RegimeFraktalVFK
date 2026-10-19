@@ -1,0 +1,1849 @@
+{
+  "preregistration": "docs/praregistrasi_generalisasi_aset.md",
+  "horizon_bars": {
+    "1h": 200,
+    "1d": 60
+  },
+  "assets": [
+    {
+      "symbol": "BTCUSDT",
+      "group": "kripto",
+      "tf": "1h",
+      "n_points": 16903,
+      "block": 175,
+      "detectors": {
+        "D-sintetis": {
+          "delta": 0.0355,
+          "ci95": [
+            -0.0373,
+            0.1174
+          ],
+          "dropped": 0.0,
+          "n": 16903,
+          "share": {
+            "anti_persistent": 0.23,
+            "random_like": 0.759,
+            "persistent": 0.011
+          }
+        },
+        "D-BTC": {
+          "delta": 0.0712,
+          "ci95": [
+            -0.0358,
+            0.1523
+          ],
+          "dropped": 0.0,
+          "n": 2582,
+          "share": {
+            "anti_persistent": 0.335,
+            "random_like": 0.301,
+            "persistent": 0.364
+          }
+        },
+        "D-klasik": {
+          "delta": 0.0039,
+          "ci95": [
+            -0.0556,
+            0.0594
+          ],
+          "dropped": 0.0,
+          "n": 16903,
+          "share": {
+            "anti_persistent": 0.27,
+            "random_like": 0.578,
+            "persistent": 0.151
+          }
+        },
+        "D-konsensus": {
+          "delta": -0.0445,
+          "ci95": [
+            -0.0948,
+            0.0022
+          ],
+          "dropped": 0.0,
+          "n": 16903,
+          "share": {
+            "anti_persistent": 0.217,
+            "random_like": 0.122,
+            "persistent": 0.188,
+            "uncertain": 0.473
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": -0.0357,
+          "ci95": [
+            -0.1251,
+            0.0835
+          ],
+          "dropped": 0.0
+        },
+        "D-klasik": {
+          "diff": 0.0316,
+          "ci95": [
+            -0.0492,
+            0.1231
+          ],
+          "dropped": 0.0
+        },
+        "D-konsensus": {
+          "diff": 0.08,
+          "ci95": [
+            0.01,
+            0.1709
+          ],
+          "dropped": 0.0
+        }
+      }
+    },
+    {
+      "symbol": "ETHUSDT",
+      "group": "kripto",
+      "tf": "1h",
+      "n_points": 16902,
+      "block": 175,
+      "detectors": {
+        "D-sintetis": {
+          "delta": 0.1605,
+          "ci95": [
+            0.0341,
+            0.245
+          ],
+          "dropped": 0.001,
+          "n": 16902,
+          "share": {
+            "anti_persistent": 0.189,
+            "random_like": 0.807,
+            "persistent": 0.004
+          }
+        },
+        "D-BTC": {
+          "delta": 0.0639,
+          "ci95": [
+            0.0244,
+            0.108
+          ],
+          "dropped": 0.0,
+          "n": 16902,
+          "share": {
+            "anti_persistent": 0.287,
+            "random_like": 0.373,
+            "persistent": 0.34
+          }
+        },
+        "D-klasik": {
+          "delta": -0.0003,
+          "ci95": [
+            -0.0699,
+            0.0569
+          ],
+          "dropped": 0.0,
+          "n": 16902,
+          "share": {
+            "anti_persistent": 0.242,
+            "random_like": 0.599,
+            "persistent": 0.159
+          }
+        },
+        "D-konsensus": {
+          "delta": 0.0535,
+          "ci95": [
+            0.0012,
+            0.1036
+          ],
+          "dropped": 0.0,
+          "n": 16902,
+          "share": {
+            "anti_persistent": 0.178,
+            "random_like": 0.131,
+            "persistent": 0.232,
+            "uncertain": 0.459
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": 0.0966,
+          "ci95": [
+            -0.0315,
+            0.1757
+          ],
+          "dropped": 0.001
+        },
+        "D-klasik": {
+          "diff": 0.1608,
+          "ci95": [
+            0.0371,
+            0.2581
+          ],
+          "dropped": 0.001
+        },
+        "D-konsensus": {
+          "diff": 0.107,
+          "ci95": [
+            -0.0196,
+            0.1961
+          ],
+          "dropped": 0.001
+        }
+      }
+    },
+    {
+      "symbol": "BNBUSDT",
+      "group": "kripto",
+      "tf": "1h",
+      "n_points": 16902,
+      "block": 175,
+      "detectors": {
+        "D-sintetis": {
+          "delta": 0.0334,
+          "ci95": [
+            -0.1278,
+            0.1553
+          ],
+          "dropped": 0.0,
+          "n": 16902,
+          "share": {
+            "anti_persistent": 0.222,
+            "random_like": 0.764,
+            "persistent": 0.015
+          }
+        },
+        "D-BTC": {
+          "delta": 0.0392,
+          "ci95": [
+            -0.0145,
+            0.0879
+          ],
+          "dropped": 0.0,
+          "n": 16902,
+          "share": {
+            "anti_persistent": 0.31,
+            "random_like": 0.434,
+            "persistent": 0.256
+          }
+        },
+        "D-klasik": {
+          "delta": 0.0285,
+          "ci95": [
+            -0.0275,
+            0.0932
+          ],
+          "dropped": 0.0,
+          "n": 16902,
+          "share": {
+            "anti_persistent": 0.33,
+            "random_like": 0.532,
+            "persistent": 0.138
+          }
+        },
+        "D-konsensus": {
+          "delta": 0.028,
+          "ci95": [
+            -0.0288,
+            0.0817
+          ],
+          "dropped": 0.0,
+          "n": 16902,
+          "share": {
+            "anti_persistent": 0.28,
+            "random_like": 0.122,
+            "persistent": 0.17,
+            "uncertain": 0.428
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": -0.0058,
+          "ci95": [
+            -0.1643,
+            0.1134
+          ],
+          "dropped": 0.0
+        },
+        "D-klasik": {
+          "diff": 0.0049,
+          "ci95": [
+            -0.1395,
+            0.1087
+          ],
+          "dropped": 0.0
+        },
+        "D-konsensus": {
+          "diff": 0.0054,
+          "ci95": [
+            -0.1496,
+            0.1266
+          ],
+          "dropped": 0.0
+        }
+      }
+    },
+    {
+      "symbol": "SOLUSDT",
+      "group": "kripto",
+      "tf": "1h",
+      "n_points": 13383,
+      "block": 175,
+      "detectors": {
+        "D-sintetis": {
+          "delta": 0.1108,
+          "ci95": [
+            -0.0245,
+            0.1855
+          ],
+          "dropped": 0.0,
+          "n": 13383,
+          "share": {
+            "anti_persistent": 0.121,
+            "random_like": 0.859,
+            "persistent": 0.02
+          }
+        },
+        "D-BTC": {
+          "delta": 0.0285,
+          "ci95": [
+            -0.0228,
+            0.0753
+          ],
+          "dropped": 0.0,
+          "n": 13383,
+          "share": {
+            "anti_persistent": 0.274,
+            "random_like": 0.469,
+            "persistent": 0.257
+          }
+        },
+        "D-klasik": {
+          "delta": -0.0101,
+          "ci95": [
+            -0.0729,
+            0.0486
+          ],
+          "dropped": 0.0,
+          "n": 13383,
+          "share": {
+            "anti_persistent": 0.266,
+            "random_like": 0.562,
+            "persistent": 0.172
+          }
+        },
+        "D-konsensus": {
+          "delta": 0.0319,
+          "ci95": [
+            -0.0243,
+            0.0874
+          ],
+          "dropped": 0.0,
+          "n": 13383,
+          "share": {
+            "anti_persistent": 0.274,
+            "random_like": 0.126,
+            "persistent": 0.194,
+            "uncertain": 0.406
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": 0.0823,
+          "ci95": [
+            -0.0546,
+            0.1655
+          ],
+          "dropped": 0.0
+        },
+        "D-klasik": {
+          "diff": 0.1209,
+          "ci95": [
+            -0.0084,
+            0.2089
+          ],
+          "dropped": 0.0
+        },
+        "D-konsensus": {
+          "diff": 0.0789,
+          "ci95": [
+            -0.0538,
+            0.1559
+          ],
+          "dropped": 0.0
+        }
+      }
+    },
+    {
+      "symbol": "XRPUSDT",
+      "group": "kripto",
+      "tf": "1h",
+      "n_points": 16902,
+      "block": 175,
+      "detectors": {
+        "D-sintetis": {
+          "delta": 0.0876,
+          "ci95": [
+            -0.03,
+            0.1747
+          ],
+          "dropped": 0.0,
+          "n": 16902,
+          "share": {
+            "anti_persistent": 0.326,
+            "random_like": 0.666,
+            "persistent": 0.008
+          }
+        },
+        "D-BTC": {
+          "delta": 0.0414,
+          "ci95": [
+            -0.0087,
+            0.0916
+          ],
+          "dropped": 0.0,
+          "n": 16902,
+          "share": {
+            "anti_persistent": 0.428,
+            "random_like": 0.363,
+            "persistent": 0.208
+          }
+        },
+        "D-klasik": {
+          "delta": 0.018,
+          "ci95": [
+            -0.047,
+            0.0861
+          ],
+          "dropped": 0.0,
+          "n": 16902,
+          "share": {
+            "anti_persistent": 0.341,
+            "random_like": 0.502,
+            "persistent": 0.157
+          }
+        },
+        "D-konsensus": {
+          "delta": 0.0379,
+          "ci95": [
+            -0.0196,
+            0.0904
+          ],
+          "dropped": 0.0,
+          "n": 16902,
+          "share": {
+            "anti_persistent": 0.32,
+            "random_like": 0.093,
+            "persistent": 0.133,
+            "uncertain": 0.454
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": 0.0462,
+          "ci95": [
+            -0.0735,
+            0.1379
+          ],
+          "dropped": 0.0
+        },
+        "D-klasik": {
+          "diff": 0.0696,
+          "ci95": [
+            -0.0477,
+            0.1651
+          ],
+          "dropped": 0.0
+        },
+        "D-konsensus": {
+          "diff": 0.0497,
+          "ci95": [
+            -0.0705,
+            0.1432
+          ],
+          "dropped": 0.0
+        }
+      }
+    },
+    {
+      "symbol": "ADAUSDT",
+      "group": "kripto",
+      "tf": "1h",
+      "n_points": 16902,
+      "block": 175,
+      "detectors": {
+        "D-sintetis": {
+          "delta": 0.0396,
+          "ci95": [
+            -0.0934,
+            0.1646
+          ],
+          "dropped": 0.0,
+          "n": 16902,
+          "share": {
+            "anti_persistent": 0.224,
+            "random_like": 0.761,
+            "persistent": 0.015
+          }
+        },
+        "D-BTC": {
+          "delta": 0.0265,
+          "ci95": [
+            -0.0254,
+            0.0767
+          ],
+          "dropped": 0.0,
+          "n": 16902,
+          "share": {
+            "anti_persistent": 0.315,
+            "random_like": 0.416,
+            "persistent": 0.269
+          }
+        },
+        "D-klasik": {
+          "delta": 0.0108,
+          "ci95": [
+            -0.0587,
+            0.0633
+          ],
+          "dropped": 0.0,
+          "n": 16902,
+          "share": {
+            "anti_persistent": 0.324,
+            "random_like": 0.524,
+            "persistent": 0.152
+          }
+        },
+        "D-konsensus": {
+          "delta": 0.0162,
+          "ci95": [
+            -0.0381,
+            0.0696
+          ],
+          "dropped": 0.0,
+          "n": 16902,
+          "share": {
+            "anti_persistent": 0.275,
+            "random_like": 0.105,
+            "persistent": 0.183,
+            "uncertain": 0.437
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": 0.0131,
+          "ci95": [
+            -0.1225,
+            0.1427
+          ],
+          "dropped": 0.0
+        },
+        "D-klasik": {
+          "diff": 0.0288,
+          "ci95": [
+            -0.0915,
+            0.1533
+          ],
+          "dropped": 0.0
+        },
+        "D-konsensus": {
+          "diff": 0.0234,
+          "ci95": [
+            -0.1065,
+            0.1454
+          ],
+          "dropped": 0.0
+        }
+      }
+    },
+    {
+      "symbol": "DOGEUSDT",
+      "group": "kripto",
+      "tf": "1h",
+      "n_points": 15793,
+      "block": 175,
+      "detectors": {
+        "D-sintetis": {
+          "delta": 0.302,
+          "ci95": [
+            0.0174,
+            0.4415
+          ],
+          "dropped": 0.048,
+          "n": 15793,
+          "share": {
+            "anti_persistent": 0.4,
+            "random_like": 0.59,
+            "persistent": 0.009
+          }
+        },
+        "D-BTC": {
+          "delta": 0.0804,
+          "ci95": [
+            0.014,
+            0.1355
+          ],
+          "dropped": 0.0,
+          "n": 15793,
+          "share": {
+            "anti_persistent": 0.468,
+            "random_like": 0.335,
+            "persistent": 0.197
+          }
+        },
+        "D-klasik": {
+          "delta": 0.0661,
+          "ci95": [
+            -0.0041,
+            0.1344
+          ],
+          "dropped": 0.0,
+          "n": 15793,
+          "share": {
+            "anti_persistent": 0.394,
+            "random_like": 0.428,
+            "persistent": 0.178
+          }
+        },
+        "D-konsensus": {
+          "delta": 0.1233,
+          "ci95": [
+            0.0454,
+            0.1857
+          ],
+          "dropped": 0.0,
+          "n": 15793,
+          "share": {
+            "anti_persistent": 0.365,
+            "random_like": 0.08,
+            "persistent": 0.149,
+            "uncertain": 0.406
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": 0.2216,
+          "ci95": [
+            -0.0457,
+            0.3653
+          ],
+          "dropped": 0.048
+        },
+        "D-klasik": {
+          "diff": 0.2359,
+          "ci95": [
+            -0.0515,
+            0.3891
+          ],
+          "dropped": 0.048
+        },
+        "D-konsensus": {
+          "diff": 0.1787,
+          "ci95": [
+            -0.0766,
+            0.3217
+          ],
+          "dropped": 0.048
+        }
+      }
+    },
+    {
+      "symbol": "PAXGUSDT",
+      "group": "emas",
+      "tf": "1h",
+      "n_points": 13279,
+      "block": 175,
+      "detectors": {
+        "D-sintetis": {
+          "delta": 0.1192,
+          "ci95": [
+            -0.0655,
+            0.2338
+          ],
+          "dropped": 0.0,
+          "n": 13279,
+          "share": {
+            "anti_persistent": 0.366,
+            "random_like": 0.576,
+            "persistent": 0.057
+          }
+        },
+        "D-BTC": {
+          "delta": 0.1427,
+          "ci95": [
+            0.0525,
+            0.2184
+          ],
+          "dropped": 0.0,
+          "n": 13279,
+          "share": {
+            "anti_persistent": 0.607,
+            "random_like": 0.271,
+            "persistent": 0.122
+          }
+        },
+        "D-klasik": {
+          "delta": 0.1564,
+          "ci95": [
+            0.0802,
+            0.2375
+          ],
+          "dropped": 0.0,
+          "n": 13279,
+          "share": {
+            "anti_persistent": 0.664,
+            "random_like": 0.284,
+            "persistent": 0.052
+          }
+        },
+        "D-konsensus": {
+          "delta": 0.1209,
+          "ci95": [
+            0.0182,
+            0.2089
+          ],
+          "dropped": 0.0,
+          "n": 13279,
+          "share": {
+            "anti_persistent": 0.446,
+            "random_like": 0.069,
+            "persistent": 0.132,
+            "uncertain": 0.353
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": -0.0235,
+          "ci95": [
+            -0.2173,
+            0.1022
+          ],
+          "dropped": 0.0
+        },
+        "D-klasik": {
+          "diff": -0.0372,
+          "ci95": [
+            -0.2189,
+            0.0684
+          ],
+          "dropped": 0.0
+        },
+        "D-konsensus": {
+          "diff": -0.0017,
+          "ci95": [
+            -0.1725,
+            0.1141
+          ],
+          "dropped": 0.0
+        }
+      }
+    },
+    {
+      "symbol": "GCF",
+      "group": "emas",
+      "tf": "1d",
+      "n_points": 1500,
+      "block": 140,
+      "detectors": {
+        "D-sintetis": {
+          "delta": NaN,
+          "ci95": null,
+          "dropped": 1.0,
+          "n": 1500,
+          "share": {
+            "anti_persistent": 0.223,
+            "random_like": 0.777
+          }
+        },
+        "D-BTC": {
+          "delta": -0.0608,
+          "ci95": [
+            -0.1423,
+            0.0295
+          ],
+          "dropped": 0.0,
+          "n": 1500,
+          "share": {
+            "anti_persistent": 0.272,
+            "random_like": 0.455,
+            "persistent": 0.273
+          }
+        },
+        "D-klasik": {
+          "delta": -0.0833,
+          "ci95": [
+            -0.4528,
+            0.0411
+          ],
+          "dropped": 0.01,
+          "n": 1500,
+          "share": {
+            "anti_persistent": 0.321,
+            "random_like": 0.573,
+            "persistent": 0.106
+          }
+        },
+        "D-konsensus": {
+          "delta": -0.0395,
+          "ci95": [
+            -0.1571,
+            0.1126
+          ],
+          "dropped": 0.0,
+          "n": 1500,
+          "share": {
+            "anti_persistent": 0.185,
+            "random_like": 0.119,
+            "persistent": 0.227,
+            "uncertain": 0.469
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": NaN,
+          "ci95": null,
+          "dropped": 1.0
+        },
+        "D-klasik": {
+          "diff": NaN,
+          "ci95": null,
+          "dropped": 1.0
+        },
+        "D-konsensus": {
+          "diff": NaN,
+          "ci95": null,
+          "dropped": 1.0
+        }
+      }
+    },
+    {
+      "symbol": "JKSE",
+      "group": "saham_idx",
+      "tf": "1d",
+      "n_points": 1484,
+      "block": 140,
+      "detectors": {
+        "D-sintetis": {
+          "delta": 0.0778,
+          "ci95": [
+            -0.052,
+            0.2109
+          ],
+          "dropped": 0.014,
+          "n": 1484,
+          "share": {
+            "anti_persistent": 0.117,
+            "random_like": 0.572,
+            "persistent": 0.311
+          }
+        },
+        "D-BTC": {
+          "delta": -0.0372,
+          "ci95": [
+            -0.2103,
+            0.1388
+          ],
+          "dropped": 0.0,
+          "n": 1484,
+          "share": {
+            "anti_persistent": 0.299,
+            "random_like": 0.237,
+            "persistent": 0.464
+          }
+        },
+        "D-klasik": {
+          "delta": 0.0459,
+          "ci95": [
+            -0.1931,
+            0.17
+          ],
+          "dropped": 0.002,
+          "n": 1484,
+          "share": {
+            "anti_persistent": 0.132,
+            "random_like": 0.398,
+            "persistent": 0.47
+          }
+        },
+        "D-konsensus": {
+          "delta": 0.0266,
+          "ci95": [
+            -0.1979,
+            0.1926
+          ],
+          "dropped": 0.0,
+          "n": 1484,
+          "share": {
+            "anti_persistent": 0.273,
+            "random_like": 0.044,
+            "persistent": 0.285,
+            "uncertain": 0.398
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": 0.115,
+          "ci95": [
+            -0.0838,
+            0.3241
+          ],
+          "dropped": 0.014
+        },
+        "D-klasik": {
+          "diff": 0.0319,
+          "ci95": [
+            -0.0645,
+            0.2269
+          ],
+          "dropped": 0.016
+        },
+        "D-konsensus": {
+          "diff": 0.0512,
+          "ci95": [
+            -0.1064,
+            0.2913
+          ],
+          "dropped": 0.014
+        }
+      }
+    },
+    {
+      "symbol": "BBCAJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "n_points": 1237,
+      "block": 140,
+      "detectors": {
+        "D-sintetis": {
+          "delta": -0.0607,
+          "ci95": [
+            -0.3919,
+            0.1073
+          ],
+          "dropped": 0.008,
+          "n": 1237,
+          "share": {
+            "anti_persistent": 0.264,
+            "random_like": 0.576,
+            "persistent": 0.159
+          }
+        },
+        "D-BTC": {
+          "delta": -0.2151,
+          "ci95": [
+            -0.3275,
+            0.1898
+          ],
+          "dropped": 0.079,
+          "n": 1237,
+          "share": {
+            "anti_persistent": 0.84,
+            "random_like": 0.125,
+            "persistent": 0.035
+          }
+        },
+        "D-klasik": {
+          "delta": -0.0579,
+          "ci95": [
+            -0.3323,
+            0.1397
+          ],
+          "dropped": 0.126,
+          "n": 1237,
+          "share": {
+            "anti_persistent": 0.622,
+            "random_like": 0.285,
+            "persistent": 0.092
+          }
+        },
+        "D-konsensus": {
+          "delta": -0.3317,
+          "ci95": [
+            -0.502,
+            -0.1219
+          ],
+          "dropped": 0.13,
+          "n": 1237,
+          "share": {
+            "anti_persistent": 0.712,
+            "random_like": 0.025,
+            "persistent": 0.019,
+            "uncertain": 0.243
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": 0.1544,
+          "ci95": [
+            -0.4813,
+            0.4182
+          ],
+          "dropped": 0.086
+        },
+        "D-klasik": {
+          "diff": -0.0028,
+          "ci95": [
+            -0.3383,
+            0.2697
+          ],
+          "dropped": 0.127
+        },
+        "D-konsensus": {
+          "diff": 0.271,
+          "ci95": [
+            -0.0811,
+            0.5588
+          ],
+          "dropped": 0.137
+        }
+      }
+    },
+    {
+      "symbol": "BBRIJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "n_points": 1275,
+      "block": 140,
+      "detectors": {
+        "D-sintetis": {
+          "delta": 0.0064,
+          "ci95": [
+            -0.2386,
+            0.1129
+          ],
+          "dropped": 0.138,
+          "n": 1275,
+          "share": {
+            "anti_persistent": 0.071,
+            "random_like": 0.395,
+            "persistent": 0.534
+          }
+        },
+        "D-BTC": {
+          "delta": -0.1708,
+          "ci95": [
+            -0.3657,
+            -0.0749
+          ],
+          "dropped": 0.086,
+          "n": 1275,
+          "share": {
+            "anti_persistent": 0.639,
+            "random_like": 0.308,
+            "persistent": 0.053
+          }
+        },
+        "D-klasik": {
+          "delta": -0.0491,
+          "ci95": [
+            -0.2153,
+            0.1432
+          ],
+          "dropped": 0.006,
+          "n": 1275,
+          "share": {
+            "anti_persistent": 0.191,
+            "random_like": 0.424,
+            "persistent": 0.385
+          }
+        },
+        "D-konsensus": {
+          "delta": -0.3189,
+          "ci95": [
+            -0.5402,
+            -0.1591
+          ],
+          "dropped": 0.013,
+          "n": 1275,
+          "share": {
+            "anti_persistent": 0.54,
+            "random_like": 0.052,
+            "persistent": 0.096,
+            "uncertain": 0.311
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": 0.1772,
+          "ci95": [
+            -0.1546,
+            0.4145
+          ],
+          "dropped": 0.204
+        },
+        "D-klasik": {
+          "diff": 0.0555,
+          "ci95": [
+            -0.1542,
+            0.1729
+          ],
+          "dropped": 0.139
+        },
+        "D-konsensus": {
+          "diff": 0.3253,
+          "ci95": [
+            0.0136,
+            0.6037
+          ],
+          "dropped": 0.139
+        }
+      }
+    },
+    {
+      "symbol": "BMRIJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "n_points": 1296,
+      "block": 140,
+      "detectors": {
+        "D-sintetis": {
+          "delta": 0.0297,
+          "ci95": [
+            -0.5156,
+            0.1726
+          ],
+          "dropped": 0.108,
+          "n": 1296,
+          "share": {
+            "anti_persistent": 0.007,
+            "random_like": 0.718,
+            "persistent": 0.275
+          }
+        },
+        "D-BTC": {
+          "delta": -0.2203,
+          "ci95": [
+            -0.3209,
+            0.1272
+          ],
+          "dropped": 0.002,
+          "n": 1296,
+          "share": {
+            "anti_persistent": 0.586,
+            "random_like": 0.34,
+            "persistent": 0.073
+          }
+        },
+        "D-klasik": {
+          "delta": 0.0067,
+          "ci95": [
+            -0.2938,
+            0.1652
+          ],
+          "dropped": 0.0,
+          "n": 1296,
+          "share": {
+            "anti_persistent": 0.187,
+            "random_like": 0.606,
+            "persistent": 0.208
+          }
+        },
+        "D-konsensus": {
+          "delta": -0.0484,
+          "ci95": [
+            -0.341,
+            0.1903
+          ],
+          "dropped": 0.021,
+          "n": 1296,
+          "share": {
+            "anti_persistent": 0.591,
+            "random_like": 0.035,
+            "persistent": 0.113,
+            "uncertain": 0.261
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": 0.25,
+          "ci95": [
+            -0.4412,
+            0.4204
+          ],
+          "dropped": 0.109
+        },
+        "D-klasik": {
+          "diff": 0.023,
+          "ci95": [
+            -0.2885,
+            0.2441
+          ],
+          "dropped": 0.108
+        },
+        "D-konsensus": {
+          "diff": 0.0781,
+          "ci95": [
+            -0.497,
+            0.3261
+          ],
+          "dropped": 0.125
+        }
+      }
+    },
+    {
+      "symbol": "BBNIJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "n_points": 1267,
+      "block": 140,
+      "detectors": {
+        "D-sintetis": {
+          "delta": NaN,
+          "ci95": null,
+          "dropped": 1.0,
+          "n": 1267,
+          "share": {
+            "random_like": 0.326,
+            "persistent": 0.674
+          }
+        },
+        "D-BTC": {
+          "delta": 0.0958,
+          "ci95": [
+            -0.0505,
+            0.2676
+          ],
+          "dropped": 0.0,
+          "n": 1267,
+          "share": {
+            "anti_persistent": 0.301,
+            "random_like": 0.383,
+            "persistent": 0.316
+          }
+        },
+        "D-klasik": {
+          "delta": -0.1256,
+          "ci95": [
+            -0.3726,
+            0.0077
+          ],
+          "dropped": 0.0,
+          "n": 1267,
+          "share": {
+            "anti_persistent": 0.097,
+            "random_like": 0.537,
+            "persistent": 0.366
+          }
+        },
+        "D-konsensus": {
+          "delta": 0.082,
+          "ci95": [
+            -0.0431,
+            0.2448
+          ],
+          "dropped": 0.0,
+          "n": 1267,
+          "share": {
+            "anti_persistent": 0.295,
+            "random_like": 0.067,
+            "persistent": 0.344,
+            "uncertain": 0.294
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": NaN,
+          "ci95": null,
+          "dropped": 1.0
+        },
+        "D-klasik": {
+          "diff": NaN,
+          "ci95": null,
+          "dropped": 1.0
+        },
+        "D-konsensus": {
+          "diff": NaN,
+          "ci95": null,
+          "dropped": 1.0
+        }
+      }
+    },
+    {
+      "symbol": "TLKMJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "n_points": 1217,
+      "block": 140,
+      "detectors": {
+        "D-sintetis": {
+          "delta": -0.0332,
+          "ci95": [
+            -0.1845,
+            0.2194
+          ],
+          "dropped": 0.174,
+          "n": 1217,
+          "share": {
+            "anti_persistent": 0.104,
+            "random_like": 0.873,
+            "persistent": 0.023
+          }
+        },
+        "D-BTC": {
+          "delta": -0.1977,
+          "ci95": [
+            -0.2487,
+            -0.1252
+          ],
+          "dropped": 0.32,
+          "n": 1217,
+          "share": {
+            "anti_persistent": 0.843,
+            "random_like": 0.156,
+            "persistent": 0.001
+          }
+        },
+        "D-klasik": {
+          "delta": -0.0579,
+          "ci95": [
+            -0.1974,
+            0.1952
+          ],
+          "dropped": 0.006,
+          "n": 1217,
+          "share": {
+            "anti_persistent": 0.317,
+            "random_like": 0.574,
+            "persistent": 0.108
+          }
+        },
+        "D-konsensus": {
+          "delta": 0.2186,
+          "ci95": [
+            -0.0805,
+            0.3027
+          ],
+          "dropped": 0.339,
+          "n": 1217,
+          "share": {
+            "anti_persistent": 0.808,
+            "random_like": 0.021,
+            "persistent": 0.016,
+            "uncertain": 0.155
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": 0.1645,
+          "ci95": [
+            -0.0345,
+            0.3896
+          ],
+          "dropped": 0.446
+        },
+        "D-klasik": {
+          "diff": 0.0247,
+          "ci95": [
+            -0.2751,
+            0.2625
+          ],
+          "dropped": 0.174
+        },
+        "D-konsensus": {
+          "diff": -0.2518,
+          "ci95": [
+            -0.3823,
+            0.1452
+          ],
+          "dropped": 0.465
+        }
+      }
+    },
+    {
+      "symbol": "ASIIJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "n_points": 1475,
+      "block": 140,
+      "detectors": {
+        "D-sintetis": {
+          "delta": 0.1895,
+          "ci95": [
+            -0.2441,
+            0.3314
+          ],
+          "dropped": 0.124,
+          "n": 1475,
+          "share": {
+            "anti_persistent": 0.069,
+            "random_like": 0.58,
+            "persistent": 0.351
+          }
+        },
+        "D-BTC": {
+          "delta": -0.1333,
+          "ci95": [
+            -0.2948,
+            0.1913
+          ],
+          "dropped": 0.004,
+          "n": 1475,
+          "share": {
+            "anti_persistent": 0.544,
+            "random_like": 0.36,
+            "persistent": 0.096
+          }
+        },
+        "D-klasik": {
+          "delta": 0.1552,
+          "ci95": [
+            -0.1461,
+            0.4308
+          ],
+          "dropped": 0.002,
+          "n": 1475,
+          "share": {
+            "anti_persistent": 0.146,
+            "random_like": 0.628,
+            "persistent": 0.226
+          }
+        },
+        "D-konsensus": {
+          "delta": -0.0499,
+          "ci95": [
+            -0.3237,
+            0.0382
+          ],
+          "dropped": 0.002,
+          "n": 1475,
+          "share": {
+            "anti_persistent": 0.59,
+            "random_like": 0.057,
+            "persistent": 0.151,
+            "uncertain": 0.203
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": 0.3228,
+          "ci95": [
+            -0.1213,
+            0.4467
+          ],
+          "dropped": 0.124
+        },
+        "D-klasik": {
+          "diff": 0.0343,
+          "ci95": [
+            -0.3998,
+            0.129
+          ],
+          "dropped": 0.126
+        },
+        "D-konsensus": {
+          "diff": 0.2394,
+          "ci95": [
+            -0.171,
+            0.5612
+          ],
+          "dropped": 0.124
+        }
+      }
+    },
+    {
+      "symbol": "ANTMJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "n_points": 1154,
+      "block": 140,
+      "detectors": {
+        "D-sintetis": {
+          "delta": 1.1011,
+          "ci95": [
+            -0.1664,
+            2.7946
+          ],
+          "dropped": 0.172,
+          "n": 1154,
+          "share": {
+            "anti_persistent": 0.061,
+            "random_like": 0.301,
+            "persistent": 0.639
+          }
+        },
+        "D-BTC": {
+          "delta": 0.2969,
+          "ci95": [
+            -0.1263,
+            0.8479
+          ],
+          "dropped": 0.0,
+          "n": 1154,
+          "share": {
+            "anti_persistent": 0.328,
+            "random_like": 0.288,
+            "persistent": 0.385
+          }
+        },
+        "D-klasik": {
+          "delta": 0.585,
+          "ci95": [
+            -0.1358,
+            1.3395
+          ],
+          "dropped": 0.006,
+          "n": 1154,
+          "share": {
+            "anti_persistent": 0.234,
+            "random_like": 0.577,
+            "persistent": 0.189
+          }
+        },
+        "D-konsensus": {
+          "delta": 0.3247,
+          "ci95": [
+            -0.2774,
+            0.9837
+          ],
+          "dropped": 0.0,
+          "n": 1154,
+          "share": {
+            "anti_persistent": 0.198,
+            "random_like": 0.049,
+            "persistent": 0.465,
+            "uncertain": 0.288
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": 0.8042,
+          "ci95": [
+            -0.1224,
+            2.3693
+          ],
+          "dropped": 0.172
+        },
+        "D-klasik": {
+          "diff": 0.5161,
+          "ci95": [
+            -0.1251,
+            1.768
+          ],
+          "dropped": 0.175
+        },
+        "D-konsensus": {
+          "diff": 0.7764,
+          "ci95": [
+            -0.0219,
+            2.1276
+          ],
+          "dropped": 0.172
+        }
+      }
+    },
+    {
+      "symbol": "UNVRJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "n_points": 1287,
+      "block": 140,
+      "detectors": {
+        "D-sintetis": {
+          "delta": 0.2798,
+          "ci95": [
+            -0.5904,
+            0.5199
+          ],
+          "dropped": 0.046,
+          "n": 1287,
+          "share": {
+            "anti_persistent": 0.182,
+            "random_like": 0.709,
+            "persistent": 0.109
+          }
+        },
+        "D-BTC": {
+          "delta": 0.3389,
+          "ci95": [
+            0.0864,
+            0.4726
+          ],
+          "dropped": 0.097,
+          "n": 1287,
+          "share": {
+            "anti_persistent": 0.713,
+            "random_like": 0.167,
+            "persistent": 0.12
+          }
+        },
+        "D-klasik": {
+          "delta": 0.3335,
+          "ci95": [
+            -0.0387,
+            0.4716
+          ],
+          "dropped": 0.006,
+          "n": 1287,
+          "share": {
+            "anti_persistent": 0.399,
+            "random_like": 0.545,
+            "persistent": 0.055
+          }
+        },
+        "D-konsensus": {
+          "delta": 0.4282,
+          "ci95": [
+            0.125,
+            0.5603
+          ],
+          "dropped": 0.161,
+          "n": 1287,
+          "share": {
+            "anti_persistent": 0.679,
+            "random_like": 0.03,
+            "persistent": 0.091,
+            "uncertain": 0.2
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": -0.0591,
+          "ci95": [
+            -0.7282,
+            0.1958
+          ],
+          "dropped": 0.114
+        },
+        "D-klasik": {
+          "diff": -0.0537,
+          "ci95": [
+            -0.6459,
+            0.2477
+          ],
+          "dropped": 0.052
+        },
+        "D-konsensus": {
+          "diff": -0.1484,
+          "ci95": [
+            -0.597,
+            0.0748
+          ],
+          "dropped": 0.161
+        }
+      }
+    },
+    {
+      "symbol": "ICBPJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "n_points": 1477,
+      "block": 140,
+      "detectors": {
+        "D-sintetis": {
+          "delta": -0.0824,
+          "ci95": [
+            -0.1856,
+            0.2333
+          ],
+          "dropped": 0.118,
+          "n": 1477,
+          "share": {
+            "anti_persistent": 0.116,
+            "random_like": 0.563,
+            "persistent": 0.322
+          }
+        },
+        "D-BTC": {
+          "delta": -0.007,
+          "ci95": [
+            -0.4582,
+            0.2787
+          ],
+          "dropped": 0.0,
+          "n": 1477,
+          "share": {
+            "anti_persistent": 0.569,
+            "random_like": 0.31,
+            "persistent": 0.121
+          }
+        },
+        "D-klasik": {
+          "delta": 0.1256,
+          "ci95": [
+            -0.0541,
+            0.2422
+          ],
+          "dropped": 0.02,
+          "n": 1477,
+          "share": {
+            "anti_persistent": 0.337,
+            "random_like": 0.649,
+            "persistent": 0.014
+          }
+        },
+        "D-konsensus": {
+          "delta": 0.0845,
+          "ci95": [
+            -0.3335,
+            0.3154
+          ],
+          "dropped": 0.001,
+          "n": 1477,
+          "share": {
+            "anti_persistent": 0.558,
+            "random_like": 0.062,
+            "persistent": 0.131,
+            "uncertain": 0.248
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": -0.0754,
+          "ci95": [
+            -0.2539,
+            0.5616
+          ],
+          "dropped": 0.118
+        },
+        "D-klasik": {
+          "diff": -0.208,
+          "ci95": [
+            -0.3607,
+            0.2056
+          ],
+          "dropped": 0.136
+        },
+        "D-konsensus": {
+          "diff": -0.1669,
+          "ci95": [
+            -0.3224,
+            0.3984
+          ],
+          "dropped": 0.118
+        }
+      }
+    },
+    {
+      "symbol": "ADROJK",
+      "group": "saham_idx",
+      "tf": "1d",
+      "n_points": 979,
+      "block": 140,
+      "detectors": {
+        "D-sintetis": {
+          "delta": NaN,
+          "ci95": null,
+          "dropped": 1.0,
+          "n": 979,
+          "share": {
+            "random_like": 0.695,
+            "persistent": 0.305
+          }
+        },
+        "D-BTC": {
+          "delta": -0.108,
+          "ci95": [
+            -0.3342,
+            0.0689
+          ],
+          "dropped": 0.0,
+          "n": 979,
+          "share": {
+            "anti_persistent": 0.111,
+            "random_like": 0.566,
+            "persistent": 0.323
+          }
+        },
+        "D-klasik": {
+          "delta": -0.0851,
+          "ci95": [
+            -0.3621,
+            0.1494
+          ],
+          "dropped": 0.018,
+          "n": 979,
+          "share": {
+            "anti_persistent": 0.183,
+            "random_like": 0.594,
+            "persistent": 0.223
+          }
+        },
+        "D-konsensus": {
+          "delta": 0.0562,
+          "ci95": [
+            -0.4169,
+            0.4608
+          ],
+          "dropped": 0.0,
+          "n": 979,
+          "share": {
+            "anti_persistent": 0.131,
+            "random_like": 0.13,
+            "persistent": 0.241,
+            "uncertain": 0.498
+          }
+        }
+      },
+      "vs_D_sintetis": {
+        "D-BTC": {
+          "diff": NaN,
+          "ci95": null,
+          "dropped": 1.0
+        },
+        "D-klasik": {
+          "diff": NaN,
+          "ci95": null,
+          "dropped": 1.0
+        },
+        "D-konsensus": {
+          "diff": NaN,
+          "ci95": null,
+          "dropped": 1.0
+        }
+      }
+    }
+  ],
+  "summary": {
+    "groups": {
+      "kripto": {
+        "assets": 7,
+        "g1_pass": 2,
+        "generalizes": false
+      },
+      "emas": {
+        "assets": 2,
+        "g1_pass": 0,
+        "generalizes": false
+      },
+      "saham_idx": {
+        "assets": 11,
+        "g1_pass": 0,
+        "generalizes": false
+      }
+    },
+    "comparisons": {
+      "G2": {
+        "vs": "D-BTC",
+        "d_sintetis_better": 0,
+        "d_sintetis_worse": 0,
+        "assets": 20
+      },
+      "G3": {
+        "vs": "D-konsensus",
+        "d_sintetis_better": 2,
+        "d_sintetis_worse": 0,
+        "assets": 20
+      },
+      "G4": {
+        "vs": "D-klasik",
+        "d_sintetis_better": 1,
+        "d_sintetis_worse": 0,
+        "assets": 20
+      }
+    }
+  }
+}
