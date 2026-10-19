@@ -100,6 +100,7 @@ Klaim yang **tidak** boleh dipakai sebagai novelty: "Hurst BTC berubah-ubah",
 - [x] `threshold_source: train_only` menjadi konfigurasi utama; `full_history` jadi sensitivitas (kode + adendum §5; run ulang berjalan).
 - [ ] Walk-forward dijadikan angka utama; hapus narasi "periode mudah" §4.4.1 atau buktikan dengan statistik per periode.
 - [ ] Seragamkan N uji (1.619/1.622, 257/262) dan laporkan p < 1/B, bukan 0,0000.
+- [ ] Bab 4 §4.1: bahas bias R/S. Pada deret acak murni n = 500 taksiran R/S rata-rata 0,59 (`threshold_criteria.md`), hampir sama dengan ambang bawah kuantil R/S di BTC (0,572), sehingga label "persistent" versi R/S sebagian besar dapat berupa bias estimator.
 - [ ] Baseline tambahan: regresi logistik, LightGBM (50 fitur), Statistical Jump Model, HMM.
 - [ ] Repo git sendiri di folder project (saat ini repo git berada di folder home) dan commit praregistrasi sebelum eksperimen baru, agar waktunya dapat diverifikasi.
 
@@ -115,7 +116,7 @@ Generator (`ml/src/synthetic.py` diperluas), H diketahui pasti:
 | S4 lengkap | S2 + S3 + lompatan (jumps) |
 | S5 regime berganti | H berubah di dalam window (titik ganti acak) |
 
-- Label kebenaran dari H pembangkit dengan **ambang absolut** (mis. H < 0,45 anti-persistent, 0,45–0,55 random-like, > 0,55 persistent), bukan kuantil.
+- Label kebenaran dari H pembangkit dengan **ambang absolut** 0,47 / 0,53 (titik impas ekonomi strategi setelah biaya), sensitivitas 0,45 / 0,55. Rancangan lengkap dan terkunci: `docs/praregistrasi_fase1_sintetis.md`.
 - Pembanding: R/S, R/S termodifikasi Lo (1991), DFA-1, uji VR Lo-MacKinlay, MLP, LightGBM, Hybrid PS.
 - Pembanding kunci untuk celah literatur: model yang **dilatih hanya pada fBm/fLm** (setara Raubitzek dkk., 2023) lalu diuji pada S3–S5. Bila model yang dilatih pada data berkarakter kripto tidak lebih baik dari ini, celah 1 tidak terbukti.
 - Metrik: BA dan Macro F1 terhadap regime sebenarnya, bias dan RMSE estimasi H, sebagai fungsi panjang window (128 / 256 / 500).

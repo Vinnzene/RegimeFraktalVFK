@@ -1,0 +1,182 @@
+# Praregistrasi Fase 1: Benchmark identifikasi regime pada data sintetis
+
+Status: **dikunci 2026-10-20** (commit "Praregistrasi Fase 1 (dikunci)").
+Isi tidak boleh diubah; perubahan ditulis sebagai adendum bertanggal di bagian
+bawah.
+
+Rumusan masalah yang dijawab: RM1 dan RM2 (`docs/rencana_pengembangan.md`).
+
+## 1. Tujuan
+
+Mengukur seberapa tepat metode klasik (R/S, DFA, R/S termodifikasi Lo, variance
+ratio) dan model pembelajaran mesin mengenali regime persistensi pada deret
+yang **regime aslinya diketahui**, dalam kondisi yang menyerupai return BTC 1H:
+ekor tebal, volatility clustering, dan lonjakan harga.
+
+Ini menggantikan kunci jawaban Hurst-DFA pada data BTC, yang hanya sepakat pada
+53% window dan tidak dapat dipakai menilai estimator itu sendiri.
+
+## 2. Kebenaran dasar
+
+- Setiap deret dibangkitkan dari fractional Gaussian noise (fGn, Davies-Harte,
+  `hurst_dfa.fbm_increments`) dengan eksponen **H** yang diketahui.
+- Label dari H pembangkit dengan **ambang absolut**:
+
+  | Konfigurasi | Anti-persistent | Random-like | Persistent |
+  |---|---|---|---|
+  | **Utama** | H < 0,47 | 0,47 ≤ H ≤ 0,53 | H > 0,53 |
+  | Sensitivitas | H < 0,45 | 0,45 ≤ H ≤ 0,55 | H > 0,55 |
+
+- Dasar ambang utama (`ml/src/threshold_criteria.py`,
+  `ml/artifacts/threshold_criteria.md`), dihitung sebelum dokumen ini dikunci
+  dan tanpa melihat kinerja model mana pun: pada data sintetis, strategi
+  mean-reversion baru untung setelah biaya bila H < 0,475 dan momentum bila
+  H > 0,531 (strategi dan biaya = `regime_strategy_demo.py`). Di antara keduanya
+  tidak ada strategi yang menguntungkan; itulah definisi praktis "random-like".
+  Titik impas dibulatkan simetris menjadi ±0,03 di sekitar 0,5. Ambang
+  sensitivitas = konvensi literatur/praktisi.
+- Keterbatasan yang diakui: titik impas bergantung pada strategi, lookback, dan
+  biaya simulasi. Bila strategi Fase 2 berbeda, ambang tetap dan perbedaan itu
+  dibahas.
+- Pengambilan sampel **seimbang per kelas**: kelas dipilih dengan peluang sama,
+  lalu H ditarik seragam di dalam rentang kelas (anti-persistent [0,30; 0,47),
+  random-like [0,47; 0,53], persistent (0,53; 0,70]). Tanpa ini kelas
+  random-like hanya ±15% sampel. Untuk konfigurasi sensitivitas, set uji yang
+  sama dilabel ulang dengan ambang 0,45/0,55 (proporsi kelas tidak seimbang;
+  metrik BA tetap sah).
+- Pada S5, label adalah regime **segmen terakhir** window (lihat §3).
+- Catatan dari kriteria statistik (dasar ekspektasi, bukan ambang): pada deret
+  acak murni n = 500, taksiran R/S rata-rata 0,59 (rentang 95%: 0,50–0,68) dan
+  DFA 0,50 (0,39–0,62). Galat estimator jauh lebih lebar dari pita ±0,03,
+  sehingga kelas random-like diperkirakan paling sulit dikenali oleh metode
+  apa pun.
+
+## 3. Skenario
+
+Semua skenario diskalakan ke simpangan baku 0,0066 per bar (BTC 1H).
+
+| Kode | Proses | Alasan |
+|---|---|---|
+| S1 | fGn Gaussian | Pembanding bersih, setara literatur |
+| S2 | fGn ditransformasi monoton ke marginal Student-t (ν = 3) lewat copula Gaussian | Ekor tebal. Transformasi monoton ganjil berperingkat Hermite 1 sehingga eksponen memori jangka panjang tetap H |
+| S3 | r_t = σ_t · z_t, z = fGn (S1), log σ_t = AR(1) independen dari z | Volatility clustering tanpa mengubah struktur tanda z, sehingga H kebenaran tetap H milik z |
+| S4 | S2 + S3 + lonjakan Poisson | Paling mirip BTC. Lonjakan: peluang 0,002 per bar, ukuran N(0, (10·σ_t)²) |
+| S5 | Seperti S4, tetapi H berganti satu kali di titik acak dalam 40–90% panjang window, dari kelas satu ke kelas lain | Regime berganti di dalam window |
+
+Kalibrasi S3/S4 dilakukan **sebelum** eksperimen dengan skrip terpisah, hanya
+memakai statistik deskriptif return BTC 1H 2019–2026 (bukan label, bukan hasil
+strategi):
+
+| Statistik BTC 1H | Nilai |
+|---|---|
+| Kurtosis return | 50,1 |
+| Autokorelasi \|r\| lag 1 / 5 / 24 / 100 | 0,286 / 0,199 / 0,174 / 0,115 |
+
+Parameter AR(1) log σ_t (φ, simpangan baku inovasi) dipilih dengan grid agar
+autokorelasi \|r\| sintetis berada dalam ±0,05 dari angka BTC pada keempat lag.
+Nilai terpilih dicatat di adendum sebelum §5 dijalankan.
+
+## 4. Data
+
+- Panjang window n ∈ {128, 256, 500}. Utama: n = 500 (sama dengan BTC).
+- Tiap skenario × n: 12.000 deret latih, 3.000 validasi, 3.000 uji.
+- Deret independen satu sama lain, sehingga tidak ada tumpang tindih dan tidak
+  perlu purge. Satu sampel = satu deret.
+- Seed terpisah untuk latih, validasi, dan uji (dasar 1000, 2000, 3000 + indeks).
+  Set uji dibangkitkan sekali dan **hanya dipakai satu kali**, setelah seluruh
+  model dan ambang dikunci.
+
+## 5. Metode yang dibandingkan
+
+**Estimator klasik**, masing-masing dalam dua varian:
+- *naif*: ambang absolut 0,45 / 0,55 pada nilai estimasinya;
+- *terkalibrasi*: dua ambang dipilih pada set **validasi** untuk memaksimalkan
+  balanced accuracy, lalu dibekukan.
+
+| Estimator | Sumber |
+|---|---|
+| R/S | `hurst_dfa.hurst_rs` |
+| DFA-1 | `hurst_dfa.dfa_alpha` |
+| R/S termodifikasi Lo (1991), lag Andrews | diimplementasikan baru, dengan unit test |
+| Variance ratio: H_VR = ½·(1 + log₂ VR(2)) dan kemiringan log VR(q) terhadap log q | `structural_features.variance_ratio` |
+| Konsensus R/S–DFA (definisi label BTC saat ini) | `regime_labeling.label_from_exponents` |
+
+**Model pembelajaran mesin** (input = 50 fitur statistik dan/atau sekuens PS,
+fungsi yang sama dengan pipeline BTC; Hurst dan DFA tidak menjadi input):
+regresi logistik, LightGBM, MLP, Hybrid PS. Hyperparameter sama dengan Bab 4,
+tidak disetel ulang.
+
+Dua rezim pelatihan:
+- **M-fBm**: dilatih hanya pada S1. Setara pendekatan Raubitzek dkk. (2023).
+- **M-kripto**: dilatih pada campuran seimbang S1–S4.
+
+Model terbaik tiap rezim dipilih dengan BA **validasi** (campuran S1–S4, n = 500).
+
+## 6. Metrik
+
+- Utama: balanced accuracy (BA) terhadap kelas sebenarnya.
+- Pendukung: Macro F1, recall per kelas, matriks konfusi.
+- Deskriptif untuk estimator klasik: bias dan RMSE estimasi H terhadap H
+  sebenarnya.
+- Interval kepercayaan 95%: bootstrap berpasangan atas deret uji (B = 2.000).
+  Deret independen, jadi bootstrap biasa sah.
+
+## 7. Hipotesis dan kriteria keputusan
+
+Semua pada n = 500 dan ambang utama kecuali disebut lain. "Terbukti" = batas
+bawah CI95 selisih BA > 0. Koreksi Holm atas H1–H3 (K = 3). H4 eksploratif.
+H1–H3 diulang dengan ambang sensitivitas (0,45/0,55) dan dilaporkan
+berdampingan; kesimpulan utama tetap dari ambang utama.
+
+| ID | Pernyataan | Pembanding |
+|---|---|---|
+| H1 | Akurasi estimator klasik turun pada kondisi berkarakter kripto | BA estimator klasik terkalibrasi terbaik: S1 − S4 > 0 |
+| H2 | Model M-kripto lebih akurat daripada estimator klasik pada S4 | BA M-kripto − BA estimator klasik terkalibrasi terbaik, pada S4 > 0 |
+| H3 | Pelatihan berkarakter kripto memberi nilai tambah dibanding pelatihan fBm saja | BA M-kripto − BA M-fBm, pada S4 > 0 |
+| H4 (eksploratif) | Keunggulan model lebih besar pada window pendek | Selisih H2 pada n = 128 dibanding n = 500 |
+
+"Estimator klasik terkalibrasi terbaik" dipilih dengan BA validasi, bukan uji.
+
+### Tafsir hasil (ditetapkan sekarang)
+
+| Hasil | Kesimpulan yang ditulis |
+|---|---|
+| H2 dan H3 terbukti | Celah 1 terisi: model yang dilatih pada data berkarakter kripto lebih akurat dari estimator klasik dan dari pendekatan fBm-saja |
+| H2 terbukti, H3 tidak | Model ML lebih akurat dari estimator klasik, tetapi pelatihan berkarakter kripto tidak menambah nilai; kontribusi novelty berkurang |
+| H2 tidak terbukti | Estimator klasik terkalibrasi sudah memadai pada kondisi ini; dashboard dan Fase 2 memakai estimator klasik terkalibrasi |
+| H1 tidak terbukti | Kondisi kripto tidak menurunkan akurasi estimator klasik; dilaporkan apa adanya |
+
+Semua hasil dilaporkan, termasuk yang negatif.
+
+## 8. Perluasan cadangan: deteksi pergantian regime
+
+Dijalankan bila skenario B/C terjadi pada hasil 1H Fase 0, atau bila waktu
+memungkinkan (`rencana_pengembangan.md`, rencana cadangan).
+
+- Data: deret panjang (20.000 bar) dengan 8–12 titik ganti regime pada posisi
+  acak, proses S4.
+- Setiap metode dijalankan bergulir (window 500, langkah 4 bar, sama dengan BTC)
+  dengan aturan konfirmasi yang sama dengan notifikasi Telegram: K = 3 window
+  berturut-turut berlabel sama.
+- Metrik: keterlambatan deteksi (bar sejak titik ganti sampai regime baru
+  terkonfirmasi), salah alarm per 1.000 bar, dan proporsi pergantian yang tidak
+  terdeteksi.
+- H5: model terpilih mendeteksi pergantian lebih cepat (median keterlambatan
+  lebih kecil) daripada konsensus R/S–DFA, tanpa salah alarm lebih banyak.
+
+## 9. Yang tidak dilakukan
+
+- Tidak ada penyetelan hyperparameter pada set uji.
+- Data BTC tidak dipakai di Fase 1 selain statistik kalibrasi di §3.
+- Skenario, ambang kelas, dan hipotesis tidak diubah setelah hasil terlihat.
+
+## 10. Keluaran
+
+- `ml/src/synthetic_benchmark.py` (generator S1–S5 + evaluasi), dengan unit test
+  untuk generator (H sebenarnya terpulihkan pada S1 oleh estimator dengan
+  n besar) dan untuk R/S termodifikasi Lo.
+- `ml/artifacts/synthetic_benchmark.{json,md}` dan gambar BA per skenario × n.
+
+## Adendum
+
+(belum ada)
