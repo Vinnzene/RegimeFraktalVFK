@@ -26,6 +26,7 @@ const GROUPS: NavGroup[] = [
       { href: "/regime-explorer", label: "Detail Kondisi", hint: "Hurst, DFA, perpindahan & durasi kondisi" },
       { href: "/timeframe-comparison", label: "1H vs 4H", hint: "Perbandingan skala waktu" },
       { href: "/analisa-teknikal", label: "Analisa Teknikal", hint: "Tarik garis, fibonacci, dan indikator (TradingView)" },
+      { href: "/orderflow-live", label: "Order Flow Live", hint: "Heatmap order book, footprint, delta & CVD (kripto)" },
     ],
   },
   {
@@ -44,7 +45,7 @@ const GROUPS: NavGroup[] = [
       { href: "/multifractal", label: "Multifraktal", hint: "Spektrum H(q) momen q=1,2,4 dan lebar ΔH" },
       { href: "/swt", label: "Wavelet", hint: "Dekomposisi multiskala SWT" },
       { href: "/attention", label: "Fokus Model", hint: "Bagian data yang diperhatikan model (attention)" },
-      { href: "/order-flow", label: "Order Flow", hint: "Ablation OFI & CVD (Model A–D)" },
+      { href: "/order-flow", label: "Order Flow (riset)", hint: "Ablation OFI & CVD untuk identifikasi regime (Model A–D)" },
     ],
   },
   {
