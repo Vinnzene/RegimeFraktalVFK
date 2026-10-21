@@ -7,8 +7,10 @@ sering "berkedip" antar window bertetangga (lihat jump_model.py); tanpa
 konfirmasi pelanggan menerima pesan bolak-balik. Window `uncertain_rule` tidak
 memicu notifikasi dan memutus rentetan konfirmasi.
 
-Saat pertama kali berjalan, regime terkini hanya dicatat sebagai keadaan awal
-tanpa mengirim pesan, supaya menyalakan backend tidak memicu siaran.
+Label berasal dari detektor AI resmi (`ai_detector.py`), sama dengan dashboard.
+Saat pertama kali berjalan, atau saat sumber label berganti (keadaan lama
+dicatat dari label konsensus Hurst–DFA), regime terkini hanya dicatat sebagai
+keadaan awal tanpa mengirim pesan, supaya tidak ada siaran palsu.
 
 Setiap notifikasi dicatat ke data/signals/regime_notifications.jsonl. Berkas
 ini adalah catatan uji maju (forward test): sinyal tercatat sebelum harga
@@ -45,13 +47,23 @@ PLAIN = {
     "uncertain_rule": "Belum Jelas",
 }
 
-# Sama dengan peta keputusan di dashboard (/strategi). Masih rancangan:
-# kinerjanya pada BTC baru diuji di Fase 2.
+# Sama dengan peta keputusan di dashboard (frontend/lib/strategy.ts): strategi
+# menurut teori + ringkasan bukti Fase 2 di BTC 1H setelah biaya.
 STRATEGY = {
-    "persistent": ("Trend-following", "Ikuti arah gerakan; masuk saat harga menembus level, keluar dengan trailing stop."),
-    "anti_persistent": ("Mean-reversion", "Lawan gerakan ekstrem; masuk di ujung range, ambil untung ke rata-rata, stop ketat."),
-    "random_like": ("Tidak trading", "Tidak ada pola yang bisa dimanfaatkan; biaya transaksi akan menggerus hasil."),
+    "persistent": (
+        "Trend-following (teori)",
+        "Belum teruji: di BTC 1H kondisi ini sangat jarang terdeteksi.",
+    ),
+    "anti_persistent": (
+        "Mean-reversion (teori)",
+        "Harga lebih sering berbalik, tetapi mean-reversion sederhana tetap rugi setelah biaya di uji Fase 2.",
+    ),
+    "random_like": (
+        "Tidak trading",
+        "Didukung uji Fase 2: momentum dan mean-reversion sama-sama rugi besar saat kondisi ini.",
+    ),
 }
+SOURCE = "ai"
 
 _lock = threading.Lock()
 
@@ -101,9 +113,9 @@ def format_message(event: Dict[str, Any], dashboard_url: str) -> str:
         "",
         f"Harga: {_fmt_num(event.get('price'), 2)} USDT",
         f"Terkonfirmasi {event['confirm_windows']} window berturut-turut (sejak {_fmt_time(event['first_window_time'])})",
-        f"Hurst {_fmt_num(event.get('hurst'), 2)} · DFA {_fmt_num(event.get('dfa'), 2)}",
+        f"Keyakinan detektor AI: {_fmt_num(None if event.get('confidence') is None else event['confidence'] * 100, 0)}%",
         "",
-        f"Strategi yang cocok: <b>{html.escape(strategy)}</b> <i>(rancangan, belum teruji di BTC)</i>",
+        f"Strategi: <b>{html.escape(strategy)}</b>",
         html.escape(action),
         "",
         f"Bukan saran investasi. Detail: {html.escape(dashboard_url.rstrip('/'))}/strategi",
@@ -134,8 +146,8 @@ def check(
 ) -> List[Dict[str, Any]]:
     """Periksa tiap timeframe, kirim notifikasi bila ada pergantian terkonfirmasi.
 
-    `regimes` memetakan timeframe ke tabel regime (kolom time, close, hurst,
-    dfa_alpha, regime). Mengembalikan daftar event yang dikirim.
+    `regimes` memetakan timeframe ke tabel regime detektor AI (kolom time,
+    close, regime, confidence). Mengembalikan daftar event yang dikirim.
     """
     k = k or confirm_windows()
     events: List[Dict[str, Any]] = []
@@ -147,9 +159,13 @@ def check(
             labels = df["regime"].astype(str).tolist()
             entry = state.get(tf)
             current = confirmed_regime(labels, k)
-            if entry is None:
+            if entry is None or entry.get("source") != SOURCE:
                 # Keadaan awal: catat tanpa siaran.
-                state[tf] = {"confirmed": current, "since": float(df["time"].iloc[-k]) if current else None}
+                state[tf] = {
+                    "confirmed": current,
+                    "since": float(df["time"].iloc[-k]) if current else None,
+                    "source": SOURCE,
+                }
                 continue
             new = detect(labels, entry.get("confirmed"), k)
             if new is None:
@@ -163,8 +179,7 @@ def check(
                 "first_window_time": float(df["time"].iloc[-k]),
                 "last_window_time": float(last["time"]),
                 "price": float(last["close"]) if "close" in df.columns else None,
-                "hurst": float(last["hurst"]) if pd.notna(last.get("hurst")) else None,
-                "dfa": float(last["dfa_alpha"]) if pd.notna(last.get("dfa_alpha")) else None,
+                "confidence": float(last["confidence"]) if pd.notna(last.get("confidence")) else None,
                 "detected_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
             }
             chat_ids = store.recipients(tf) if store else []
@@ -178,7 +193,7 @@ def check(
                     failed += 1
                     log.warning("kirim ke %s gagal: %s", chat_id, exc)
             event.update({"recipients": len(chat_ids), "sent": sent, "failed": failed})
-            state[tf] = {"confirmed": new, "since": event["first_window_time"]}
+            state[tf] = {"confirmed": new, "since": event["first_window_time"], "source": SOURCE}
             log_path.parent.mkdir(parents=True, exist_ok=True)
             with log_path.open("a", encoding="utf-8") as fh:
                 fh.write(json.dumps(event) + "\n")
@@ -189,14 +204,13 @@ def check(
 
 def status_text() -> str:
     """Ringkasan regime terbaru semua timeframe, untuk perintah /status."""
-    from app.db.repository import get_repository
+    from app.services import ai_detector
 
     cfg = get_config()
-    repo = get_repository()
-    lines = ["<b>Kondisi regime BTC/USDT terbaru</b>"]
+    lines = ["<b>Kondisi regime BTC/USDT terbaru (detektor AI)</b>"]
     for tf in cfg.data.timeframes:
         try:
-            df = repo.get_regime(cfg.data.symbol, tf)
+            df = ai_detector.series(cfg.data.symbol, tf)
         except Exception:  # noqa: BLE001
             lines.append(f"{tf.upper()}: belum tersedia")
             continue
@@ -205,6 +219,9 @@ def status_text() -> str:
             continue
         last = df.iloc[-1]
         name = PLAIN.get(str(last["regime"]), str(last["regime"]))
-        lines.append(f"{tf.upper()}: <b>{html.escape(name)}</b> · harga {_fmt_num(last.get('close'), 2)} · {_fmt_time(float(last['time']))}")
+        lines.append(
+            f"{tf.upper()}: <b>{html.escape(name)}</b> ({_fmt_num(last['confidence'] * 100, 0)}%) · "
+            f"harga {_fmt_num(last.get('close'), 2)} · {_fmt_time(float(last['time']))}"
+        )
     lines.append("\nBukan saran investasi.")
     return "\n".join(lines)

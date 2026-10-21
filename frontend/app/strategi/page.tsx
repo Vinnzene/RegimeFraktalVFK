@@ -7,15 +7,15 @@ import { useAppConfig } from "@/components/ConfigContext";
 import { ApiState, useApi } from "@/components/useApi";
 import { api, type RegimePoint } from "@/lib/api-client";
 import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
-import { STRATEGY_PLAN as PLAN } from "@/lib/strategy";
+import { FASE2_BTC_1H, STRATEGY_PLAN as PLAN, VERDICT_META } from "@/lib/strategy";
 
 /**
  * Regime → strategi.
  *
  * Menjawab pertanyaan pengguna "kondisi pasar sekarang cocok untuk strategi
- * apa?". Rekomendasi di sini adalah RANCANGAN yang akan diuji di Fase 2 pada
- * data BTC; buktinya saat ini baru simulasi sintetis, dan halaman menyatakan
- * itu terang-terangan.
+ * apa?". Peta strategi berasal dari teori; hasil uji Fase 2 di BTC 1H
+ * (setelah biaya) ditampilkan berdampingan dan halaman menyatakan terang-terangan
+ * bagian mana yang tidak didukung data.
  */
 
 const MOM = REGIME_META.persistent.color;
@@ -179,11 +179,68 @@ function SimulationEvidence() {
   );
 }
 
+/* ------------------------------------------------------------ Fase 2 */
+
+const pctSigned = (v: number) => `${v < 0 ? "−" : ""}${Math.abs(Math.round(v * 100))}%`;
+const num = (v: number) => `${v < 0 ? "−" : "+"}${Math.abs(v).toFixed(2).replace(".", ",")}`;
+
+function Fase2Evidence() {
+  return (
+    <section className="panel space-y-3">
+      <div>
+        <div className="panel-title">Hasil uji Fase 2: BTC/USDT 1H setelah biaya</div>
+        <div className="panel-sub">
+          Uji praregistrasi pada 2019–2026, biaya 0,085% per sisi (fee + slippage). Detektor tidak pernah dilatih pada BTC,
+          sehingga seluruh periode adalah data luar sampel.
+        </div>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="data-table min-w-[560px] font-sans">
+          <thead>
+            <tr>
+              <th className="text-left">Strategi</th>
+              <th>Sharpe tahunan</th>
+              <th>Drawdown maks.</th>
+              <th>Waktu di pasar</th>
+            </tr>
+          </thead>
+          <tbody>
+            {FASE2_BTC_1H.map((r) => (
+              <tr key={r.key}>
+                <td className="py-2 text-left !font-sans text-[12.5px] text-txt">{r.name}</td>
+                <td className={`py-2 ${r.sharpe < 0 ? "text-bearish" : "text-bullish"}`}>{num(r.sharpe)}</td>
+                <td className="py-2 text-txtDim">{pctSigned(r.maxDd)}</td>
+                <td className="py-2 text-txtDim">{Math.round(r.exposure * 100)}%</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <ul className="list-disc space-y-1 pl-5 text-[12.5px] leading-relaxed text-txtDim">
+        <li>
+          Semua strategi aktif sederhana (momentum dan mean-reversion 24 bar) <b className="text-txt">rugi setelah biaya</b>,
+          dengan atau tanpa detektor. Pemilihan strategi berbasis regime tidak lebih baik daripada strategi tunggal terbaik
+          (hipotesis F1 tidak terbukti di kelompok aset mana pun).
+        </li>
+        <li>
+          Yang didukung data: saat detektor memberi label <b className="text-txt">acak</b>, kedua strategi rugi paling besar
+          (Sharpe momentum −2,46, mean-reversion −1,47). Detektor berguna sebagai <b className="text-txt">filter &ldquo;jangan
+          trading&rdquo;</b>.
+        </li>
+        <li>
+          Di saham IDX (harian, long saja), switching menghasilkan Sharpe setara beli-dan-tahan dengan drawdown lebih kecil
+          pada 8 dari 11 saham (IHSG: drawdown −20% vs −61%).
+        </li>
+      </ul>
+    </section>
+  );
+}
+
 /* ------------------------------------------------------------ halaman */
 
 export default function StrategiPage() {
   const { timeframe } = useAppConfig();
-  const regime = useApi(() => api.regime(timeframe), [timeframe]);
+  const regime = useApi(() => api.aiRegime(timeframe), [timeframe]);
 
   const current = (regime.data?.current_regime ?? null) as Regime | null;
   const run = useMemo(() => currentRun(regime.data?.series ?? []), [regime.data]);
@@ -193,7 +250,7 @@ export default function StrategiPage() {
     <div className="mx-auto max-w-[1400px] space-y-3">
       <PageHeader
         title="Regime → Strategi"
-        description="Kondisi pasar menentukan strategi yang cocok: trend-following saat gerakan cenderung berlanjut, mean-reversion saat cenderung berbalik, dan tidak trading saat acak. Peta di halaman ini adalah rancangan yang akan diuji pada data BTC (Fase 2) dengan biaya transaksi nyata dan evaluasi walk-forward. Bukti yang tersedia sekarang baru simulasi pada data sintetis."
+        description="Secara teori, kondisi pasar menentukan strategi: trend-following saat gerakan cenderung berlanjut, mean-reversion saat cenderung berbalik, dan tidak trading saat acak. Halaman ini menampilkan peta itu berdampingan dengan hasil uji Fase 2 pada BTC 1H setelah biaya transaksi. Kesimpulan utamanya: detektor paling berguna untuk mengetahui kapan TIDAK trading."
       />
       <ParameterBar />
       <ApiState loading={regime.loading} error={regime.error} />
@@ -201,7 +258,7 @@ export default function StrategiPage() {
       {current && plan && (
         <section className="panel grid gap-5 lg:grid-cols-[1fr_1.2fr]" style={{ borderLeft: `3px solid ${REGIME_META[current].color}` }}>
           <div className="space-y-2">
-            <div className="metric-label">Kondisi pasar saat ini · {timeframe.toUpperCase()}</div>
+            <div className="metric-label">Kondisi pasar saat ini menurut detektor AI · {timeframe.toUpperCase()}</div>
             <div className="text-[24px] font-semibold tracking-tight" style={{ color: REGIME_META[current].color }}>
               {REGIME_PLAIN[current].name}
             </div>
@@ -217,8 +274,8 @@ export default function StrategiPage() {
           <div className="space-y-2 rounded-md border border-edge bg-surface/60 p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="metric-label">Strategi yang cocok</div>
-              <span className="rounded-full border border-warn/40 bg-warn/10 px-2 py-0.5 text-2xs font-medium text-warn">
-                Rancangan · belum teruji di BTC
+              <span className={`rounded-full border px-2 py-0.5 text-2xs font-medium ${VERDICT_META[plan.verdict].className}`}>
+                {VERDICT_META[plan.verdict].label}
               </span>
             </div>
             <div className={`text-[20px] font-semibold tracking-tight ${plan.tone === "go" ? "text-txt" : "text-txtDim"}`}>
@@ -228,6 +285,10 @@ export default function StrategiPage() {
             <div className="text-[12px] text-txtMuted">
               Contoh alat: <span className="text-txtDim">{plan.tool}</span>
             </div>
+            <p className="border-t border-edge pt-2 text-[12px] leading-relaxed text-txtDim">
+              <span className="font-medium text-txt">Bukti BTC 1H: </span>
+              {plan.evidence}
+            </p>
           </div>
         </section>
       )}
@@ -273,12 +334,14 @@ export default function StrategiPage() {
         </div>
       </section>
 
+      <Fase2Evidence />
+
       <section className="panel space-y-3">
         <div>
-          <div className="panel-title">Bukti saat ini: simulasi pada data sintetis</div>
+          <div className="panel-title">Mekanisme: simulasi pada data sintetis</div>
           <div className="panel-sub">
-            Strategi yang sama dijalankan pada harga sintetis dengan eksponen Hurst yang diketahui. Data BTC sengaja belum
-            dipakai agar uji Fase 2 tetap bersih.
+            Strategi yang sama dijalankan pada harga sintetis dengan eksponen Hurst yang diketahui, untuk menunjukkan
+            mengapa strategi yang salah regime merugi. Ini ilustrasi mekanisme, bukan bukti kinerja di BTC.
           </div>
         </div>
         <SimulationEvidence />

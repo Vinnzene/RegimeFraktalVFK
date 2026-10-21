@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Dict, List, Optional
 
 import numpy as np
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query
 
 from app.core.config import get_config
 from app.db.repository import get_repository
@@ -135,6 +135,58 @@ def read_regime(
         "stride_bars": stride,
         "purge_gap_bars": cfg.model.purge_gap,
         "purge_gap_rows": purge_rows,
+        "series": sampled["rows"],
+    }
+
+
+@router.get("/ai-regime")
+def read_ai_regime(
+    tf: str = Query("1h"),
+    symbol: str = Query("BTCUSDT"),
+    limit: Optional[int] = Query(3000, ge=100, le=50000),
+) -> dict:
+    """Regime dari detektor resmi sistem (Hybrid PS latih-sintetis).
+
+    Berbeda dari `/regime` (label konsensus Hurst R/S–DFA), detektor ini tidak
+    dilatih pada data BTC sama sekali, sehingga tidak ada pembagian
+    latih/validasi/uji pada deret BTC: seluruh riwayat adalah data luar sampel.
+    """
+    from app.services import ai_detector  # noqa: PLC0415
+
+    cfg = get_config()
+    try:
+        m = ai_detector.meta()
+        df = ai_detector.series(symbol, tf)
+    except ai_detector.DetectorUnavailable as exc:
+        raise HTTPException(status_code=503, detail=f"Detektor AI belum tersedia: {exc}") from exc
+    except ai_detector.CacheBuilding as exc:
+        raise HTTPException(status_code=503, detail=f"Detektor AI sedang menghitung riwayat ({exc}). Coba lagi beberapa menit lagi.") from exc
+
+    classes = list(m["classes"])
+    labels = df["regime"].tolist()
+    last = df.iloc[-1] if len(df) else None
+    rows = df.round(4).to_dict(orient="records")
+    sampled = apply_downsample(rows, limit, method="uniform")
+    return {
+        "timeframe": tf,
+        "symbol": symbol,
+        "config_hash": cfg.config_hash,
+        "detector": {
+            "name": "Hybrid PS (Attention-BiLSTM)",
+            "inputs": "Sekuens persistensi 32×11 + 50 fitur struktural (termasuk 12 rasio energi SWT)",
+            "trained_on": "Deret sintetis dengan eksponen Hurst diketahui (skenario S1–S4)",
+            "class_thresholds_h": m["thresholds"],
+            "window": m["window"],
+            "stride_bars": ai_detector.STRIDE,
+            "test_ba_synthetic": m.get("test_ba_reproduced"),
+        },
+        "current_regime": labels[-1] if labels else None,
+        "current_time": int(last["time"]) if last is not None else None,
+        "current_probabilities": {c: round(float(last[f"p_{c}"]), 4) for c in classes} if last is not None else None,
+        "distribution": regime_distribution(labels),
+        "count": len(sampled["rows"]),
+        "original_count": len(labels),
+        "downsampled": sampled["downsampled"],
         "series": sampled["rows"],
     }
 

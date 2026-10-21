@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 import type { RegimePoint } from "@/lib/api-client";
 import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
-import { STRATEGY_PLAN } from "@/lib/strategy";
+import { STRATEGY_PLAN, VERDICT_META } from "@/lib/strategy";
 
 const DAY = 24 * 3600;
 
@@ -44,8 +44,8 @@ export function useRecentRegimes(series: RegimePoint[]) {
 }
 
 /**
- * Kartu pertama yang dibaca: kondisi pasar sekarang, apa artinya bagi
- * pengguna (strategi yang cocok), dan dua alat ukur di baliknya.
+ * Kartu pertama yang dibaca: kondisi pasar sekarang menurut detektor AI, apa
+ * artinya bagi pengguna (strategi beserta bukti Fase 2), dan keyakinan model.
  */
 export default function MarketSummary({
   current,
@@ -54,6 +54,7 @@ export default function MarketSummary({
   symbol,
   timeframe,
   gauges,
+  gaugesTitle = "Keyakinan detektor",
 }: {
   current: string | null | undefined;
   series: RegimePoint[];
@@ -61,6 +62,7 @@ export default function MarketSummary({
   symbol: string;
   timeframe: string;
   gauges: React.ReactNode;
+  gaugesTitle?: string;
 }) {
   const info = useRecentRegimes(series);
 
@@ -76,6 +78,7 @@ export default function MarketSummary({
   const key = (current ?? "") as Regime;
   const plain = REGIME_PLAIN[key];
   const plan = STRATEGY_PLAN[key];
+  const verdict = plan ? VERDICT_META[plan.verdict] : null;
   const color = REGIME_META[key]?.color ?? "#8b949e";
 
   if (!plain || !plan) {
@@ -136,17 +139,18 @@ export default function MarketSummary({
         <div className="flex flex-col bg-panel p-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="text-[12px] text-txtDim">Apa artinya untuk Anda?</span>
-            <span className="rounded-full border border-warn/40 bg-warn/10 px-2 py-0.5 text-2xs font-medium text-warn">
-              Rancangan · belum teruji
-            </span>
+            {verdict && (
+              <span className={`rounded-full border px-2 py-0.5 text-2xs font-medium ${verdict.className}`}>{verdict.label}</span>
+            )}
           </div>
           <div className="mt-3 text-[11px] uppercase tracking-wider text-txtMuted">Strategi yang cocok</div>
           <div className={`mt-1 text-[22px] font-semibold tracking-tight ${plan.tone === "go" ? "text-txt" : "text-txtDim"}`}>
             {plan.strategy}
           </div>
           <p className="mt-2 text-[13px] leading-relaxed text-txtDim">{plan.action}</p>
-          <p className="mt-2 text-[12px] text-txtMuted">
-            Contoh alat: <span className="text-txtDim">{plan.tool}</span>
+          <p className="mt-3 rounded-lg bg-surface/70 px-3 py-2 text-[12px] leading-relaxed text-txtDim">
+            <span className="font-medium text-txt">Bukti BTC 1H: </span>
+            {plan.evidence}
           </p>
           <div className="mt-auto pt-4">
             <Link
@@ -160,7 +164,7 @@ export default function MarketSummary({
 
         {/* 3. Alat ukur */}
         <div className="flex flex-col gap-3 bg-panel p-5">
-          <span className="text-[12px] text-txtDim">Dua alat ukur di baliknya</span>
+          <span className="text-[12px] text-txtDim">{gaugesTitle}</span>
           {gauges}
         </div>
       </div>

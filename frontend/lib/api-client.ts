@@ -15,7 +15,11 @@ async function get<T>(path: string, params: Record<string, string | number | und
     if (v !== undefined && v !== null) url.searchParams.set(k, String(v));
   });
   const res = await fetch(url.toString(), { cache: "no-store" });
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText} — ${url.pathname}`);
+  if (!res.ok) {
+    // FastAPI mengirim alasan di `detail` (mis. cache detektor sedang dibangun).
+    const detail = await res.json().then((j) => (typeof j?.detail === "string" ? j.detail : null)).catch(() => null);
+    throw new Error(detail ?? `${res.status} ${res.statusText} — ${url.pathname}`);
+  }
   return (await res.json()) as T;
 }
 
@@ -42,10 +46,42 @@ export interface Candle {
 export interface RegimePoint {
   time: number;
   close: number;
-  hurst: number | null;
-  dfa_alpha: number | null;
   regime: string;
-  segment: string;
+  /** Hanya pada label konsensus Hurst–DFA (`/analysis/regime`). */
+  hurst?: number | null;
+  dfa_alpha?: number | null;
+  segment?: string;
+}
+
+export type AiRegimeClass = "persistent" | "random_like" | "anti_persistent";
+
+/** Titik deteksi detektor AI; `hurst`, `dfa_alpha`, `segment` tidak ada (bukan label konsensus). */
+export interface AiRegimePoint extends RegimePoint {
+  confidence: number;
+  p_persistent: number;
+  p_random_like: number;
+  p_anti_persistent: number;
+}
+
+export interface AiRegimeResponse {
+  timeframe: string;
+  symbol: string;
+  config_hash: string;
+  detector: {
+    name: string;
+    inputs: string;
+    trained_on: string;
+    class_thresholds_h: [number, number];
+    window: number;
+    stride_bars: number;
+    test_ba_synthetic: Record<string, number> | null;
+  };
+  current_regime: AiRegimeClass | null;
+  current_time: number | null;
+  current_probabilities: Record<AiRegimeClass, number> | null;
+  distribution: Record<string, { count: number; share: number }>;
+  series: AiRegimePoint[];
+  original_count: number;
 }
 
 type OhlcvResponse = {
@@ -122,6 +158,8 @@ export const api = {
       current_regime: string;
       config_hash: string;
     }>("/api/v1/analysis/regime", { tf }),
+  /** Regime dari detektor resmi (Hybrid PS latih-sintetis). */
+  aiRegime: (tf: string) => get<AiRegimeResponse>("/api/v1/analysis/ai-regime", { tf }),
   hurstDfa: (tf: string, limit?: number) =>
     get<any>("/api/v1/analysis/hurst-dfa", { tf, limit }),
   multifractal: (tf: string, limit?: number) =>

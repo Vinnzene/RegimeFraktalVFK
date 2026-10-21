@@ -134,3 +134,15 @@ def test_stop_status_and_group_chats():
     assert store.recipients("1h") == []
     assert handle_update(update("/start abc", chat_type="group"), store, reply, lambda: "") == "not_private"
     assert handle_update(update("halo"), store, reply, lambda: "") is None
+
+
+def test_state_from_old_label_source_is_reset_without_broadcast(tmp_path):
+    store = subscribed_store(("u1", 11, ["1h"]))
+    send = Sender()
+    state, logp = tmp_path / "state.json", tmp_path / "log.jsonl"
+    # Keadaan lama dicatat dari label konsensus Hurst–DFA (tanpa kolom source).
+    state.write_text(json.dumps({"1h": {"confirmed": P, "since": 0.0}}))
+    assert rn.check({"1h": frame([A, A, A])}, store, send, "http://x", state, logp, k=3) == []
+    assert send.sent == []
+    entry = json.loads(state.read_text())["1h"]
+    assert entry["confirmed"] == A and entry["source"] == "ai"

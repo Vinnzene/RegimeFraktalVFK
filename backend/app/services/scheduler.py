@@ -93,6 +93,20 @@ def warm_cache() -> List[Dict[str, object]]:
         except Exception as exc:  # noqa: BLE001
             results.append({"timeframe": tf, "ok": False, "error": str(exc)[:200]})
 
+    # Detektor AI resmi: hitung titik deteksi baru (seluruh riwayat bila cache
+    # masih kosong) sebelum dashboard memintanya.
+    for tf in cfg.data.timeframes:
+        started = time.time()
+        try:
+            from app.services import ai_detector
+
+            ai = ai_detector.update_cache(cfg.data.symbol, tf)
+            results.append(
+                {"timeframe": tf, "ok": True, "warmed": "ai_detector", "windows": len(ai), "seconds": round(time.time() - started, 1)}
+            )
+        except Exception as exc:  # noqa: BLE001
+            results.append({"timeframe": tf, "ok": False, "warmed": "ai_detector", "error": str(exc)[:200]})
+
     # Panaskan pula endpoint model. Diimpor di dalam fungsi agar modul
     # scheduler tidak menarik TensorFlow saat startup.
     for tf in cfg.data.timeframes:
@@ -129,16 +143,16 @@ def notify_once() -> List[Dict[str, object]]:
     Tidak melakukan apa pun bila bot belum dikonfigurasi. Kegagalan dicatat,
     tidak dilempar, agar penyegaran data tetap berjalan.
     """
-    from app.services import regime_notifier, telegram_bot
+    from app.services import ai_detector, regime_notifier, telegram_bot
     from app.services.telegram_store import get_store
 
     bot = telegram_bot.settings()
     if not bot.configured:
         return []
     cfg = get_config()
-    repo = get_repository()
     try:
-        regimes = {tf: repo.get_regime(cfg.data.symbol, tf) for tf in cfg.data.timeframes}
+        # Label dari detektor AI resmi, sama dengan yang tampil di dashboard.
+        regimes = {tf: ai_detector.update_cache(cfg.data.symbol, tf) for tf in cfg.data.timeframes}
         events = regime_notifier.check(regimes, get_store(), telegram_bot.send_message, bot.dashboard_url)
     except Exception as exc:  # noqa: BLE001
         _record({"at": int(time.time()), "notify_error": f"{type(exc).__name__}: {exc}"[:200]})
