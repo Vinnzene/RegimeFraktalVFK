@@ -1,0 +1,245 @@
+{
+  "abstain": {
+    "tau": 0.75,
+    "rule": "\u03c4 terkecil dengan BA tercakup validasi \u2265 0,90",
+    "validation": [
+      {
+        "tau": 0.4,
+        "coverage": 1.0,
+        "ba_covered": 0.8323
+      },
+      {
+        "tau": 0.45,
+        "coverage": 1.0,
+        "ba_covered": 0.8323
+      },
+      {
+        "tau": 0.5,
+        "coverage": 0.9973,
+        "ba_covered": 0.8329
+      },
+      {
+        "tau": 0.55,
+        "coverage": 0.9457,
+        "ba_covered": 0.8508
+      },
+      {
+        "tau": 0.6,
+        "coverage": 0.8979,
+        "ba_covered": 0.8662
+      },
+      {
+        "tau": 0.65,
+        "coverage": 0.8471,
+        "ba_covered": 0.8805
+      },
+      {
+        "tau": 0.7,
+        "coverage": 0.7928,
+        "ba_covered": 0.895
+      },
+      {
+        "tau": 0.75,
+        "coverage": 0.7261,
+        "ba_covered": 0.9114
+      },
+      {
+        "tau": 0.8,
+        "coverage": 0.6384,
+        "ba_covered": 0.9248
+      },
+      {
+        "tau": 0.85,
+        "coverage": 0.5327,
+        "ba_covered": 0.9245
+      },
+      {
+        "tau": 0.9,
+        "coverage": 0.451,
+        "ba_covered": 0.7387
+      },
+      {
+        "tau": 0.95,
+        "coverage": 0.4041,
+        "ba_covered": 0.6667
+      }
+    ],
+    "test": {
+      "S4": [
+        {
+          "tau": 0.4,
+          "coverage": 1.0,
+          "ba_covered": 0.813
+        },
+        {
+          "tau": 0.45,
+          "coverage": 1.0,
+          "ba_covered": 0.813
+        },
+        {
+          "tau": 0.5,
+          "coverage": 0.9967,
+          "ba_covered": 0.8147
+        },
+        {
+          "tau": 0.55,
+          "coverage": 0.9453,
+          "ba_covered": 0.8315
+        },
+        {
+          "tau": 0.6,
+          "coverage": 0.8893,
+          "ba_covered": 0.8492
+        },
+        {
+          "tau": 0.65,
+          "coverage": 0.8227,
+          "ba_covered": 0.8667
+        },
+        {
+          "tau": 0.7,
+          "coverage": 0.7553,
+          "ba_covered": 0.8886
+        },
+        {
+          "tau": 0.75,
+          "coverage": 0.6787,
+          "ba_covered": 0.905
+        },
+        {
+          "tau": 0.8,
+          "coverage": 0.57,
+          "ba_covered": 0.9158
+        },
+        {
+          "tau": 0.85,
+          "coverage": 0.462,
+          "ba_covered": 0.8635
+        },
+        {
+          "tau": 0.9,
+          "coverage": 0.4047,
+          "ba_covered": 0.6667
+        },
+        {
+          "tau": 0.95,
+          "coverage": 0.3517,
+          "ba_covered": 0.6667
+        }
+      ],
+      "S4k": [
+        {
+          "tau": 0.4,
+          "coverage": 1.0,
+          "ba_covered": 0.8357
+        },
+        {
+          "tau": 0.45,
+          "coverage": 1.0,
+          "ba_covered": 0.8357
+        },
+        {
+          "tau": 0.5,
+          "coverage": 0.9967,
+          "ba_covered": 0.8364
+        },
+        {
+          "tau": 0.55,
+          "coverage": 0.9463,
+          "ba_covered": 0.8552
+        },
+        {
+          "tau": 0.6,
+          "coverage": 0.892,
+          "ba_covered": 0.8653
+        },
+        {
+          "tau": 0.65,
+          "coverage": 0.8393,
+          "ba_covered": 0.884
+        },
+        {
+          "tau": 0.7,
+          "coverage": 0.7843,
+          "ba_covered": 0.897
+        },
+        {
+          "tau": 0.75,
+          "coverage": 0.7143,
+          "ba_covered": 0.9063
+        },
+        {
+          "tau": 0.8,
+          "coverage": 0.63,
+          "ba_covered": 0.9176
+        },
+        {
+          "tau": 0.85,
+          "coverage": 0.5077,
+          "ba_covered": 0.8948
+        },
+        {
+          "tau": 0.9,
+          "coverage": 0.444,
+          "ba_covered": 0.68
+        },
+        {
+          "tau": 0.95,
+          "coverage": 0.4013,
+          "ba_covered": 0.6667
+        }
+      ]
+    },
+    "btc_uncertain_share": {
+      "1h": 0.5664,
+      "4h": 0.4869
+    }
+  },
+  "change": {
+    "n_series": 40,
+    "length": 20000,
+    "changes": 392,
+    "pooled": {
+      "D-sintetis": {
+        "median_delay": 296.0,
+        "fa_per_1000": 0.909,
+        "missed_share": 0.0587
+      },
+      "Konsensus naif": {
+        "median_delay": 603.5,
+        "fa_per_1000": 0.2359,
+        "missed_share": 0.6786
+      },
+      "Konsensus terkalibrasi": {
+        "median_delay": 388.0,
+        "fa_per_1000": 1.4128,
+        "missed_share": 0.0587
+      },
+      "VR(2) terkalibrasi": {
+        "median_delay": 302.0,
+        "fa_per_1000": 2.409,
+        "missed_share": 0.023
+      },
+      "D-sintetis + abstain": {
+        "median_delay": 368.0,
+        "fa_per_1000": 0.3,
+        "missed_share": 0.125
+      }
+    },
+    "h5_ci95_diff": {
+      "median_delay": [
+        -463.0125,
+        -192.0
+      ],
+      "fa_per_1000": [
+        0.5807,
+        0.7615
+      ],
+      "missed_share": [
+        -0.679,
+        -0.5561
+      ]
+    },
+    "h5": "TIDAK TERBUKTI"
+  }
+}

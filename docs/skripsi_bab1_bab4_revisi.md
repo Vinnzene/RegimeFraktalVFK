@@ -702,6 +702,48 @@ Ketiga hipotesis juga terbukti pada ambang sensitivitas 0,45/0,55.
 4. Semua metode gagal pada S5 (regime berganti di dalam jendela, BA ±0,3).
    Identifikasi tepat setelah pergantian regime belum dapat diandalkan.
 
+## 4.6b Kecepatan dan Ketepatan Identifikasi (Fase 1 §8 dan adendum 5)
+
+**Deteksi pergantian regime.** 40 deret sintetis S4 × 20.000 bar, 392 titik
+ganti, detektor bergulir (jendela 500, langkah 4) dengan konfirmasi 3 jendela
+berturut-turut, sama dengan aturan notifikasi sistem
+(`ml/artifacts/regime_change_study.md`).
+
+**Tabel 4.11b** Kecepatan dan salah alarm
+
+| Metode | Median keterlambatan (bar) | Salah alarm / 1.000 bar | Pergantian terlewat |
+|---|---|---|---|
+| **D-sintetis (Attention-BiLSTM)** | **296** | 0,91 | **5,9%** |
+| Konsensus R/S–DFA naif | 604 | 0,24 | 67,9% |
+| Konsensus R/S–DFA terkalibrasi | 388 | 1,41 | 5,9% |
+| VR(2) terkalibrasi | 302 | 2,41 | 2,3% |
+| D-sintetis + abstain (τ = 0,75) | 368 | 0,30 | 12,5% |
+
+H5 (lebih cepat **dan** salah alarm tidak lebih banyak daripada konsensus naif):
+**tidak terbukti**. Detektor AI dua kali lebih cepat (selisih median
+keterlambatan CI95 [−463; −192] bar) dan jauh lebih jarang melewatkan
+pergantian (5,9% vs 67,9%), tetapi salah alarmnya lebih banyak (+0,58 sampai
++0,76 per 1.000 bar). Salah alarm konsensus naif rendah karena konsensus jarang
+mengonfirmasi apa pun: dua pertiga pergantian tidak pernah terdeteksi.
+
+Secara deskriptif, dibanding konsensus terkalibrasi, detektor AI lebih cepat
+(296 vs 388 bar) dan lebih jarang salah alarm (0,91 vs 1,41) dengan proporsi
+terlewat sama. Dengan abstain, salah alarm turun ke 0,30 per 1.000 bar
+(setara konsensus naif) dan keterlambatan tetap jauh lebih kecil (368 vs 604).
+
+**Abstain berdasarkan keyakinan.** Ambang τ dipilih di validasi (τ terkecil dengan
+BA tercakup ≥ 0,90): **τ = 0,75**. Pada uji S4: BA tercakup 0,905 pada 67,9%
+jendela (tanpa abstain 0,813 pada 100%). Pada BTC, 56,6% jendela 1H dan 48,7%
+jendela 4H akan berlabel tidak pasti. Pada τ ≥ 0,90 BA tercakup justru turun
+(0,667) karena kelas random-like hampir tidak pernah diprediksi dengan keyakinan
+setinggi itu.
+
+**Pembahasan.** Keterlambatan ±300 bar (±12 hari pada 1H) adalah harga dari
+jendela 500 bar; jendela lebih pendek lebih cepat tetapi kurang akurat (BA S4
+0,732 pada 256 bar). Abstain memberi pilihan rancangan yang jelas: label lebih
+tepat dan salah alarm lebih jarang, dibayar dengan lebih banyak jendela "tidak
+pasti" dan deteksi sedikit lebih lambat.
+
 ## 4.7 Multi-Timeframe (RM4, bagian 2)
 
 | Aspek | 1H | 4H |
