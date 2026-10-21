@@ -621,6 +621,45 @@ Split acak menggelembungkan BA sebesar +0,12 (1H) dan +0,18 (4H) karena jendela
 bertetangga berbagi hingga 496 bar. Pada Hybrid SWT, SWT non-kausal hanya
 mengubah BA +0,005 (1H) dan −0,025 (4H).
 
+## 4.5b Upaya Mengurangi Overfitting: Pralatih Sintetis + Fine-Tune (Fase 0b)
+
+Fase 0 menunjukkan overfitting (selisih BA latih − uji ±0,20 di 4H). Mengikuti
+saran literatur untuk data kecil dan label berderau (Ismail Fawaz dkk., 2018;
+Müller dkk., 2019), dilakukan eksperimen terpraregistrasi
+(`docs/praregistrasi_fase0b_transfer.md`). Split identik dengan Fase 0.
+
+**Tabel 4.9b** Hasil uji, rata-rata 3 seed (`ml/artifacts/transfer_finetune_*.md`)
+
+| Model | 1H BA latih | 1H BA uji | 4H BA latih | 4H BA uji | 4H selisih |
+|---|---|---|---|---|---|
+| B0 Hybrid PS dari nol | 0,759 | 0,711 | 0,811 | 0,607 | 0,204 |
+| T1 pralatih sintetis + fine-tune | 0,712 | 0,633 | 0,735 | 0,541 | 0,193 |
+| T2 T1 + label smoothing 0,1 | 0,777 | 0,651 | 0,755 | 0,510 | 0,245 |
+| T0 detektor sintetis tanpa fine-tune | – | 0,372 | – | 0,343 | – |
+
+| Hipotesis | 1H ΔMacro-F1 [CI95] | 4H ΔMacro-F1 [CI95] | Keputusan (Holm, 4 uji) |
+|---|---|---|---|
+| T-H1 pralatih > dari nol | −0,074 [−0,121; −0,032] | −0,048 [−0,274; +0,098] | 1H **berlawanan**, 4H tidak terbukti |
+| T-H2 label smoothing > T1 | +0,019 [−0,017; +0,061] | −0,009 [−0,030; +0,010] | Tidak terbukti |
+
+Walk-forward 5 fold: T1 mengungguli B0 pada 1/5 fold (1H) dan 2/5 fold (4H).
+
+**Pembahasan.**
+1. Sesuai tabel tafsir praregistrasi, di 1H terjadi ***negative transfer***:
+   pengetahuan dari data sintetis tidak berpindah ke label Hurst-DFA BTC. Di 4H
+   selisih latih − uji T1 sedikit lebih kecil, tetapi karena BA latih dan uji
+   sama-sama turun; ini bukan perbaikan generalisasi.
+2. Penjelasannya terlihat dari T0. Detektor sintetis tanpa fine-tune hanya
+   mencapai BA 0,34–0,37 terhadap label BTC, nyaris tebakan acak. Label BTC
+   (kuantil 1/3 dan 2/3 R/S–DFA, misalnya "persisten" = R/S > 0,60) dan label
+   sintetis (H sebenarnya 0,47/0,53) **mengukur konsep yang berbeda**. Pralatih
+   pada konsep yang satu menghambat pembelajaran konsep yang lain.
+3. Temuan ini memperkuat 4.1 dan 4.6: label Hurst-DFA bukan ukuran persistensi
+   yang sebenarnya. Overfitting Fase 0 tidak dapat diperbaiki lewat pralatih
+   karena sumbernya adalah definisi label dan sedikitnya sampel efektif, bukan
+   kurangnya pengetahuan awal model.
+4. Detektor resmi sistem tidak diganti (praregistrasi §7).
+
 ## 4.6 Benchmark Sintetis: Hurst-DFA Klasik vs Attention-BiLSTM (RM1 bagian 2, RM3 bagian 2; Fase 1)
 
 **Tabel 4.10** BA uji pada n = 500 (`ml/artifacts/synthetic_benchmark.md`)
