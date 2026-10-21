@@ -286,3 +286,50 @@ belum pernah diukur.
    hasil ini (pemilihan model sudah selesai di §5; set uji tidak dipakai
    untuk memilih).
 5. Keluaran: `ml/src/swt_ablation.py`, `ml/artifacts/swt_ablation.{json,md}`.
+
+### Adendum 5 (2026-10-22): menjalankan §8 (deteksi pergantian regime) dan kurva abstain
+
+Ditulis sebelum kedua analisis dijalankan. Belum ada deret panjang berganti
+regime yang pernah dibangkitkan, dan probabilitas detektor belum pernah
+dianalisis terhadap ambang keyakinan.
+
+**A. Deteksi pergantian regime (melaksanakan §8, rincian implementasi)**
+
+1. Data: 40 deret panjang × 20.000 bar (seed `SeedSequence([8000, i])`).
+   Jumlah titik ganti 8–12 (seragam), posisi acak dengan panjang segmen minimum
+   1.000 bar. Kelas segmen pertama acak; kelas setiap segmen berikutnya dipilih
+   acak dari dua kelas lain (selalu berganti). H segmen = `sample_h(kelas)`
+   (ambang utama 0,47/0,53). Proses S4: fGn per segmen disambung, lalu ekor
+   tebal, volatilitas stokastik, dan lonjakan diterapkan sekali pada seluruh
+   deret (sama dengan cara S5).
+2. Metode bergulir (jendela 500, langkah 4 bar):
+   - **D-sintetis**: detektor resmi, normalisasi per jendela sama dengan sistem;
+   - **Konsensus R/S–DFA** naif (ambang 0,47/0,53) — pembanding H5;
+   - Konsensus R/S–DFA terkalibrasi dan VR(2) terkalibrasi (ambang Fase 1) — sekunder;
+   - **D-sintetis + abstain** (bagian B) — sekunder.
+3. Konfirmasi: K = 3 jendela berturut-turut berlabel sama (kelas utama); label
+   lain memutus rentetan. Keadaan awal = regime terkonfirmasi pertama.
+4. Metrik per titik ganti c (kelas baru k): **keterlambatan** = bar akhir
+   jendela pada konfirmasi pertama ke kelas k setelah c, dikurangi c, selama
+   sebelum titik ganti berikutnya; bila tidak ada, **terlewat**. **Salah alarm**
+   = konfirmasi pergantian ke kelas yang berbeda dari kelas segmen yang memuat
+   bar akhir jendela; dilaporkan per 1.000 bar.
+5. **H5**: median keterlambatan D-sintetis < konsensus R/S–DFA naif **dan**
+   salah alarm tidak lebih banyak. Bootstrap per deret (B = 2.000): terbukti bila
+   batas atas CI95 selisih median keterlambatan (D-sintetis − konsensus) < 0 dan
+   batas bawah CI95 selisih salah alarm per 1.000 bar ≤ 0. Keterlambatan hanya
+   dihitung pada pergantian yang terdeteksi; proporsi terlewat dilaporkan
+   berdampingan dan dibandingkan dengan CI95 bootstrap yang sama.
+
+**B. Abstain berdasarkan keyakinan (deskriptif)**
+
+1. Keyakinan = probabilitas kelas tertinggi detektor. Kurva untuk τ = 0,40,
+   0,45, …, 0,95: cakupan (proporsi jendela dengan keyakinan ≥ τ) dan BA pada
+   jendela tercakup.
+2. **Pemilihan τ (validasi campuran S1–S4)**: τ terkecil dengan BA tercakup
+   ≥ 0,90. Bila tidak ada, τ dengan BA tercakup tertinggi dengan cakupan ≥ 20%.
+3. Pada τ terpilih dilaporkan BA tercakup dan cakupan di uji S4 dan S4k, serta
+   proporsi jendela BTC 1H/4H yang akan berlabel "tidak pasti" (dari cache
+   sistem). Tidak ada hipotesis; dashboard tidak diubah otomatis oleh hasil ini.
+
+Keluaran: `ml/src/regime_change_study.py`, `ml/artifacts/regime_change_study.{json,md}`.
