@@ -259,3 +259,30 @@ Perubahan:
    syarat institusi dan oleh keluaran probabilitasnya (dasar kelas abstain),
    bukan oleh keunggulan akurasi.
 3. Hipotesis H1–H4, kriteria, dan data tidak berubah.
+
+### Adendum 4 (2026-10-22): ablasi fitur energi SWT pada detektor resmi
+
+Ditulis sebelum ablasi dijalankan. Belum ada model tanpa fitur SWT yang
+pernah dilatih atau dievaluasi.
+
+Alasan: judul skripsi yang disetujui memuat "SWT". Pada detektor resmi, SWT
+masuk sebagai 12 fitur rasio energi antar-skala (`swt_energy_w*_d*`) di dalam
+50 fitur struktural; sekuens PS tidak memuat SWT. Kontribusi 12 fitur itu
+belum pernah diukur.
+
+1. **Varian**: A0 = detektor resmi (50 fitur); A1 = 12 kolom `swt_energy_*`
+   dibuang (38 fitur). Arsitektur, data latih/validasi (campuran S1–S4,
+   n = 500), ambang utama, dan konfigurasi latih sama dengan
+   `train_detector.py`. Setiap varian dilatih dengan seed 42, 43, 44.
+2. **Uji**: set uji S1, S2, S3, S4, S4k. BA dilaporkan per seed (rata-rata ±
+   simpangan baku).
+3. **Hipotesis S-SWT** (pada S4, set uji utama Fase 1): ΔBA = BA(A0) − BA(A1)
+   dengan probabilitas rata-rata 3 seed per varian. CI95 dengan bootstrap
+   berpasangan per deret (deret uji saling independen), B = 2.000.
+   - batas bawah > 0: fitur SWT menyumbang akurasi;
+   - CI memuat 0: kontribusi fitur SWT tidak terdeteksi;
+   - batas atas < 0: fitur SWT menurunkan akurasi.
+4. Hasil apa pun dilaporkan. Detektor resmi **tidak diganti** berdasarkan
+   hasil ini (pemilihan model sudah selesai di §5; set uji tidak dipakai
+   untuk memilih).
+5. Keluaran: `ml/src/swt_ablation.py`, `ml/artifacts/swt_ablation.{json,md}`.
