@@ -6,6 +6,8 @@ pandas
 numpy
 pyarrow
 PyWavelets
+joblib
+plotly
 requests
 python-dotenv
 httpx
