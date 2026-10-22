@@ -6,12 +6,14 @@
  *  - variant "fractal"   : istilah "regime fraktal" dipakai operasional,
  *                          bukan klaim matematis ketat (Bab 2.1.3)
  *  - variant "mock"      : data masih sintetis
+ *  - variant "archive"   : halaman Fase 0 (model/label lama), bukan detektor sistem
+ *  - variant "classic"   : label konsensus Hurst-DFA, hanya pembanding
  */
 export default function Disclaimer({
   variant,
   className = "",
 }: {
-  variant: "backtest" | "fractal" | "mock";
+  variant: "backtest" | "fractal" | "mock" | "archive" | "classic";
   className?: string;
 }) {
   const content = {
@@ -29,6 +31,16 @@ export default function Disclaimer({
       tone: "border-uncertainLowconf/40 bg-uncertainLowconf/10 text-uncertainLowconf",
       title: "Data sintetis (use_mock = true)",
       body: "Angka pada halaman ini berasal dari generator mock. Sumber data historis resmi (exchange dan rentang tanggal) masih open question di skripsi.",
+    },
+    archive: {
+      tone: "border-uncertainRule/60 bg-uncertainRule/15 text-txtDim",
+      title: "Arsip Fase 0",
+      body: "Halaman ini memakai model dan label lama (Hurst-DFA BTC) dari tahap awal penelitian. Kondisi pasar yang dipakai sistem berasal dari detektor AI di halaman Ringkasan; hasil terbaru ada di halaman Strategi dan Tentang.",
+    },
+    classic: {
+      tone: "border-edge bg-surface/50 text-txtDim",
+      title: "Pembanding klasik",
+      body: "Label di halaman ini berasal dari konsensus estimator Hurst R/S dan DFA, bukan dari detektor AI. Kedua estimator hanya sepakat pada ±53% window dan kurang akurat pada data kripto, sehingga ditampilkan sebagai pembanding.",
     },
   }[variant];
 

@@ -1,5 +1,6 @@
 "use client";
 
+import Disclaimer from "@/components/Disclaimer";
 import {
   Bar,
   BarChart,
@@ -49,6 +50,7 @@ export default function RegimeExplorerPage() {
         title="Regime Explorer"
         description="Karakterisasi persistensi lewat Hurst Exponent dan DFA α pada rolling window. Kategori Uncertain (rule) muncul saat kedua estimator tidak sepakat dan sengaja tidak dipaksa masuk salah satu dari tiga kategori."
       />
+      <Disclaimer variant="classic" />
 
       <ParameterBar />
       <ApiState loading={loading} error={error} />

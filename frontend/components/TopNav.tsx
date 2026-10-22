@@ -22,9 +22,7 @@ const GROUPS: NavGroup[] = [
   {
     label: "Pasar",
     items: [
-      { href: "/", label: "Ringkasan", hint: "Kondisi pasar saat ini + grafik harga" },
-      { href: "/regime-explorer", label: "Detail Kondisi", hint: "Hurst, DFA, perpindahan & durasi kondisi" },
-      { href: "/timeframe-comparison", label: "1H vs 4H", hint: "Perbandingan skala waktu" },
+      { href: "/", label: "Ringkasan", hint: "Kondisi pasar 1H & 4H menurut detektor AI + grafik harga" },
       { href: "/analisa-teknikal", label: "Analisa Teknikal", hint: "Tarik garis, fibonacci, dan indikator (TradingView)" },
       { href: "/orderflow-live", label: "Order Flow Live", hint: "Heatmap order book, footprint, delta & CVD (kripto)" },
     ],
@@ -32,27 +30,34 @@ const GROUPS: NavGroup[] = [
   {
     label: "Strategi",
     items: [
-      { href: "/strategi", label: "Regime → Strategi", hint: "Strategi yang cocok untuk kondisi pasar saat ini" },
-      { href: "/backtest", label: "Uji Strategi", hint: "Backtest eksploratif vs Buy & Hold" },
+      { href: "/strategi", label: "Regime → Strategi", hint: "Strategi per kondisi beserta hasil uji Fase 2" },
       { href: "/notifikasi", label: "Notifikasi Telegram", hint: "Pesan otomatis saat regime berganti" },
     ],
   },
   {
     label: "Riset",
     items: [
-      { href: "/model-comparison", label: "Perbandingan Model", hint: "Model usulan vs pembanding" },
-      { href: "/walk-forward-evaluation", label: "Walk-Forward", hint: "Evaluasi walk-forward out-of-sample" },
+      { href: "/regime-explorer", label: "Hurst-DFA Klasik", hint: "Pembanding: label konsensus R/S–DFA, perpindahan & durasi" },
+      { href: "/timeframe-comparison", label: "Hurst-DFA 1H vs 4H", hint: "Pembanding klasik pada dua skala waktu" },
       { href: "/multifractal", label: "Multifraktal", hint: "Spektrum H(q) momen q=1,2,4 dan lebar ΔH" },
       { href: "/swt", label: "Wavelet", hint: "Dekomposisi multiskala SWT" },
-      { href: "/attention", label: "Fokus Model", hint: "Bagian data yang diperhatikan model (attention)" },
-      { href: "/order-flow", label: "Order Flow (riset)", hint: "Ablation OFI & CVD untuk identifikasi regime (Model A–D)" },
+    ],
+  },
+  {
+    label: "Arsip Fase 0",
+    items: [
+      { href: "/model-comparison", label: "Perbandingan Model", hint: "Arsip: model lama berlabel Hurst-DFA" },
+      { href: "/attention", label: "Fokus Model", hint: "Arsip: bobot attention model SWT lama" },
+      { href: "/backtest", label: "Uji Strategi (lama)", hint: "Arsip: backtest eksploratif sebelum Fase 2" },
+      { href: "/walk-forward-evaluation", label: "Setup Engine", hint: "Arsip: simulasi setup engine, digantikan Fase 2" },
+      { href: "/order-flow", label: "Order Flow (riset)", hint: "Arsip: ablation OFI & CVD (Model A–D)" },
     ],
   },
   {
     label: "Tentang",
     items: [
-      { href: "/methodology", label: "Metodologi", hint: "Rumus & definisi" },
-      { href: "/about", label: "Tentang", hint: "Latar belakang & batasan" },
+      { href: "/methodology", label: "Metodologi", hint: "Alur detektor, rumus & definisi" },
+      { href: "/about", label: "Tentang", hint: "Latar belakang, batasan & temuan utama" },
     ],
   },
 ];

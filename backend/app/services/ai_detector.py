@@ -33,6 +33,10 @@ STRIDE = 4
 # Di atas jumlah ini, permintaan API tidak menunggu; pembangunan dijalankan di
 # latar belakang dan endpoint memberi tahu bahwa cache sedang dibangun.
 MAX_SYNC_WINDOWS = 1500
+# Ambang abstain: τ terkecil dengan BA tercakup ≥ 0,90 pada validasi sintetis
+# (praregistrasi Fase 1 adendum 5, `ml/artifacts/regime_change_study.md`).
+# Di bawahnya label dianggap tidak pasti (uncertain_lowconf).
+ABSTAIN_TAU = 0.75
 
 _lock = threading.Lock()
 _building: Dict[str, bool] = {}
@@ -180,6 +184,17 @@ def update_cache(symbol: str, tf: str, jobs: int = -1, max_new: Optional[int] = 
     for i, c in enumerate(classes):
         df[f"p_{c}"] = cached_proba[:, i]
     return df
+
+
+def with_abstain(df: pd.DataFrame, tau: float = ABSTAIN_TAU) -> pd.DataFrame:
+    """Salinan deret dengan label berkeyakinan rendah diganti `uncertain_lowconf`.
+
+    Dipakai untuk notifikasi: label ragu memutus rentetan konfirmasi, sehingga
+    salah alarm turun (0,91 → 0,30 per 1.000 bar pada uji sintetis).
+    """
+    out = df.copy()
+    out.loc[out["confidence"] < tau, "regime"] = "uncertain_lowconf"
+    return out
 
 
 def series(symbol: str, tf: str) -> pd.DataFrame:

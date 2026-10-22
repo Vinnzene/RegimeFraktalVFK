@@ -8,6 +8,8 @@ konfirmasi pelanggan menerima pesan bolak-balik. Window `uncertain_rule` tidak
 memicu notifikasi dan memutus rentetan konfirmasi.
 
 Label berasal dari detektor AI resmi (`ai_detector.py`), sama dengan dashboard.
+Label dengan keyakinan di bawah τ = 0,75 diperlakukan sebagai tidak pasti dan
+memutus rentetan konfirmasi (salah alarm turun ±3× pada uji sintetis).
 Saat pertama kali berjalan, atau saat sumber label berganti (keadaan lama
 dicatat dari label konsensus Hurst–DFA), regime terkini hanya dicatat sebagai
 keadaan awal tanpa mengirim pesan, supaya tidak ada siaran palsu.
@@ -45,6 +47,7 @@ PLAIN = {
     "random_like": "Acak / Tanpa Pola",
     "anti_persistent": "Cenderung Berbalik",
     "uncertain_rule": "Belum Jelas",
+    "uncertain_lowconf": "Keyakinan Rendah",
 }
 
 # Sama dengan peta keputusan di dashboard (frontend/lib/strategy.ts): strategi
@@ -219,6 +222,8 @@ def status_text() -> str:
             continue
         last = df.iloc[-1]
         name = PLAIN.get(str(last["regime"]), str(last["regime"]))
+        if last["confidence"] < ai_detector.ABSTAIN_TAU:
+            name += " (keyakinan rendah)"
         lines.append(
             f"{tf.upper()}: <b>{html.escape(name)}</b> ({_fmt_num(last['confidence'] * 100, 0)}%) · "
             f"harga {_fmt_num(last.get('close'), 2)} · {_fmt_time(float(last['time']))}"

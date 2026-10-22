@@ -59,6 +59,7 @@ export default function BacktestPage() {
         title="Backtest Berbasis Regime"
         description="Menguji kegunaan praktis informasi regime pada data historis. Aturan posisi ditetapkan di muka dan tidak dapat diubah pengguna, agar tidak terjadi pemilihan aturan setelah melihat hasil."
       />
+      <Disclaimer variant="archive" />
 
       <ParameterBar />
       <Disclaimer variant="backtest" />

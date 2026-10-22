@@ -58,9 +58,10 @@ export const STRATEGY_PLAN: Record<Regime, StrategyPlan> = {
   uncertain_lowconf: {
     strategy: "Tunggu konfirmasi",
     tool: "Kurangi posisi",
-    action: "Model tidak cukup yakin. Tunggu sampai kondisi terkonfirmasi.",
+    action: "Model tidak cukup yakin (keyakinan di bawah 75%). Perlakukan seperti kondisi acak: jangan membuka posisi baru.",
     tone: "wait",
-    evidence: "Belum diuji.",
+    evidence:
+      "Pada uji sintetis, label dengan keyakinan ≥ 75% tepat 90,5%, sedangkan seluruh label 81,3%. Aturan Fase 2 memperlakukan kondisi tidak pasti sama dengan acak: tidak memegang posisi.",
     verdict: "untested",
   },
 };

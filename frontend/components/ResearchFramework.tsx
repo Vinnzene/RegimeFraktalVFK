@@ -21,59 +21,48 @@ const ROWS: Row[] = [
     stage: "Masalah umum",
     kind: "problem",
     content:
-      "Karakteristik pola Bitcoin berubah dari waktu ke waktu dan berbeda pada skala waktu.",
+      "Sifat gerakan Bitcoin (berlanjut, acak, atau berbalik) berubah dari waktu ke waktu; strategi yang tidak cocok dengan kondisi itu merugi.",
   },
   {
     stage: "Solusi masalah umum",
     kind: "solution",
-    content: "Karakterisasi dinamis menggunakan Hurst-DFA dengan rolling window.",
-    evidence: "L = 500 bar · stride 4 bar · 16.736 window pada 1H",
-  },
-  {
-    stage: "Masalah informatika",
-    kind: "problem",
-    content:
-      "Data sequence bersifat kompleks, temporal, dan multiskala sehingga sulit dikenali secara otomatis.",
-  },
-  {
-    stage: "Solusi informatika",
-    kind: "solution",
-    content:
-      "SWT untuk representasi multiskala dan Attention-BiLSTM untuk pembelajaran temporal.",
-    evidence: "SWT J = 4 level, dihitung causal per window",
+    content: "Identifikasi regime fraktal berbasis eksponen Hurst pada rolling window, untuk timeframe 1H dan 4H.",
+    evidence: "L = 500 bar · langkah 4 bar · kelas H < 0,47 / 0,47–0,53 / > 0,53",
   },
   {
     stage: "Masalah khusus",
     kind: "problem",
     content:
-      "Hasil model harus dikaitkan dengan regime yang memiliki dasar karakteristik statistik dan tidak boleh mengalami leakage.",
+      "Estimator Hurst-DFA klasik tidak konsisten dan tidak akurat pada data berderau; regime sebenarnya di data nyata tidak teramati.",
+    evidence: "R/S dan DFA hanya sepakat 52,6% (BTC 1H) · konsensus naif BA 0,268 pada data mirip kripto",
   },
   {
-    stage: "Solusi masalah khusus",
+    stage: "Solusi informatika",
     kind: "solution",
     content:
-      "Hurst-DFA membentuk target regime; input hanya berasal dari data historis sampai waktu t.",
-    evidence: "SWT causal · purge gap L + h di batas split · scaler dari subset training",
+      "Attention-BiLSTM dengan sekuens statistik persistensi dan fitur multi-skala (termasuk energi SWT), dilatih pada deret sintetis berkarakter kripto yang nilai H-nya diketahui.",
+    evidence: "BA 0,813 vs Hurst-DFA klasik terbaik 0,654 (+0,159, terbukti) · selisih latih–uji ±0,01",
+  },
+  {
+    stage: "Temuan yang dilaporkan terbuka",
+    kind: "analysis",
+    content:
+      "Koefisien SWT mentah gagal; energi SWT dan lapisan attention tidak terbukti menambah akurasi; menggabungkan timeframe lebih tepat tetapi lebih lambat.",
+    evidence: "SWT mentah BA 0,38 · ablasi SWT ΔBA −0,0003 · H3 tidak terbukti · multi-skala +0,03 BA, +39% keterlambatan",
   },
   {
     stage: "Output",
     kind: "output",
     content:
-      "Regime Persistent, Random-like, Anti-persistent, ditambah Uncertain saat Hurst dan DFA tidak sepakat.",
-    evidence: "Identifikasi biner 90,2% · tiga kelas 69,0%",
+      "Regime Tren Berlanjut, Acak, dan Cenderung Berbalik beserta keyakinan model, untuk 1H dan 4H, di dashboard dan notifikasi Telegram.",
+    evidence: "Deteksi pergantian regime median 296 bar (2× lebih cepat dari konsensus Hurst-DFA)",
   },
   {
-    stage: "Analisis",
-    kind: "analysis",
-    content: "Dinamika regime, durasi, perpindahan regime, serta perbandingan 1H dan 4H.",
-    evidence: "P(bertahan) 0,76–0,79 versus 0,19–0,20 bila label acak",
-  },
-  {
-    stage: "Evaluasi tambahan",
+    stage: "Kegunaan",
     kind: "analysis",
     content:
-      "Backtesting eksploratif beserta diagnostik penyebab, bukan sekadar equity curve.",
-    evidence: "Dekomposisi edge/drag/biaya · uji lawan posisi acak",
+      "Uji pemilihan strategi setelah biaya (Fase 2) dan uji generalisasi pada 20 aset tanpa latih ulang.",
+    evidence: "Saat label acak, strategi aktif rugi paling besar → filter \"jangan trading\" · saham IDX: drawdown ±½ beli-tahan",
   },
 ];
 

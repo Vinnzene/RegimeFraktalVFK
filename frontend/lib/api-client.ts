@@ -75,10 +75,14 @@ export interface AiRegimeResponse {
     window: number;
     stride_bars: number;
     test_ba_synthetic: Record<string, number> | null;
+    abstain_tau: number;
   };
   current_regime: AiRegimeClass | null;
   current_time: number | null;
   current_probabilities: Record<AiRegimeClass, number> | null;
+  /** Keyakinan di bawah `detector.abstain_tau`: label dianggap tidak pasti. */
+  current_low_confidence: boolean | null;
+  low_confidence_share: number | null;
   distribution: Record<string, { count: number; share: number }>;
   series: AiRegimePoint[];
   original_count: number;

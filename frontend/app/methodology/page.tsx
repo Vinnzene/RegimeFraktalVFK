@@ -51,11 +51,12 @@ export default function MethodologyPage() {
           >
             <RegimeLegend />
             <p className="mt-3 text-[11px] leading-relaxed text-txtDim">
-              Pemisahan ini penting saat sidang: Uncertain (rule) menyatakan bahwa DATA-nya
-              ambigu — Hurst dan DFA memberi kesimpulan berbeda pada window yang sama.
-              Uncertain (low-conf) menyatakan bahwa MODEL-nya ragu — probabilitas tertinggi
-              masih di bawah ambang τ. Menggabungkan keduanya akan menyembunyikan perbedaan
-              antara keterbatasan data dan keterbatasan model.
+              Uncertain (rule) hanya muncul pada label klasik Hurst-DFA: R/S dan DFA memberi
+              kesimpulan berbeda pada window yang sama (47,4% window BTC 1H). Uncertain
+              (low-conf) muncul pada detektor AI: probabilitas tertinggi di bawah ambang τ = 0,75.
+              Ambang ini dipilih di data validasi sintetis; di atasnya ketepatan naik dari 0,813
+              ke 0,905 dengan 68% window tetap berlabel. Keduanya dipisah karena yang satu
+              keterbatasan data, yang lain keterbatasan model.
             </p>
           </Panel>
 
@@ -74,17 +75,18 @@ export default function MethodologyPage() {
 
           <Panel
             title="Alur Pemrosesan"
-            subtitle="Urutan yang dijalankan sistem, dari harga mentah hingga label regime."
+            subtitle="Urutan yang dijalankan detektor sistem, dari harga mentah hingga label regime."
           >
             <ol className="space-y-2 text-[11px] leading-relaxed text-txtDim">
               {[
-                "Harga penutupan diubah menjadi log-return. Harga level tidak dipakai karena bersifat non-stasioner (unit root) sehingga estimasi Hurst akan selalu mendekati 1.",
-                "Rolling window sepanjang L dibentuk. Window pada titik t hanya memuat data sampai t.",
-                "Hurst (R/S) dan DFA α dihitung untuk tiap window.",
-                "Label ground truth ditetapkan dari pasangan (H, α). Bila keduanya tidak sepakat, window ditandai Uncertain (rule).",
-                "SWT dihitung ulang per window secara causal untuk membentuk fitur multiskala.",
-                "Attention-BiLSTM memetakan fitur pada t ke regime pada t+h — bukan ke regime window yang sama, agar tugasnya prediktif dan bukan sekadar meniru rumus Hurst-DFA.",
-                "Output softmax 3 kelas dilewatkan ambang τ; bila probabilitas tertinggi di bawah τ, label menjadi Uncertain (low-conf).",
+                "Harga penutupan diubah menjadi log-return. Harga level tidak dipakai karena bersifat non-stasioner (unit root) sehingga estimasi Hurst akan selalu mendekati 1. Candle yang belum tutup dibuang.",
+                "Rolling window 500 bar dibentuk setiap 4 bar. Window pada titik t hanya memuat data sampai t; tugasnya identifikasi kondisi saat ini, bukan prediksi.",
+                "Return dalam window diskalakan ke simpangan baku 0,0066 (sama dengan data latih sintetis).",
+                "Fitur dihitung: sekuens statistik persistensi 32 × 11 (variance ratio, autokorelasi, volatilitas per sub-window) dan 50 fitur struktural, termasuk 12 rasio energi SWT (db4, 4 level, causal).",
+                "Attention-BiLSTM (Hybrid PS) mengeluarkan probabilitas tiga kelas. Model dilatih pada deret sintetis yang eksponen Hurst-nya diketahui (H < 0,47 berbalik, 0,47–0,53 acak, > 0,53 berlanjut), tidak pada label BTC.",
+                "Bila probabilitas tertinggi di bawah τ = 0,75, kondisi ditandai keyakinan rendah (Uncertain low-conf).",
+                "Hurst R/S dan DFA α tetap dihitung untuk setiap window sebagai pembanding klasik, bukan penentu label.",
+                "Pergantian regime diumumkan (dashboard dan Telegram) bila 3 window berturut-turut berlabel sama.",
               ].map((step, i) => (
                 <li key={i} className="flex gap-3">
                   <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-edge font-mono text-2xs text-txtMuted">

@@ -44,6 +44,7 @@ export default function AttentionPage() {
         title="Attention Weights"
         description="Bobot α_t yang diberikan model pada tiap timestep dalam satu window, disandingkan dengan candlestick window yang sama. Panel ini menjawab pertanyaan 'bagian mana dari sekuens yang diperhatikan model'."
       />
+      <Disclaimer variant="archive" />
 
       <ParameterBar />
       {config?.runtime.use_mock && <Disclaimer variant="mock" />}

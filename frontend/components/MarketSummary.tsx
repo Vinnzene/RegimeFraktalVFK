@@ -55,6 +55,7 @@ export default function MarketSummary({
   timeframe,
   gauges,
   gaugesTitle = "Keyakinan detektor",
+  lowConfidence = false,
 }: {
   current: string | null | undefined;
   series: RegimePoint[];
@@ -63,6 +64,8 @@ export default function MarketSummary({
   timeframe: string;
   gauges: React.ReactNode;
   gaugesTitle?: string;
+  /** Keyakinan model di bawah ambang abstain: strategi mengikuti kondisi tidak pasti. */
+  lowConfidence?: boolean;
 }) {
   const info = useRecentRegimes(series);
 
@@ -77,7 +80,7 @@ export default function MarketSummary({
 
   const key = (current ?? "") as Regime;
   const plain = REGIME_PLAIN[key];
-  const plan = STRATEGY_PLAN[key];
+  const plan = STRATEGY_PLAN[lowConfidence ? "uncertain_lowconf" : key];
   const verdict = plan ? VERDICT_META[plan.verdict] : null;
   const color = REGIME_META[key]?.color ?? "#8b949e";
 
@@ -113,6 +116,11 @@ export default function MarketSummary({
               <h2 className="text-[28px] font-semibold leading-none tracking-tight" style={{ color }}>
                 {plain.name}
               </h2>
+              {lowConfidence && (
+                <span className="mt-1.5 inline-block rounded-full border border-uncertainLowconf/50 bg-uncertainLowconf/10 px-2 py-0.5 text-2xs font-medium text-uncertainLowconf">
+                  Keyakinan rendah · perlakukan sebagai tidak pasti
+                </span>
+              )}
               <p className="mt-1.5 text-[13.5px] text-txt">{plain.summary}</p>
             </div>
           </div>

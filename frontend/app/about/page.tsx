@@ -83,19 +83,22 @@ export default function AboutPage() {
             <span className="text-txt">regime karakteristik</span> deret waktu BTC/USDT:
             apakah pergerakan pada suatu periode cenderung berlanjut (persistent), menyerupai
             random walk (random-like), atau cenderung berbalik arah (anti-persistent).
-            Karakterisasi dilakukan dengan Hurst Exponent dan Detrended Fluctuation Analysis
-            pada rolling window, direpresentasikan multiskala lewat Stationary Wavelet
-            Transform, lalu dipelajari polanya oleh Attention-BiLSTM.
+            Regime didefinisikan oleh eksponen Hurst. Estimator klasik Hurst R/S dan DFA
+            ternyata sering tidak sepakat dan kurang akurat pada data kripto, sehingga
+            identifikasi dilakukan oleh Attention-BiLSTM yang dilatih pada deret sintetis
+            dengan nilai Hurst yang diketahui, memakai fitur persistensi dan energi multiskala
+            Stationary Wavelet Transform.
           </p>
         </Panel>
 
         <Panel title="Tujuan">
           <ul className="space-y-1.5 text-[11px] leading-relaxed text-txtDim">
             {[
-              "Mengkarakterisasi regime fraktal BTC/USDT berdasarkan Hurst-DFA.",
-              "Menguji apakah SWT + Attention-BiLSTM dapat mengidentifikasi regime periode berikutnya.",
-              "Membandingkan hasil pada timeframe 1H dan 4H.",
-              "Menilai kegunaan praktis informasi regime lewat backtesting eksploratif.",
+              "Mengukur konsistensi dan akurasi estimator Hurst-DFA klasik pada BTC/USDT.",
+              "Menguji peran SWT dan sekuens statistik persistensi sebagai representasi.",
+              "Membangun Attention-BiLSTM yang mengidentifikasi regime saat ini dan membandingkannya dengan estimator klasik.",
+              "Membandingkan identifikasi pada timeframe 1H dan 4H.",
+              "Menguji generalisasi ke aset lain dan kegunaannya untuk memilih strategi setelah biaya.",
             ].map((t, i) => (
               <li key={i} className="flex gap-2">
                 <span className="text-persistent">•</span>
@@ -108,12 +111,12 @@ export default function AboutPage() {
         <Panel title="Batasan Penelitian">
           <ul className="space-y-1.5 text-[11px] leading-relaxed text-txtDim">
             {[
-              "Output utama bukan prediksi harga.",
-              "Faktor eksternal (berita, sentimen, makroekonomi, fundamental) tidak dipakai.",
+              "Identifikasi kondisi saat ini, bukan prediksi harga atau prediksi regime.",
+              "Hanya data harga OHLCV; berita, sentimen, dan fundamental tidak dipakai.",
               "Tidak ada eksekusi order otomatis ke exchange.",
-              "Accuracy / precision / recall / F1 bukan indikator keberhasilan utama.",
-              "Data terbatas pada BTC/USDT.",
-              "Backtest bersifat eksploratif, bukan jaminan profit.",
+              "Objek utama BTC/USDT 1H dan 4H; 19 aset lain hanya untuk uji generalisasi tanpa latih ulang.",
+              "Deteksi pergantian regime butuh waktu (median ±300 bar) karena window 500 bar.",
+              "Hasil uji strategi bukan jaminan profit.",
             ].map((t, i) => (
               <li key={i} className="flex gap-2">
                 <span className="text-antiPersistent">•</span>
@@ -123,13 +126,14 @@ export default function AboutPage() {
           </ul>
         </Panel>
 
-        <Panel title="Yang Masih Terbuka">
+        <Panel title="Temuan Utama">
           <ul className="space-y-1.5 text-[11px] leading-relaxed text-txtDim">
             {[
-              "Angka pasti ukuran rolling window L untuk 1H dan 4H.",
-              "Angka pasti level dekomposisi SWT (J).",
-              "Detail arsitektur numerik Attention-BiLSTM (unit, layer, dropout).",
-              "Nilai horizon h final setelah uji sensitivitas.",
+              "R/S dan DFA hanya sepakat pada 52,6% window BTC 1H.",
+              "Attention-BiLSTM latih-sintetis lebih akurat dari Hurst-DFA klasik terbaik: 0,813 vs 0,654.",
+              "Koefisien SWT mentah gagal (BA 0,38); energi SWT dan attention tidak terbukti menambah akurasi.",
+              "Menggabungkan timeframe lebih tepat (+0,03) tetapi lebih lambat mendeteksi pergantian (+39%).",
+              "Pemilihan strategi berbasis regime tidak menambah Sharpe setelah biaya; kegunaannya sebagai filter \"jangan trading\".",
             ].map((t, i) => (
               <li key={i} className="flex gap-2">
                 <span className="text-txtMuted">◦</span>
@@ -138,9 +142,8 @@ export default function AboutPage() {
             ))}
           </ul>
           <p className="mt-3 text-2xs leading-relaxed text-txtMuted">
-            Seluruh butir di atas bersifat numerik. Nilainya dibaca dari{" "}
-            <span className="font-mono">config.yaml</span> sehingga dapat diisi tanpa mengubah
-            struktur sistem.
+            Setiap uji dipraregistrasi (hipotesis dikunci sebelum hasil dilihat); rincian di
+            folder <span className="font-mono">docs/</span> dan <span className="font-mono">ml/artifacts/</span>.
           </p>
         </Panel>
       </div>

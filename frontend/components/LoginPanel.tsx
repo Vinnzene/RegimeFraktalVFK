@@ -97,7 +97,7 @@ function useMarketStats() {
     let alive = true;
     (async () => {
       try {
-        const [o, g] = await Promise.all([api.ohlcv("1h", 25), api.regime("1h").catch(() => null)]);
+        const [o, g] = await Promise.all([api.ohlcv("1h", 25), api.aiRegime("1h").catch(() => null)]);
         const c = o.candles;
         if (!alive || c.length < 2) return;
         const last = c[c.length - 1];

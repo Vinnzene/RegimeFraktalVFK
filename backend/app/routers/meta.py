@@ -28,8 +28,14 @@ def do_reload_config() -> dict:
 
 @router.get("/methodology")
 def methodology() -> dict:
+    from app.services import ai_detector
+
     cfg = get_config()
-    lo_h, hi_h = cfg.analysis.hurst_threshold
+    # Ambang kelas detektor resmi (kebenaran dasar H), bukan ambang `fixed` lama di config.
+    try:
+        lo_h, hi_h = ai_detector.meta()["thresholds"]
+    except ai_detector.DetectorUnavailable:
+        lo_h, hi_h = 0.47, 0.53
     return {
         "config_hash": cfg.config_hash,
         "sections": [
@@ -67,11 +73,13 @@ def methodology() -> dict:
                     rf"\text{{Persistent}} & H > {hi_h} \end{{cases}}"
                 ),
                 "body": (
-                    f"Ambang {lo_h}/{hi_h} adalah rancangan awal yang diuji "
-                    "sensitivitasnya, bukan angka final. Kriteria yang sama "
-                    "diterapkan pada DFA alpha. Bila Hurst dan DFA menghasilkan "
-                    "kelas berbeda, window ditandai uncertain_rule dan tidak "
-                    "dipaksa masuk salah satu dari tiga kategori."
+                    f"Detektor AI mempelajari kelas ini dari deret sintetis yang "
+                    f"nilai H-nya diketahui, dengan ambang {lo_h}/{hi_h} yang "
+                    "diturunkan dari titik impas ekonomi strategi momentum dan "
+                    "mean-reversion setelah biaya (sensitivitas 0,45/0,55). Label "
+                    "klasik R/S dan DFA memakai ambang kuantil 1/3 dan 2/3 data "
+                    "latih; bila keduanya tidak sepakat, window ditandai "
+                    "uncertain_rule."
                 ),
             },
             {
@@ -93,20 +101,22 @@ def methodology() -> dict:
                 "body": (
                     "BiLSTM membaca sekuens dua arah; attention memberi bobot "
                     "alpha_t pada tiap timestep sehingga kontribusi tiap bagian "
-                    "sekuens dapat diperiksa. Bobot inilah yang divisualisasikan "
-                    "di halaman /attention."
+                    "sekuens dapat diperiksa. Pada detektor, bobotnya hampir "
+                    "seragam (entropi 0,92) dan attention tidak terbukti menambah "
+                    "akurasi (H3): model memakai informasi dari seluruh window."
                 ),
             },
             {
                 "id": "leakage",
                 "title": "Pencegahan Look-Ahead Bias",
-                "formula": r"X_t = f(x_{\le t}),\quad Y_t = \text{Regime}(W_{t+h})",
+                "formula": r"X_t = f(x_{t-L+1}, \dots, x_t),\quad \hat{Y}_t = \text{Regime}(W_t)",
                 "body": (
-                    "Fitur hanya memakai data sampai t. Target adalah regime "
-                    "window ke depan sejauh h. Split bersifat time-based tanpa "
-                    f"shuffle, dan pada tiap batas dibuang {cfg.model.purge_gap} "
-                    "bar (purge gap = L + h) agar window training tidak tumpang "
-                    "tindih dengan window test."
+                    "Fitur hanya memakai data sampai t dan target adalah regime "
+                    "window yang sama (identifikasi, bukan prediksi). Detektor "
+                    "dilatih pada data sintetis, sehingga seluruh riwayat BTC "
+                    "adalah data luar sampel. Pada eksperimen berlabel BTC, split "
+                    "time-based tanpa shuffle dengan purge 500 bar di tiap batas; "
+                    "split acak terbukti menggelembungkan akurasi +0,12 sampai +0,18."
                 ),
             },
         ],

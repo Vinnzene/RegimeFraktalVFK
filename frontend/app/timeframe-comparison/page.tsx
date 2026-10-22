@@ -1,5 +1,6 @@
 "use client";
 
+import Disclaimer from "@/components/Disclaimer";
 import { useMemo } from "react";
 import PageHeader from "@/components/PageHeader";
 import Panel from "@/components/Panel";
@@ -135,6 +136,7 @@ export default function TimeframeComparisonPage() {
         title="Perbandingan 1H vs 4H"
         description="Apakah karakteristik regime berubah mengikuti skala waktu pengamatan. Perhatikan bahwa 4H memakai seperempat jumlah sampel 1H untuk rentang kalender yang sama, sehingga sebagian perbedaan bisa berasal dari ukuran sampel, bukan dari sifat skalanya."
       />
+      <Disclaimer variant="classic" />
 
       <ParameterBar showTimeframe={false} />
 

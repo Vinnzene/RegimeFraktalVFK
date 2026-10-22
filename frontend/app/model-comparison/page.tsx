@@ -1,5 +1,6 @@
 "use client";
 
+import Disclaimer from "@/components/Disclaimer";
 import { useMemo, useState } from "react";
 import {
   CartesianGrid,
@@ -73,8 +74,9 @@ export default function ModelComparisonPage() {
     <div className="space-y-4">
       <PageHeader
         title="Perbandingan Model"
-        description="Empat baris pembanding: Baseline Persistence (naif), Baseline 1 (rule-based), Baseline 2 (SWT+BiLSTM), dan model usulan (SWT+Attention-BiLSTM). Fokus penilaian ada pada kestabilan regime, pola transisi, dan konsistensi — bukan pada akurasi."
+        description="Empat baris pembanding: Baseline Persistence (naif), Baseline 1 (rule-based), Baseline 2 (SWT+BiLSTM), dan model usulan tahap awal (SWT+Attention-BiLSTM, label Hurst-DFA). Detektor sistem saat ini adalah Hybrid PS latih-sintetis. Fokus penilaian ada pada kestabilan regime, pola transisi, dan konsistensi — bukan pada akurasi."
       />
+      <Disclaimer variant="archive" />
 
       <ParameterBar />
       <ApiState loading={compare.loading} error={compare.error} />

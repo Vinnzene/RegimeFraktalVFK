@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import Disclaimer from "@/components/Disclaimer";
 import { useMemo } from "react";
 import {
   Bar,
@@ -91,6 +92,7 @@ export default function OrderFlowPage() {
         title="Order Flow (OFI & CVD)"
         description="Menguji apakah informasi order flow â€” tekanan beli vs jual â€” membantu Attention-BiLSTM mengenali regime Hurst-DFA. Model A memakai SWT saja; B menambah OFI; C menambah CVD; D menambah keduanya. Hurst dan DFA tetap hanya membentuk label, tidak pernah menjadi input."
       />
+      <Disclaimer variant="archive" />
       <ParameterBar />
 
       <div className="rounded border border-persistent/30 bg-persistent/5 px-3 py-2 text-[12px] leading-relaxed text-txtDim">

@@ -75,6 +75,7 @@ function TimeframeStrip({ items }: { items: { tf: string; data: AiRegimeResponse
         const key = data?.current_regime ?? null;
         const color = key ? REGIME_META[key].color : "#8b949e";
         const conf = key && data?.current_probabilities ? data.current_probabilities[key] : null;
+        const low = Boolean(data?.current_low_confidence);
         return (
           <div key={tf} className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-edge bg-panel px-4 py-3">
             <span className="rounded-md border border-edge px-2 py-0.5 font-mono text-[12px] text-txtDim">{tf.toUpperCase()}</span>
@@ -84,7 +85,11 @@ function TimeframeStrip({ items }: { items: { tf: string; data: AiRegimeResponse
                 <span className="text-[14px] font-semibold" style={{ color }}>
                   {REGIME_PLAIN[key].name}
                 </span>
-                {conf !== null && <span className="text-[12px] text-txtMuted">keyakinan {Math.round(conf * 100)}%</span>}
+                {conf !== null && (
+                  <span className={`text-[12px] ${low ? "text-uncertainLowconf" : "text-txtMuted"}`}>
+                    keyakinan {Math.round(conf * 100)}%{low ? " · rendah" : ""}
+                  </span>
+                )}
               </>
             ) : (
               <span className="text-[12.5px] text-txtMuted">{error ?? "Memuat…"}</span>
@@ -182,9 +187,16 @@ export default function DashboardPage() {
             loading={regime.loading}
             symbol={symbol.replace("USDT", "/USDT")}
             timeframe={timeframe}
+            lowConfidence={Boolean(regime.data?.current_low_confidence)}
             gauges={
               <>
                 <ProbabilityBars probs={regime.data?.current_probabilities} />
+                {detector && (
+                  <p className="text-[11px] leading-relaxed text-txtMuted">
+                    Di bawah {Math.round(detector.abstain_tau * 100)}% label dianggap tidak pasti. Pada riwayat ini{" "}
+                    {Math.round((regime.data?.low_confidence_share ?? 0) * 100)}% window berkeyakinan rendah.
+                  </p>
+                )}
                 <div className="mt-1 border-t border-edge pt-3 text-[11.5px] text-txtMuted">Pembanding klasik (bukan penentu label)</div>
                 <ExponentGauge
                   label="Hurst (R/S)"

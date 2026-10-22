@@ -152,7 +152,8 @@ def notify_once() -> List[Dict[str, object]]:
     cfg = get_config()
     try:
         # Label dari detektor AI resmi, sama dengan yang tampil di dashboard.
-        regimes = {tf: ai_detector.update_cache(cfg.data.symbol, tf) for tf in cfg.data.timeframes}
+        # Label berkeyakinan rendah (< τ) memutus konfirmasi agar salah alarm berkurang.
+        regimes = {tf: ai_detector.with_abstain(ai_detector.update_cache(cfg.data.symbol, tf)) for tf in cfg.data.timeframes}
         events = regime_notifier.check(regimes, get_store(), telegram_bot.send_message, bot.dashboard_url)
     except Exception as exc:  # noqa: BLE001
         _record({"at": int(time.time()), "notify_error": f"{type(exc).__name__}: {exc}"[:200]})

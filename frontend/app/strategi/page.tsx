@@ -244,7 +244,8 @@ export default function StrategiPage() {
 
   const current = (regime.data?.current_regime ?? null) as Regime | null;
   const run = useMemo(() => currentRun(regime.data?.series ?? []), [regime.data]);
-  const plan = current ? PLAN[current] : null;
+  const low = Boolean(regime.data?.current_low_confidence);
+  const plan = current ? PLAN[low ? "uncertain_lowconf" : current] : null;
 
   return (
     <div className="mx-auto max-w-[1400px] space-y-3">
@@ -263,6 +264,11 @@ export default function StrategiPage() {
               {REGIME_PLAIN[current].name}
             </div>
             <p className="text-[13px] text-txtDim">{REGIME_PLAIN[current].summary}</p>
+            {low && (
+              <span className="inline-block rounded-full border border-uncertainLowconf/50 bg-uncertainLowconf/10 px-2 py-0.5 text-2xs font-medium text-uncertainLowconf">
+                Keyakinan rendah (&lt; 75%) · perlakukan sebagai tidak pasti
+              </span>
+            )}
             {run && (
               <div className="flex flex-wrap gap-2 pt-1">
                 <span className="chip">sejak {formatDate(run.since)}</span>

@@ -1,5 +1,6 @@
 "use client";
 
+import Disclaimer from "@/components/Disclaimer";
 import { useState, useEffect } from "react";
 import PageHeader from "@/components/PageHeader";
 import Panel from "@/components/Panel";
@@ -36,8 +37,9 @@ export default function WalkForwardEvaluationPage() {
     <div className="space-y-6">
       <PageHeader
         title="Walk-Forward Setup Evaluation"
-        description="Laporan akhir simulasi trading engine menggunakan arsitektur Attention-BiLSTM secara out-of-sample tanpa lookahead bias."
+        description="Arsip simulasi setup engine (Mode A/B) dari tahap awal. Digantikan uji pemilihan strategi Fase 2 yang dipraregistrasi (lihat halaman Strategi)."
       />
+      <Disclaimer variant="archive" />
 
       <Panel title="Pengaturan Mode Evaluasi">
         <div className="flex gap-4">
