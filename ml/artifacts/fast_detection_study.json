@@ -1,0 +1,105 @@
+{
+  "preregistration": "docs/praregistrasi_deteksi_cepat.md",
+  "accuracy": {
+    "D0": {
+      "S4": [
+        0.8183
+      ],
+      "S5": [
+        0.2813
+      ]
+    },
+    "A": {
+      "S4": [
+        0.6957,
+        0.6903,
+        0.654
+      ],
+      "S5": [
+        0.5987,
+        0.626,
+        0.6217
+      ]
+    },
+    "B0": {
+      "S4": [
+        0.7477,
+        0.7503,
+        0.75
+      ],
+      "S5": [
+        0.2823,
+        0.2743,
+        0.265
+      ]
+    },
+    "B": {
+      "S4": [
+        0.6467,
+        0.6187,
+        0.6423
+      ],
+      "S5": [
+        0.517,
+        0.5233,
+        0.52
+      ]
+    }
+  },
+  "attention_last8": {
+    "D0": 0.2658,
+    "A": 0.9123,
+    "B0": 0.3265,
+    "B": 0.9041
+  },
+  "speed": {
+    "D0": {
+      "median_delay": 296.0,
+      "fa_per_1000": 0.909,
+      "missed_share": 0.0587
+    },
+    "A": {
+      "median_delay": 120.0,
+      "fa_per_1000": 2.85,
+      "missed_share": 0.0026
+    },
+    "B0": {
+      "median_delay": 177.0,
+      "fa_per_1000": 1.9282,
+      "missed_share": 0.0102
+    },
+    "B": {
+      "median_delay": 72.0,
+      "fa_per_1000": 5.3051,
+      "missed_share": 0.0
+    }
+  },
+  "hypotheses": [
+    {
+      "id": "CEPAT-H1",
+      "model": "A",
+      "delta": -176.0,
+      "ci95": [
+        -196.5,
+        -158.0
+      ],
+      "p_raw": 0.0,
+      "p_holm": 0.0,
+      "keputusan": "TERBUKTI"
+    },
+    {
+      "id": "CEPAT-H2",
+      "model": "B",
+      "delta": -224.0,
+      "ci95": [
+        -243.5,
+        -205.0
+      ],
+      "p_raw": 0.0,
+      "p_holm": 0.0,
+      "keputusan": "TERBUKTI"
+    }
+  ],
+  "recommendation": "tidak ada model yang memenuhi semua syarat; detektor resmi tetap D0",
+  "seconds": 1529
+}

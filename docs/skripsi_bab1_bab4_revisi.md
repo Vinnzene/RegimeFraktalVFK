@@ -780,6 +780,42 @@ yang sama (`docs/praregistrasi_multiskala.md`, `ml/artifacts/multiscale_study.md
    detektor sistem tetap satu skala 500 bar per timeframe. Multi-timeframe di
    sistem tetap berupa identifikasi 1H dan 4H berdampingan.
 
+## 4.6d Mempercepat Deteksi (praregistrasi deteksi cepat)
+
+Dua cara memangkas keterlambatan dibandingkan dengan detektor resmi (D0):
+melatih model pada jendela yang regime-nya berganti di dalam jendela (label =
+regime terbaru), dan memendekkan jendela ke 256 bar
+(`docs/praregistrasi_deteksi_cepat.md`, `ml/artifacts/fast_detection_study.md`).
+
+**Tabel 4.11d** Kecepatan vs ketepatan
+
+| Model | BA S4 (stabil) | BA S5 (berganti) | Keterlambatan median | Salah alarm / 1.000 bar | Terlewat | Bobot attention 8 langkah terakhir |
+|---|---|---|---|---|---|---|
+| D0 resmi (500) | **0,818** | 0,281 | 296 | **0,91** | 5,9% | 0,27 |
+| A 500 + latih pergantian | 0,680 | **0,615** | 120 | 2,85 | 0,3% | **0,91** |
+| B0 256 | 0,749 | 0,274 | 177 | 1,93 | 1,0% | 0,33 |
+| B 256 + latih pergantian | 0,636 | 0,520 | **72** | 5,31 | 0,0% | 0,90 |
+
+CEPAT-H1 (A lebih cepat dari D0): −176 bar [−196; −158], **terbukti**.
+CEPAT-H2 (B lebih cepat dari D0): −224 bar [−244; −205], **terbukti**.
+
+**Pembahasan.**
+1. Melatih model pada pergantian regime mempercepat deteksi 2,5 kali (296 →
+   120 bar, ±12 → ±5 hari di 1H) tanpa memendekkan jendela; digabung jendela
+   pendek, 4 kali (72 bar, ±3 hari).
+2. **Attention menjadi bermakna.** Pada model yang dilatih pergantian, 91% bobot
+   attention terpusat pada 8 langkah terakhir (seragam = 25%): model belajar
+   melihat bagian terbaru jendela. Pada detektor resmi bobotnya hampir seragam
+   (27%), sejalan dengan H3 yang tidak terbukti. Peran attention bergantung
+   pada tugasnya.
+3. Harganya besar: BA kondisi stabil turun 0,14–0,18 dan salah alarm naik 3–6
+   kali. Model yang peka terhadap bagian terbaru jendela juga lebih mudah
+   terkecoh fluktuasi sesaat.
+4. Sesuai aturan praregistrasi §6 (BA S4 turun ≤ 0,03 dan salah alarm ≤ 1,5 ×
+   D0), **tidak ada model yang direkomendasikan**; detektor sistem tetap D0.
+   Trade-off ketepatan–kecepatan kembali terlihat: tidak ada satu model yang
+   unggul di keduanya.
+
 ## 4.7 Multi-Timeframe (RM4, bagian 2)
 
 | Aspek | 1H | 4H |
