@@ -89,4 +89,5 @@ def health() -> dict:
         "provider": cfg.source.provider,
         "auto_refresh": cfg.source.auto_refresh,
         "scheduler_running": scheduler.status()["running"],
+        "telegram_bot": telegram_bot.status(),
     }

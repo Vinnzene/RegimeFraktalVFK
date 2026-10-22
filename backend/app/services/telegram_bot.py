@@ -16,6 +16,7 @@ import html
 import logging
 import os
 import threading
+import time
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, Optional
 
@@ -130,14 +131,19 @@ def handle_update(
 
 _thread: Optional[threading.Thread] = None
 _stop = threading.Event()
+_last_ok: Optional[float] = None
+_last_error: Optional[str] = None
 
 
 def _poll(status_text: Callable[[], str]) -> None:
+    global _last_ok, _last_error
     offset = 0
     while not _stop.is_set():
         try:
             data = call("getUpdates", {"offset": offset, "timeout": 25, "allowed_updates": ["message"]}, timeout=35)
+            _last_ok = time.time()
         except Exception as exc:  # noqa: BLE001 — jaringan putus tidak boleh mematikan bot
+            _last_error = str(exc)[:160]
             log.warning("getUpdates gagal: %s", exc)
             _stop.wait(10)
             continue
@@ -164,3 +170,13 @@ def start(status_text: Callable[[], str]) -> Dict[str, object]:
 
 def stop() -> None:
     _stop.set()
+
+
+def status() -> Dict[str, object]:
+    """Kondisi bot untuk /health: terkonfigurasi, thread hidup, kontak terakhir."""
+    return {
+        "configured": settings().configured,
+        "running": bool(_thread and _thread.is_alive()),
+        "last_poll_ok": int(_last_ok) if _last_ok else None,
+        "last_error": _last_error,
+    }
