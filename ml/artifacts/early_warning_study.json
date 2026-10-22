@@ -1,0 +1,21 @@
+{
+  "preregistration": "docs/praregistrasi_peringatan_dini.md",
+  "pooled": {
+    "median_lead": 148.0,
+    "mean_lead": 176.3252,
+    "share_warned": 0.8916,
+    "precision": 0.3438,
+    "false_per_1000": 2.5526,
+    "warnings_per_1000": 3.8897,
+    "n_changes": 369
+  },
+  "dini_h1": {
+    "ci95_median_lead": [
+      130.0,
+      164.0
+    ],
+    "keputusan": "TERBUKTI"
+  },
+  "pasang_di_sistem": false,
+  "seconds": 611
+}

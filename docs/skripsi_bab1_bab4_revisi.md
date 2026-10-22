@@ -816,6 +816,27 @@ CEPAT-H2 (B lebih cepat dari D0): −224 bar [−244; −205], **terbukti**.
    Trade-off ketepatan–kecepatan kembali terlihat: tidak ada satu model yang
    unggul di keduanya.
 
+## 4.6e Peringatan Dini Dua Kecepatan (praregistrasi peringatan dini)
+
+Detektor resmi (D0) tetap menentukan label; model A (lebih cepat) hanya memberi
+peringatan bila mengonfirmasi kelas yang berbeda dari keadaan D0
+(`docs/praregistrasi_peringatan_dini.md`, `ml/artifacts/early_warning_study.md`).
+
+| Ukuran (369 pergantian, 40 deret) | Nilai |
+|---|---|
+| Median waktu yang dihemat | 148 bar (±6 hari di 1H); CI95 [130; 164] → DINI-H1 **terbukti** |
+| Pergantian yang didahului peringatan benar | 89,2% |
+| Ketepatan peringatan | 34,4% |
+| Peringatan salah per 1.000 bar | 2,55 (±1 per 16 hari di 1H) |
+
+**Pembahasan.** Peringatan dini memang datang ±6 hari lebih awal dan
+mendahului hampir 9 dari 10 pergantian, tetapi hanya sepertiga peringatan yang
+benar. Sesuai syarat praregistrasi (ketepatan ≥ 70% dan salah ≤ 1,0 per 1.000
+bar), peringatan dini **tidak dipasang** di sistem. Hasil ini melengkapi
+4.6c–4.6d: setiap upaya mempercepat identifikasi dibayar dengan banyaknya sinyal
+palsu, sehingga detektor 500 bar dengan konfirmasi 3 window tetap menjadi
+pilihan yang seimbang.
+
 ## 4.7 Multi-Timeframe (RM4, bagian 2)
 
 | Aspek | 1H | 4H |
