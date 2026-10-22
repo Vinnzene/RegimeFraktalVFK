@@ -57,11 +57,22 @@ def meta() -> Dict[str, Any]:
     return json.loads(META_PATH.read_text(encoding="utf-8"))["d_sintetis"]
 
 
+_fp_cache: Dict[str, str] = {}
+
+
 def _fingerprint(m: Dict[str, Any]) -> str:
-    """Sidik jari model + normalisasi: cache gugur bila detektor dilatih ulang."""
+    """Sidik jari isi model + normalisasi: cache gugur bila detektor dilatih ulang.
+
+    Memakai hash isi berkas, bukan waktu ubah, agar cache tetap sah setelah
+    model dan cache disalin ke server lain (scp mengubah waktu ubah).
+    """
     path = ARTIFACTS_DIR / m["file"]
-    blob = json.dumps({"mtime": int(path.stat().st_mtime), "mean": m["feature_mean"][:5], "sigma": m["sigma_per_bar"]})
-    return hashlib.sha256(blob.encode()).hexdigest()[:12]
+    key = f"{path}:{path.stat().st_mtime_ns}"
+    if key not in _fp_cache:
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        blob = json.dumps({"model": digest, "mean": m["feature_mean"][:5], "sigma": m["sigma_per_bar"]})
+        _fp_cache[key] = hashlib.sha256(blob.encode()).hexdigest()[:12]
+    return _fp_cache[key]
 
 
 def _load_model(m: Dict[str, Any]) -> Any:

@@ -6,6 +6,9 @@
 #
 # Panduan lengkap: docs/DEPLOY_VPS.md
 
+# Nama project tetap, agar tidak bentrok dengan compose lama di infra/docker-compose.yml.
+name: regimefraktal
+
 services:
   backend:
     build:
