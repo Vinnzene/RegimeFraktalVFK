@@ -744,6 +744,42 @@ jendela 500 bar; jendela lebih pendek lebih cepat tetapi kurang akurat (BA S4
 tepat dan salah alarm lebih jarang, dibayar dengan lebih banyak jendela "tidak
 pasti" dan deteksi sedikit lebih lambat.
 
+## 4.6c Multi-Timeframe sebagai Masukan (praregistrasi multi-skala)
+
+Apakah melihat timeframe yang lebih kasar (4H dan 1D) saat mengidentifikasi 1H
+meningkatkan ketepatan? Diuji pada data sintetis dengan model Attention-BiLSTM
+yang sama (`docs/praregistrasi_multiskala.md`, `ml/artifacts/multiscale_study.md`).
+
+**Tabel 4.11c** Ketepatan dan kecepatan
+
+| Model | Masukan | Cakupan sejarah | BA S4 | Keterlambatan median | Salah alarm / 1.000 bar | Terlewat |
+|---|---|---|---|---|---|---|
+| M1 | 1H (500 bar) | 500 | 0,817 | **306** | 0,83 | **5,2%** |
+| M2 | 1H + 4H | 2.000 | 0,847 | 424 | 0,59 | 15,1% |
+| M3 | 1H + 4H + 1D | 12.000 | 0,857 | 403 | 1,13 | 17,7% |
+| M4 | 1H, jendela 2.000 bar | 2.000 | **0,897** | 891 | 0,40 | 36,5% |
+
+| Hipotesis | ΔBA [CI95] | Keputusan (Holm) |
+|---|---|---|
+| MS-H1 1H+4H > 1H | +0,032 [+0,020; +0,043] | **Terbukti** |
+| MS-H2 1H+4H+1D > 1H | +0,041 [+0,028; +0,054] | **Terbukti** |
+| MS-H3 1H+4H > 1H jendela panjang (cakupan sama) | −0,046 [−0,059; −0,034] | **Berlawanan** |
+
+**Pembahasan.**
+1. Menambah timeframe lebih kasar meningkatkan ketepatan (+0,03 sampai +0,04).
+2. Namun satu skala dengan jendela sepanjang cakupan yang sama (M4) lebih tepat
+   lagi. Jadi peningkatan berasal dari **sejarah yang lebih panjang**, bukan dari
+   informasi multi-skala itu sendiri. Ini sejalan dengan teori: pada proses
+   *self-similar*, agregasi ke skala kasar tidak menambah informasi tentang H,
+   bahkan membuang sebagian.
+3. Sejarah lebih panjang dibayar dengan kecepatan: keterlambatan naik 32–39%
+   (M2, M3) sampai 191% (M4), dan pergantian yang terlewat naik dari 5% ke
+   15–37%. Ketepatan dan kecepatan saling tarik-menarik.
+4. Sesuai aturan praregistrasi §7 (keterlambatan naik ≤ 25% dan salah alarm
+   tidak lebih tinggi), **tidak ada model multi-skala yang direkomendasikan**;
+   detektor sistem tetap satu skala 500 bar per timeframe. Multi-timeframe di
+   sistem tetap berupa identifikasi 1H dan 4H berdampingan.
+
 ## 4.7 Multi-Timeframe (RM4, bagian 2)
 
 | Aspek | 1H | 4H |
