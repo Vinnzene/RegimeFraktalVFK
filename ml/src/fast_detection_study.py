@@ -46,6 +46,20 @@ LABELS = {
 CACHE = ARTIFACTS_DIR / "fast_detection_cache"
 
 
+def attention_weights(model, X: List[np.ndarray]) -> np.ndarray:
+    """Bobot attention per langkah, dihitung eager pada keluaran BiLSTM.
+
+    `model_architecture.attention_extractor` membangun graf simbolik yang tidak
+    lagi didukung Keras 3, sehingga bobot dihitung dari keluaran lapisan sebelum
+    attention pooling (dropout nonaktif saat prediksi).
+    """
+    import tensorflow as tf  # type: ignore
+
+    pool = model.get_layer("attention_pool")
+    seq = tf.keras.Model(model.inputs, pool.input).predict(X, batch_size=1024, verbose=0)
+    return np.concatenate([pool.compute_attention(tf.constant(seq[i : i + 2048])).numpy() for i in range(0, len(seq), 2048)])
+
+
 def meta_for(meta: Dict[str, Any], w: int) -> Dict[str, Any]:
     return dict(meta, window=w, sub_window=SUB[w])
 
@@ -113,7 +127,7 @@ def train(w: int, switch: bool, seed: int, meta: Dict[str, Any]):
     import tensorflow as tf  # type: ignore
 
     from app.services.feature_builder import apply_scaler, fit_scaler
-    from model_architecture import attention_extractor, build_hybrid_attention_bilstm, compile_model
+    from model_architecture import build_hybrid_attention_bilstm, compile_model
     from train import class_weights
 
     scen = STATIONARY + (("S5",) if switch else ())
@@ -136,20 +150,18 @@ def train(w: int, switch: bool, seed: int, meta: Dict[str, Any]):
             tf.keras.callbacks.ReduceLROnPlateau(monitor="val_loss", factor=0.5, patience=6, min_lr=1e-5),
         ],
     )
-    att = attention_extractor(model)
     return (
         lambda d: model.predict(X(d), batch_size=1024, verbose=0),
-        lambda d: att.predict(X(d), batch_size=1024, verbose=0),
+        lambda d: attention_weights(model, X(d)),
     )
 
 
 def d0_attention(d: Dict[str, np.ndarray], meta: Dict[str, Any]) -> np.ndarray:
     from app.services.feature_builder import apply_scaler
-    from model_architecture import attention_extractor
 
     model = ai_detector._load_model(meta)
     F = (d["feat"] - np.array(meta["feature_mean"])) / np.array(meta["feature_std"])
-    return attention_extractor(model).predict([apply_scaler(d["ps"], meta["ps_scaler"]), F], batch_size=1024, verbose=0)
+    return attention_weights(model, [apply_scaler(d["ps"], meta["ps_scaler"]), F])
 
 
 def last_share(att: np.ndarray) -> float:
