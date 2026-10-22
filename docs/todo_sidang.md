@@ -11,7 +11,7 @@ Kolom **Siapa**: *Kamu* = harus dikerjakan sendiri; *Claude* = bisa dikerjakan/d
 | A2 | Siapkan formulir UAT (5 skenario tugas) + kuesioner SUS (10 butir) di Google Form — paket di `docs/uat_sus/`; tinggal jalankan `create_google_form.gs` | Claude | 1 jam | [x] |
 | A3 | Rekrut minimal 10 responden (trader kripto aktif); jalankan UAT + SUS; simpan semua jawaban mentah | Kamu | 1–2 minggu | [ ] |
 | A4 | Olah hasil UAT/SUS (skor SUS, tingkat keberhasilan tugas) dan isi Bab 4.11.3 | Claude | 1 jam | [ ] |
-| A5 | Isi token bot Telegram (`backend/.env` dan `frontend/.env.local`; jangan ditempel di chat), lalu uji: tautkan akun, terima notifikasi, `/status`, `/stop` | Kamu + Claude | 1 jam | [ ] |
+| A5 | Isi token bot Telegram (`backend/.env` dan `frontend/.env.local`; jangan ditempel di chat), lalu uji: tautkan akun, terima notifikasi, `/status`, `/stop` | Kamu + Claude | 1 jam | [x] |
 | A6 | Uji black-box: tabel kasus uji per fitur (login, ringkasan pasar, ganti 1H/4H, grafik, strategi, Telegram, order flow) beserta hasil nyata | Claude buat daftar, Kamu eksekusi | 2–3 jam | [ ] |
 | A7 | Ambil tangkapan layar semua halaman utama untuk Bab 4.11.1 | Claude | 30 menit | [ ] |
 | A8 | Tulis Bab V (Kesimpulan dan Saran) | Claude draf, Kamu revisi | 2 jam | [ ] |
