@@ -1,0 +1,15 @@
+# Konteks build hanya butuh backend/ dan frontend/ (lihat infra/Dockerfile.*).
+**/node_modules
+**/.next
+**/__pycache__
+**/.pytest_cache
+.git
+data
+ml
+docs
+reports
+secrets
+infra
+backend/.env
+backend/tests
+*.log

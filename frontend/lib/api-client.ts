@@ -2,7 +2,10 @@
 
 function getBaseUrl(): string {
   const envBase = process.env.NEXT_PUBLIC_API_BASE?.trim();
-  if (envBase) return envBase;
+  // "same-origin": backend diakses lewat reverse proxy di domain/IP yang sama
+  // (/api/v1/* diteruskan ke FastAPI), sehingga tidak ada port 8000 di browser.
+  if (envBase === "same-origin" && typeof window !== "undefined") return window.location.origin;
+  if (envBase && envBase !== "same-origin") return envBase;
   if (typeof window !== "undefined") {
     return `${window.location.protocol}//${window.location.hostname}:8000`;
   }

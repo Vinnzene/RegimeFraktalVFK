@@ -5,8 +5,9 @@ WORKDIR /app
 COPY backend/requirements.txt ./backend/requirements.txt
 RUN pip install --no-cache-dir -r backend/requirements.txt
 
+# config.yaml, data/, ml/artifacts/ (model detektor), dan secrets/ dipasang
+# sebagai volume oleh docker-compose, bukan disalin ke image.
 COPY backend ./backend
-COPY config.yaml ./config.yaml
 
 WORKDIR /app/backend
 EXPOSE 8000

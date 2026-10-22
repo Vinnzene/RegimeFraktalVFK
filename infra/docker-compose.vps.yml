@@ -1,0 +1,57 @@
+# Deploy ke VPS tanpa domain: semua diakses lewat http://<IP-VPS> (port 80).
+# Caddy meneruskan /api/v1/* ke FastAPI dan sisanya ke Next.js, sehingga
+# browser hanya berbicara dengan satu alamat (tidak ada port 8000 yang dibuka).
+#
+#   docker compose -f infra/docker-compose.vps.yml up -d --build
+#
+# Panduan lengkap: docs/DEPLOY_VPS.md
+
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.backend
+    restart: unless-stopped
+    env_file: ../backend/.env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - TF_CPP_MIN_LOG_LEVEL=2
+      - DASHBOARD_URL=${DASHBOARD_URL:-http://localhost}
+    volumes:
+      - ../config.yaml:/app/config.yaml:ro
+      - ../data:/app/data
+      - ../ml/artifacts:/app/ml/artifacts:ro
+      - ../secrets:/app/secrets:ro
+    expose:
+      - "8000"
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile.frontend
+      args:
+        - NEXT_PUBLIC_API_BASE=same-origin
+    restart: unless-stopped
+    env_file: ../frontend/.env.local
+    environment:
+      - NODE_ENV=production
+      - FIREBASE_SERVICE_ACCOUNT=/app/secrets/firebase-service-account.json
+      # Tanpa HTTPS browser menolak cookie Secure; ubah ke true bila sudah memakai domain + HTTPS.
+      - COOKIE_SECURE=false
+    volumes:
+      - ../secrets:/app/secrets:ro
+    expose:
+      - "3000"
+    depends_on:
+      - backend
+
+  caddy:
+    image: caddy:2.8.4
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - frontend
+      - backend

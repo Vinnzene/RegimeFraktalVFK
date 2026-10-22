@@ -1,0 +1,15 @@
+# Reverse proxy satu alamat untuk akses lewat IP (tanpa HTTPS).
+# Bila nanti memakai domain, ganti ":80" dengan nama domain; Caddy akan
+# mengurus sertifikat HTTPS otomatis (lalu set COOKIE_SECURE=true).
+:80 {
+	encode gzip
+
+	# API FastAPI (/api/v1/...). Route Next.js (/api/session, /api/telegram, ...) tetap ke frontend.
+	handle /api/v1/* {
+		reverse_proxy backend:8000
+	}
+
+	handle {
+		reverse_proxy frontend:3000
+	}
+}

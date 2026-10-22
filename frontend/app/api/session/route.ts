@@ -47,7 +47,9 @@ export async function POST(req: NextRequest) {
   // "Ingat saya" mati: cookie sesi browser, hilang saat browser ditutup.
   res.cookies.set(SESSION_COOKIE, sessionCookie, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    // COOKIE_SECURE=false hanya untuk server tanpa HTTPS (akses lewat IP);
+    // browser menolak cookie Secure di http://.
+    secure: process.env.COOKIE_SECURE ? process.env.COOKIE_SECURE === "true" : process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
     ...(remember === false ? {} : { maxAge: SESSION_MAX_AGE }),
