@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import BrandMark from "@/components/login/BrandMark";
 import HeroChart from "@/components/login/HeroChart";
 import ParticleWave from "@/components/login/ParticleWave";
@@ -193,12 +194,12 @@ export default function LoginPanel({
       <div className="relative grid min-h-screen lg:grid-cols-2">
         {/* Kiri: identitas + ilustrasi */}
         <section className="relative hidden flex-col justify-between px-12 py-10 lg:flex xl:px-16">
-          <div className="flex items-center gap-3">
+          <Link href="/welcome" className="flex w-fit items-center gap-3">
             <BrandMark size={38} />
             <span className="text-[19px] font-semibold tracking-[0.04em]">
               regimefraktal<span className="text-[#ff8a3d]">VFK</span>
             </span>
-          </div>
+          </Link>
 
           <HeroChart />
 
@@ -253,6 +254,9 @@ export default function LoginPanel({
         {/* Kanan: kartu login */}
         <section className="relative flex items-center justify-center px-4 py-10 sm:px-8">
           <ParticleWave className="pointer-events-none absolute inset-0 h-full w-full opacity-80" />
+          <Link href="/welcome" className="absolute left-4 top-4 z-10 text-[13px] text-[#b9b2aa] transition hover:text-white sm:left-8 sm:top-6">
+            ← Beranda
+          </Link>
 
           <div className="relative w-full max-w-[420px] rounded-2xl border border-[#ff8a3d]/45 bg-white/[0.06] p-7 shadow-[0_0_0_1px_rgba(255,138,61,0.08),0_0_60px_-10px_rgba(255,106,0,0.45),0_30px_80px_-20px_rgba(0,0,0,0.8)] backdrop-blur-xl sm:p-9">
             <div className="flex flex-col items-center text-center">

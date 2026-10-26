@@ -9,12 +9,12 @@ import { UserProvider } from "@/components/UserContext";
 /**
  * Kerangka aplikasi: pengguna, config, dan dua baris header.
  *
- * Halaman login tampil tanpa header karena pengunjung belum masuk dan data
- * pasar belum perlu dimuat.
+ * Halaman login dan landing page tampil tanpa header karena pengunjung belum
+ * masuk dan data pasar belum perlu dimuat.
  */
 export default function AppChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  if (pathname === "/login") return <>{children}</>;
+  if (pathname === "/login" || pathname === "/welcome") return <>{children}</>;
 
   return (
     <UserProvider>
