@@ -1,0 +1,65 @@
+{
+  "adendum": "praregistrasi_fase1_sintetis.md adendum 6",
+  "n": 500,
+  "thresholds": [
+    0.47,
+    0.53
+  ],
+  "scenarios": {
+    "S4": {
+      "n_series": 3000,
+      "ba_detector": 0.813,
+      "ba_lightgbm": 0.8053,
+      "bootstrap": {
+        "diff": 0.0077,
+        "ci95": [
+          -0.0043,
+          0.0192
+        ],
+        "p_raw": 0.0995
+      },
+      "mcnemar": {
+        "detector_only_correct": 167,
+        "lightgbm_only_correct": 144,
+        "p_two_sided": 0.21214442105272632
+      }
+    },
+    "S1": {
+      "n_series": 3000,
+      "ba_detector": 0.8627,
+      "ba_lightgbm": 0.8637,
+      "bootstrap": {
+        "diff": -0.001,
+        "ci95": [
+          -0.0079,
+          0.0058
+        ],
+        "p_raw": 0.6125
+      },
+      "mcnemar": {
+        "detector_only_correct": 53,
+        "lightgbm_only_correct": 56,
+        "p_two_sided": 0.8481947835965666
+      }
+    },
+    "S4k": {
+      "n_series": 3000,
+      "ba_detector": 0.8357,
+      "ba_lightgbm": 0.8117,
+      "bootstrap": {
+        "diff": 0.024,
+        "ci95": [
+          0.0136,
+          0.0343
+        ],
+        "p_raw": 0.0
+      },
+      "mcnemar": {
+        "detector_only_correct": 163,
+        "lightgbm_only_correct": 91,
+        "p_two_sided": 7.350027200196084e-06
+      }
+    }
+  },
+  "decision": "SETARA: selisih tidak melampaui variasi sampling"
+}
