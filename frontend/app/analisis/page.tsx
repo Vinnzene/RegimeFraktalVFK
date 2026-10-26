@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import SymbolSearch, { type SymbolItem } from "@/components/SymbolSearch";
 import { analyses, SOURCE_META, type AnalysisRecord, type AnalysisSource } from "@/lib/analyses-client";
 import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
 
@@ -34,7 +35,7 @@ function StatusBadge({ r }: { r: AnalysisRecord }) {
 export default function AnalisisPage() {
   const router = useRouter();
   const [source, setSource] = useState<AnalysisSource>("binance");
-  const [symbol, setSymbol] = useState("");
+  const [picked, setPicked] = useState<SymbolItem | null>(null);
   const [timeframe, setTimeframe] = useState("1h");
   const [bars, setBars] = useState(2000);
   const [items, setItems] = useState<AnalysisRecord[] | null>(null);
@@ -56,16 +57,17 @@ export default function AnalisisPage() {
   const meta = SOURCE_META[source];
   const pickSource = (s: AnalysisSource) => {
     setSource(s);
+    setPicked(null);
     if (!SOURCE_META[s].timeframes.includes(timeframe)) setTimeframe(SOURCE_META[s].timeframes.includes("1d") ? "1d" : SOURCE_META[s].timeframes[0]);
   };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!symbol.trim()) return setError("Isi simbol terlebih dahulu.");
+    if (!picked) return setError("Pilih simbol dari daftar terlebih dahulu.");
     setBusy(true);
     setError(null);
     try {
-      const job = await analyses.create({ source, symbol: symbol.trim(), timeframe, bars });
+      const job = await analyses.create({ source, symbol: picked.symbol, timeframe, bars });
       router.push(`/analisis/${job.id}`);
     } catch (err: any) {
       setError(err.message);
@@ -87,7 +89,7 @@ export default function AnalisisPage() {
 
       <form onSubmit={submit} className="rounded-xl border border-edge bg-panel p-5 shadow-panel">
         <div className="grid gap-4 md:grid-cols-[auto_1fr_auto_auto_auto] md:items-end">
-          <label className="block">
+          <div className="block" role="group" aria-label="Sumber data">
             <span className="mb-1 block text-[12px] font-medium text-txtDim">Sumber data</span>
             <div className="inline-flex gap-0.5 rounded-lg border border-edge bg-surface p-0.5">
               {(Object.keys(SOURCE_META) as AnalysisSource[]).map((s) => (
@@ -102,17 +104,11 @@ export default function AnalisisPage() {
                 </button>
               ))}
             </div>
-          </label>
-          <label className="block">
-            <span className="mb-1 block text-[12px] font-medium text-txtDim">Simbol</span>
-            <input
-              value={symbol}
-              onChange={(e) => setSymbol(e.target.value)}
-              placeholder={meta.placeholder}
-              autoComplete="off"
-              className="w-full rounded-lg border border-edge bg-panel px-3 py-2 font-mono text-[14px] text-txt outline-none transition focus:border-accent"
-            />
-          </label>
+          </div>
+          <div className="block">
+            <span className="mb-1 block text-[12px] font-medium text-txtDim">Simbol (ketik untuk mencari, lalu pilih)</span>
+            <SymbolSearch source={source} value={picked} onChange={setPicked} />
+          </div>
           <label className="block">
             <span className="mb-1 block text-[12px] font-medium text-txtDim">Timeframe</span>
             <select
@@ -151,17 +147,6 @@ export default function AnalisisPage() {
         </div>
 
         <div className="mt-3 flex flex-wrap items-center gap-2 text-[12px] text-txtMuted">
-          Contoh:
-          {meta.examples.map((ex) => (
-            <button
-              key={ex}
-              type="button"
-              onClick={() => setSymbol(ex)}
-              className="rounded-md border border-edge px-2 py-0.5 font-mono text-txtDim hover:border-edgeBright hover:text-txt"
-            >
-              {ex}
-            </button>
-          ))}
           <span className="ml-auto">
             {quota ? (
               <>
