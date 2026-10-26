@@ -12,6 +12,8 @@ import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
  * ditandai "ragu".
  */
 
+const TF_SECONDS: Record<string, number> = { "15m": 900, "1h": 3600, "4h": 14400, "1d": 86400 };
+
 type Segment = { regime: Regime; start: number; end: number; meanConf: number; n: number };
 
 function segments(series: AiRegimePoint[]): Segment[] {
@@ -48,7 +50,8 @@ export default function RegimeHistoryTable({
   rows?: number;
 }) {
   const recent = useMemo(() => segments(series).slice(-rows).reverse(), [series, rows]);
-  const stride = timeframe === "4h" ? 4 * 4 * 3600 : 4 * 3600;
+  // Satu titik deteksi mewakili 4 bar; durasi periode ditambah satu langkah itu.
+  const stride = 4 * (TF_SECONDS[timeframe] ?? 3600);
 
   return (
     <section className="flex h-full flex-col rounded-xl border border-edge bg-panel shadow-panel">

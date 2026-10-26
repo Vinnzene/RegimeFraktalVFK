@@ -21,17 +21,20 @@ const AI_CLASSES: AiRegimeClass[] = ["persistent", "random_like", "anti_persiste
 
 export type Band = { lower: number; median: number; upper: number };
 export type RandomBand = { scenario: string; window: number; hurst_rs: Band; dfa_alpha: Band } | null;
-type ClassicPoint = { time?: number; hurst?: number | null; dfa_alpha?: number | null };
+export type ClassicPoint = { time?: number; hurst?: number | null; dfa_alpha?: number | null };
 
-const num = (v: number, d = 3) => v.toLocaleString("id-ID", { minimumFractionDigits: d, maximumFractionDigits: d });
-const signed = (v: number, d = 3) => `${v >= 0 ? "+" : "−"}${num(Math.abs(v), d)}`;
-const pct = (v: number) => `${Math.round(v * 100)}%`;
+export const num = (v: number, d = 3) => v.toLocaleString("id-ID", { minimumFractionDigits: d, maximumFractionDigits: d });
+export const signed = (v: number, d = 3) => `${v >= 0 ? "+" : "−"}${num(Math.abs(v), d)}`;
+export const pct = (v: number) => `${Math.round(v * 100)}%`;
+/** Keyakinan; satu desimal di sekitar ambang agar 74,8% tidak tampil "75% · rendah" pada τ = 75%. */
+export const pctConf = (v: number, tau: number) =>
+  Math.abs(v - tau) < 0.01 ? `${(v * 100).toLocaleString("id-ID", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%` : pct(v);
 
-function formatDate(t: number) {
+export function formatDate(t: number) {
   return new Date(t * 1000).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" });
 }
 
-function formatDuration(seconds: number) {
+export function formatDuration(seconds: number) {
   const days = Math.floor(seconds / DAY);
   const hours = Math.round((seconds % DAY) / 3600);
   if (days >= 1) return hours ? `${days} hari ${hours} jam` : `${days} hari`;
@@ -39,7 +42,7 @@ function formatDuration(seconds: number) {
 }
 
 /** Awal kondisi berjalan dan jumlah pergantian 30 hari terakhir. */
-function runInfo(series: AiRegimeResponse["series"]) {
+export function runInfo(series: { time: number; regime: string }[]) {
   if (!series.length) return null;
   const last = series[series.length - 1];
   let i = series.length - 1;
@@ -51,7 +54,7 @@ function runInfo(series: AiRegimeResponse["series"]) {
 }
 
 /** Titik terdekat ke `target` (deret klasik dijarangkan, jaraknya tidak seragam). */
-function nearest(points: ClassicPoint[], target: number) {
+export function nearest(points: ClassicPoint[], target: number) {
   let best: ClassicPoint | null = null;
   for (const p of points) {
     if (p.time === undefined) continue;
@@ -60,14 +63,14 @@ function nearest(points: ClassicPoint[], target: number) {
   return best;
 }
 
-function bandStatus(value: number | null | undefined, band: Band | undefined) {
+export function bandStatus(value: number | null | undefined, band: Band | undefined) {
   if (value === null || value === undefined || !band) return null;
   if (value > band.upper) return { label: "Di atas pita acak", tone: "persistent" as const, outside: true };
   if (value < band.lower) return { label: "Di bawah pita acak", tone: "anti_persistent" as const, outside: true };
   return { label: "Dalam pita acak", tone: "random_like" as const, outside: false };
 }
 
-function Chip({ children, color, title }: { children: React.ReactNode; color?: string; title?: string }) {
+export function Chip({ children, color, title }: { children: React.ReactNode; color?: string; title?: string }) {
   return (
     <span
       title={title}
@@ -83,7 +86,7 @@ function Chip({ children, color, title }: { children: React.ReactNode; color?: s
   );
 }
 
-function MetricCard({
+export function MetricCard({
   title,
   value,
   status,
@@ -118,7 +121,7 @@ function MetricCard({
   );
 }
 
-function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
+export function InfoCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col items-center justify-center rounded-lg border border-edge px-4 py-3 text-center">
       <div className="text-[11px] font-medium uppercase tracking-wider text-txtDim">{title}</div>
@@ -127,7 +130,13 @@ function InfoCard({ title, children }: { title: string; children: React.ReactNod
   );
 }
 
-function ProbabilityBars({ title, data }: { title: string; data: AiRegimeResponse | null }) {
+export function ProbabilityBars({
+  title,
+  data,
+}: {
+  title: string;
+  data: { current_probabilities?: Record<AiRegimeClass, number> | null } | null;
+}) {
   const probs = data?.current_probabilities;
   if (!probs) return null;
   return (
@@ -218,7 +227,7 @@ export default function RegimeOverview({
       <MetricCard
         key={tf}
         title={`DETEKTOR AI ${tf}`}
-        value={c !== null ? pct(c) : "–"}
+        value={c !== null ? pctConf(c, tau) : "–"}
         status={r ? `${REGIME_PLAIN[k as Regime].name}${lowConf ? " · ragu" : ""}` : null}
         statusColor={r ? REGIME_META[r].color : "rgb(var(--c-txt-muted))"}
         foot={info ? `sejak ${formatDate(info.since)}` : null}
@@ -246,7 +255,7 @@ export default function RegimeOverview({
 
   const sentence = [
     `Detektor AI menilai pasar ${timeframe.toUpperCase()} ${REGIME_PLAIN[key].name.toLowerCase()}${
-      conf !== null ? ` dengan keyakinan ${pct(conf)}` : ""
+      conf !== null ? ` dengan keyakinan ${pctConf(conf, tau)}` : ""
     }${low ? `, di bawah batas ${pct(tau)} sehingga diperlakukan sebagai tidak pasti` : ""}.`,
     otherKey
       ? agree
@@ -277,7 +286,7 @@ export default function RegimeOverview({
           <div className="mt-3 flex flex-wrap gap-1.5">
             {conf !== null && (
               <Chip color={low ? REGIME_META.uncertain_lowconf.color : undefined} title={`Ambang ragu ${pct(tau)}`}>
-                Keyakinan {pct(conf)}
+                Keyakinan {pctConf(conf, tau)}
                 {low ? " · rendah" : ""}
               </Chip>
             )}

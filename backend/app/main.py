@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse
 
 from app.core.config import get_config
 from app.db.repository import InvalidIdentifier
-from app.routers import analysis, backtest, meta, model, ohlcv
+from app.routers import analysis, backtest, internal, meta, model, ohlcv
 from app.services import regime_notifier, scheduler, telegram_bot
 from app.services.inference import ModelUnavailable
 
@@ -78,6 +78,7 @@ async def model_unavailable_handler(_: Request, exc: ModelUnavailable) -> JSONRe
 
 
 app.include_router(meta.router)
+app.include_router(internal.router)
 app.include_router(ohlcv.router)
 app.include_router(analysis.router)
 app.include_router(model.router)

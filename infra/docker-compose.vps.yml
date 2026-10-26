@@ -39,6 +39,8 @@ services:
     environment:
       - NODE_ENV=production
       - FIREBASE_SERVICE_ACCOUNT=/app/secrets/firebase-service-account.json
+      # Rute /api/analyses memanggil endpoint internal backend lewat jaringan Docker.
+      - BACKEND_INTERNAL_URL=http://backend:8000
       # Tanpa HTTPS browser menolak cookie Secure; ubah ke true bila sudah memakai domain + HTTPS.
       - COOKIE_SECURE=false
     volumes:

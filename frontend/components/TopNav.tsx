@@ -24,6 +24,7 @@ const GROUPS: NavGroup[] = [
     label: "Pasar",
     items: [
       { href: "/", label: "Ringkasan", hint: "Kondisi pasar 1H & 4H menurut detektor AI + grafik harga" },
+      { href: "/analisis", label: "Analisis Aset", hint: "Detektor regime untuk pair/ticker apa pun (Binance, Yahoo) · 10 per hari" },
       { href: "/analisa-teknikal", label: "Analisa Teknikal", hint: "Tarik garis, fibonacci, dan indikator (TradingView)" },
       { href: "/orderflow-live", label: "Order Flow Live", hint: "Heatmap order book, footprint, delta & CVD (kripto)" },
     ],
@@ -63,7 +64,7 @@ const GROUPS: NavGroup[] = [
   },
 ];
 
-const isActive = (pathname: string, href: string) => pathname === href;
+const isActive = (pathname: string, href: string) => pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
 
 export default function TopNav() {
   const pathname = usePathname();

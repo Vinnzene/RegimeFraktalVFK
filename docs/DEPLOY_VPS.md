@@ -79,6 +79,18 @@ echo "DASHBOARD_URL=http://<IP-VPS>" > infra/.env
 Tidak perlu mengubah path kunci Firebase: compose memasang `secrets/` ke
 `/app/secrets` dan mengarahkan kedua aplikasi ke sana.
 
+Analisis Aset (`/analisis`) memanggil endpoint internal backend
+`/internal/analyses`, yang tidak diteruskan Caddy ke publik. Sebagai pengaman
+kedua, isi token yang sama di kedua berkas env (nilainya tidak perlu dilihat):
+
+```bash
+cd /opt/regime
+T=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+echo "ANALYSIS_INTERNAL_TOKEN=$T" >> backend/.env
+echo "ANALYSIS_INTERNAL_TOKEN=$T" >> frontend/.env.local
+unset T
+```
+
 ## 5. Jalankan
 
 ```bash
