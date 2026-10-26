@@ -333,3 +333,29 @@ dianalisis terhadap ambang keyakinan.
    sistem). Tidak ada hipotesis; dashboard tidak diubah otomatis oleh hasil ini.
 
 Keluaran: `ml/src/regime_change_study.py`, `ml/artifacts/regime_change_study.{json,md}`.
+
+### Adendum 6 (2026-10-27): uji formal detektor resmi vs LightGBM pada S4
+
+Status: **analisis tambahan, ditulis setelah benchmark §7 dibaca.** Selisih
+BA uji S4 antara Hybrid PS (0,813) dan LightGBM (0,805) sudah terlihat di
+`ml/artifacts/synthetic_benchmark.md` dan saat itu tidak diuji formal. Uji
+di bawah tidak membuktikan hipotesis buta; ia hanya menilai apakah selisih yang
+teramati melampaui variasi sampling. Ditulis dan di-commit sebelum dijalankan.
+
+1. **Model**: (a) detektor resmi `detector/hybrid_ps_sintetis.keras` dengan
+   normalisasi dari `detector_meta.json`, tanpa dilatih ulang; (b) LightGBM
+   dilatih ulang persis seperti `synthetic_benchmark.train_models` (S1–S4
+   latih, n = 500, fitur struktural ternormalisasi rata-rata/simpangan latih,
+   `fit_tabular("lightgbm", ..., seed=42)`).
+2. **Data uji utama**: S4, n = 500, 3.000 deret independen; ambang 0,47/0,53.
+   S1 dan S4k dilaporkan deskriptif.
+3. **Uji**: (i) bootstrap berpasangan per deret, B = 2.000, ΔBA = BA(detektor)
+   − BA(LightGBM), p satu sisi H0: ΔBA ≤ 0; (ii) McNemar eksak dua sisi atas
+   benar/salah per deret. Deret saling independen, sehingga McNemar sah (berbeda
+   dengan jendela BTC bertumpuk, yang memerlukan bootstrap blok).
+4. **Keputusan**: "detektor lebih akurat daripada LightGBM pada S4" bila batas
+   bawah CI95 ΔBA > 0 **dan** p McNemar < 0,05. Bila tidak, dinyatakan setara.
+   Satu uji utama, tanpa koreksi Holm.
+5. Hasil tidak mengubah detektor sistem maupun keputusan H1–H3 Fase 1.
+
+Keluaran: `ml/src/detector_vs_lightgbm.py`, `ml/artifacts/detector_vs_lightgbm.{json,md}`.
