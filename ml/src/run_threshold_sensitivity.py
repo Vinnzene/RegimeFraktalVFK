@@ -1,8 +1,15 @@
 """Uji Sensitivitas Sumber Ambang Kuantil Label (T1.3).
 
 Membandingkan kinerja model dan keputusan hipotesis H1–H6 antara:
-1. `full_history` (bawaan skripsi): ambang kuantil dihitung dari seluruh riwayat.
-2. `train_only` (uji sensitivitas): ambang kuantil dihitung HANYA dari data latih (bebas kebocoran).
+1. `train_only` (protokol utama sejak praregistrasi adendum §5, config.yaml):
+   ambang kuantil dihitung HANYA dari data latih (bebas kebocoran).
+2. `full_history` (uji sensitivitas): ambang kuantil dihitung dari seluruh riwayat.
+
+Hasil protokol utama dibaca dari ps_study_{tf}.json (artefak Bab 4) bila
+config_hash-nya cocok, sehingga angka utama di sini identik dengan Bab 4;
+protokol pembanding selalu dihitung ulang. Versi lama skrip ini membaca
+ps_study sebagai "full_history", padahal sejak ambang train_only menjadi
+bawaan berkas itu berisi hasil train_only — label kolomnya tertukar.
 
 Jalankan:
     python ml/src/run_threshold_sensitivity.py --timeframe 1h
@@ -199,24 +206,31 @@ def compare_and_save(timeframe: str) -> None:
     cfg = get_config()
     classes = list(REGIME_CLASSES)
 
-    # 1. Baca hasil full_history dari ps_study_{tf}.json jika ada, atau jalankan jika belum ada
-    ps_file = ARTIFACTS_DIR / f"ps_study_{timeframe}.json"
-    if ps_file.exists():
-        print(f"Memuat hasil baseline full_history dari {ps_file.name}...")
-        full_hist = json.loads(ps_file.read_text(encoding="utf-8"))
-        # Pastikan threshold tercatat
-        base_fh = build_base(timeframe, 32, classes, threshold_source="full_history")
-        full_hist["thresholds"] = base_fh["thresholds"]
-    else:
-        full_hist = run_pipeline(timeframe, "full_history")
+    main_source = cfg.analysis.threshold_source
+    other_source = "full_history" if main_source == "train_only" else "train_only"
 
-    # 2. Jalankan pipeline train_only
-    train_only = run_pipeline(timeframe, "train_only")
+    # 1. Protokol utama: pakai artefak Bab 4 bila dihasilkan config yang sama.
+    ps_file = ARTIFACTS_DIR / f"ps_study_{timeframe}.json"
+    main_res = None
+    if ps_file.exists():
+        cached = json.loads(ps_file.read_text(encoding="utf-8"))
+        if cached.get("config_hash") == cfg.config_hash:
+            print(f"Memuat hasil protokol utama ({main_source}) dari {ps_file.name}...")
+            main_res = cached
+            main_res["thresholds"] = build_base(timeframe, 32, classes, threshold_source=main_source)["thresholds"]
+    if main_res is None:
+        main_res = run_pipeline(timeframe, main_source)
+
+    # 2. Protokol pembanding selalu dihitung ulang.
+    other_res = run_pipeline(timeframe, other_source)
+    results = {main_source: main_res, other_source: other_res}
+    full_hist, train_only = results["full_history"], results["train_only"]
 
     # 3. Bentuk perbandingan
     comp = {
         "timeframe": timeframe,
         "config_hash": cfg.config_hash,
+        "main_source": main_source,
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "thresholds_comparison": {
             "full_history": full_hist["thresholds"],
@@ -261,6 +275,8 @@ def generate_markdown(comp: Dict, classes: List[str]) -> str:
     to_models = comp["train_only"]["models"]
     fh_hyps = {h["id"]: h for h in comp["full_history"]["hypotheses"]}
     to_hyps = {h["id"]: h for h in comp["train_only"]["hypotheses"]}
+    main = comp.get("main_source", "train_only")
+    role = {k: ("Utama" if k == main else "Uji Sensitivitas") for k in ("full_history", "train_only")}
 
     lines = [
         f"# Uji Sensitivitas Sumber Ambang Kuantil Label — {tf}",
@@ -268,7 +284,9 @@ def generate_markdown(comp: Dict, classes: List[str]) -> str:
         "",
         "## 1. Perbandingan Nilai Ambang Kuantil Ground Truth",
         "",
-        "| Estimator | Ambang Full-History (Bawaan) | Ambang Train-Only (Uji Sensitivitas) | Selisih (Train - Full) | Interpretasi Stabilitas |",
+        f"Protokol utama (config.yaml `analysis.threshold_source`): **{main}**.",
+        "",
+        f"| Estimator | Ambang Full-History ({role['full_history']}) | Ambang Train-Only ({role['train_only']}) | Selisih (Train - Full) | Interpretasi Stabilitas |",
         "|---|---|---|---|---|",
         f"| **Hurst Lower (q=0.33)** | {tc['full_history']['hurst'][0]:.4f} | {tc['train_only']['hurst'][0]:.4f} | {tc['delta_hurst'][0]:+.4f} | {'Sangat Stabil' if abs(tc['delta_hurst'][0]) <= 0.02 else 'Bergeser'} |",
         f"| **Hurst Upper (q=0.67)** | {tc['full_history']['hurst'][1]:.4f} | {tc['train_only']['hurst'][1]:.4f} | {tc['delta_hurst'][1]:+.4f} | {'Sangat Stabil' if abs(tc['delta_hurst'][1]) <= 0.02 else 'Bergeser'} |",
@@ -276,8 +294,8 @@ def generate_markdown(comp: Dict, classes: List[str]) -> str:
         f"| **DFA Upper (q=0.67)** | {tc['full_history']['dfa'][1]:.4f} | {tc['train_only']['dfa'][1]:.4f} | {tc['delta_dfa'][1]:+.4f} | {'Sangat Stabil' if abs(tc['delta_dfa'][1]) <= 0.02 else 'Bergeser'} |",
         "",
         "## 2. Perbandingan Ukuran Sampel Partisi Data",
-        f"- **Full-History:** Train={comp['sample_sizes']['full_history']['train']}, Val={comp['sample_sizes']['full_history']['validation']}, Test={comp['sample_sizes']['full_history']['test']}",
-        f"- **Train-Only:** Train={comp['sample_sizes']['train_only']['train']}, Val={comp['sample_sizes']['train_only']['validation']}, Test={comp['sample_sizes']['train_only']['test']}",
+        f"- **Full-History ({role['full_history']}):** Train={comp['sample_sizes']['full_history']['train']}, Val={comp['sample_sizes']['full_history']['validation']}, Test={comp['sample_sizes']['full_history']['test']}",
+        f"- **Train-Only ({role['train_only']}):** Train={comp['sample_sizes']['train_only']['train']}, Val={comp['sample_sizes']['train_only']['validation']}, Test={comp['sample_sizes']['train_only']['test']}",
         "",
         "## 3. Perbandingan Kinerja Model di Data Uji (Test Split)",
         "",
@@ -306,6 +324,10 @@ def generate_markdown(comp: Dict, classes: List[str]) -> str:
     lines += [
         "",
         "## 4. Perbandingan Keputusan Hipotesis H1–H6",
+        "",
+        "Keputusan di sini memakai aturan per-seed studi PS (CI per seed, tanpa koreksi Holm) dan hanya untuk",
+        "melihat apakah sumber ambang mengubah kesimpulan. Keputusan final Bab 4 memakai bootstrap ensemble",
+        f"3 seed dengan koreksi Holm (`bootstrap_eval_{comp['timeframe']}.md`); di sana H5 1H tidak terbukti (p Holm 0,0575).",
         "",
         "| Hipotesis | Pertanyaan Ilmiah | Keputusan Full-History | Keputusan Train-Only | Status Konsistensi |",
         "|---|---|---|---|---|",

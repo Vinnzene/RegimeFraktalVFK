@@ -1,7 +1,8 @@
 {
   "timeframe": "4h",
   "config_hash": "b2225bb25c4f80e84a2c7cf94f993d8e554cf55a48dbb5616e317ea65f8baaa1",
-  "timestamp": "2026-10-19T17:13:33Z",
+  "main_source": "train_only",
+  "timestamp": "2026-10-26T18:31:35Z",
   "thresholds_comparison": {
     "full_history": {
       "hurst": [
@@ -9,14 +10,14 @@
         0.6126
       ],
       "dfa": [
-        0.4743,
-        0.5233
+        0.4744,
+        0.5234
       ]
     },
     "train_only": {
       "hurst": [
         0.5894,
-        0.6136
+        0.6137
       ],
       "dfa": [
         0.4803,
@@ -25,26 +26,3438 @@
     },
     "delta_hurst": [
       0.0015,
-      0.001
+      0.0011
     ],
     "delta_dfa": [
-      0.006,
-      0.0038
+      0.0059,
+      0.0037
     ]
   },
   "sample_sizes": {
     "full_history": {
+      "train": 1468,
+      "validation": 337,
+      "test": 265
+    },
+    "train_only": {
       "train": 1446,
       "validation": 354,
       "test": 261
-    },
-    "train_only": {
-      "train": 1457,
-      "validation": 347,
-      "test": 262
     }
   },
   "full_history": {
+    "timeframe": "4h",
+    "threshold_source": "full_history",
+    "thresholds": {
+      "hurst": [
+        0.5879,
+        0.6126
+      ],
+      "dfa": [
+        0.4744,
+        0.5234
+      ]
+    },
+    "n": {
+      "train": 1468,
+      "validation": 337,
+      "test": 265
+    },
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "models": {
+      "logreg": {
+        "label": "Regresi logistik fitur statistik",
+        "summary": {
+          "accuracy": {
+            "mean": 0.6453,
+            "std": 0.0
+          },
+          "balanced_accuracy": {
+            "mean": 0.5609,
+            "std": 0.0
+          },
+          "macro_f1": {
+            "mean": 0.5562,
+            "std": 0.0
+          },
+          "mcc": {
+            "mean": 0.4532,
+            "std": 0.0
+          },
+          "kappa": {
+            "mean": 0.4261,
+            "std": 0.0
+          },
+          "val_balanced_accuracy": {
+            "mean": 0.5379,
+            "std": 0.0
+          },
+          "recall_per_class": {
+            "persistent": 0.4862,
+            "random_like": 0.2973,
+            "anti_persistent": 0.8992
+          }
+        },
+        "per_seed": [
+          {
+            "seed": 42,
+            "epochs_ran": 0,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.6677,
+              "balanced_accuracy": 0.5379,
+              "precision_macro": 0.6078,
+              "recall_macro": 0.5379,
+              "macro_f1": 0.5558,
+              "kappa": 0.3698,
+              "mcc": 0.381,
+              "confusion_matrix": [
+                [
+                  27,
+                  14,
+                  27
+                ],
+                [
+                  12,
+                  24,
+                  37
+                ],
+                [
+                  0,
+                  22,
+                  174
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.6923,
+                  "recall": 0.3971,
+                  "f1": 0.5047,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.4,
+                  "recall": 0.3288,
+                  "f1": 0.3609,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.7311,
+                  "recall": 0.8878,
+                  "f1": 0.8018,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.6453,
+              "balanced_accuracy": 0.5609,
+              "precision_macro": 0.6268,
+              "recall_macro": 0.5609,
+              "macro_f1": 0.5562,
+              "kappa": 0.4261,
+              "mcc": 0.4532,
+              "confusion_matrix": [
+                [
+                  53,
+                  28,
+                  28
+                ],
+                [
+                  0,
+                  11,
+                  26
+                ],
+                [
+                  0,
+                  12,
+                  107
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 1.0,
+                  "recall": 0.4862,
+                  "f1": 0.6543,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2157,
+                  "recall": 0.2973,
+                  "f1": 0.25,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.6646,
+                  "recall": 0.8992,
+                  "f1": 0.7643,
+                  "support": 119
+                }
+              ]
+            }
+          },
+          {
+            "seed": 43,
+            "epochs_ran": 0,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.6677,
+              "balanced_accuracy": 0.5379,
+              "precision_macro": 0.6078,
+              "recall_macro": 0.5379,
+              "macro_f1": 0.5558,
+              "kappa": 0.3698,
+              "mcc": 0.381,
+              "confusion_matrix": [
+                [
+                  27,
+                  14,
+                  27
+                ],
+                [
+                  12,
+                  24,
+                  37
+                ],
+                [
+                  0,
+                  22,
+                  174
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.6923,
+                  "recall": 0.3971,
+                  "f1": 0.5047,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.4,
+                  "recall": 0.3288,
+                  "f1": 0.3609,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.7311,
+                  "recall": 0.8878,
+                  "f1": 0.8018,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.6453,
+              "balanced_accuracy": 0.5609,
+              "precision_macro": 0.6268,
+              "recall_macro": 0.5609,
+              "macro_f1": 0.5562,
+              "kappa": 0.4261,
+              "mcc": 0.4532,
+              "confusion_matrix": [
+                [
+                  53,
+                  28,
+                  28
+                ],
+                [
+                  0,
+                  11,
+                  26
+                ],
+                [
+                  0,
+                  12,
+                  107
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 1.0,
+                  "recall": 0.4862,
+                  "f1": 0.6543,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2157,
+                  "recall": 0.2973,
+                  "f1": 0.25,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.6646,
+                  "recall": 0.8992,
+                  "f1": 0.7643,
+                  "support": 119
+                }
+              ]
+            }
+          },
+          {
+            "seed": 44,
+            "epochs_ran": 0,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.6677,
+              "balanced_accuracy": 0.5379,
+              "precision_macro": 0.6078,
+              "recall_macro": 0.5379,
+              "macro_f1": 0.5558,
+              "kappa": 0.3698,
+              "mcc": 0.381,
+              "confusion_matrix": [
+                [
+                  27,
+                  14,
+                  27
+                ],
+                [
+                  12,
+                  24,
+                  37
+                ],
+                [
+                  0,
+                  22,
+                  174
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.6923,
+                  "recall": 0.3971,
+                  "f1": 0.5047,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.4,
+                  "recall": 0.3288,
+                  "f1": 0.3609,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.7311,
+                  "recall": 0.8878,
+                  "f1": 0.8018,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.6453,
+              "balanced_accuracy": 0.5609,
+              "precision_macro": 0.6268,
+              "recall_macro": 0.5609,
+              "macro_f1": 0.5562,
+              "kappa": 0.4261,
+              "mcc": 0.4532,
+              "confusion_matrix": [
+                [
+                  53,
+                  28,
+                  28
+                ],
+                [
+                  0,
+                  11,
+                  26
+                ],
+                [
+                  0,
+                  12,
+                  107
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 1.0,
+                  "recall": 0.4862,
+                  "f1": 0.6543,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2157,
+                  "recall": 0.2973,
+                  "f1": 0.25,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.6646,
+                  "recall": 0.8992,
+                  "f1": 0.7643,
+                  "support": 119
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "lightgbm": {
+        "label": "LightGBM fitur statistik",
+        "summary": {
+          "accuracy": {
+            "mean": 0.6,
+            "std": 0.0031
+          },
+          "balanced_accuracy": {
+            "mean": 0.5624,
+            "std": 0.0052
+          },
+          "macro_f1": {
+            "mean": 0.553,
+            "std": 0.0036
+          },
+          "mcc": {
+            "mean": 0.4096,
+            "std": 0.003
+          },
+          "kappa": {
+            "mean": 0.3937,
+            "std": 0.0036
+          },
+          "val_balanced_accuracy": {
+            "mean": 0.514,
+            "std": 0.0078
+          },
+          "recall_per_class": {
+            "persistent": 0.5596,
+            "random_like": 0.4414,
+            "anti_persistent": 0.6863
+          }
+        },
+        "per_seed": [
+          {
+            "seed": 42,
+            "epochs_ran": 0,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.6261,
+              "balanced_accuracy": 0.525,
+              "precision_macro": 0.5415,
+              "recall_macro": 0.525,
+              "macro_f1": 0.5316,
+              "kappa": 0.3292,
+              "mcc": 0.3303,
+              "confusion_matrix": [
+                [
+                  34,
+                  15,
+                  19
+                ],
+                [
+                  18,
+                  20,
+                  35
+                ],
+                [
+                  6,
+                  33,
+                  157
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.5862,
+                  "recall": 0.5,
+                  "f1": 0.5397,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2941,
+                  "recall": 0.274,
+                  "f1": 0.2837,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.7441,
+                  "recall": 0.801,
+                  "f1": 0.7715,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.6,
+              "balanced_accuracy": 0.5604,
+              "precision_macro": 0.5921,
+              "recall_macro": 0.5604,
+              "macro_f1": 0.5519,
+              "kappa": 0.3925,
+              "mcc": 0.408,
+              "confusion_matrix": [
+                [
+                  61,
+                  36,
+                  12
+                ],
+                [
+                  7,
+                  16,
+                  14
+                ],
+                [
+                  6,
+                  31,
+                  82
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.8243,
+                  "recall": 0.5596,
+                  "f1": 0.6667,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.1928,
+                  "recall": 0.4324,
+                  "f1": 0.2667,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.7593,
+                  "recall": 0.6891,
+                  "f1": 0.7225,
+                  "support": 119
+                }
+              ]
+            }
+          },
+          {
+            "seed": 43,
+            "epochs_ran": 0,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.6202,
+              "balanced_accuracy": 0.5091,
+              "precision_macro": 0.5389,
+              "recall_macro": 0.5091,
+              "macro_f1": 0.5195,
+              "kappa": 0.3088,
+              "mcc": 0.3112,
+              "confusion_matrix": [
+                [
+                  31,
+                  15,
+                  22
+                ],
+                [
+                  17,
+                  19,
+                  37
+                ],
+                [
+                  3,
+                  34,
+                  159
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.6078,
+                  "recall": 0.4559,
+                  "f1": 0.521,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2794,
+                  "recall": 0.2603,
+                  "f1": 0.2695,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.7294,
+                  "recall": 0.8112,
+                  "f1": 0.7681,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.5962,
+              "balanced_accuracy": 0.5573,
+              "precision_macro": 0.5926,
+              "recall_macro": 0.5573,
+              "macro_f1": 0.5493,
+              "kappa": 0.39,
+              "mcc": 0.407,
+              "confusion_matrix": [
+                [
+                  60,
+                  40,
+                  9
+                ],
+                [
+                  7,
+                  16,
+                  14
+                ],
+                [
+                  7,
+                  30,
+                  82
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.8108,
+                  "recall": 0.5505,
+                  "f1": 0.6557,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.186,
+                  "recall": 0.4324,
+                  "f1": 0.2602,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.781,
+                  "recall": 0.6891,
+                  "f1": 0.7321,
+                  "support": 119
+                }
+              ]
+            }
+          },
+          {
+            "seed": 44,
+            "epochs_ran": 0,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.6231,
+              "balanced_accuracy": 0.508,
+              "precision_macro": 0.534,
+              "recall_macro": 0.508,
+              "macro_f1": 0.5165,
+              "kappa": 0.3075,
+              "mcc": 0.3109,
+              "confusion_matrix": [
+                [
+                  31,
+                  12,
+                  25
+                ],
+                [
+                  18,
+                  18,
+                  37
+                ],
+                [
+                  4,
+                  31,
+                  161
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.5849,
+                  "recall": 0.4559,
+                  "f1": 0.5124,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2951,
+                  "recall": 0.2466,
+                  "f1": 0.2687,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.722,
+                  "recall": 0.8214,
+                  "f1": 0.7685,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.6038,
+              "balanced_accuracy": 0.5696,
+              "precision_macro": 0.5949,
+              "recall_macro": 0.5696,
+              "macro_f1": 0.5579,
+              "kappa": 0.3985,
+              "mcc": 0.4139,
+              "confusion_matrix": [
+                [
+                  62,
+                  36,
+                  11
+                ],
+                [
+                  6,
+                  17,
+                  14
+                ],
+                [
+                  8,
+                  30,
+                  81
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.8158,
+                  "recall": 0.5688,
+                  "f1": 0.6703,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2048,
+                  "recall": 0.4595,
+                  "f1": 0.2833,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.7642,
+                  "recall": 0.6807,
+                  "f1": 0.72,
+                  "support": 119
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "structural_mlp": {
+        "label": "MLP fitur statistik",
+        "summary": {
+          "accuracy": {
+            "mean": 0.688,
+            "std": 0.0302
+          },
+          "balanced_accuracy": {
+            "mean": 0.5928,
+            "std": 0.0035
+          },
+          "macro_f1": {
+            "mean": 0.5915,
+            "std": 0.006
+          },
+          "mcc": {
+            "mean": 0.5004,
+            "std": 0.0262
+          },
+          "kappa": {
+            "mean": 0.495,
+            "std": 0.0302
+          },
+          "val_balanced_accuracy": {
+            "mean": 0.4451,
+            "std": 0.0124
+          },
+          "recall_per_class": {
+            "persistent": 0.7126,
+            "random_like": 0.2703,
+            "anti_persistent": 0.7955
+          }
+        },
+        "per_seed": [
+          {
+            "seed": 42,
+            "epochs_ran": 16,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.5757,
+              "balanced_accuracy": 0.4621,
+              "precision_macro": 0.5082,
+              "recall_macro": 0.4621,
+              "macro_f1": 0.4691,
+              "kappa": 0.2237,
+              "mcc": 0.2275,
+              "confusion_matrix": [
+                [
+                  18,
+                  20,
+                  30
+                ],
+                [
+                  7,
+                  26,
+                  40
+                ],
+                [
+                  9,
+                  37,
+                  150
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.5294,
+                  "recall": 0.2647,
+                  "f1": 0.3529,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.3133,
+                  "recall": 0.3562,
+                  "f1": 0.3333,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.6818,
+                  "recall": 0.7653,
+                  "f1": 0.7212,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.6453,
+              "balanced_accuracy": 0.5896,
+              "precision_macro": 0.6116,
+              "recall_macro": 0.5896,
+              "macro_f1": 0.5844,
+              "kappa": 0.4525,
+              "mcc": 0.4635,
+              "confusion_matrix": [
+                [
+                  68,
+                  33,
+                  8
+                ],
+                [
+                  8,
+                  15,
+                  14
+                ],
+                [
+                  6,
+                  25,
+                  88
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.8293,
+                  "recall": 0.6239,
+                  "f1": 0.712,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2055,
+                  "recall": 0.4054,
+                  "f1": 0.2727,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.8,
+                  "recall": 0.7395,
+                  "f1": 0.7686,
+                  "support": 119
+                }
+              ]
+            }
+          },
+          {
+            "seed": 43,
+            "epochs_ran": 15,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.6202,
+              "balanced_accuracy": 0.4399,
+              "precision_macro": 0.4746,
+              "recall_macro": 0.4399,
+              "macro_f1": 0.4291,
+              "kappa": 0.2275,
+              "mcc": 0.2558,
+              "confusion_matrix": [
+                [
+                  21,
+                  12,
+                  35
+                ],
+                [
+                  13,
+                  6,
+                  54
+                ],
+                [
+                  7,
+                  7,
+                  182
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.5122,
+                  "recall": 0.3088,
+                  "f1": 0.3853,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.24,
+                  "recall": 0.0822,
+                  "f1": 0.1224,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.6716,
+                  "recall": 0.9286,
+                  "f1": 0.7794,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.7094,
+              "balanced_accuracy": 0.5911,
+              "precision_macro": 0.5979,
+              "recall_macro": 0.5911,
+              "macro_f1": 0.591,
+              "kappa": 0.5132,
+              "mcc": 0.5164,
+              "confusion_matrix": [
+                [
+                  82,
+                  8,
+                  19
+                ],
+                [
+                  11,
+                  7,
+                  19
+                ],
+                [
+                  8,
+                  12,
+                  99
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.8119,
+                  "recall": 0.7523,
+                  "f1": 0.781,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2593,
+                  "recall": 0.1892,
+                  "f1": 0.2188,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.7226,
+                  "recall": 0.8319,
+                  "f1": 0.7734,
+                  "support": 119
+                }
+              ]
+            }
+          },
+          {
+            "seed": 44,
+            "epochs_ran": 15,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.5697,
+              "balanced_accuracy": 0.4332,
+              "precision_macro": 0.4817,
+              "recall_macro": 0.4332,
+              "macro_f1": 0.4413,
+              "kappa": 0.172,
+              "mcc": 0.1794,
+              "confusion_matrix": [
+                [
+                  19,
+                  6,
+                  43
+                ],
+                [
+                  12,
+                  16,
+                  45
+                ],
+                [
+                  6,
+                  33,
+                  157
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.5135,
+                  "recall": 0.2794,
+                  "f1": 0.3619,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2909,
+                  "recall": 0.2192,
+                  "f1": 0.25,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.6408,
+                  "recall": 0.801,
+                  "f1": 0.712,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.7094,
+              "balanced_accuracy": 0.5976,
+              "precision_macro": 0.6039,
+              "recall_macro": 0.5976,
+              "macro_f1": 0.599,
+              "kappa": 0.5194,
+              "mcc": 0.5214,
+              "confusion_matrix": [
+                [
+                  83,
+                  11,
+                  15
+                ],
+                [
+                  8,
+                  8,
+                  21
+                ],
+                [
+                  7,
+                  15,
+                  97
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.8469,
+                  "recall": 0.7615,
+                  "f1": 0.8019,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2353,
+                  "recall": 0.2162,
+                  "f1": 0.2254,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.7293,
+                  "recall": 0.8151,
+                  "f1": 0.7698,
+                  "support": 119
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "swt_attention_bilstm": {
+        "label": "SWT + Attention-BiLSTM",
+        "summary": {
+          "accuracy": {
+            "mean": 0.4755,
+            "std": 0.024
+          },
+          "balanced_accuracy": {
+            "mean": 0.3782,
+            "std": 0.0095
+          },
+          "macro_f1": {
+            "mean": 0.3635,
+            "std": 0.0036
+          },
+          "mcc": {
+            "mean": 0.1183,
+            "std": 0.0152
+          },
+          "kappa": {
+            "mean": 0.1122,
+            "std": 0.014
+          },
+          "val_balanced_accuracy": {
+            "mean": 0.4525,
+            "std": 0.0195
+          },
+          "recall_per_class": {
+            "persistent": 0.3853,
+            "random_like": 0.0631,
+            "anti_persistent": 0.6863
+          },
+          "attention_entropy": {
+            "mean": 0.9749,
+            "std": 0.0115
+          }
+        },
+        "per_seed": [
+          {
+            "seed": 42,
+            "epochs_ran": 13,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.5757,
+              "balanced_accuracy": 0.4671,
+              "precision_macro": 0.4562,
+              "recall_macro": 0.4671,
+              "macro_f1": 0.4562,
+              "kappa": 0.2356,
+              "mcc": 0.2382,
+              "confusion_matrix": [
+                [
+                  33,
+                  7,
+                  28
+                ],
+                [
+                  26,
+                  11,
+                  36
+                ],
+                [
+                  20,
+                  26,
+                  150
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.4177,
+                  "recall": 0.4853,
+                  "f1": 0.449,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.25,
+                  "recall": 0.1507,
+                  "f1": 0.188,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.7009,
+                  "recall": 0.7653,
+                  "f1": 0.7317,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.4566,
+              "balanced_accuracy": 0.3733,
+              "precision_macro": 0.4007,
+              "recall_macro": 0.3733,
+              "macro_f1": 0.3686,
+              "kappa": 0.1053,
+              "mcc": 0.1113,
+              "confusion_matrix": [
+                [
+                  37,
+                  15,
+                  57
+                ],
+                [
+                  6,
+                  4,
+                  27
+                ],
+                [
+                  17,
+                  22,
+                  80
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.6167,
+                  "recall": 0.3394,
+                  "f1": 0.4379,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.0976,
+                  "recall": 0.1081,
+                  "f1": 0.1026,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.4878,
+                  "recall": 0.6723,
+                  "f1": 0.5654,
+                  "support": 119
+                }
+              ]
+            },
+            "attention_entropy": 0.9766
+          },
+          {
+            "seed": 43,
+            "epochs_ran": 13,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.5668,
+              "balanced_accuracy": 0.4654,
+              "precision_macro": 0.3924,
+              "recall_macro": 0.4654,
+              "macro_f1": 0.4028,
+              "kappa": 0.2341,
+              "mcc": 0.2485,
+              "confusion_matrix": [
+                [
+                  43,
+                  2,
+                  23
+                ],
+                [
+                  36,
+                  1,
+                  36
+                ],
+                [
+                  43,
+                  6,
+                  147
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.3525,
+                  "recall": 0.6324,
+                  "f1": 0.4526,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.1111,
+                  "recall": 0.0137,
+                  "f1": 0.0244,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.7136,
+                  "recall": 0.75,
+                  "f1": 0.7313,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.5094,
+              "balanced_accuracy": 0.3915,
+              "precision_macro": 0.3418,
+              "recall_macro": 0.3915,
+              "macro_f1": 0.3608,
+              "kappa": 0.1318,
+              "mcc": 0.1394,
+              "confusion_matrix": [
+                [
+                  52,
+                  0,
+                  57
+                ],
+                [
+                  11,
+                  0,
+                  26
+                ],
+                [
+                  36,
+                  0,
+                  83
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.5253,
+                  "recall": 0.4771,
+                  "f1": 0.5,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.0,
+                  "recall": 0.0,
+                  "f1": 0.0,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.5,
+                  "recall": 0.6975,
+                  "f1": 0.5825,
+                  "support": 119
+                }
+              ]
+            },
+            "attention_entropy": 0.9881
+          },
+          {
+            "seed": 44,
+            "epochs_ran": 13,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.549,
+              "balanced_accuracy": 0.425,
+              "precision_macro": 0.3967,
+              "recall_macro": 0.425,
+              "macro_f1": 0.4003,
+              "kappa": 0.19,
+              "mcc": 0.1946,
+              "confusion_matrix": [
+                [
+                  30,
+                  10,
+                  28
+                ],
+                [
+                  33,
+                  5,
+                  35
+                ],
+                [
+                  31,
+                  15,
+                  150
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.3191,
+                  "recall": 0.4412,
+                  "f1": 0.3704,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.1667,
+                  "recall": 0.0685,
+                  "f1": 0.0971,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.7042,
+                  "recall": 0.7653,
+                  "f1": 0.7335,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.4604,
+              "balanced_accuracy": 0.3699,
+              "precision_macro": 0.3767,
+              "recall_macro": 0.3699,
+              "macro_f1": 0.361,
+              "kappa": 0.0996,
+              "mcc": 0.1042,
+              "confusion_matrix": [
+                [
+                  37,
+                  17,
+                  55
+                ],
+                [
+                  8,
+                  3,
+                  26
+                ],
+                [
+                  24,
+                  13,
+                  82
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.5362,
+                  "recall": 0.3394,
+                  "f1": 0.4157,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.0909,
+                  "recall": 0.0811,
+                  "f1": 0.0857,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.5031,
+                  "recall": 0.6891,
+                  "f1": 0.5816,
+                  "support": 119
+                }
+              ]
+            },
+            "attention_entropy": 0.9601
+          }
+        ]
+      },
+      "hybrid_swt": {
+        "label": "Hybrid SWT (usulan lama)",
+        "summary": {
+          "accuracy": {
+            "mean": 0.6818,
+            "std": 0.0201
+          },
+          "balanced_accuracy": {
+            "mean": 0.6115,
+            "std": 0.0177
+          },
+          "macro_f1": {
+            "mean": 0.6093,
+            "std": 0.0175
+          },
+          "mcc": {
+            "mean": 0.5046,
+            "std": 0.0175
+          },
+          "kappa": {
+            "mean": 0.498,
+            "std": 0.0209
+          },
+          "val_balanced_accuracy": {
+            "mean": 0.5522,
+            "std": 0.0402
+          },
+          "recall_per_class": {
+            "persistent": 0.734,
+            "random_like": 0.3694,
+            "anti_persistent": 0.7311
+          },
+          "attention_entropy": {
+            "mean": 0.8664,
+            "std": 0.0407
+          }
+        },
+        "per_seed": [
+          {
+            "seed": 42,
+            "epochs_ran": 16,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.6024,
+              "balanced_accuracy": 0.4962,
+              "precision_macro": 0.5083,
+              "recall_macro": 0.4962,
+              "macro_f1": 0.4993,
+              "kappa": 0.3013,
+              "mcc": 0.3023,
+              "confusion_matrix": [
+                [
+                  23,
+                  29,
+                  16
+                ],
+                [
+                  15,
+                  27,
+                  31
+                ],
+                [
+                  14,
+                  29,
+                  153
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.4423,
+                  "recall": 0.3382,
+                  "f1": 0.3833,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.3176,
+                  "recall": 0.3699,
+                  "f1": 0.3418,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.765,
+                  "recall": 0.7806,
+                  "f1": 0.7727,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.6566,
+              "balanced_accuracy": 0.5954,
+              "precision_macro": 0.6182,
+              "recall_macro": 0.5954,
+              "macro_f1": 0.5919,
+              "kappa": 0.4707,
+              "mcc": 0.482,
+              "confusion_matrix": [
+                [
+                  82,
+                  26,
+                  1
+                ],
+                [
+                  13,
+                  14,
+                  10
+                ],
+                [
+                  10,
+                  31,
+                  78
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.781,
+                  "recall": 0.7523,
+                  "f1": 0.7664,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.1972,
+                  "recall": 0.3784,
+                  "f1": 0.2593,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.8764,
+                  "recall": 0.6555,
+                  "f1": 0.75,
+                  "support": 119
+                }
+              ]
+            },
+            "attention_entropy": 0.8536
+          },
+          {
+            "seed": 43,
+            "epochs_ran": 15,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.6973,
+              "balanced_accuracy": 0.5884,
+              "precision_macro": 0.6013,
+              "recall_macro": 0.5884,
+              "macro_f1": 0.5935,
+              "kappa": 0.4572,
+              "mcc": 0.4587,
+              "confusion_matrix": [
+                [
+                  33,
+                  24,
+                  11
+                ],
+                [
+                  17,
+                  29,
+                  27
+                ],
+                [
+                  13,
+                  10,
+                  173
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.5238,
+                  "recall": 0.4853,
+                  "f1": 0.5038,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.4603,
+                  "recall": 0.3973,
+                  "f1": 0.4265,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.8199,
+                  "recall": 0.8827,
+                  "f1": 0.8501,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.7057,
+              "balanced_accuracy": 0.6362,
+              "precision_macro": 0.6371,
+              "recall_macro": 0.6362,
+              "macro_f1": 0.6332,
+              "kappa": 0.5216,
+              "mcc": 0.5246,
+              "confusion_matrix": [
+                [
+                  75,
+                  17,
+                  17
+                ],
+                [
+                  6,
+                  15,
+                  16
+                ],
+                [
+                  10,
+                  12,
+                  97
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.8242,
+                  "recall": 0.6881,
+                  "f1": 0.75,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.3409,
+                  "recall": 0.4054,
+                  "f1": 0.3704,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.7462,
+                  "recall": 0.8151,
+                  "f1": 0.7791,
+                  "support": 119
+                }
+              ]
+            },
+            "attention_entropy": 0.8242
+          },
+          {
+            "seed": 44,
+            "epochs_ran": 16,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.6558,
+              "balanced_accuracy": 0.572,
+              "precision_macro": 0.5732,
+              "recall_macro": 0.572,
+              "macro_f1": 0.5726,
+              "kappa": 0.4004,
+              "mcc": 0.4004,
+              "confusion_matrix": [
+                [
+                  38,
+                  17,
+                  13
+                ],
+                [
+                  21,
+                  26,
+                  26
+                ],
+                [
+                  8,
+                  31,
+                  157
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.5672,
+                  "recall": 0.5588,
+                  "f1": 0.563,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.3514,
+                  "recall": 0.3562,
+                  "f1": 0.3537,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.801,
+                  "recall": 0.801,
+                  "f1": 0.801,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.683,
+              "balanced_accuracy": 0.6028,
+              "precision_macro": 0.6172,
+              "recall_macro": 0.6028,
+              "macro_f1": 0.6028,
+              "kappa": 0.5017,
+              "mcc": 0.5073,
+              "confusion_matrix": [
+                [
+                  83,
+                  23,
+                  3
+                ],
+                [
+                  15,
+                  12,
+                  10
+                ],
+                [
+                  8,
+                  25,
+                  86
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.783,
+                  "recall": 0.7615,
+                  "f1": 0.7721,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2,
+                  "recall": 0.3243,
+                  "f1": 0.2474,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.8687,
+                  "recall": 0.7227,
+                  "f1": 0.789,
+                  "support": 119
+                }
+              ]
+            },
+            "attention_entropy": 0.9215
+          }
+        ]
+      },
+      "ps_bilstm": {
+        "label": "PS + BiLSTM (tanpa attention)",
+        "summary": {
+          "accuracy": {
+            "mean": 0.4239,
+            "std": 0.0756
+          },
+          "balanced_accuracy": {
+            "mean": 0.457,
+            "std": 0.0718
+          },
+          "macro_f1": {
+            "mean": 0.4106,
+            "std": 0.0819
+          },
+          "mcc": {
+            "mean": 0.235,
+            "std": 0.1036
+          },
+          "kappa": {
+            "mean": 0.2011,
+            "std": 0.0929
+          },
+          "val_balanced_accuracy": {
+            "mean": 0.6405,
+            "std": 0.0268
+          },
+          "recall_per_class": {
+            "persistent": 0.2783,
+            "random_like": 0.5856,
+            "anti_persistent": 0.507
+          }
+        },
+        "per_seed": [
+          {
+            "seed": 42,
+            "epochs_ran": 14,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.632,
+              "balanced_accuracy": 0.6027,
+              "precision_macro": 0.6216,
+              "recall_macro": 0.6027,
+              "macro_f1": 0.5997,
+              "kappa": 0.4037,
+              "mcc": 0.4158,
+              "confusion_matrix": [
+                [
+                  42,
+                  23,
+                  3
+                ],
+                [
+                  17,
+                  37,
+                  19
+                ],
+                [
+                  1,
+                  61,
+                  134
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.7,
+                  "recall": 0.6176,
+                  "f1": 0.6562,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.3058,
+                  "recall": 0.5068,
+                  "f1": 0.3814,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.859,
+                  "recall": 0.6837,
+                  "f1": 0.7614,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.4792,
+              "balanced_accuracy": 0.5148,
+              "precision_macro": 0.5763,
+              "recall_macro": 0.5148,
+              "macro_f1": 0.4711,
+              "kappa": 0.2721,
+              "mcc": 0.3167,
+              "confusion_matrix": [
+                [
+                  39,
+                  62,
+                  8
+                ],
+                [
+                  10,
+                  24,
+                  3
+                ],
+                [
+                  7,
+                  48,
+                  64
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.6964,
+                  "recall": 0.3578,
+                  "f1": 0.4727,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.1791,
+                  "recall": 0.6486,
+                  "f1": 0.2807,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.8533,
+                  "recall": 0.5378,
+                  "f1": 0.6598,
+                  "support": 119
+                }
+              ]
+            }
+          },
+          {
+            "seed": 43,
+            "epochs_ran": 15,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.6766,
+              "balanced_accuracy": 0.6613,
+              "precision_macro": 0.6736,
+              "recall_macro": 0.6613,
+              "macro_f1": 0.6412,
+              "kappa": 0.4874,
+              "mcc": 0.5135,
+              "confusion_matrix": [
+                [
+                  38,
+                  27,
+                  3
+                ],
+                [
+                  17,
+                  53,
+                  3
+                ],
+                [
+                  1,
+                  58,
+                  137
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.6786,
+                  "recall": 0.5588,
+                  "f1": 0.6129,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.3841,
+                  "recall": 0.726,
+                  "f1": 0.5024,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.958,
+                  "recall": 0.699,
+                  "f1": 0.8083,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.4755,
+              "balanced_accuracy": 0.5003,
+              "precision_macro": 0.5625,
+              "recall_macro": 0.5003,
+              "macro_f1": 0.4659,
+              "kappa": 0.2612,
+              "mcc": 0.2995,
+              "confusion_matrix": [
+                [
+                  42,
+                  58,
+                  9
+                ],
+                [
+                  9,
+                  22,
+                  6
+                ],
+                [
+                  8,
+                  49,
+                  62
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.7119,
+                  "recall": 0.3853,
+                  "f1": 0.5,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.1705,
+                  "recall": 0.5946,
+                  "f1": 0.2651,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.8052,
+                  "recall": 0.521,
+                  "f1": 0.6327,
+                  "support": 119
+                }
+              ]
+            }
+          },
+          {
+            "seed": 44,
+            "epochs_ran": 18,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.7151,
+              "balanced_accuracy": 0.6574,
+              "precision_macro": 0.6878,
+              "recall_macro": 0.6574,
+              "macro_f1": 0.6449,
+              "kappa": 0.5303,
+              "mcc": 0.5499,
+              "confusion_matrix": [
+                [
+                  29,
+                  39,
+                  0
+                ],
+                [
+                  12,
+                  54,
+                  7
+                ],
+                [
+                  1,
+                  37,
+                  158
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.6905,
+                  "recall": 0.4265,
+                  "f1": 0.5273,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.4154,
+                  "recall": 0.7397,
+                  "f1": 0.532,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.9576,
+                  "recall": 0.8061,
+                  "f1": 0.8753,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.317,
+              "balanced_accuracy": 0.3558,
+              "precision_macro": 0.3876,
+              "recall_macro": 0.3558,
+              "macro_f1": 0.2949,
+              "kappa": 0.0699,
+              "mcc": 0.0888,
+              "confusion_matrix": [
+                [
+                  10,
+                  79,
+                  20
+                ],
+                [
+                  7,
+                  19,
+                  11
+                ],
+                [
+                  8,
+                  56,
+                  55
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.4,
+                  "recall": 0.0917,
+                  "f1": 0.1493,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.1234,
+                  "recall": 0.5135,
+                  "f1": 0.199,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.6395,
+                  "recall": 0.4622,
+                  "f1": 0.5366,
+                  "support": 119
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "ps_attention_bilstm": {
+        "label": "PS + Attention-BiLSTM",
+        "summary": {
+          "accuracy": {
+            "mean": 0.4855,
+            "std": 0.0967
+          },
+          "balanced_accuracy": {
+            "mean": 0.4818,
+            "std": 0.06
+          },
+          "macro_f1": {
+            "mean": 0.4612,
+            "std": 0.0763
+          },
+          "mcc": {
+            "mean": 0.2923,
+            "std": 0.0865
+          },
+          "kappa": {
+            "mean": 0.2667,
+            "std": 0.0972
+          },
+          "val_balanced_accuracy": {
+            "mean": 0.5485,
+            "std": 0.0313
+          },
+          "recall_per_class": {
+            "persistent": 0.419,
+            "random_like": 0.4775,
+            "anti_persistent": 0.549
+          },
+          "attention_entropy": {
+            "mean": 0.8288,
+            "std": 0.0598
+          }
+        },
+        "per_seed": [
+          {
+            "seed": 42,
+            "epochs_ran": 17,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.4688,
+              "balanced_accuracy": 0.5138,
+              "precision_macro": 0.5915,
+              "recall_macro": 0.5138,
+              "macro_f1": 0.4812,
+              "kappa": 0.2266,
+              "mcc": 0.2767,
+              "confusion_matrix": [
+                [
+                  30,
+                  31,
+                  7
+                ],
+                [
+                  13,
+                  52,
+                  8
+                ],
+                [
+                  1,
+                  119,
+                  76
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.6818,
+                  "recall": 0.4412,
+                  "f1": 0.5357,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2574,
+                  "recall": 0.7123,
+                  "f1": 0.3782,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.8352,
+                  "recall": 0.3878,
+                  "f1": 0.5296,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.3509,
+              "balanced_accuracy": 0.397,
+              "precision_macro": 0.5089,
+              "recall_macro": 0.397,
+              "macro_f1": 0.3541,
+              "kappa": 0.1319,
+              "mcc": 0.1721,
+              "confusion_matrix": [
+                [
+                  24,
+                  77,
+                  8
+                ],
+                [
+                  8,
+                  21,
+                  8
+                ],
+                [
+                  5,
+                  66,
+                  48
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.6486,
+                  "recall": 0.2202,
+                  "f1": 0.3288,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.128,
+                  "recall": 0.5676,
+                  "f1": 0.209,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.75,
+                  "recall": 0.4034,
+                  "f1": 0.5246,
+                  "support": 119
+                }
+              ]
+            },
+            "attention_entropy": 0.745
+          },
+          {
+            "seed": 43,
+            "epochs_ran": 15,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.5519,
+              "balanced_accuracy": 0.542,
+              "precision_macro": 0.6006,
+              "recall_macro": 0.542,
+              "macro_f1": 0.5384,
+              "kappa": 0.288,
+              "mcc": 0.308,
+              "confusion_matrix": [
+                [
+                  32,
+                  22,
+                  14
+                ],
+                [
+                  11,
+                  43,
+                  19
+                ],
+                [
+                  0,
+                  85,
+                  111
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.7442,
+                  "recall": 0.4706,
+                  "f1": 0.5766,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2867,
+                  "recall": 0.589,
+                  "f1": 0.3857,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.7708,
+                  "recall": 0.5663,
+                  "f1": 0.6529,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.5736,
+              "balanced_accuracy": 0.5281,
+              "precision_macro": 0.566,
+              "recall_macro": 0.5281,
+              "macro_f1": 0.5261,
+              "kappa": 0.3572,
+              "mcc": 0.3719,
+              "confusion_matrix": [
+                [
+                  60,
+                  41,
+                  8
+                ],
+                [
+                  14,
+                  14,
+                  9
+                ],
+                [
+                  10,
+                  31,
+                  78
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.7143,
+                  "recall": 0.5505,
+                  "f1": 0.6218,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.1628,
+                  "recall": 0.3784,
+                  "f1": 0.2276,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.8211,
+                  "recall": 0.6555,
+                  "f1": 0.729,
+                  "support": 119
+                }
+              ]
+            },
+            "attention_entropy": 0.8608
+          },
+          {
+            "seed": 44,
+            "epochs_ran": 17,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.6528,
+              "balanced_accuracy": 0.5897,
+              "precision_macro": 0.6318,
+              "recall_macro": 0.5897,
+              "macro_f1": 0.5676,
+              "kappa": 0.4302,
+              "mcc": 0.4551,
+              "confusion_matrix": [
+                [
+                  19,
+                  41,
+                  8
+                ],
+                [
+                  12,
+                  54,
+                  7
+                ],
+                [
+                  0,
+                  49,
+                  147
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.6129,
+                  "recall": 0.2794,
+                  "f1": 0.3838,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.375,
+                  "recall": 0.7397,
+                  "f1": 0.4977,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.9074,
+                  "recall": 0.75,
+                  "f1": 0.8212,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.5321,
+              "balanced_accuracy": 0.5203,
+              "precision_macro": 0.5591,
+              "recall_macro": 0.5203,
+              "macro_f1": 0.5034,
+              "kappa": 0.3109,
+              "mcc": 0.3328,
+              "confusion_matrix": [
+                [
+                  53,
+                  43,
+                  13
+                ],
+                [
+                  9,
+                  18,
+                  10
+                ],
+                [
+                  9,
+                  40,
+                  70
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.7465,
+                  "recall": 0.4862,
+                  "f1": 0.5889,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.1782,
+                  "recall": 0.4865,
+                  "f1": 0.2609,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.7527,
+                  "recall": 0.5882,
+                  "f1": 0.6604,
+                  "support": 119
+                }
+              ]
+            },
+            "attention_entropy": 0.8806
+          }
+        ]
+      },
+      "ps_attention_bilstm_shuffled": {
+        "label": "PS + Attention-BiLSTM, urutan diacak",
+        "summary": {
+          "accuracy": {
+            "mean": 0.6277,
+            "std": 0.0309
+          },
+          "balanced_accuracy": {
+            "mean": 0.5599,
+            "std": 0.051
+          },
+          "macro_f1": {
+            "mean": 0.5381,
+            "std": 0.0434
+          },
+          "mcc": {
+            "mean": 0.4378,
+            "std": 0.055
+          },
+          "kappa": {
+            "mean": 0.4122,
+            "std": 0.0523
+          },
+          "val_balanced_accuracy": {
+            "mean": 0.6324,
+            "std": 0.0323
+          },
+          "recall_per_class": {
+            "persistent": 0.4006,
+            "random_like": 0.3604,
+            "anti_persistent": 0.9188
+          },
+          "attention_entropy": {
+            "mean": 0.921,
+            "std": 0.056
+          }
+        },
+        "per_seed": [
+          {
+            "seed": 42,
+            "epochs_ran": 23,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.6499,
+              "balanced_accuracy": 0.631,
+              "precision_macro": 0.7665,
+              "recall_macro": 0.631,
+              "macro_f1": 0.5882,
+              "kappa": 0.4512,
+              "mcc": 0.515,
+              "confusion_matrix": [
+                [
+                  19,
+                  48,
+                  1
+                ],
+                [
+                  1,
+                  69,
+                  3
+                ],
+                [
+                  0,
+                  65,
+                  131
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.95,
+                  "recall": 0.2794,
+                  "f1": 0.4318,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.3791,
+                  "recall": 0.9452,
+                  "f1": 0.5412,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.9704,
+                  "recall": 0.6684,
+                  "f1": 0.7915,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.5849,
+              "balanced_accuracy": 0.4933,
+              "precision_macro": 0.5389,
+              "recall_macro": 0.4933,
+              "macro_f1": 0.4778,
+              "kappa": 0.3387,
+              "mcc": 0.3633,
+              "confusion_matrix": [
+                [
+                  37,
+                  46,
+                  26
+                ],
+                [
+                  7,
+                  8,
+                  22
+                ],
+                [
+                  3,
+                  6,
+                  110
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.7872,
+                  "recall": 0.3394,
+                  "f1": 0.4744,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.1333,
+                  "recall": 0.2162,
+                  "f1": 0.1649,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.6962,
+                  "recall": 0.9244,
+                  "f1": 0.7942,
+                  "support": 119
+                }
+              ]
+            },
+            "attention_entropy": 0.843
+          },
+          {
+            "seed": 43,
+            "epochs_ran": 15,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.638,
+              "balanced_accuracy": 0.5935,
+              "precision_macro": 0.5771,
+              "recall_macro": 0.5935,
+              "macro_f1": 0.575,
+              "kappa": 0.4187,
+              "mcc": 0.4282,
+              "confusion_matrix": [
+                [
+                  47,
+                  19,
+                  2
+                ],
+                [
+                  37,
+                  27,
+                  9
+                ],
+                [
+                  7,
+                  48,
+                  141
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.5165,
+                  "recall": 0.6912,
+                  "f1": 0.5912,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2872,
+                  "recall": 0.3699,
+                  "f1": 0.3234,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.9276,
+                  "recall": 0.7194,
+                  "f1": 0.8103,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.6566,
+              "balanced_accuracy": 0.569,
+              "precision_macro": 0.5796,
+              "recall_macro": 0.569,
+              "macro_f1": 0.5583,
+              "kappa": 0.441,
+              "mcc": 0.4559,
+              "confusion_matrix": [
+                [
+                  52,
+                  33,
+                  24
+                ],
+                [
+                  10,
+                  11,
+                  16
+                ],
+                [
+                  6,
+                  2,
+                  111
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.7647,
+                  "recall": 0.4771,
+                  "f1": 0.5876,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2391,
+                  "recall": 0.2973,
+                  "f1": 0.2651,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.7351,
+                  "recall": 0.9328,
+                  "f1": 0.8222,
+                  "support": 119
+                }
+              ]
+            },
+            "attention_entropy": 0.9482
+          },
+          {
+            "seed": 44,
+            "epochs_ran": 18,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.7774,
+              "balanced_accuracy": 0.6726,
+              "precision_macro": 0.7538,
+              "recall_macro": 0.6726,
+              "macro_f1": 0.6563,
+              "kappa": 0.611,
+              "mcc": 0.6311,
+              "confusion_matrix": [
+                [
+                  19,
+                  49,
+                  0
+                ],
+                [
+                  4,
+                  58,
+                  11
+                ],
+                [
+                  0,
+                  11,
+                  185
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.8261,
+                  "recall": 0.2794,
+                  "f1": 0.4176,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.4915,
+                  "recall": 0.7945,
+                  "f1": 0.6073,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.9439,
+                  "recall": 0.9439,
+                  "f1": 0.9439,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.6415,
+              "balanced_accuracy": 0.6173,
+              "precision_macro": 0.6659,
+              "recall_macro": 0.6173,
+              "macro_f1": 0.5781,
+              "kappa": 0.4568,
+              "mcc": 0.4942,
+              "confusion_matrix": [
+                [
+                  42,
+                  57,
+                  10
+                ],
+                [
+                  0,
+                  21,
+                  16
+                ],
+                [
+                  2,
+                  10,
+                  107
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.9545,
+                  "recall": 0.3853,
+                  "f1": 0.549,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2386,
+                  "recall": 0.5676,
+                  "f1": 0.336,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.8045,
+                  "recall": 0.8992,
+                  "f1": 0.8492,
+                  "support": 119
+                }
+              ]
+            },
+            "attention_entropy": 0.9718
+          }
+        ]
+      },
+      "hybrid_ps": {
+        "label": "Hybrid PS",
+        "summary": {
+          "accuracy": {
+            "mean": 0.6377,
+            "std": 0.0163
+          },
+          "balanced_accuracy": {
+            "mean": 0.5849,
+            "std": 0.0166
+          },
+          "macro_f1": {
+            "mean": 0.5742,
+            "std": 0.0097
+          },
+          "mcc": {
+            "mean": 0.4396,
+            "std": 0.0133
+          },
+          "kappa": {
+            "mean": 0.4303,
+            "std": 0.0153
+          },
+          "val_balanced_accuracy": {
+            "mean": 0.5811,
+            "std": 0.0061
+          },
+          "recall_per_class": {
+            "persistent": 0.581,
+            "random_like": 0.4144,
+            "anti_persistent": 0.7591
+          },
+          "attention_entropy": {
+            "mean": 0.8222,
+            "std": 0.0466
+          }
+        },
+        "per_seed": [
+          {
+            "seed": 42,
+            "epochs_ran": 15,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.632,
+              "balanced_accuracy": 0.5803,
+              "precision_macro": 0.7085,
+              "recall_macro": 0.5803,
+              "macro_f1": 0.559,
+              "kappa": 0.3978,
+              "mcc": 0.4309,
+              "confusion_matrix": [
+                [
+                  18,
+                  44,
+                  6
+                ],
+                [
+                  2,
+                  56,
+                  15
+                ],
+                [
+                  0,
+                  57,
+                  139
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.9,
+                  "recall": 0.2647,
+                  "f1": 0.4091,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.3567,
+                  "recall": 0.7671,
+                  "f1": 0.487,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.8688,
+                  "recall": 0.7092,
+                  "f1": 0.7809,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.6226,
+              "balanced_accuracy": 0.5785,
+              "precision_macro": 0.5887,
+              "recall_macro": 0.5785,
+              "macro_f1": 0.5685,
+              "kappa": 0.4187,
+              "mcc": 0.4282,
+              "confusion_matrix": [
+                [
+                  66,
+                  35,
+                  8
+                ],
+                [
+                  11,
+                  16,
+                  10
+                ],
+                [
+                  14,
+                  22,
+                  83
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.7253,
+                  "recall": 0.6055,
+                  "f1": 0.66,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2192,
+                  "recall": 0.4324,
+                  "f1": 0.2909,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.8218,
+                  "recall": 0.6975,
+                  "f1": 0.7545,
+                  "support": 119
+                }
+              ]
+            },
+            "attention_entropy": 0.8844
+          },
+          {
+            "seed": 43,
+            "epochs_ran": 18,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.638,
+              "balanced_accuracy": 0.5741,
+              "precision_macro": 0.7403,
+              "recall_macro": 0.5741,
+              "macro_f1": 0.5487,
+              "kappa": 0.3987,
+              "mcc": 0.4309,
+              "confusion_matrix": [
+                [
+                  15,
+                  46,
+                  7
+                ],
+                [
+                  0,
+                  56,
+                  17
+                ],
+                [
+                  0,
+                  52,
+                  144
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 1.0,
+                  "recall": 0.2206,
+                  "f1": 0.3614,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.3636,
+                  "recall": 0.7671,
+                  "f1": 0.4934,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.8571,
+                  "recall": 0.7347,
+                  "f1": 0.7912,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.6302,
+              "balanced_accuracy": 0.6076,
+              "precision_macro": 0.6137,
+              "recall_macro": 0.6076,
+              "macro_f1": 0.5878,
+              "kappa": 0.4203,
+              "mcc": 0.4323,
+              "confusion_matrix": [
+                [
+                  61,
+                  19,
+                  29
+                ],
+                [
+                  3,
+                  20,
+                  14
+                ],
+                [
+                  6,
+                  27,
+                  86
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.8714,
+                  "recall": 0.5596,
+                  "f1": 0.6816,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.303,
+                  "recall": 0.5405,
+                  "f1": 0.3883,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.6667,
+                  "recall": 0.7227,
+                  "f1": 0.6935,
+                  "support": 119
+                }
+              ]
+            },
+            "attention_entropy": 0.7721
+          },
+          {
+            "seed": 44,
+            "epochs_ran": 16,
+            "validation": {
+              "n": 337,
+              "accuracy": 0.6825,
+              "balanced_accuracy": 0.589,
+              "precision_macro": 0.6519,
+              "recall_macro": 0.589,
+              "macro_f1": 0.5964,
+              "kappa": 0.4434,
+              "mcc": 0.4507,
+              "confusion_matrix": [
+                [
+                  26,
+                  33,
+                  9
+                ],
+                [
+                  8,
+                  40,
+                  25
+                ],
+                [
+                  1,
+                  31,
+                  164
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.7429,
+                  "recall": 0.3824,
+                  "f1": 0.5049,
+                  "support": 68
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.3846,
+                  "recall": 0.5479,
+                  "f1": 0.452,
+                  "support": 73
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.8283,
+                  "recall": 0.8367,
+                  "f1": 0.8325,
+                  "support": 196
+                }
+              ]
+            },
+            "test": {
+              "n": 265,
+              "accuracy": 0.6604,
+              "balanced_accuracy": 0.5685,
+              "precision_macro": 0.5791,
+              "recall_macro": 0.5685,
+              "macro_f1": 0.5663,
+              "kappa": 0.452,
+              "mcc": 0.4582,
+              "confusion_matrix": [
+                [
+                  63,
+                  29,
+                  17
+                ],
+                [
+                  11,
+                  10,
+                  16
+                ],
+                [
+                  7,
+                  10,
+                  102
+                ]
+              ],
+              "per_class": [
+                {
+                  "regime": "persistent",
+                  "precision": 0.7778,
+                  "recall": 0.578,
+                  "f1": 0.6632,
+                  "support": 109
+                },
+                {
+                  "regime": "random_like",
+                  "precision": 0.2041,
+                  "recall": 0.2703,
+                  "f1": 0.2326,
+                  "support": 37
+                },
+                {
+                  "regime": "anti_persistent",
+                  "precision": 0.7556,
+                  "recall": 0.8571,
+                  "f1": 0.8031,
+                  "support": 119
+                }
+              ]
+            },
+            "attention_entropy": 0.8102
+          }
+        ]
+      }
+    },
+    "hypotheses": [
+      {
+        "id": "H1",
+        "a": "swt_attention_bilstm",
+        "b": "ps_attention_bilstm",
+        "question": "Input PS lebih informatif dari SWT?",
+        "diffs": [
+          {
+            "seed": 42,
+            "mean_diff": -0.0222,
+            "ci95": [
+              -0.1915,
+              0.128
+            ],
+            "mcnemar_p": 0.0197
+          },
+          {
+            "seed": 43,
+            "mean_diff": 0.0849,
+            "ci95": [
+              -0.0352,
+              0.2274
+            ],
+            "mcnemar_p": 0.1621
+          },
+          {
+            "seed": 44,
+            "mean_diff": 0.0778,
+            "ci95": [
+              -0.1034,
+              0.2442
+            ],
+            "mcnemar_p": 0.1241
+          }
+        ],
+        "verdict": "TIDAK TERBUKTI (setara)"
+      },
+      {
+        "id": "H2",
+        "a": "ps_attention_bilstm_shuffled",
+        "b": "ps_attention_bilstm",
+        "question": "Urutan waktu persistensi membawa informasi?",
+        "diffs": [
+          {
+            "seed": 42,
+            "mean_diff": -0.0815,
+            "ci95": [
+              -0.2435,
+              0.0442
+            ],
+            "mcnemar_p": 0.0
+          },
+          {
+            "seed": 43,
+            "mean_diff": -0.0396,
+            "ci95": [
+              -0.1211,
+              0.0456
+            ],
+            "mcnemar_p": 0.002
+          },
+          {
+            "seed": 44,
+            "mean_diff": -0.0746,
+            "ci95": [
+              -0.2066,
+              0.0258
+            ],
+            "mcnemar_p": 0.0033
+          }
+        ],
+        "verdict": "TIDAK TERBUKTI (setara)"
+      },
+      {
+        "id": "H3",
+        "a": "ps_bilstm",
+        "b": "ps_attention_bilstm",
+        "question": "Attention menambah nilai?",
+        "diffs": [
+          {
+            "seed": 42,
+            "mean_diff": -0.0296,
+            "ci95": [
+              -0.1473,
+              0.0802
+            ],
+            "mcnemar_p": 0.0001
+          },
+          {
+            "seed": 43,
+            "mean_diff": 0.0813,
+            "ci95": [
+              -0.0031,
+              0.164
+            ],
+            "mcnemar_p": 0.001
+          },
+          {
+            "seed": 44,
+            "mean_diff": 0.1913,
+            "ci95": [
+              0.0174,
+              0.3235
+            ],
+            "mcnemar_p": 0.0
+          }
+        ],
+        "verdict": "TIDAK TERBUKTI (setara)"
+      },
+      {
+        "id": "H4",
+        "a": "hybrid_swt",
+        "b": "hybrid_ps",
+        "question": "PS memperbaiki model hybrid?",
+        "diffs": [
+          {
+            "seed": 42,
+            "mean_diff": -0.0561,
+            "ci95": [
+              -0.1967,
+              0.0741
+            ],
+            "mcnemar_p": 0.3619
+          },
+          {
+            "seed": 43,
+            "mean_diff": -0.0547,
+            "ci95": [
+              -0.2534,
+              0.1274
+            ],
+            "mcnemar_p": 0.0212
+          },
+          {
+            "seed": 44,
+            "mean_diff": -0.0602,
+            "ci95": [
+              -0.2031,
+              0.0382
+            ],
+            "mcnemar_p": 0.5115
+          }
+        ],
+        "verdict": "TIDAK TERBUKTI (setara)"
+      },
+      {
+        "id": "H5",
+        "a": "structural_mlp",
+        "b": "hybrid_ps",
+        "question": "Hybrid PS melampaui MLP?",
+        "diffs": [
+          {
+            "seed": 42,
+            "mean_diff": -0.0339,
+            "ci95": [
+              -0.1056,
+              0.0366
+            ],
+            "mcnemar_p": 0.5186
+          },
+          {
+            "seed": 43,
+            "mean_diff": -0.0303,
+            "ci95": [
+              -0.1457,
+              0.0854
+            ],
+            "mcnemar_p": 0.0281
+          },
+          {
+            "seed": 44,
+            "mean_diff": -0.0818,
+            "ci95": [
+              -0.1958,
+              -0.005
+            ],
+            "mcnemar_p": 0.1056
+          }
+        ],
+        "verdict": "TIDAK TERBUKTI (setara)"
+      },
+      {
+        "id": "H6",
+        "a": "structural_mlp",
+        "b": "ps_attention_bilstm",
+        "question": "Model sekuens murni menyamai/melampaui MLP?",
+        "diffs": [
+          {
+            "seed": 42,
+            "mean_diff": -0.175,
+            "ci95": [
+              -0.3234,
+              -0.0584
+            ],
+            "mcnemar_p": 0.0
+          },
+          {
+            "seed": 43,
+            "mean_diff": -0.107,
+            "ci95": [
+              -0.209,
+              -0.0203
+            ],
+            "mcnemar_p": 0.0001
+          },
+          {
+            "seed": 44,
+            "mean_diff": -0.1252,
+            "ci95": [
+              -0.246,
+              -0.0209
+            ],
+            "mcnemar_p": 0.0
+          }
+        ],
+        "verdict": "BERLAWANAN"
+      }
+    ],
+    "selected_on_validation": "hybrid_ps"
+  },
+  "train_only": {
     "timeframe": "4h",
     "task": "identification",
     "config_hash": "b2225bb25c4f80e84a2c7cf94f993d8e554cf55a48dbb5616e317ea65f8baaa1",
@@ -3542,3425 +6955,13 @@
     "selected_on_validation": "hybrid_ps",
     "thresholds": {
       "hurst": [
-        0.5879,
-        0.6126
-      ],
-      "dfa": [
-        0.4743,
-        0.5233
-      ]
-    }
-  },
-  "train_only": {
-    "timeframe": "4h",
-    "threshold_source": "train_only",
-    "thresholds": {
-      "hurst": [
         0.5894,
-        0.6136
+        0.6137
       ],
       "dfa": [
         0.4803,
         0.5271
       ]
-    },
-    "n": {
-      "train": 1457,
-      "validation": 347,
-      "test": 262
-    },
-    "seeds": [
-      42,
-      43,
-      44
-    ],
-    "models": {
-      "logreg": {
-        "label": "Regresi logistik fitur statistik",
-        "summary": {
-          "accuracy": {
-            "mean": 0.6832,
-            "std": 0.0
-          },
-          "balanced_accuracy": {
-            "mean": 0.5785,
-            "std": 0.0
-          },
-          "macro_f1": {
-            "mean": 0.5845,
-            "std": 0.0
-          },
-          "mcc": {
-            "mean": 0.4863,
-            "std": 0.0
-          },
-          "kappa": {
-            "mean": 0.4657,
-            "std": 0.0
-          },
-          "val_balanced_accuracy": {
-            "mean": 0.5615,
-            "std": 0.0
-          },
-          "recall_per_class": {
-            "persistent": 0.5312,
-            "random_like": 0.2973,
-            "anti_persistent": 0.907
-          }
-        },
-        "per_seed": [
-          {
-            "seed": 42,
-            "epochs_ran": 0,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6801,
-              "balanced_accuracy": 0.5615,
-              "precision_macro": 0.5693,
-              "recall_macro": 0.5615,
-              "macro_f1": 0.563,
-              "kappa": 0.3752,
-              "mcc": 0.3778,
-              "confusion_matrix": [
-                [
-                  33,
-                  6,
-                  17
-                ],
-                [
-                  20,
-                  18,
-                  35
-                ],
-                [
-                  2,
-                  31,
-                  185
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.6,
-                  "recall": 0.5893,
-                  "f1": 0.5946,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3273,
-                  "recall": 0.2466,
-                  "f1": 0.2812,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7806,
-                  "recall": 0.8486,
-                  "f1": 0.8132,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.6832,
-              "balanced_accuracy": 0.5785,
-              "precision_macro": 0.6448,
-              "recall_macro": 0.5785,
-              "macro_f1": 0.5845,
-              "kappa": 0.4657,
-              "mcc": 0.4863,
-              "confusion_matrix": [
-                [
-                  51,
-                  22,
-                  23
-                ],
-                [
-                  1,
-                  11,
-                  25
-                ],
-                [
-                  0,
-                  12,
-                  117
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.9808,
-                  "recall": 0.5312,
-                  "f1": 0.6892,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2444,
-                  "recall": 0.2973,
-                  "f1": 0.2683,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7091,
-                  "recall": 0.907,
-                  "f1": 0.7959,
-                  "support": 129
-                }
-              ]
-            }
-          },
-          {
-            "seed": 43,
-            "epochs_ran": 0,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6801,
-              "balanced_accuracy": 0.5615,
-              "precision_macro": 0.5693,
-              "recall_macro": 0.5615,
-              "macro_f1": 0.563,
-              "kappa": 0.3752,
-              "mcc": 0.3778,
-              "confusion_matrix": [
-                [
-                  33,
-                  6,
-                  17
-                ],
-                [
-                  20,
-                  18,
-                  35
-                ],
-                [
-                  2,
-                  31,
-                  185
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.6,
-                  "recall": 0.5893,
-                  "f1": 0.5946,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3273,
-                  "recall": 0.2466,
-                  "f1": 0.2812,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7806,
-                  "recall": 0.8486,
-                  "f1": 0.8132,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.6832,
-              "balanced_accuracy": 0.5785,
-              "precision_macro": 0.6448,
-              "recall_macro": 0.5785,
-              "macro_f1": 0.5845,
-              "kappa": 0.4657,
-              "mcc": 0.4863,
-              "confusion_matrix": [
-                [
-                  51,
-                  22,
-                  23
-                ],
-                [
-                  1,
-                  11,
-                  25
-                ],
-                [
-                  0,
-                  12,
-                  117
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.9808,
-                  "recall": 0.5312,
-                  "f1": 0.6892,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2444,
-                  "recall": 0.2973,
-                  "f1": 0.2683,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7091,
-                  "recall": 0.907,
-                  "f1": 0.7959,
-                  "support": 129
-                }
-              ]
-            }
-          },
-          {
-            "seed": 44,
-            "epochs_ran": 0,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6801,
-              "balanced_accuracy": 0.5615,
-              "precision_macro": 0.5693,
-              "recall_macro": 0.5615,
-              "macro_f1": 0.563,
-              "kappa": 0.3752,
-              "mcc": 0.3778,
-              "confusion_matrix": [
-                [
-                  33,
-                  6,
-                  17
-                ],
-                [
-                  20,
-                  18,
-                  35
-                ],
-                [
-                  2,
-                  31,
-                  185
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.6,
-                  "recall": 0.5893,
-                  "f1": 0.5946,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3273,
-                  "recall": 0.2466,
-                  "f1": 0.2812,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7806,
-                  "recall": 0.8486,
-                  "f1": 0.8132,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.6832,
-              "balanced_accuracy": 0.5785,
-              "precision_macro": 0.6448,
-              "recall_macro": 0.5785,
-              "macro_f1": 0.5845,
-              "kappa": 0.4657,
-              "mcc": 0.4863,
-              "confusion_matrix": [
-                [
-                  51,
-                  22,
-                  23
-                ],
-                [
-                  1,
-                  11,
-                  25
-                ],
-                [
-                  0,
-                  12,
-                  117
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.9808,
-                  "recall": 0.5312,
-                  "f1": 0.6892,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2444,
-                  "recall": 0.2973,
-                  "f1": 0.2683,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7091,
-                  "recall": 0.907,
-                  "f1": 0.7959,
-                  "support": 129
-                }
-              ]
-            }
-          }
-        ]
-      },
-      "lightgbm": {
-        "label": "LightGBM fitur statistik",
-        "summary": {
-          "accuracy": {
-            "mean": 0.6336,
-            "std": 0.0083
-          },
-          "balanced_accuracy": {
-            "mean": 0.6126,
-            "std": 0.0085
-          },
-          "macro_f1": {
-            "mean": 0.5866,
-            "std": 0.0064
-          },
-          "mcc": {
-            "mean": 0.4667,
-            "std": 0.0095
-          },
-          "kappa": {
-            "mean": 0.4422,
-            "std": 0.0102
-          },
-          "val_balanced_accuracy": {
-            "mean": 0.5187,
-            "std": 0.0143
-          },
-          "recall_per_class": {
-            "persistent": 0.4965,
-            "random_like": 0.5946,
-            "anti_persistent": 0.7467
-          }
-        },
-        "per_seed": [
-          {
-            "seed": 42,
-            "epochs_ran": 0,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6196,
-              "balanced_accuracy": 0.4984,
-              "precision_macro": 0.5105,
-              "recall_macro": 0.4984,
-              "macro_f1": 0.5037,
-              "kappa": 0.2697,
-              "mcc": 0.2702,
-              "confusion_matrix": [
-                [
-                  26,
-                  10,
-                  20
-                ],
-                [
-                  17,
-                  18,
-                  38
-                ],
-                [
-                  7,
-                  40,
-                  171
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.52,
-                  "recall": 0.4643,
-                  "f1": 0.4906,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2647,
-                  "recall": 0.2466,
-                  "f1": 0.2553,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7467,
-                  "recall": 0.7844,
-                  "f1": 0.7651,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.6374,
-              "balanced_accuracy": 0.6082,
-              "precision_macro": 0.6405,
-              "recall_macro": 0.6082,
-              "macro_f1": 0.5855,
-              "kappa": 0.4454,
-              "mcc": 0.4689,
-              "confusion_matrix": [
-                [
-                  47,
-                  43,
-                  6
-                ],
-                [
-                  4,
-                  21,
-                  12
-                ],
-                [
-                  5,
-                  25,
-                  99
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.8393,
-                  "recall": 0.4896,
-                  "f1": 0.6184,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.236,
-                  "recall": 0.5676,
-                  "f1": 0.3333,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.8462,
-                  "recall": 0.7674,
-                  "f1": 0.8049,
-                  "support": 129
-                }
-              ]
-            }
-          },
-          {
-            "seed": 43,
-            "epochs_ran": 0,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6455,
-              "balanced_accuracy": 0.5288,
-              "precision_macro": 0.5362,
-              "recall_macro": 0.5288,
-              "macro_f1": 0.5321,
-              "kappa": 0.3232,
-              "mcc": 0.3236,
-              "confusion_matrix": [
-                [
-                  27,
-                  9,
-                  20
-                ],
-                [
-                  19,
-                  22,
-                  32
-                ],
-                [
-                  7,
-                  36,
-                  175
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.5094,
-                  "recall": 0.4821,
-                  "f1": 0.4954,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3284,
-                  "recall": 0.3014,
-                  "f1": 0.3143,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7709,
-                  "recall": 0.8028,
-                  "f1": 0.7865,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.6412,
-              "balanced_accuracy": 0.6245,
-              "precision_macro": 0.647,
-              "recall_macro": 0.6245,
-              "macro_f1": 0.5949,
-              "kappa": 0.4528,
-              "mcc": 0.477,
-              "confusion_matrix": [
-                [
-                  48,
-                  42,
-                  6
-                ],
-                [
-                  2,
-                  23,
-                  12
-                ],
-                [
-                  7,
-                  25,
-                  97
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.8421,
-                  "recall": 0.5,
-                  "f1": 0.6275,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2556,
-                  "recall": 0.6216,
-                  "f1": 0.3622,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.8435,
-                  "recall": 0.7519,
-                  "f1": 0.7951,
-                  "support": 129
-                }
-              ]
-            }
-          },
-          {
-            "seed": 44,
-            "epochs_ran": 0,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6455,
-              "balanced_accuracy": 0.5288,
-              "precision_macro": 0.5451,
-              "recall_macro": 0.5288,
-              "macro_f1": 0.5359,
-              "kappa": 0.3178,
-              "mcc": 0.3185,
-              "confusion_matrix": [
-                [
-                  27,
-                  10,
-                  19
-                ],
-                [
-                  15,
-                  22,
-                  36
-                ],
-                [
-                  7,
-                  36,
-                  175
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.551,
-                  "recall": 0.4821,
-                  "f1": 0.5143,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3235,
-                  "recall": 0.3014,
-                  "f1": 0.3121,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7609,
-                  "recall": 0.8028,
-                  "f1": 0.7812,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.6221,
-              "balanced_accuracy": 0.6052,
-              "precision_macro": 0.638,
-              "recall_macro": 0.6052,
-              "macro_f1": 0.5794,
-              "kappa": 0.4284,
-              "mcc": 0.4541,
-              "confusion_matrix": [
-                [
-                  48,
-                  42,
-                  6
-                ],
-                [
-                  3,
-                  22,
-                  12
-                ],
-                [
-                  6,
-                  30,
-                  93
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.8421,
-                  "recall": 0.5,
-                  "f1": 0.6275,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.234,
-                  "recall": 0.5946,
-                  "f1": 0.3359,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.8378,
-                  "recall": 0.7209,
-                  "f1": 0.775,
-                  "support": 129
-                }
-              ]
-            }
-          }
-        ]
-      },
-      "structural_mlp": {
-        "label": "MLP fitur statistik",
-        "summary": {
-          "accuracy": {
-            "mean": 0.6845,
-            "std": 0.0207
-          },
-          "balanced_accuracy": {
-            "mean": 0.5846,
-            "std": 0.0128
-          },
-          "macro_f1": {
-            "mean": 0.5854,
-            "std": 0.0122
-          },
-          "mcc": {
-            "mean": 0.4857,
-            "std": 0.0217
-          },
-          "kappa": {
-            "mean": 0.4817,
-            "std": 0.0241
-          },
-          "val_balanced_accuracy": {
-            "mean": 0.4747,
-            "std": 0.0192
-          },
-          "recall_per_class": {
-            "persistent": 0.6423,
-            "random_like": 0.2793,
-            "anti_persistent": 0.832
-          }
-        },
-        "per_seed": [
-          {
-            "seed": 42,
-            "epochs_ran": 17,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6167,
-              "balanced_accuracy": 0.4704,
-              "precision_macro": 0.4982,
-              "recall_macro": 0.4704,
-              "macro_f1": 0.4797,
-              "kappa": 0.2342,
-              "mcc": 0.2371,
-              "confusion_matrix": [
-                [
-                  20,
-                  10,
-                  26
-                ],
-                [
-                  12,
-                  18,
-                  43
-                ],
-                [
-                  10,
-                  32,
-                  176
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.4762,
-                  "recall": 0.3571,
-                  "f1": 0.4082,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3,
-                  "recall": 0.2466,
-                  "f1": 0.2707,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7184,
-                  "recall": 0.8073,
-                  "f1": 0.7603,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.6565,
-              "balanced_accuracy": 0.5695,
-              "precision_macro": 0.5959,
-              "recall_macro": 0.5695,
-              "macro_f1": 0.5709,
-              "kappa": 0.4478,
-              "mcc": 0.4552,
-              "confusion_matrix": [
-                [
-                  54,
-                  32,
-                  10
-                ],
-                [
-                  8,
-                  12,
-                  17
-                ],
-                [
-                  6,
-                  17,
-                  106
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.7941,
-                  "recall": 0.5625,
-                  "f1": 0.6585,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.1967,
-                  "recall": 0.3243,
-                  "f1": 0.2449,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.797,
-                  "recall": 0.8217,
-                  "f1": 0.8092,
-                  "support": 129
-                }
-              ]
-            }
-          },
-          {
-            "seed": 43,
-            "epochs_ran": 16,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6744,
-              "balanced_accuracy": 0.5001,
-              "precision_macro": 0.5472,
-              "recall_macro": 0.5001,
-              "macro_f1": 0.4922,
-              "kappa": 0.3067,
-              "mcc": 0.3293,
-              "confusion_matrix": [
-                [
-                  26,
-                  5,
-                  25
-                ],
-                [
-                  16,
-                  9,
-                  48
-                ],
-                [
-                  12,
-                  7,
-                  199
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.4815,
-                  "recall": 0.4643,
-                  "f1": 0.4727,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.4286,
-                  "recall": 0.1233,
-                  "f1": 0.1915,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7316,
-                  "recall": 0.9128,
-                  "f1": 0.8122,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.7061,
-              "balanced_accuracy": 0.5834,
-              "precision_macro": 0.59,
-              "recall_macro": 0.5834,
-              "macro_f1": 0.5846,
-              "kappa": 0.502,
-              "mcc": 0.5043,
-              "confusion_matrix": [
-                [
-                  68,
-                  12,
-                  16
-                ],
-                [
-                  12,
-                  7,
-                  18
-                ],
-                [
-                  8,
-                  11,
-                  110
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.7727,
-                  "recall": 0.7083,
-                  "f1": 0.7391,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2333,
-                  "recall": 0.1892,
-                  "f1": 0.209,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7639,
-                  "recall": 0.8527,
-                  "f1": 0.8059,
-                  "support": 129
-                }
-              ]
-            }
-          },
-          {
-            "seed": 44,
-            "epochs_ran": 17,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.5965,
-              "balanced_accuracy": 0.4536,
-              "precision_macro": 0.4803,
-              "recall_macro": 0.4536,
-              "macro_f1": 0.4625,
-              "kappa": 0.1939,
-              "mcc": 0.1963,
-              "confusion_matrix": [
-                [
-                  20,
-                  6,
-                  30
-                ],
-                [
-                  13,
-                  16,
-                  44
-                ],
-                [
-                  9,
-                  38,
-                  171
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.4762,
-                  "recall": 0.3571,
-                  "f1": 0.4082,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2667,
-                  "recall": 0.2192,
-                  "f1": 0.2406,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.698,
-                  "recall": 0.7844,
-                  "f1": 0.7387,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.6908,
-              "balanced_accuracy": 0.6008,
-              "precision_macro": 0.6075,
-              "recall_macro": 0.6008,
-              "macro_f1": 0.6008,
-              "kappa": 0.4954,
-              "mcc": 0.4975,
-              "confusion_matrix": [
-                [
-                  63,
-                  23,
-                  10
-                ],
-                [
-                  10,
-                  12,
-                  15
-                ],
-                [
-                  9,
-                  14,
-                  106
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.7683,
-                  "recall": 0.6562,
-                  "f1": 0.7079,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2449,
-                  "recall": 0.3243,
-                  "f1": 0.2791,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.8092,
-                  "recall": 0.8217,
-                  "f1": 0.8154,
-                  "support": 129
-                }
-              ]
-            }
-          }
-        ]
-      },
-      "swt_attention_bilstm": {
-        "label": "SWT + Attention-BiLSTM",
-        "summary": {
-          "accuracy": {
-            "mean": 0.4898,
-            "std": 0.0188
-          },
-          "balanced_accuracy": {
-            "mean": 0.3684,
-            "std": 0.0159
-          },
-          "macro_f1": {
-            "mean": 0.3467,
-            "std": 0.0103
-          },
-          "mcc": {
-            "mean": 0.0919,
-            "std": 0.027
-          },
-          "kappa": {
-            "mean": 0.0878,
-            "std": 0.0265
-          },
-          "val_balanced_accuracy": {
-            "mean": 0.4907,
-            "std": 0.005
-          },
-          "recall_per_class": {
-            "persistent": 0.4062,
-            "random_like": 0.009,
-            "anti_persistent": 0.6899
-          },
-          "attention_entropy": {
-            "mean": 0.9737,
-            "std": 0.0039
-          }
-        },
-        "per_seed": [
-          {
-            "seed": 42,
-            "epochs_ran": 13,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.5879,
-              "balanced_accuracy": 0.4968,
-              "precision_macro": 0.4527,
-              "recall_macro": 0.4968,
-              "macro_f1": 0.4442,
-              "kappa": 0.2556,
-              "mcc": 0.266,
-              "confusion_matrix": [
-                [
-                  37,
-                  2,
-                  17
-                ],
-                [
-                  34,
-                  7,
-                  32
-                ],
-                [
-                  40,
-                  18,
-                  160
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.3333,
-                  "recall": 0.6607,
-                  "f1": 0.4431,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2593,
-                  "recall": 0.0959,
-                  "f1": 0.14,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7656,
-                  "recall": 0.7339,
-                  "f1": 0.7494,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.4656,
-              "balanced_accuracy": 0.349,
-              "precision_macro": 0.3251,
-              "recall_macro": 0.349,
-              "macro_f1": 0.3344,
-              "kappa": 0.0668,
-              "mcc": 0.0682,
-              "confusion_matrix": [
-                [
-                  38,
-                  9,
-                  49
-                ],
-                [
-                  11,
-                  0,
-                  26
-                ],
-                [
-                  36,
-                  9,
-                  84
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.4471,
-                  "recall": 0.3958,
-                  "f1": 0.4199,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.0,
-                  "recall": 0.0,
-                  "f1": 0.0,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.5283,
-                  "recall": 0.6512,
-                  "f1": 0.5833,
-                  "support": 129
-                }
-              ]
-            },
-            "attention_entropy": 0.9683
-          },
-          {
-            "seed": 43,
-            "epochs_ran": 13,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.5965,
-              "balanced_accuracy": 0.4846,
-              "precision_macro": 0.3593,
-              "recall_macro": 0.4846,
-              "macro_f1": 0.3974,
-              "kappa": 0.2614,
-              "mcc": 0.2833,
-              "confusion_matrix": [
-                [
-                  38,
-                  3,
-                  15
-                ],
-                [
-                  40,
-                  0,
-                  33
-                ],
-                [
-                  49,
-                  0,
-                  169
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.2992,
-                  "recall": 0.6786,
-                  "f1": 0.4153,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.0,
-                  "recall": 0.0,
-                  "f1": 0.0,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7788,
-                  "recall": 0.7752,
-                  "f1": 0.777,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.4924,
-              "balanced_accuracy": 0.3682,
-              "precision_macro": 0.4293,
-              "recall_macro": 0.3682,
-              "macro_f1": 0.3461,
-              "kappa": 0.0715,
-              "mcc": 0.0779,
-              "confusion_matrix": [
-                [
-                  32,
-                  2,
-                  62
-                ],
-                [
-                  8,
-                  1,
-                  28
-                ],
-                [
-                  33,
-                  0,
-                  96
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.4384,
-                  "recall": 0.3333,
-                  "f1": 0.3787,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3333,
-                  "recall": 0.027,
-                  "f1": 0.05,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.5161,
-                  "recall": 0.7442,
-                  "f1": 0.6095,
-                  "support": 129
-                }
-              ]
-            },
-            "attention_entropy": 0.9776
-          },
-          {
-            "seed": 44,
-            "epochs_ran": 13,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6052,
-              "balanced_accuracy": 0.4908,
-              "precision_macro": 0.4568,
-              "recall_macro": 0.4908,
-              "macro_f1": 0.4173,
-              "kappa": 0.2693,
-              "mcc": 0.2882,
-              "confusion_matrix": [
-                [
-                  37,
-                  2,
-                  17
-                ],
-                [
-                  38,
-                  2,
-                  33
-                ],
-                [
-                  44,
-                  3,
-                  171
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.3109,
-                  "recall": 0.6607,
-                  "f1": 0.4229,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2857,
-                  "recall": 0.0274,
-                  "f1": 0.05,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7738,
-                  "recall": 0.7844,
-                  "f1": 0.779,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.5115,
-              "balanced_accuracy": 0.388,
-              "precision_macro": 0.3356,
-              "recall_macro": 0.388,
-              "macro_f1": 0.3595,
-              "kappa": 0.1252,
-              "mcc": 0.1297,
-              "confusion_matrix": [
-                [
-                  47,
-                  1,
-                  48
-                ],
-                [
-                  14,
-                  0,
-                  23
-                ],
-                [
-                  42,
-                  0,
-                  87
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.4563,
-                  "recall": 0.4896,
-                  "f1": 0.4724,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.0,
-                  "recall": 0.0,
-                  "f1": 0.0,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.5506,
-                  "recall": 0.6744,
-                  "f1": 0.6063,
-                  "support": 129
-                }
-              ]
-            },
-            "attention_entropy": 0.9752
-          }
-        ]
-      },
-      "hybrid_swt": {
-        "label": "Hybrid SWT (usulan lama)",
-        "summary": {
-          "accuracy": {
-            "mean": 0.6679,
-            "std": 0.0195
-          },
-          "balanced_accuracy": {
-            "mean": 0.5919,
-            "std": 0.0189
-          },
-          "macro_f1": {
-            "mean": 0.5901,
-            "std": 0.0181
-          },
-          "mcc": {
-            "mean": 0.4737,
-            "std": 0.0207
-          },
-          "kappa": {
-            "mean": 0.469,
-            "std": 0.0231
-          },
-          "val_balanced_accuracy": {
-            "mean": 0.5725,
-            "std": 0.0723
-          },
-          "recall_per_class": {
-            "persistent": 0.684,
-            "random_like": 0.3424,
-            "anti_persistent": 0.7493
-          },
-          "attention_entropy": {
-            "mean": 0.8753,
-            "std": 0.032
-          }
-        },
-        "per_seed": [
-          {
-            "seed": 42,
-            "epochs_ran": 18,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6254,
-              "balanced_accuracy": 0.4703,
-              "precision_macro": 0.4824,
-              "recall_macro": 0.4703,
-              "macro_f1": 0.4738,
-              "kappa": 0.2599,
-              "mcc": 0.2622,
-              "confusion_matrix": [
-                [
-                  21,
-                  19,
-                  16
-                ],
-                [
-                  14,
-                  15,
-                  44
-                ],
-                [
-                  13,
-                  24,
-                  181
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.4375,
-                  "recall": 0.375,
-                  "f1": 0.4038,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2586,
-                  "recall": 0.2055,
-                  "f1": 0.229,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.751,
-                  "recall": 0.8303,
-                  "f1": 0.7887,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.687,
-              "balanced_accuracy": 0.6128,
-              "precision_macro": 0.615,
-              "recall_macro": 0.6128,
-              "macro_f1": 0.6092,
-              "kappa": 0.4959,
-              "mcc": 0.4986,
-              "confusion_matrix": [
-                [
-                  65,
-                  21,
-                  10
-                ],
-                [
-                  11,
-                  14,
-                  12
-                ],
-                [
-                  9,
-                  19,
-                  101
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.7647,
-                  "recall": 0.6771,
-                  "f1": 0.7182,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2593,
-                  "recall": 0.3784,
-                  "f1": 0.3077,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.8211,
-                  "recall": 0.7829,
-                  "f1": 0.8016,
-                  "support": 129
-                }
-              ]
-            },
-            "attention_entropy": 0.902
-          },
-          {
-            "seed": 43,
-            "epochs_ran": 17,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6859,
-              "balanced_accuracy": 0.6283,
-              "precision_macro": 0.5961,
-              "recall_macro": 0.6283,
-              "macro_f1": 0.6029,
-              "kappa": 0.4649,
-              "mcc": 0.4746,
-              "confusion_matrix": [
-                [
-                  33,
-                  21,
-                  2
-                ],
-                [
-                  25,
-                  39,
-                  9
-                ],
-                [
-                  17,
-                  35,
-                  166
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.44,
-                  "recall": 0.5893,
-                  "f1": 0.5038,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.4105,
-                  "recall": 0.5342,
-                  "f1": 0.4643,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.9379,
-                  "recall": 0.7615,
-                  "f1": 0.8405,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.6756,
-              "balanced_accuracy": 0.596,
-              "precision_macro": 0.6041,
-              "recall_macro": 0.596,
-              "macro_f1": 0.5952,
-              "kappa": 0.4716,
-              "mcc": 0.4744,
-              "confusion_matrix": [
-                [
-                  62,
-                  20,
-                  14
-                ],
-                [
-                  8,
-                  13,
-                  16
-                ],
-                [
-                  9,
-                  18,
-                  102
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.7848,
-                  "recall": 0.6458,
-                  "f1": 0.7086,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2549,
-                  "recall": 0.3514,
-                  "f1": 0.2955,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7727,
-                  "recall": 0.7907,
-                  "f1": 0.7816,
-                  "support": 129
-                }
-              ]
-            },
-            "attention_entropy": 0.8303
-          },
-          {
-            "seed": 44,
-            "epochs_ran": 16,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6657,
-              "balanced_accuracy": 0.6188,
-              "precision_macro": 0.583,
-              "recall_macro": 0.6188,
-              "macro_f1": 0.5917,
-              "kappa": 0.4295,
-              "mcc": 0.4381,
-              "confusion_matrix": [
-                [
-                  36,
-                  18,
-                  2
-                ],
-                [
-                  22,
-                  35,
-                  16
-                ],
-                [
-                  18,
-                  40,
-                  160
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.4737,
-                  "recall": 0.6429,
-                  "f1": 0.5455,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3763,
-                  "recall": 0.4795,
-                  "f1": 0.4217,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.8989,
-                  "recall": 0.7339,
-                  "f1": 0.8081,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.6412,
-              "balanced_accuracy": 0.567,
-              "precision_macro": 0.5845,
-              "recall_macro": 0.567,
-              "macro_f1": 0.5658,
-              "kappa": 0.4395,
-              "mcc": 0.448,
-              "confusion_matrix": [
-                [
-                  70,
-                  23,
-                  3
-                ],
-                [
-                  17,
-                  11,
-                  9
-                ],
-                [
-                  13,
-                  29,
-                  87
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.7,
-                  "recall": 0.7292,
-                  "f1": 0.7143,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.1746,
-                  "recall": 0.2973,
-                  "f1": 0.22,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.8788,
-                  "recall": 0.6744,
-                  "f1": 0.7632,
-                  "support": 129
-                }
-              ]
-            },
-            "attention_entropy": 0.8935
-          }
-        ]
-      },
-      "ps_bilstm": {
-        "label": "PS + BiLSTM (tanpa attention)",
-        "summary": {
-          "accuracy": {
-            "mean": 0.4835,
-            "std": 0.0858
-          },
-          "balanced_accuracy": {
-            "mean": 0.5279,
-            "std": 0.0734
-          },
-          "macro_f1": {
-            "mean": 0.4599,
-            "std": 0.0807
-          },
-          "mcc": {
-            "mean": 0.3341,
-            "std": 0.0971
-          },
-          "kappa": {
-            "mean": 0.2821,
-            "std": 0.0958
-          },
-          "val_balanced_accuracy": {
-            "mean": 0.6465,
-            "std": 0.033
-          },
-          "recall_per_class": {
-            "persistent": 0.2673,
-            "random_like": 0.7477,
-            "anti_persistent": 0.5685
-          }
-        },
-        "per_seed": [
-          {
-            "seed": 42,
-            "epochs_ran": 15,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6686,
-              "balanced_accuracy": 0.61,
-              "precision_macro": 0.6012,
-              "recall_macro": 0.61,
-              "macro_f1": 0.6007,
-              "kappa": 0.4173,
-              "mcc": 0.4226,
-              "confusion_matrix": [
-                [
-                  33,
-                  14,
-                  9
-                ],
-                [
-                  19,
-                  36,
-                  18
-                ],
-                [
-                  4,
-                  51,
-                  163
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.5893,
-                  "recall": 0.5893,
-                  "f1": 0.5893,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3564,
-                  "recall": 0.4932,
-                  "f1": 0.4138,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.8579,
-                  "recall": 0.7477,
-                  "f1": 0.799,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.5344,
-              "balanced_accuracy": 0.5776,
-              "precision_macro": 0.6084,
-              "recall_macro": 0.5776,
-              "macro_f1": 0.5005,
-              "kappa": 0.3357,
-              "mcc": 0.3907,
-              "confusion_matrix": [
-                [
-                  26,
-                  62,
-                  8
-                ],
-                [
-                  5,
-                  30,
-                  2
-                ],
-                [
-                  6,
-                  39,
-                  84
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.7027,
-                  "recall": 0.2708,
-                  "f1": 0.391,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.229,
-                  "recall": 0.8108,
-                  "f1": 0.3571,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.8936,
-                  "recall": 0.6512,
-                  "f1": 0.7534,
-                  "support": 129
-                }
-              ]
-            }
-          },
-          {
-            "seed": 43,
-            "epochs_ran": 16,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6484,
-              "balanced_accuracy": 0.6396,
-              "precision_macro": 0.6348,
-              "recall_macro": 0.6396,
-              "macro_f1": 0.6027,
-              "kappa": 0.4288,
-              "mcc": 0.4634,
-              "confusion_matrix": [
-                [
-                  27,
-                  23,
-                  6
-                ],
-                [
-                  11,
-                  58,
-                  4
-                ],
-                [
-                  8,
-                  70,
-                  140
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.587,
-                  "recall": 0.4821,
-                  "f1": 0.5294,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3841,
-                  "recall": 0.7945,
-                  "f1": 0.5179,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.9333,
-                  "recall": 0.6422,
-                  "f1": 0.7609,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.5534,
-              "balanced_accuracy": 0.5819,
-              "precision_macro": 0.6335,
-              "recall_macro": 0.5819,
-              "macro_f1": 0.532,
-              "kappa": 0.363,
-              "mcc": 0.4142,
-              "confusion_matrix": [
-                [
-                  38,
-                  56,
-                  2
-                ],
-                [
-                  7,
-                  27,
-                  3
-                ],
-                [
-                  6,
-                  43,
-                  80
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.7451,
-                  "recall": 0.3958,
-                  "f1": 0.517,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2143,
-                  "recall": 0.7297,
-                  "f1": 0.3313,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.9412,
-                  "recall": 0.6202,
-                  "f1": 0.7477,
-                  "support": 129
-                }
-              ]
-            }
-          },
-          {
-            "seed": 44,
-            "epochs_ran": 18,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.755,
-              "balanced_accuracy": 0.6899,
-              "precision_macro": 0.6849,
-              "recall_macro": 0.6899,
-              "macro_f1": 0.676,
-              "kappa": 0.5673,
-              "mcc": 0.577,
-              "confusion_matrix": [
-                [
-                  29,
-                  22,
-                  5
-                ],
-                [
-                  14,
-                  53,
-                  6
-                ],
-                [
-                  3,
-                  35,
-                  180
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.6304,
-                  "recall": 0.5179,
-                  "f1": 0.5686,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.4818,
-                  "recall": 0.726,
-                  "f1": 0.5792,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.9424,
-                  "recall": 0.8257,
-                  "f1": 0.8802,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.3626,
-              "balanced_accuracy": 0.4241,
-              "precision_macro": 0.4877,
-              "recall_macro": 0.4241,
-              "macro_f1": 0.3472,
-              "kappa": 0.1475,
-              "mcc": 0.1975,
-              "confusion_matrix": [
-                [
-                  13,
-                  78,
-                  5
-                ],
-                [
-                  9,
-                  26,
-                  2
-                ],
-                [
-                  9,
-                  64,
-                  56
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.4194,
-                  "recall": 0.1354,
-                  "f1": 0.2047,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.1548,
-                  "recall": 0.7027,
-                  "f1": 0.2537,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.8889,
-                  "recall": 0.4341,
-                  "f1": 0.5833,
-                  "support": 129
-                }
-              ]
-            }
-          }
-        ]
-      },
-      "ps_attention_bilstm": {
-        "label": "PS + Attention-BiLSTM",
-        "summary": {
-          "accuracy": {
-            "mean": 0.5878,
-            "std": 0.091
-          },
-          "balanced_accuracy": {
-            "mean": 0.5691,
-            "std": 0.0467
-          },
-          "macro_f1": {
-            "mean": 0.5427,
-            "std": 0.0622
-          },
-          "mcc": {
-            "mean": 0.4039,
-            "std": 0.0869
-          },
-          "kappa": {
-            "mean": 0.3791,
-            "std": 0.1023
-          },
-          "val_balanced_accuracy": {
-            "mean": 0.6059,
-            "std": 0.0156
-          },
-          "recall_per_class": {
-            "persistent": 0.4757,
-            "random_like": 0.5496,
-            "anti_persistent": 0.6822
-          },
-          "attention_entropy": {
-            "mean": 0.7821,
-            "std": 0.0217
-          }
-        },
-        "per_seed": [
-          {
-            "seed": 42,
-            "epochs_ran": 18,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6657,
-              "balanced_accuracy": 0.6104,
-              "precision_macro": 0.6119,
-              "recall_macro": 0.6104,
-              "macro_f1": 0.6007,
-              "kappa": 0.4212,
-              "mcc": 0.4313,
-              "confusion_matrix": [
-                [
-                  30,
-                  19,
-                  7
-                ],
-                [
-                  17,
-                  41,
-                  15
-                ],
-                [
-                  3,
-                  55,
-                  160
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.6,
-                  "recall": 0.5357,
-                  "f1": 0.566,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3565,
-                  "recall": 0.5616,
-                  "f1": 0.4362,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.8791,
-                  "recall": 0.7339,
-                  "f1": 0.8,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.4847,
-              "balanced_accuracy": 0.5374,
-              "precision_macro": 0.6388,
-              "recall_macro": 0.5374,
-              "macro_f1": 0.4778,
-              "kappa": 0.2791,
-              "mcc": 0.3363,
-              "confusion_matrix": [
-                [
-                  33,
-                  53,
-                  10
-                ],
-                [
-                  0,
-                  28,
-                  9
-                ],
-                [
-                  2,
-                  61,
-                  66
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.9429,
-                  "recall": 0.3438,
-                  "f1": 0.5038,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.1972,
-                  "recall": 0.7568,
-                  "f1": 0.3128,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7765,
-                  "recall": 0.5116,
-                  "f1": 0.6168,
-                  "support": 129
-                }
-              ]
-            },
-            "attention_entropy": 0.7526
-          },
-          {
-            "seed": 43,
-            "epochs_ran": 16,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6254,
-              "balanced_accuracy": 0.5849,
-              "precision_macro": 0.5959,
-              "recall_macro": 0.5849,
-              "macro_f1": 0.5738,
-              "kappa": 0.3571,
-              "mcc": 0.3697,
-              "confusion_matrix": [
-                [
-                  27,
-                  13,
-                  16
-                ],
-                [
-                  14,
-                  44,
-                  15
-                ],
-                [
-                  3,
-                  69,
-                  146
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.6136,
-                  "recall": 0.4821,
-                  "f1": 0.54,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3492,
-                  "recall": 0.6027,
-                  "f1": 0.4422,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.8249,
-                  "recall": 0.6697,
-                  "f1": 0.7392,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.5725,
-              "balanced_accuracy": 0.5348,
-              "precision_macro": 0.5509,
-              "recall_macro": 0.5348,
-              "macro_f1": 0.5238,
-              "kappa": 0.3386,
-              "mcc": 0.3489,
-              "confusion_matrix": [
-                [
-                  50,
-                  26,
-                  20
-                ],
-                [
-                  12,
-                  16,
-                  9
-                ],
-                [
-                  9,
-                  36,
-                  84
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.7042,
-                  "recall": 0.5208,
-                  "f1": 0.5988,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2051,
-                  "recall": 0.4324,
-                  "f1": 0.2783,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7434,
-                  "recall": 0.6512,
-                  "f1": 0.6942,
-                  "support": 129
-                }
-              ]
-            },
-            "attention_entropy": 0.7892
-          },
-          {
-            "seed": 44,
-            "epochs_ran": 17,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6772,
-              "balanced_accuracy": 0.6223,
-              "precision_macro": 0.6512,
-              "recall_macro": 0.6223,
-              "macro_f1": 0.5995,
-              "kappa": 0.4582,
-              "mcc": 0.489,
-              "confusion_matrix": [
-                [
-                  21,
-                  33,
-                  2
-                ],
-                [
-                  12,
-                  56,
-                  5
-                ],
-                [
-                  1,
-                  59,
-                  158
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.6176,
-                  "recall": 0.375,
-                  "f1": 0.4667,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3784,
-                  "recall": 0.7671,
-                  "f1": 0.5068,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.9576,
-                  "recall": 0.7248,
-                  "f1": 0.8251,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.7061,
-              "balanced_accuracy": 0.6352,
-              "precision_macro": 0.6392,
-              "recall_macro": 0.6352,
-              "macro_f1": 0.6266,
-              "kappa": 0.5197,
-              "mcc": 0.5266,
-              "confusion_matrix": [
-                [
-                  54,
-                  28,
-                  14
-                ],
-                [
-                  8,
-                  17,
-                  12
-                ],
-                [
-                  7,
-                  8,
-                  114
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.7826,
-                  "recall": 0.5625,
-                  "f1": 0.6545,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3208,
-                  "recall": 0.4595,
-                  "f1": 0.3778,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.8143,
-                  "recall": 0.8837,
-                  "f1": 0.8476,
-                  "support": 129
-                }
-              ]
-            },
-            "attention_entropy": 0.8044
-          }
-        ]
-      },
-      "ps_attention_bilstm_shuffled": {
-        "label": "PS + Attention-BiLSTM, urutan diacak",
-        "summary": {
-          "accuracy": {
-            "mean": 0.6272,
-            "std": 0.0361
-          },
-          "balanced_accuracy": {
-            "mean": 0.5491,
-            "std": 0.0421
-          },
-          "macro_f1": {
-            "mean": 0.5259,
-            "std": 0.0356
-          },
-          "mcc": {
-            "mean": 0.4244,
-            "std": 0.0577
-          },
-          "kappa": {
-            "mean": 0.3971,
-            "std": 0.0562
-          },
-          "val_balanced_accuracy": {
-            "mean": 0.6323,
-            "std": 0.0343
-          },
-          "recall_per_class": {
-            "persistent": 0.3299,
-            "random_like": 0.4054,
-            "anti_persistent": 0.9121
-          },
-          "attention_entropy": {
-            "mean": 0.9369,
-            "std": 0.0305
-          }
-        },
-        "per_seed": [
-          {
-            "seed": 42,
-            "epochs_ran": 17,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6801,
-              "balanced_accuracy": 0.6335,
-              "precision_macro": 0.6507,
-              "recall_macro": 0.6335,
-              "macro_f1": 0.6196,
-              "kappa": 0.4587,
-              "mcc": 0.4803,
-              "confusion_matrix": [
-                [
-                  28,
-                  27,
-                  1
-                ],
-                [
-                  14,
-                  49,
-                  10
-                ],
-                [
-                  1,
-                  58,
-                  159
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.6512,
-                  "recall": 0.5,
-                  "f1": 0.5657,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3657,
-                  "recall": 0.6712,
-                  "f1": 0.4734,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.9353,
-                  "recall": 0.7294,
-                  "f1": 0.8196,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.6489,
-              "balanced_accuracy": 0.6,
-              "precision_macro": 0.6531,
-              "recall_macro": 0.6,
-              "macro_f1": 0.5577,
-              "kappa": 0.4491,
-              "mcc": 0.4853,
-              "confusion_matrix": [
-                [
-                  29,
-                  57,
-                  10
-                ],
-                [
-                  2,
-                  21,
-                  14
-                ],
-                [
-                  2,
-                  7,
-                  120
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.8788,
-                  "recall": 0.3021,
-                  "f1": 0.4496,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2471,
-                  "recall": 0.5676,
-                  "f1": 0.3443,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.8333,
-                  "recall": 0.9302,
-                  "f1": 0.8791,
-                  "support": 129
-                }
-              ]
-            },
-            "attention_entropy": 0.9798
-          },
-          {
-            "seed": 43,
-            "epochs_ran": 18,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.7032,
-              "balanced_accuracy": 0.6737,
-              "precision_macro": 0.659,
-              "recall_macro": 0.6737,
-              "macro_f1": 0.6509,
-              "kappa": 0.4992,
-              "mcc": 0.5173,
-              "confusion_matrix": [
-                [
-                  35,
-                  19,
-                  2
-                ],
-                [
-                  18,
-                  48,
-                  7
-                ],
-                [
-                  2,
-                  55,
-                  161
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.6364,
-                  "recall": 0.625,
-                  "f1": 0.6306,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3934,
-                  "recall": 0.6575,
-                  "f1": 0.4923,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.9471,
-                  "recall": 0.7385,
-                  "f1": 0.8299,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.6565,
-              "balanced_accuracy": 0.5506,
-              "precision_macro": 0.5819,
-              "recall_macro": 0.5506,
-              "macro_f1": 0.5437,
-              "kappa": 0.4233,
-              "mcc": 0.4411,
-              "confusion_matrix": [
-                [
-                  40,
-                  33,
-                  23
-                ],
-                [
-                  7,
-                  11,
-                  19
-                ],
-                [
-                  5,
-                  3,
-                  121
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.7692,
-                  "recall": 0.4167,
-                  "f1": 0.5405,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.234,
-                  "recall": 0.2973,
-                  "f1": 0.2619,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7423,
-                  "recall": 0.938,
-                  "f1": 0.8288,
-                  "support": 129
-                }
-              ]
-            },
-            "attention_entropy": 0.9192
-          },
-          {
-            "seed": 44,
-            "epochs_ran": 23,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.732,
-              "balanced_accuracy": 0.5897,
-              "precision_macro": 0.6941,
-              "recall_macro": 0.5897,
-              "macro_f1": 0.5409,
-              "kappa": 0.5104,
-              "mcc": 0.5387,
-              "confusion_matrix": [
-                [
-                  5,
-                  51,
-                  0
-                ],
-                [
-                  2,
-                  59,
-                  12
-                ],
-                [
-                  0,
-                  28,
-                  190
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.7143,
-                  "recall": 0.0893,
-                  "f1": 0.1587,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.4275,
-                  "recall": 0.8082,
-                  "f1": 0.5592,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.9406,
-                  "recall": 0.8716,
-                  "f1": 0.9048,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.5763,
-              "balanced_accuracy": 0.4968,
-              "precision_macro": 0.5929,
-              "recall_macro": 0.4968,
-              "macro_f1": 0.4762,
-              "kappa": 0.319,
-              "mcc": 0.3469,
-              "confusion_matrix": [
-                [
-                  26,
-                  46,
-                  24
-                ],
-                [
-                  2,
-                  13,
-                  22
-                ],
-                [
-                  1,
-                  16,
-                  112
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.8966,
-                  "recall": 0.2708,
-                  "f1": 0.416,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.1733,
-                  "recall": 0.3514,
-                  "f1": 0.2321,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7089,
-                  "recall": 0.8682,
-                  "f1": 0.7805,
-                  "support": 129
-                }
-              ]
-            },
-            "attention_entropy": 0.9117
-          }
-        ]
-      },
-      "hybrid_ps": {
-        "label": "Hybrid PS",
-        "summary": {
-          "accuracy": {
-            "mean": 0.6578,
-            "std": 0.025
-          },
-          "balanced_accuracy": {
-            "mean": 0.6148,
-            "std": 0.0082
-          },
-          "macro_f1": {
-            "mean": 0.5975,
-            "std": 0.0133
-          },
-          "mcc": {
-            "mean": 0.4664,
-            "std": 0.0171
-          },
-          "kappa": {
-            "mean": 0.4548,
-            "std": 0.0222
-          },
-          "val_balanced_accuracy": {
-            "mean": 0.6171,
-            "std": 0.0201
-          },
-          "recall_per_class": {
-            "persistent": 0.5313,
-            "random_like": 0.5225,
-            "anti_persistent": 0.7907
-          },
-          "attention_entropy": {
-            "mean": 0.7796,
-            "std": 0.0528
-          }
-        },
-        "per_seed": [
-          {
-            "seed": 42,
-            "epochs_ran": 16,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6686,
-              "balanced_accuracy": 0.5934,
-              "precision_macro": 0.6535,
-              "recall_macro": 0.5934,
-              "macro_f1": 0.59,
-              "kappa": 0.4158,
-              "mcc": 0.4313,
-              "confusion_matrix": [
-                [
-                  21,
-                  29,
-                  6
-                ],
-                [
-                  6,
-                  48,
-                  19
-                ],
-                [
-                  2,
-                  53,
-                  163
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.7241,
-                  "recall": 0.375,
-                  "f1": 0.4941,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3692,
-                  "recall": 0.6575,
-                  "f1": 0.4729,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.867,
-                  "recall": 0.7477,
-                  "f1": 0.803,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.6603,
-              "balanced_accuracy": 0.6033,
-              "precision_macro": 0.6026,
-              "recall_macro": 0.6033,
-              "macro_f1": 0.5921,
-              "kappa": 0.4549,
-              "mcc": 0.4607,
-              "confusion_matrix": [
-                [
-                  53,
-                  28,
-                  15
-                ],
-                [
-                  9,
-                  17,
-                  11
-                ],
-                [
-                  11,
-                  15,
-                  103
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.726,
-                  "recall": 0.5521,
-                  "f1": 0.6272,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2833,
-                  "recall": 0.4595,
-                  "f1": 0.3505,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7984,
-                  "recall": 0.7984,
-                  "f1": 0.7984,
-                  "support": 129
-                }
-              ]
-            },
-            "attention_entropy": 0.8491
-          },
-          {
-            "seed": 43,
-            "epochs_ran": 17,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.6571,
-              "balanced_accuracy": 0.6426,
-              "precision_macro": 0.66,
-              "recall_macro": 0.6426,
-              "macro_f1": 0.6151,
-              "kappa": 0.4401,
-              "mcc": 0.4762,
-              "confusion_matrix": [
-                [
-                  28,
-                  24,
-                  4
-                ],
-                [
-                  13,
-                  56,
-                  4
-                ],
-                [
-                  1,
-                  73,
-                  144
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.6667,
-                  "recall": 0.5,
-                  "f1": 0.5714,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.366,
-                  "recall": 0.7671,
-                  "f1": 0.4956,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.9474,
-                  "recall": 0.6606,
-                  "f1": 0.7784,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.626,
-              "balanced_accuracy": 0.6197,
-              "precision_macro": 0.6283,
-              "recall_macro": 0.6197,
-              "macro_f1": 0.5845,
-              "kappa": 0.4276,
-              "mcc": 0.4489,
-              "confusion_matrix": [
-                [
-                  47,
-                  36,
-                  13
-                ],
-                [
-                  3,
-                  24,
-                  10
-                ],
-                [
-                  8,
-                  28,
-                  93
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.8103,
-                  "recall": 0.4896,
-                  "f1": 0.6104,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.2727,
-                  "recall": 0.6486,
-                  "f1": 0.384,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.8017,
-                  "recall": 0.7209,
-                  "f1": 0.7592,
-                  "support": 129
-                }
-              ]
-            },
-            "attention_entropy": 0.7684
-          },
-          {
-            "seed": 44,
-            "epochs_ran": 23,
-            "validation": {
-              "n": 347,
-              "accuracy": 0.7695,
-              "balanced_accuracy": 0.6154,
-              "precision_macro": 0.6921,
-              "recall_macro": 0.6154,
-              "macro_f1": 0.63,
-              "kappa": 0.5417,
-              "mcc": 0.55,
-              "confusion_matrix": [
-                [
-                  18,
-                  29,
-                  9
-                ],
-                [
-                  6,
-                  42,
-                  25
-                ],
-                [
-                  2,
-                  9,
-                  207
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.6923,
-                  "recall": 0.3214,
-                  "f1": 0.439,
-                  "support": 56
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.525,
-                  "recall": 0.5753,
-                  "f1": 0.549,
-                  "support": 73
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.8589,
-                  "recall": 0.9495,
-                  "f1": 0.902,
-                  "support": 218
-                }
-              ]
-            },
-            "test": {
-              "n": 262,
-              "accuracy": 0.687,
-              "balanced_accuracy": 0.6214,
-              "precision_macro": 0.6312,
-              "recall_macro": 0.6214,
-              "macro_f1": 0.6158,
-              "kappa": 0.482,
-              "mcc": 0.4896,
-              "confusion_matrix": [
-                [
-                  53,
-                  20,
-                  23
-                ],
-                [
-                  6,
-                  17,
-                  14
-                ],
-                [
-                  8,
-                  11,
-                  110
-                ]
-              ],
-              "per_class": [
-                {
-                  "regime": "persistent",
-                  "precision": 0.791,
-                  "recall": 0.5521,
-                  "f1": 0.6503,
-                  "support": 96
-                },
-                {
-                  "regime": "random_like",
-                  "precision": 0.3542,
-                  "recall": 0.4595,
-                  "f1": 0.4,
-                  "support": 37
-                },
-                {
-                  "regime": "anti_persistent",
-                  "precision": 0.7483,
-                  "recall": 0.8527,
-                  "f1": 0.7971,
-                  "support": 129
-                }
-              ]
-            },
-            "attention_entropy": 0.7212
-          }
-        ]
-      }
-    },
-    "hypotheses": [
-      {
-        "id": "H1",
-        "a": "swt_attention_bilstm",
-        "b": "ps_attention_bilstm",
-        "question": "Input PS lebih informatif dari SWT?",
-        "diffs": [
-          {
-            "seed": 42,
-            "mean_diff": 0.0366,
-            "ci95": [
-              -0.137,
-              0.22
-            ],
-            "mcnemar_p": 0.7464
-          },
-          {
-            "seed": 43,
-            "mean_diff": 0.0815,
-            "ci95": [
-              -0.0619,
-              0.2392
-            ],
-            "mcnemar_p": 0.0829
-          },
-          {
-            "seed": 44,
-            "mean_diff": 0.2056,
-            "ci95": [
-              0.0964,
-              0.3098
-            ],
-            "mcnemar_p": 0.0
-          }
-        ],
-        "verdict": "TIDAK TERBUKTI (setara)"
-      },
-      {
-        "id": "H2",
-        "a": "ps_attention_bilstm_shuffled",
-        "b": "ps_attention_bilstm",
-        "question": "Urutan waktu persistensi membawa informasi?",
-        "diffs": [
-          {
-            "seed": 42,
-            "mean_diff": -0.104,
-            "ci95": [
-              -0.2244,
-              0.0013
-            ],
-            "mcnemar_p": 0.0
-          },
-          {
-            "seed": 43,
-            "mean_diff": -0.0353,
-            "ci95": [
-              -0.1636,
-              0.0699
-            ],
-            "mcnemar_p": 0.0077
-          },
-          {
-            "seed": 44,
-            "mean_diff": 0.1176,
-            "ci95": [
-              -0.0,
-              0.2161
-            ],
-            "mcnemar_p": 0.0
-          }
-        ],
-        "verdict": "TIDAK TERBUKTI (setara)"
-      },
-      {
-        "id": "H3",
-        "a": "ps_bilstm",
-        "b": "ps_attention_bilstm",
-        "question": "Attention menambah nilai?",
-        "diffs": [
-          {
-            "seed": 42,
-            "mean_diff": -0.0335,
-            "ci95": [
-              -0.1171,
-              0.0622
-            ],
-            "mcnemar_p": 0.1056
-          },
-          {
-            "seed": 43,
-            "mean_diff": 0.0158,
-            "ci95": [
-              -0.0278,
-              0.0566
-            ],
-            "mcnemar_p": 0.5322
-          },
-          {
-            "seed": 44,
-            "mean_diff": 0.2672,
-            "ci95": [
-              0.0904,
-              0.4538
-            ],
-            "mcnemar_p": 0.0
-          }
-        ],
-        "verdict": "TIDAK TERBUKTI (setara)"
-      },
-      {
-        "id": "H4",
-        "a": "hybrid_swt",
-        "b": "hybrid_ps",
-        "question": "PS memperbaiki model hybrid?",
-        "diffs": [
-          {
-            "seed": 42,
-            "mean_diff": -0.0487,
-            "ci95": [
-              -0.179,
-              0.1146
-            ],
-            "mcnemar_p": 0.4568
-          },
-          {
-            "seed": 43,
-            "mean_diff": -0.0525,
-            "ci95": [
-              -0.2205,
-              0.0886
-            ],
-            "mcnemar_p": 0.112
-          },
-          {
-            "seed": 44,
-            "mean_diff": 0.0337,
-            "ci95": [
-              -0.1611,
-              0.2126
-            ],
-            "mcnemar_p": 0.1886
-          }
-        ],
-        "verdict": "TIDAK TERBUKTI (setara)"
-      },
-      {
-        "id": "H5",
-        "a": "structural_mlp",
-        "b": "hybrid_ps",
-        "question": "Hybrid PS melampaui MLP?",
-        "diffs": [
-          {
-            "seed": 42,
-            "mean_diff": 0.0007,
-            "ci95": [
-              -0.075,
-              0.0829
-            ],
-            "mcnemar_p": 1.0
-          },
-          {
-            "seed": 43,
-            "mean_diff": -0.0364,
-            "ci95": [
-              -0.1457,
-              0.0658
-            ],
-            "mcnemar_p": 0.0192
-          },
-          {
-            "seed": 44,
-            "mean_diff": -0.0169,
-            "ci95": [
-              -0.1241,
-              0.0976
-            ],
-            "mcnemar_p": 1.0
-          }
-        ],
-        "verdict": "TIDAK TERBUKTI (setara)"
-      },
-      {
-        "id": "H6",
-        "a": "structural_mlp",
-        "b": "ps_attention_bilstm",
-        "question": "Model sekuens murni menyamai/melampaui MLP?",
-        "diffs": [
-          {
-            "seed": 42,
-            "mean_diff": -0.1249,
-            "ci95": [
-              -0.2371,
-              -0.0315
-            ],
-            "mcnemar_p": 0.0
-          },
-          {
-            "seed": 43,
-            "mean_diff": -0.0903,
-            "ci95": [
-              -0.2075,
-              0.0111
-            ],
-            "mcnemar_p": 0.0003
-          },
-          {
-            "seed": 44,
-            "mean_diff": 0.0046,
-            "ci95": [
-              -0.0495,
-              0.0641
-            ],
-            "mcnemar_p": 0.6985
-          }
-        ],
-        "verdict": "TIDAK TERBUKTI (setara)"
-      }
-    ],
-    "selected_on_validation": "hybrid_ps"
+    }
   }
 }
