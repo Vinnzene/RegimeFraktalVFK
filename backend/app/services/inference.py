@@ -8,6 +8,7 @@ perbandingan memakai fitur yang berbeda untuk model yang sama.
 
 from __future__ import annotations
 
+import os
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
@@ -25,6 +26,33 @@ from app.services.model_registry import (
 )
 
 # Fitur mahal dihitung sekali per (symbol, timeframe, config_hash, seq_len).
+def placeholder_allowed() -> bool:
+    """Stand-in deterministik untuk model neural hanya bila diizinkan eksplisit.
+
+    Sengaja lewat variabel lingkungan, bukan config.yaml: menambah field
+    config mengubah config_hash dan membuat semua artefak terbaca "config
+    berbeda". Juga terpisah dari runtime.use_mock, yang mengatur sumber DATA.
+    """
+    return os.environ.get("ALLOW_MODEL_PLACEHOLDER", "").strip().lower() in {"1", "true", "yes"}
+
+
+class ModelUnavailable(RuntimeError):
+    """Artefak model neural tidak ada atau gagal dimuat, dan stand-in dilarang.
+
+    Angka buatan tidak boleh tampil seolah keluaran model: endpoint menjawab
+    503 dan halaman menandai model sebagai tidak tersedia. Salin berkas .keras
+    ke ml/artifacts/ untuk memulihkan.
+    """
+
+    def __init__(self, model_key: str, timeframe: str):
+        super().__init__(
+            f"Model {model_key} ({timeframe}) tidak tersedia di server: artefak "
+            f"ml/artifacts/{model_key}_{timeframe}.keras belum ada atau gagal dimuat."
+        )
+        self.model_key = model_key
+        self.timeframe = timeframe
+
+
 _FEATURE_CACHE: Dict[Tuple[str, str, str, int, int], np.ndarray] = {}
 # Probabilitas dikunci pula pada jumlah baris: hasil dari deret yang lebih
 # pendek tidak boleh terpakai untuk deret penuh.
@@ -108,7 +136,8 @@ def probabilities_for(
     """Matriks probabilitas (n_window, 3) beserta asal angkanya.
 
     Mengembalikan ("trained_artifact") bila model terlatih dipakai, atau
-    ("placeholder") bila jatuh ke stand-in deterministik.
+    ("placeholder") bila jatuh ke stand-in deterministik. Stand-in untuk model
+    neural hanya bila placeholder_allowed(); di luar itu ModelUnavailable.
     """
     cfg = get_config()
     n = len(regime_df)
@@ -141,7 +170,11 @@ def probabilities_for(
             _SOURCE[(symbol, timeframe, model_key)] = "trained_artifact"
             return probs, "trained_artifact"
 
-    # Stand-in deterministik: dipakai untuk rule_based dan saat artefak absen.
+    if model_key in NEURAL_KEYS and not placeholder_allowed():
+        raise ModelUnavailable(model_key, timeframe)
+
+    # Stand-in deterministik: dipakai untuk rule_based, dan untuk model neural
+    # hanya bila diizinkan (pengembangan tanpa artefak).
     rows = []
     for i, (h_val, a_val) in enumerate(
         zip(regime_df["hurst"].fillna(0.0), regime_df["dfa_alpha"].fillna(0.0))

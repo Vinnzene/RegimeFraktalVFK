@@ -8,6 +8,7 @@ direktori sementara, terpisah dari data/processed/ milik dashboard.
 
 from __future__ import annotations
 
+import os
 import shutil
 import tempfile
 from pathlib import Path
@@ -21,6 +22,9 @@ from app.core.config import AppConfig, load_config, set_config_override
 @pytest.fixture(autouse=True, scope="session")
 def isolated_environment():
     tmp_dir = Path(tempfile.mkdtemp(prefix="regimefraktal-test-"))
+    # Test berjalan tanpa jaminan artefak .keras; stand-in diizinkan di sini
+    # saja. Perilaku produksi (dilarang) diuji di test_model_unavailable.py.
+    os.environ["ALLOW_MODEL_PLACEHOLDER"] = "true"
 
     base = load_config()
     payload = base.canonical()

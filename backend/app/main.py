@@ -17,6 +17,7 @@ from app.core.config import get_config
 from app.db.repository import InvalidIdentifier
 from app.routers import analysis, backtest, meta, model, ohlcv
 from app.services import regime_notifier, scheduler, telegram_bot
+from app.services.inference import ModelUnavailable
 
 
 @asynccontextmanager
@@ -68,6 +69,12 @@ app.add_middleware(GZipMiddleware, minimum_size=1024)
 async def invalid_identifier_handler(_: Request, exc: InvalidIdentifier) -> JSONResponse:
     """symbol/timeframe di luar daftar sah adalah kesalahan klien, bukan 500."""
     return JSONResponse(status_code=400, content={"detail": str(exc)})
+
+
+@app.exception_handler(ModelUnavailable)
+async def model_unavailable_handler(_: Request, exc: ModelUnavailable) -> JSONResponse:
+    """Artefak model hilang di produksi: jawab 503, jangan isi angka buatan."""
+    return JSONResponse(status_code=503, content={"detail": str(exc), "model_key": exc.model_key})
 
 
 app.include_router(meta.router)

@@ -83,13 +83,18 @@ export default function ModelComparisonPage() {
 
       {!compare.loading && !compare.error && (
         <>
-          {compare.data?.any_trained === false ? (
+          {(compare.data?.unavailable_models?.length ?? 0) > 0 ? (
             <div className="rounded border border-warn/40 bg-warn/10 px-3 py-2 text-[11px] leading-relaxed text-warn">
-              <span className="font-semibold">Model belum dilatih. </span>
-              Artefak di <span className="font-mono">ml/artifacts/</span> belum tersedia,
-              sehingga probabilitas pada halaman ini berasal dari stand-in deterministik —
-              bukan hasil pembelajaran. Jalankan{" "}
-              <span className="font-mono">ml/src/train.py</span> lebih dulu.
+              <span className="font-semibold">Sebagian model tidak tersedia di server. </span>
+              Artefak{" "}
+              {(compare.data?.unavailable_models as string[]).map((k, i) => (
+                <span key={k}>
+                  {i > 0 && ", "}
+                  <span className="font-mono">{k}_{timeframe}.keras</span>
+                </span>
+              ))}{" "}
+              belum ada di <span className="font-mono">ml/artifacts/</span>, sehingga model tersebut tidak ditampilkan.
+              Tidak ada angka pengganti yang dipakai.
             </div>
           ) : (
             <div className="rounded border border-edge bg-surface/50 px-3 py-2 text-[11px] leading-relaxed text-txtDim">
@@ -179,7 +184,7 @@ export default function ModelComparisonPage() {
               subtitle="Model yang terlalu sering berpindah regime sulit dipakai, meski akurasinya tinggi."
             >
               <div className="space-y-3">
-                {MODEL_ORDER.filter((k) => models[k]).map((key) => {
+                {MODEL_ORDER.filter((k) => models[k] && models[k].prediction_source !== "unavailable").map((key) => {
                   const m = models[key];
                   return (
                     <div key={key} className="rounded border border-edge bg-panelAlt p-2.5">
@@ -305,7 +310,7 @@ export default function ModelComparisonPage() {
                   </tr>
                 </thead>
                 <tbody className="font-mono text-txtDim">
-                  {MODEL_ORDER.filter((k) => models[k]).map((key) => {
+                  {MODEL_ORDER.filter((k) => models[k] && models[k].prediction_source !== "unavailable").map((key) => {
                     const m = models[key];
                     const s = m.secondary_metrics ?? {};
                     const argmax = s.argmax ?? {};
@@ -383,7 +388,7 @@ export default function ModelComparisonPage() {
                   </tr>
                 </thead>
                 <tbody className="font-mono text-txtDim">
-                  {MODEL_ORDER.filter((k) => models[k]?.confidence).map((key) => {
+                  {MODEL_ORDER.filter((k) => models[k]?.confidence && models[k].prediction_source !== "unavailable").map((key) => {
                     const m = models[key];
                     const c = m.confidence;
                     return (

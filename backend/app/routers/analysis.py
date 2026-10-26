@@ -14,7 +14,12 @@ from app.db.repository import get_repository
 from app.mock.generator import generate_attention_weights
 from app.services.downsample import apply_downsample
 from app.services.hurst_dfa import to_log_return
-from app.services.inference import scaled_features_for, sequence_length
+from app.services.inference import (
+    ModelUnavailable,
+    placeholder_allowed,
+    scaled_features_for,
+    sequence_length,
+)
 from app.services.model_registry import attention_weights
 from app.services.multifractal import DEFAULT_Q, hq_spectrum, rolling_hq
 from app.services.regime_labeling import (
@@ -430,6 +435,8 @@ def read_attention(
 
     source = "trained_artifact"
     if weights is None:
+        if not placeholder_allowed():
+            raise ModelUnavailable("swt_attention_bilstm", tf)
         weights = generate_attention_weights(seq_len, seed=cfg.model.seed + pos)
         source = "placeholder"
 

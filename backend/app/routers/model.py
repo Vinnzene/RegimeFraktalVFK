@@ -18,6 +18,7 @@ from app.services.identification import (
     consistency_report,
 )
 from app.services.inference import (
+    ModelUnavailable,
     clear_inference_cache,
     probabilities_for,
     to_dicts,
@@ -153,8 +154,20 @@ def compare(tf: str = Query("1h"), symbol: str = Query("BTCUSDT")) -> dict:
     models: Dict[str, dict] = {}
     training_curves: Dict[str, dict] = {}
 
+    unavailable: List[str] = []
     for key in MODEL_KEYS:
-        probs_matrix, source = probabilities_for(symbol, tf, df, key)
+        try:
+            probs_matrix, source = probabilities_for(symbol, tf, df, key)
+        except ModelUnavailable as exc:
+            # Model ditandai tidak tersedia; tidak ada angka pengganti.
+            unavailable.append(key)
+            models[key] = {
+                "label": MODEL_LABELS[key],
+                "artifact_loaded": False,
+                "prediction_source": "unavailable",
+                "reason": str(exc),
+            }
+            continue
         prob_dicts = to_dicts(probs_matrix)
 
         # Dua lapis label: argmax (tanpa ambang) dan final (setelah tau).
@@ -247,9 +260,13 @@ def compare(tf: str = Query("1h"), symbol: str = Query("BTCUSDT")) -> dict:
             "Metrik akurasi di sini sekunder, bukan indikator keberhasilan utama."
         ),
         "ground_truth_uncertain_share": regime_distribution(labels)[UNCERTAIN_RULE]["share"],
+        "unavailable_models": unavailable,
     }
-    _COMPARE_CACHE[mem_key] = result
-    disk_cache.write(disk_key, result)
+    # Hasil dengan model yang hilang tidak disimpan, agar langsung dihitung
+    # ulang begitu artefaknya dipulihkan.
+    if not unavailable:
+        _COMPARE_CACHE[mem_key] = result
+        disk_cache.write(disk_key, result)
     return result
 
 
