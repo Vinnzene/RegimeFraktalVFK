@@ -1,0 +1,121 @@
+{
+  "description": "Persentil 2,5/50/97,5 estimator pada deret sintetis H = 0,5 (tanpa memori).",
+  "h_true": 0.5,
+  "n_series": 2000,
+  "seed": 20261026,
+  "percentiles": [
+    2.5,
+    50,
+    97.5
+  ],
+  "scenarios": {
+    "S1": "fGn Gaussian",
+    "S4": "fGn + ekor tebal + volatilitas stokastik + lonjakan (mirip kripto)"
+  },
+  "dashboard_default": {
+    "scenario": "S4",
+    "window": 500
+  },
+  "bands": {
+    "S1": {
+      "128": {
+        "hurst_rs": {
+          "lower": 0.4561,
+          "median": 0.6285,
+          "upper": 0.7971
+        },
+        "dfa_alpha": {
+          "lower": 0.2938,
+          "median": 0.4979,
+          "upper": 0.738
+        }
+      },
+      "256": {
+        "hurst_rs": {
+          "lower": 0.4951,
+          "median": 0.6111,
+          "upper": 0.7261
+        },
+        "dfa_alpha": {
+          "lower": 0.3586,
+          "median": 0.5019,
+          "upper": 0.6615
+        }
+      },
+      "500": {
+        "hurst_rs": {
+          "lower": 0.5045,
+          "median": 0.5894,
+          "upper": 0.6757
+        },
+        "dfa_alpha": {
+          "lower": 0.3848,
+          "median": 0.4974,
+          "upper": 0.6136
+        }
+      },
+      "1000": {
+        "hurst_rs": {
+          "lower": 0.514,
+          "median": 0.578,
+          "upper": 0.6412
+        },
+        "dfa_alpha": {
+          "lower": 0.4108,
+          "median": 0.4971,
+          "upper": 0.5901
+        }
+      }
+    },
+    "S4": {
+      "128": {
+        "hurst_rs": {
+          "lower": 0.4714,
+          "median": 0.6213,
+          "upper": 0.7769
+        },
+        "dfa_alpha": {
+          "lower": 0.2534,
+          "median": 0.5001,
+          "upper": 0.8042
+        }
+      },
+      "256": {
+        "hurst_rs": {
+          "lower": 0.5046,
+          "median": 0.6037,
+          "upper": 0.7119
+        },
+        "dfa_alpha": {
+          "lower": 0.2586,
+          "median": 0.4917,
+          "upper": 0.7116
+        }
+      },
+      "500": {
+        "hurst_rs": {
+          "lower": 0.5097,
+          "median": 0.5875,
+          "upper": 0.6715
+        },
+        "dfa_alpha": {
+          "lower": 0.319,
+          "median": 0.4833,
+          "upper": 0.6606
+        }
+      },
+      "1000": {
+        "hurst_rs": {
+          "lower": 0.5179,
+          "median": 0.5791,
+          "upper": 0.6439
+        },
+        "dfa_alpha": {
+          "lower": 0.33,
+          "median": 0.4881,
+          "upper": 0.6339
+        }
+      }
+    }
+  }
+}

@@ -5,6 +5,7 @@
  *  - uncertain_rule    : hatching diagonal (Hurst & DFA tidak sepakat -> soal DATA)
  *  - uncertain_lowconf : hatching titik    (max(P) < tau            -> soal MODEL)
  *
+ * Warna dipilih bernada tengah agar terbaca di tema terang maupun gelap.
  * Hijau dan merah TIDAK dipakai di sini meski tema memakainya untuk candle.
  * Regime menyatakan sifat persistensi, bukan arah harga: Persistent tidak
  * berarti naik. Memakai warna arah akan membuat pembaca menyamakan keduanya.
@@ -31,31 +32,31 @@ export const REGIME_META: Record<
 > = {
   persistent: {
     label: "Persistent",
-    color: "#4a9eff",
+    color: "#3b82f6",
     pattern: "solid",
     note: "H & α di atas ambang atas — gerakan cenderung berlanjut",
   },
   random_like: {
     label: "Random-like",
-    color: "#8b949e",
+    color: "#808896",
     pattern: "solid",
     note: "H & α di dalam pita ambang — menyerupai random walk",
   },
   anti_persistent: {
     label: "Anti-persistent",
-    color: "#f0b90b",
+    color: "#d4a20a",
     pattern: "solid",
     note: "H & α di bawah ambang bawah — cenderung berbalik arah",
   },
   uncertain_rule: {
     label: "Uncertain (rule)",
-    color: "#5c6673",
+    color: "#64748b",
     pattern: "diagonal",
     note: "Hurst & DFA tidak konsisten — ketidakpastian pada DATA",
   },
   uncertain_lowconf: {
     label: "Uncertain (low-conf)",
-    color: "#b07cf5",
+    color: "#a371f7",
     pattern: "dots",
     note: "max(P) < τ — ketidakpastian pada MODEL",
   },

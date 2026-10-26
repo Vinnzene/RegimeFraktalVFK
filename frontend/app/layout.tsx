@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "katex/dist/katex.min.css";
 import AppChrome from "@/components/AppChrome";
+import { THEME_INIT_SCRIPT } from "@/lib/theme-script";
 
 export const metadata: Metadata = {
   title: "regimefraktalVFK — Identifikasi Regime Fraktal BTC/USDT",
@@ -18,7 +19,10 @@ export const metadata: Metadata = {
  */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id">
+    <html lang="id" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body>
         <AppChrome>{children}</AppChrome>
       </body>

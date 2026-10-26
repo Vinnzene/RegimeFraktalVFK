@@ -5,15 +5,16 @@ import CandlestickChart from "@/components/CandlestickChart";
 import CollapsiblePanel from "@/components/CollapsiblePanel";
 import DataStatusBar from "@/components/DataStatusBar";
 import Disclaimer from "@/components/Disclaimer";
-import ExponentGauge from "@/components/ExponentGauge";
 import HowToRead from "@/components/HowToRead";
-import MarketSummary, { useRecentRegimes } from "@/components/MarketSummary";
+import { useRecentRegimes } from "@/components/MarketSummary";
 import ParameterBar from "@/components/ParameterBar";
+import RegimeHistoryTable from "@/components/RegimeHistoryTable";
 import RegimeLegend from "@/components/RegimeLegend";
+import RegimeOverview, { type RandomBand } from "@/components/RegimeOverview";
 import TimeframeToggle from "@/components/TimeframeToggle";
 import { useAppConfig } from "@/components/ConfigContext";
 import { ApiState, useApi } from "@/components/useApi";
-import { api, type AiRegimeClass, type AiRegimeResponse } from "@/lib/api-client";
+import { api } from "@/lib/api-client";
 import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
 
 function ShareBar({ title, note, rows }: { title: string; note: string; rows: { key: string; share: number }[] }) {
@@ -45,69 +46,13 @@ function ShareBar({ title, note, rows }: { title: string; note: string; rows: { 
   );
 }
 
-const AI_CLASSES: AiRegimeClass[] = ["persistent", "random_like", "anti_persistent"];
-
-/** Probabilitas tiap kelas dari detektor AI untuk window terakhir. */
-function ProbabilityBars({ probs }: { probs: Record<AiRegimeClass, number> | null | undefined }) {
-  if (!probs) return null;
-  return (
-    <div className="space-y-2">
-      {AI_CLASSES.map((c) => (
-        <div key={c}>
-          <div className="flex items-baseline justify-between text-[12px]">
-            <span className="text-txtDim">{REGIME_PLAIN[c].name}</span>
-            <span className="font-mono text-txt">{Math.round(probs[c] * 100)}%</span>
-          </div>
-          <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-surface">
-            <div className="h-full rounded-full" style={{ width: `${probs[c] * 100}%`, backgroundColor: REGIME_META[c].color }} />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/** Regime saat ini di setiap timeframe, berdampingan. */
-function TimeframeStrip({ items }: { items: { tf: string; data: AiRegimeResponse | null; error: string | null }[] }) {
-  return (
-    <section className="grid gap-3 sm:grid-cols-2" aria-label="Kondisi per skala waktu">
-      {items.map(({ tf, data, error }) => {
-        const key = data?.current_regime ?? null;
-        const color = key ? REGIME_META[key].color : "#8b949e";
-        const conf = key && data?.current_probabilities ? data.current_probabilities[key] : null;
-        const low = Boolean(data?.current_low_confidence);
-        return (
-          <div key={tf} className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl border border-edge bg-panel px-4 py-3">
-            <span className="rounded-md border border-edge px-2 py-0.5 font-mono text-[12px] text-txtDim">{tf.toUpperCase()}</span>
-            {key ? (
-              <>
-                <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: color }} />
-                <span className="text-[14px] font-semibold" style={{ color }}>
-                  {REGIME_PLAIN[key].name}
-                </span>
-                {conf !== null && (
-                  <span className={`text-[12px] ${low ? "text-uncertainLowconf" : "text-txtMuted"}`}>
-                    keyakinan {Math.round(conf * 100)}%{low ? " · rendah" : ""}
-                  </span>
-                )}
-              </>
-            ) : (
-              <span className="text-[12.5px] text-txtMuted">{error ?? "Memuat…"}</span>
-            )}
-          </div>
-        );
-      })}
-    </section>
-  );
-}
-
 export default function DashboardPage() {
   const { timeframe, config } = useAppConfig();
   const symbol = config?.data.symbol ?? "BTCUSDT";
 
   const [chartHeight, setChartHeight] = useState(520);
   useEffect(() => {
-    const resize = () => setChartHeight(Math.max(380, Math.min(600, window.innerHeight - 300)));
+    const resize = () => setChartHeight(Math.max(380, Math.min(560, window.innerHeight - 340)));
     resize();
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
@@ -120,26 +65,19 @@ export default function DashboardPage() {
   const ai1h = useApi(() => api.aiRegime("1h"), []);
   const ai4h = useApi(() => api.aiRegime("4h"), []);
   const regime = timeframe === "4h" ? ai4h : ai1h;
-  // Estimator klasik Hurst R/S dan DFA sebagai pembanding (nilai dan ambang efektif).
-  const classic = useApi(() => api.hurstDfa(timeframe, 100), [timeframe]);
+  // Estimator klasik Hurst R/S dan DFA sebagai pembanding beserta pita acaknya.
+  // 2000 titik cukup rapat untuk membaca selisih terhadap ±30 hari lalu.
+  const classic = useApi(() => api.hurstDfa(timeframe, 2000), [timeframe]);
 
   // Chart harga hanya menunggu OHLCV; overlay regime menyusul.
   const loading = ohlcv.loading;
   const error = ohlcv.error;
 
   const series = regime.data?.series ?? [];
-  const current = regime.data?.current_regime;
   const distribution = regime.data?.distribution ?? {};
   const recent = useRecentRegimes(series);
-  const classicSeries = classic.data?.series ?? [];
-  const last = classicSeries.length ? classicSeries[classicSeries.length - 1] : null;
   const detector = regime.data?.detector;
-
-  const p = classic.data?.parameters;
-  const hLo = p?.hurst_lower ?? config?.analysis.hurst_threshold[0] ?? 0.45;
-  const hHi = p?.hurst_upper ?? config?.analysis.hurst_threshold[1] ?? 0.55;
-  const aLo = p?.dfa_lower ?? config?.analysis.dfa_threshold[0] ?? 0.45;
-  const aHi = p?.dfa_upper ?? config?.analysis.dfa_threshold[1] ?? 0.55;
+  const band: RandomBand = classic.data?.random_band ?? null;
 
   const allTime = Object.entries(distribution)
     .map(([key, v]) => ({ key, share: v.share }))
@@ -147,12 +85,18 @@ export default function DashboardPage() {
     .sort((a, b) => b.share - a.share);
 
   return (
-    <div className="mx-auto max-w-[1500px] space-y-4 px-1 pb-6 sm:px-3">
-      <header className="flex flex-wrap items-end justify-between gap-3 pt-1">
+    <div className="mx-auto max-w-[1560px] space-y-4 px-1 pb-8 sm:px-4">
+      <header className="flex flex-wrap items-end justify-between gap-3 pt-2">
         <div>
-          <h1 className="text-[22px] font-semibold tracking-tight text-txt">Ringkasan pasar</h1>
-          <p className="mt-0.5 text-[13px] text-txtDim">
-            Sifat gerakan {symbol.replace("USDT", "/USDT")} menurut detektor AI dan apa artinya untuk strategi Anda.
+          <div className="flex flex-wrap items-center gap-2.5">
+            <h1 className="text-[26px] font-bold tracking-tight text-txt">{symbol.replace("USDT", "/USDT")}</h1>
+            <span className="rounded-md border border-edge bg-panel px-2 py-0.5 text-[12px] font-medium text-txt">Ringkasan</span>
+            <span className="rounded-md bg-surface px-2 py-0.5 text-[12px] font-medium text-txtDim">
+              Detektor AI · {timeframe.toUpperCase()}
+            </span>
+          </div>
+          <p className="mt-1 text-[13px] text-txtMuted">
+            Sifat gerakan harga menurut detektor Attention-BiLSTM dan apa artinya untuk strategi Anda.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -160,8 +104,6 @@ export default function DashboardPage() {
           <TimeframeToggle />
         </div>
       </header>
-
-      <HowToRead />
 
       {config?.runtime.use_mock && <Disclaimer variant="mock" />}
       <ApiState loading={loading} error={error} />
@@ -174,58 +116,21 @@ export default function DashboardPage() {
             </div>
           )}
 
-          <TimeframeStrip
-            items={[
-              { tf: "1h", data: ai1h.data, error: ai1h.error },
-              { tf: "4h", data: ai4h.data, error: ai4h.error },
-            ]}
-          />
-
-          <MarketSummary
-            current={current}
-            series={series}
-            loading={regime.loading}
-            symbol={symbol.replace("USDT", "/USDT")}
+          <RegimeOverview
             timeframe={timeframe}
-            lowConfidence={Boolean(regime.data?.current_low_confidence)}
-            gauges={
-              <>
-                <ProbabilityBars probs={regime.data?.current_probabilities} />
-                {detector && (
-                  <p className="text-[11px] leading-relaxed text-txtMuted">
-                    Di bawah {Math.round(detector.abstain_tau * 100)}% label dianggap tidak pasti. Pada riwayat ini{" "}
-                    {Math.round((regime.data?.low_confidence_share ?? 0) * 100)}% window berkeyakinan rendah.
-                  </p>
-                )}
-                <div className="mt-1 border-t border-edge pt-3 text-[11.5px] text-txtMuted">Pembanding klasik (bukan penentu label)</div>
-                <ExponentGauge
-                  label="Hurst (R/S)"
-                  hint="Eksponen Hurst (metode R/S). Di atas batas atas = tren berlanjut, di bawah batas bawah = cenderung berbalik."
-                  value={last?.hurst}
-                  lower={hLo}
-                  upper={hHi}
-                  loading={classic.loading}
-                />
-                <ExponentGauge
-                  label="DFA (α)"
-                  hint="Detrended Fluctuation Analysis (α). Dibaca sama seperti Hurst. Estimator klasik tidak andal di data berderau (Fase 1), sehingga hanya ditampilkan sebagai pembanding."
-                  value={last?.dfa_alpha}
-                  lower={aLo}
-                  upper={aHi}
-                  loading={classic.loading}
-                />
-              </>
-            }
+            ai1h={ai1h.data}
+            ai4h={ai4h.data}
+            classic={classic.data?.series ?? []}
+            band={band}
+            candles={ohlcv.data?.candles ?? []}
           />
 
-          <section className="space-y-2">
-            <div className="flex flex-wrap items-baseline gap-x-3 px-1">
-              <h2 className="text-[15px] font-semibold text-txt">Riwayat harga &amp; kondisi pasar</h2>
-              <span className="text-[12px] text-txtMuted">
-                Warna latar = kondisi pasar saat itu. Tombol 1D–ALL mengubah rentang; gulir untuk zoom.
-              </span>
-            </div>
-            <div className="overflow-hidden rounded-xl border border-edge">
+          <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_400px]">
+            <div className="rounded-xl border border-edge bg-panel p-4 shadow-panel">
+              <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                <h2 className="text-[16px] font-semibold text-txt">Harga dengan pita kondisi pasar</h2>
+                <span className="text-[12px] text-txtMuted">Warna latar = kondisi saat itu · 1D–ALL mengubah rentang · gulir untuk zoom</span>
+              </div>
               <CandlestickChart
                 candles={ohlcv.data?.candles ?? []}
                 regimes={series}
@@ -236,10 +141,11 @@ export default function DashboardPage() {
                 legend={<RegimeLegend compact />}
               />
             </div>
+            <RegimeHistoryTable series={series} tau={detector?.abstain_tau ?? 0.75} timeframe={timeframe} />
           </section>
 
           <section className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-            <div className="space-y-5 rounded-xl border border-edge bg-panel p-5">
+            <div className="space-y-5 rounded-xl border border-edge bg-panel p-5 shadow-panel">
               <div>
                 <h2 className="text-[15px] font-semibold text-txt">Seberapa sering tiap kondisi terjadi?</h2>
                 <p className="mt-0.5 text-[12px] text-txtMuted">Bandingkan 30 hari terakhir dengan seluruh riwayat.</p>
@@ -247,7 +153,7 @@ export default function DashboardPage() {
               {recent && <ShareBar title="30 hari terakhir" note={`${recent.switches}× berganti`} rows={recent.recentShare} />}
               {allTime.length > 0 && <ShareBar title="Seluruh riwayat" note="sejak 2019" rows={allTime} />}
             </div>
-            <div className="rounded-xl border border-edge bg-panel p-5">
+            <div className="rounded-xl border border-edge bg-panel p-5 shadow-panel">
               <h2 className="text-[15px] font-semibold text-txt">Arti tiap warna</h2>
               <div className="mt-3">
                 <RegimeLegend />
@@ -257,6 +163,8 @@ export default function DashboardPage() {
               </p>
             </div>
           </section>
+
+          <HowToRead />
 
           <CollapsiblePanel title="Tentang detektor" subtitle="Model AI yang menentukan kondisi pasar">
             <ParameterBar showTimeframe={false} />

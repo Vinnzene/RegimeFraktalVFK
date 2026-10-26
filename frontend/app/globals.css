@@ -2,8 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Tema terang (bawaan) dan gelap. Nilai "r g b" dipakai tailwind.config.ts. */
 :root {
+  color-scheme: light;
+  --c-panel-alt: 246 247 249;
+  --c-panel: 255 255 255;
+  --c-surface: 243 244 246;
+  --c-edge: 229 231 235;
+  --c-edge-bright: 209 213 219;
+  --c-txt: 17 24 39;
+  --c-txt-dim: 75 85 99;
+  --c-txt-muted: 107 114 128;
+  --c-bullish: 22 163 74;
+  --c-bearish: 220 38 38;
+  --c-accent: 194 65 12;
+  --c-warn: 180 83 9;
+  --c-persistent: 37 99 235;
+  --c-random-like: 107 114 128;
+  --c-anti-persistent: 202 138 4;
+  --c-uncertain-rule: 100 116 139;
+  --c-uncertain-lowconf: 147 51 234;
+  --shadow-panel: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-pop: 0 10px 28px rgba(16, 24, 40, 0.12);
+}
+
+:root[data-theme="dark"] {
   color-scheme: dark;
+  --c-panel-alt: 10 11 13;
+  --c-panel: 19 21 24;
+  --c-surface: 27 30 34;
+  --c-edge: 39 43 49;
+  --c-edge-bright: 54 59 67;
+  --c-txt: 241 237 232;
+  --c-txt-dim: 168 162 155;
+  --c-txt-muted: 111 106 100;
+  --c-bullish: 46 189 133;
+  --c-bearish: 246 70 93;
+  --c-accent: 255 122 26;
+  --c-warn: 240 185 11;
+  --c-persistent: 74 158 255;
+  --c-random-like: 139 148 158;
+  --c-anti-persistent: 240 185 11;
+  --c-uncertain-rule: 92 102 115;
+  --c-uncertain-lowconf: 176 124 245;
+  --shadow-panel: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-pop: 0 8px 24px rgba(0, 0, 0, 0.55);
 }
 
 body {
@@ -17,14 +60,14 @@ body {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0a0b0d;
+  background: rgb(var(--c-panel-alt));
 }
 ::-webkit-scrollbar-thumb {
-  background: #272b31;
+  background: rgb(var(--c-edge));
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #363b43;
+  background: rgb(var(--c-edge-bright));
 }
 
 /* Pola untuk dua jenis Uncertain — dibedakan supaya tidak tertukar. */
@@ -92,7 +135,7 @@ body {
            disabled:cursor-not-allowed disabled:opacity-40;
   }
   .btn-primary {
-    @apply rounded bg-accent px-4 py-1.5 text-[11px] font-semibold text-panelAlt
+    @apply rounded bg-accent px-4 py-1.5 text-[11px] font-semibold text-white
            transition hover:brightness-110 disabled:opacity-40;
   }
 

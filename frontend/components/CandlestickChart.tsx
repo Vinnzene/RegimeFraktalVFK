@@ -12,6 +12,7 @@ import {
 } from "lightweight-charts";
 import type { Candle, RegimePoint } from "@/lib/api-client";
 import { REGIME_META, REGIME_PLAIN, SEGMENT_META, type Regime } from "@/lib/regime";
+import { themeColor, useTheme } from "@/lib/theme";
 
 /**
  * Candlestick bergaya terminal perdagangan.
@@ -49,7 +50,9 @@ function hexToRgba(hex: string, alpha: number): string {
 function regimeBandColor(regime: string): string {
   const meta = REGIME_META[regime as Regime];
   if (!meta) return "rgba(51,65,85,0.10)";
-  const alpha = meta.pattern === "solid" ? 0.1 : 0.16;
+  // Acak adalah kondisi paling umum (±76% waktu); pitanya dibuat paling samar
+  // agar kondisi yang jarang (berlanjut/berbalik) menonjol.
+  const alpha = regime === "random_like" ? 0.05 : meta.pattern === "solid" ? 0.12 : 0.16;
   return hexToRgba(meta.color, alpha);
 }
 
@@ -196,6 +199,23 @@ export default function CandlestickChart({
       volumeRef.current = null;
     };
   }, [height]);
+
+  // Efek 1b — warna mengikuti tema. Canvas tidak memahami var(), jadi token
+  // tema dibaca sebagai warna jadi dan diterapkan ulang saat tema berganti.
+  const theme = useTheme();
+  useEffect(() => {
+    const chart = chartRef.current;
+    if (!chart) return;
+    const edge = themeColor("edge");
+    const label = themeColor("txt-dim");
+    chart.applyOptions({
+      layout: { background: { type: ColorType.Solid, color: themeColor("panel") }, textColor: themeColor("txt-dim") },
+      grid: { vertLines: { color: themeColor("edge", 0.55) }, horzLines: { color: themeColor("edge", 0.55) } },
+      crosshair: { vertLine: { labelBackgroundColor: label }, horzLine: { labelBackgroundColor: label } },
+      rightPriceScale: { borderColor: edge },
+      timeScale: { borderColor: edge },
+    });
+  }, [theme, height]);
 
   // Rentang aktif dibaca lewat ref agar efek data tidak ikut berjalan ulang
   // setiap kali pengguna menekan tombol rentang.

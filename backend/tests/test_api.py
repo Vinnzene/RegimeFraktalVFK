@@ -151,3 +151,15 @@ def test_multifractal_lebar_spektrum_konsisten_dengan_hq() -> None:
     assert rows, "tidak ada baris H(q) yang berhasil dihitung"
     for x in rows[:50]:
         assert abs(x["hq_width"] - (x["hq_1"] - x["hq_4"])) < 1e-9
+
+
+def test_hurst_dfa_random_band_nearest_window():
+    """Pita acak memilih jendela terdekat dan lebih lebar dari median."""
+    from app.routers.analysis import random_band
+
+    band = random_band(500)
+    assert band is not None and band["window"] == 500 and band["scenario"] == "S4"
+    for est in ("hurst_rs", "dfa_alpha"):
+        assert band[est]["lower"] < band[est]["median"] < band[est]["upper"]
+    assert random_band(480)["window"] == 500
+    assert random_band(None) is None

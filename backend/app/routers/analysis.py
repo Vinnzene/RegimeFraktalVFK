@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import json
+from functools import lru_cache
 from typing import Dict, List, Optional
 
 import numpy as np
 from fastapi import APIRouter, HTTPException, Query
 
-from app.core.config import get_config
+from app.core.config import ARTIFACTS_DIR, get_config
 from app.db.repository import get_repository
 from app.mock.generator import generate_attention_weights
 from app.services.downsample import apply_downsample
@@ -36,6 +38,26 @@ THRESHOLD_COLUMNS = {
     "effective_window",
     "stride_bars",
 }
+
+
+@lru_cache(maxsize=1)
+def _random_bands() -> Optional[dict]:
+    path = ARTIFACTS_DIR / "random_band.json"
+    return json.loads(path.read_text(encoding="utf-8")) if path.exists() else None
+
+
+def random_band(window: Optional[int], scenario: str = "S4") -> Optional[dict]:
+    """Pita acak R/S dan DFA untuk jendela terdekat (ml/src/random_band.py).
+
+    Persentil 2,5–97,5% estimator pada deret sintetis H = 0,5: nilai di dalam
+    pita tidak dapat dibedakan dari pasar tanpa memori pada panjang jendela itu.
+    """
+    data = _random_bands()
+    if not data or not window or scenario not in data["bands"]:
+        return None
+    bands = data["bands"][scenario]
+    nearest = min(bands, key=lambda n: abs(int(n) - window))
+    return {"scenario": scenario, "window": int(nearest), "h_true": data["h_true"], **bands[nearest]}
 
 
 @router.get("/hurst-dfa")
@@ -80,6 +102,7 @@ def read_hurst_dfa(
             "dfa_lower": float(df["dfa_lower"].iloc[0]) if len(df) else None,
             "dfa_upper": float(df["dfa_upper"].iloc[0]) if len(df) else None,
         },
+        "random_band": random_band(int(df["effective_window"].iloc[0]) if len(df) else cfg.analysis.L),
         "count": len(sampled["rows"]),
         "original_count": sampled["original_count"],
         "downsampled": sampled["downsampled"],

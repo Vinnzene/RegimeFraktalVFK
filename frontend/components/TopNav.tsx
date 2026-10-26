@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import ThemeToggle from "@/components/ThemeToggle";
 import UserMenu from "@/components/UserMenu";
 import BrandMark from "@/components/login/BrandMark";
 
@@ -163,6 +164,7 @@ export default function TopNav() {
         >
           Menu
         </button>
+        <ThemeToggle />
         <UserMenu />
       </div>
 

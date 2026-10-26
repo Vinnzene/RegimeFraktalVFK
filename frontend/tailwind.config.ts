@@ -1,9 +1,9 @@
 import type { Config } from "tailwindcss";
 
 /**
- * Palet bergaya terminal data kripto: latar nyaris hitam hangat, permukaan
- * berlapis, aksen merek oranye (sama dengan halaman login), dan hijau-merah
- * khusus untuk arah harga.
+ * Dua tema berbagi nama warna yang sama: terang (bawaan, putih bersih dengan
+ * garis tipis) dan gelap (terminal data kripto). Nilainya ada di globals.css;
+ * aksen merek oranye dan hijau-merah khusus untuk arah harga.
  *
  * Catatan penting soal warna regime: hijau/merah SENGAJA tidak dipakai untuk
  * kategori regime. Persistent bukan berarti naik dan anti-persistent bukan
@@ -15,31 +15,34 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Semua warna dibaca dari variabel CSS (globals.css) supaya tema terang
+        // dan gelap berbagi nama kelas yang sama. Format "r g b" memungkinkan
+        // modifier opasitas Tailwind seperti bg-surface/70.
         // Lapisan latar, dari paling dalam ke paling depan.
-        panelAlt: "#0a0b0d",
-        panel: "#131518",
-        surface: "#1b1e22",
-        edge: "#272b31",
-        edgeBright: "#363b43",
+        panelAlt: "rgb(var(--c-panel-alt) / <alpha-value>)",
+        panel: "rgb(var(--c-panel) / <alpha-value>)",
+        surface: "rgb(var(--c-surface) / <alpha-value>)",
+        edge: "rgb(var(--c-edge) / <alpha-value>)",
+        edgeBright: "rgb(var(--c-edge-bright) / <alpha-value>)",
 
         // Teks
-        txt: "#f1ede8",
-        txtDim: "#a8a29b",
-        txtMuted: "#6f6a64",
+        txt: "rgb(var(--c-txt) / <alpha-value>)",
+        txtDim: "rgb(var(--c-txt-dim) / <alpha-value>)",
+        txtMuted: "rgb(var(--c-txt-muted) / <alpha-value>)",
 
         // Arah harga
-        bullish: "#2ebd85",
-        bearish: "#f6465d",
+        bullish: "rgb(var(--c-bullish) / <alpha-value>)",
+        bearish: "rgb(var(--c-bearish) / <alpha-value>)",
         // Aksen merek (navigasi, pilihan aktif). Bukan penanda naik/turun.
-        accent: "#ff7a1a",
-        warn: "#f0b90b",
+        accent: "rgb(var(--c-accent) / <alpha-value>)",
+        warn: "rgb(var(--c-warn) / <alpha-value>)",
 
         // Kategori regime — biru/emas/ungu, bukan hijau/merah.
-        persistent: "#4a9eff",
-        randomLike: "#8b949e",
-        antiPersistent: "#f0b90b",
-        uncertainRule: "#5c6673",
-        uncertainLowconf: "#b07cf5",
+        persistent: "rgb(var(--c-persistent) / <alpha-value>)",
+        randomLike: "rgb(var(--c-random-like) / <alpha-value>)",
+        antiPersistent: "rgb(var(--c-anti-persistent) / <alpha-value>)",
+        uncertainRule: "rgb(var(--c-uncertain-rule) / <alpha-value>)",
+        uncertainLowconf: "rgb(var(--c-uncertain-lowconf) / <alpha-value>)",
       },
       fontFamily: {
         mono: ["ui-monospace", "SFMono-Regular", "Menlo", "Consolas", "monospace"],
@@ -49,8 +52,8 @@ const config: Config = {
         "2xs": ["10px", "14px"],
       },
       boxShadow: {
-        panel: "0 1px 2px rgba(0,0,0,0.4)",
-        pop: "0 8px 24px rgba(0,0,0,0.55)",
+        panel: "var(--shadow-panel)",
+        pop: "var(--shadow-pop)",
       },
     },
   },

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { themeColor, useTheme } from "@/lib/theme";
 
 /**
  * Analisa teknikal bebas dengan widget resmi TradingView (gratis).
@@ -53,6 +54,8 @@ const INTERVALS = [
 
 function TradingViewChart({ symbol, interval }: { symbol: string; interval: string }) {
   const host = useRef<HTMLDivElement>(null);
+  // Widget dibangun ulang saat tema berganti; warnanya diambil dari token tema.
+  const theme = useTheme();
 
   useEffect(() => {
     const el = host.current;
@@ -70,11 +73,11 @@ function TradingViewChart({ symbol, interval }: { symbol: string; interval: stri
       symbol,
       interval,
       timezone: "Asia/Jakarta",
-      theme: "dark",
+      theme,
       style: "1",
       locale: "id",
-      backgroundColor: "#131518",
-      gridColor: "rgba(39, 43, 49, 0.6)",
+      backgroundColor: themeColor("panel"),
+      gridColor: themeColor("edge", 0.6),
       allow_symbol_change: true,
       hide_side_toolbar: false,
       withdateranges: true,
@@ -86,7 +89,7 @@ function TradingViewChart({ symbol, interval }: { symbol: string; interval: stri
     return () => {
       el.innerHTML = "";
     };
-  }, [symbol, interval]);
+  }, [symbol, interval, theme]);
 
   return <div ref={host} className="tradingview-widget-container h-full w-full" />;
 }
