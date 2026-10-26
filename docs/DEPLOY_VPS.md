@@ -91,6 +91,15 @@ echo "ANALYSIS_INTERNAL_TOKEN=$T" >> frontend/.env.local
 unset T
 ```
 
+Panduan Setup (`/setup`) terkunci per akun; permintaan akses disetujui di
+`/admin/akses` oleh akun yang emailnya tercantum di `ADMIN_EMAILS` (dipisah koma):
+
+```bash
+echo "ADMIN_EMAILS=email-admin@contoh.com" >> frontend/.env.local
+```
+
+Admin yang menautkan Telegram menerima pesan setiap ada permintaan baru.
+
 ## 5. Jalankan
 
 ```bash

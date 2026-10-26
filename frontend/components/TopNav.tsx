@@ -33,6 +33,7 @@ const GROUPS: NavGroup[] = [
     label: "Strategi",
     items: [
       { href: "/strategi", label: "Regime → Strategi", hint: "Strategi per kondisi beserta hasil uji Fase 2" },
+      { href: "/setup", label: "Panduan Setup", hint: "Setup yang cocok dan dihindari per kondisi pasar · perlu persetujuan admin" },
       { href: "/notifikasi", label: "Notifikasi Telegram", hint: "Pesan otomatis saat regime berganti" },
     ],
   },

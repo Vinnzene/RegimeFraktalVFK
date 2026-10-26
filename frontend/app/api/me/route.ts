@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
 import { requireUser } from "@/lib/server-user";
+import { isAdmin } from "@/lib/setup-access";
 
 export type TelegramStatus = {
   chat_id: number;
@@ -16,6 +17,8 @@ export type MeResponse = {
   telegram: TelegramStatus | null;
   firestore: boolean;
   bot_username: string | null;
+  /** Email akun ada di ADMIN_EMAILS: boleh mengelola akses Panduan Setup. */
+  admin: boolean;
 };
 
 /** Profil pengguna + status langganan Telegram. */
@@ -49,6 +52,7 @@ export async function GET() {
     telegram,
     firestore: Boolean(db),
     bot_username: process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME?.replace(/^@/, "") || null,
+    admin: isAdmin(user),
   };
   return NextResponse.json(body);
 }

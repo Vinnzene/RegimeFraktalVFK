@@ -62,6 +62,16 @@ export default function UserMenu() {
               {tg ? (tg.enabled ? "aktif" : "jeda") : "belum"}
             </span>
           </Link>
+          {me.admin && (
+            <Link
+              href="/admin/akses"
+              onClick={() => setOpen(false)}
+              className="flex items-center justify-between rounded px-3 py-2 text-[12.5px] text-txtDim transition-colors hover:bg-surface hover:text-txt"
+            >
+              Kelola akses Panduan Setup
+              <span className="text-2xs text-accent">admin</span>
+            </Link>
+          )}
           <button
             type="button"
             onClick={() => void signOutEverywhere()}
