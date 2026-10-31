@@ -1,0 +1,109 @@
+# BAB 5|KESIMPULAN DAN SARAN
+
+## 5.1. Kesimpulan
+
+Berdasarkan hasil penelitian, kesimpulan untuk setiap rumusan masalah adalah sebagai berikut.
+
+1. **RM1 (Hurst-DFA).** Estimator Hurst R/S dan DFA-1 tidak konsisten pada BTC/USDT: keduanya hanya sepakat pada 52,6% jendela 1H dan 52,7% jendela 4H dengan korelasi 0,573 dan 0,550, dan pada sekitar 7% jendela menunjuk arah berlawanan. Ketika kebenaran dasar diketahui, konsensus R/S–DFA naif hanya mencapai BA 0,268 pada deret berkarakter kripto, dan estimator klasik terbaik (VR(2) terkalibrasi) mencapai 0,654. Akurasi estimator klasik turun nyata ketika karakter kripto ditambahkan (+0,141, p Holm < 0,0005).
+2. **RM2 (SWT).** Koefisien SWT mentah tidak memberi daya pembeda yang berarti (BA 0,38 pada 1H). Sekuens statistik persistensi jauh lebih informatif (ΔMacro-F1 +0,277, p Holm < 0,0005 pada 1H). Fitur energi SWT dalam detektor resmi tidak memberi kontribusi yang terdeteksi (ΔBA −0,0003, CI95 [−0,005; +0,005]), karena informasinya sudah tercakup oleh variance ratio dan autokorelasi multi-lag.
+3. **RM3 (Attention-BiLSTM).** Pada data sintetis berkebenaran dasar, Attention-BiLSTM yang dilatih pada data berkarakter kripto mencapai BA 0,813, lebih akurat 0,159 daripada estimator Hurst-DFA klasik terbaik (p Holm < 0,0005), dan mendeteksi pergantian regime dua kali lebih cepat daripada konsensus naif (median 296 dibanding 604 bar). Pada label Hurst-DFA BTC, model usulan Hybrid PS memiliki BA tertinggi (0,698 pada 1H), tetapi keunggulannya atas MLP tidak signifikan setelah koreksi Holm (p = 0,0575) dan setara dengan regresi logistik. Attention tidak menambah akurasi identifikasi regime yang stabil, tetapi menjadi bermakna pada model yang dilatih mendeteksi pergantian (91% bobot pada 8 langkah terakhir).
+4. **RM4 (Multi-timeframe).** Identifikasi pada 1H lebih akurat dan stabil daripada 4H (BA uji 0,698 dibanding 0,593; walk-forward 0,570 dibanding 0,443) karena sampel efektif 4H jauh lebih kecil. Menambahkan timeframe yang lebih kasar sebagai masukan menaikkan ketepatan pada data sintetis, tetapi peningkatan itu berasal dari sejarah yang lebih panjang dan dibayar dengan deteksi 32–39% lebih lambat, sehingga tidak diterapkan.
+5. **RM5 (Kegunaan).** Detektor tidak memenuhi kriteria generalisasi kelompok pada 19 aset lain, meskipun tidak pernah lebih buruk daripada detektor pembanding. Pemilihan strategi berbasis regime tidak menambah Sharpe dibanding strategi tunggal terbaik setelah biaya di kelompok aset mana pun. Nilai praktis yang didukung data adalah sebagai filter untuk tidak menjalankan strategi aktif saat kondisi random-like, dan di saham IDX sebagai pengurang drawdown.
+6. **RM6 (Sistem).** Sistem web pengawas regime berhasil diimplementasikan dengan FastAPI, Next.js, Firebase, dan bot Telegram, menampilkan regime 1H dan 4H dari detektor AI beserta tingkat keyakinan, abstain τ = 0,75, dan konfirmasi 3 jendela untuk notifikasi. Sistem berjalan di VPS dan 330 unit test lulus. Pengujian black-box, UAT, dan SUS belum dilaksanakan.
+
+CATATAN: Perbarui butir 6 setelah black-box, UAT, dan SUS dilaksanakan.
+
+Secara keseluruhan, penelitian ini menunjukkan bahwa identifikasi regime fraktal BTC/USDT dengan estimator Hurst-DFA klasik tidak dapat diandalkan, dan bahwa Attention-BiLSTM yang dilatih pada data sintetis berkebenaran dasar memberikan identifikasi yang lebih akurat dan lebih cepat. Kontribusi terbesarnya berasal dari cara melatih dan mengevaluasi model, bukan dari SWT atau attention itu sendiri.
+
+## 5.2. Saran
+
+1. **Data sintetis dengan pergantian regime.** Semua metode gagal ketika regime berganti di dalam jendela (S5). Penelitian selanjutnya dapat membangkitkan data latih dengan pergantian H yang lebih realistis, misalnya proses multifraktal atau *Markov-switching*, agar deteksi setelah pergantian lebih cepat tanpa menurunkan ketepatan pada kondisi stabil.
+2. **Kelas random-like.** Kelas ini paling sulit dikenali (recall 0,45 pada label BTC). Pendekatan regresi H secara langsung, dengan kelas ditentukan setelahnya dan disertai selang ketidakpastian, dapat diuji sebagai alternatif klasifikasi tiga kelas.
+3. **Kalibrasi keyakinan.** Ambang abstain dipilih pada data sintetis. Metode seperti *conformal prediction* dapat dipakai agar tingkat keyakinan memiliki jaminan cakupan pada data nyata.
+4. **Kalibrasi per aset.** Generalisasi lintas aset gagal terutama karena label persistent sangat jarang muncul. Penelitian selanjutnya dapat menyesuaikan normalisasi atau ambang kelas per aset tanpa melatih ulang model.
+5. **Strategi yang lebih kaya.** Uji kegunaan dapat diperluas ke strategi dengan biaya lebih rendah atau frekuensi transaksi lebih jarang, serta ke pengaturan ukuran posisi berdasarkan regime, dengan tetap memakai praregistrasi dan bootstrap berpasangan.
+6. **Sistem.** Sistem dapat dilengkapi domain dan HTTPS (sehingga login Google dapat dipakai), pencatatan uji maju notifikasi dalam jangka panjang, serta pelaksanaan UAT dan SUS dengan pengguna nyata.
+
+Dua saran yang lazim, yaitu *transfer learning* dari data sintetis dan penggabungan beberapa timeframe atau panjang jendela, telah diuji dalam penelitian ini (Subbab 4.5.2 dan 4.7.2) dan tidak memberikan perbaikan yang memenuhi kriteria praregistrasi.
+
+#! DAFTAR PUSTAKA
+
+PUSTAKA: Al-Yahyaee, K. H., Mensi, W., & Yoon, S.-M. (2018). Efficiency, multifractality, and the long-memory property of the Bitcoin market: A comparative analysis with stock, currency, and gold markets. *Finance Research Letters, 27*, 228–234. https://doi.org/10.1016/j.frl.2018.03.017
+
+PUSTAKA: Bahdanau, D., Cho, K., & Bengio, Y. (2015). Neural machine translation by jointly learning to align and translate. *Proceedings of the 3rd International Conference on Learning Representations (ICLR 2015)*.
+
+PUSTAKA: Bangor, A., Kortum, P. T., & Miller, J. T. (2008). An empirical evaluation of the System Usability Scale. *International Journal of Human-Computer Interaction, 24*(6), 574–594. https://doi.org/10.1080/10447310802205776
+
+PUSTAKA: Bao, W., Yue, J., & Rao, Y. (2017). A deep learning framework for financial time series using stacked autoencoders and long-short term memory. *PLOS ONE, 12*(7), e0180944. https://doi.org/10.1371/journal.pone.0180944
+
+PUSTAKA: Bariviera, A. F. (2017). The inefficiency of Bitcoin revisited: A dynamic approach. *Economics Letters, 161*, 1–4. https://doi.org/10.1016/j.econlet.2017.09.013
+
+PUSTAKA: Bo, S., Schmidt, F., Eichhorn, R., & Volpe, G. (2019). Measurement of anomalous diffusion using recurrent neural networks. *Physical Review E, 100*(1), 010102. https://doi.org/10.1103/PhysRevE.100.010102
+
+PUSTAKA: Brooke, J. (1996). SUS: A "quick and dirty" usability scale. Dalam P. W. Jordan, B. Thomas, B. A. Weerdmeester, & I. L. McClelland (Ed.), *Usability Evaluation in Industry* (hlm. 189–194). Taylor & Francis.
+
+PUSTAKA: Chen, K.-Y., Chen, K.-H., & Jang, J.-S. R. (2025). Dynamic grid trading strategy: From zero expectation to market outperformance. *arXiv preprint* arXiv:2506.11921.
+
+PUSTAKA: Davies, R. B., & Harte, D. S. (1987). Tests for Hurst effect. *Biometrika, 74*(1), 95–101. https://doi.org/10.1093/biomet/74.1.95
+
+PUSTAKA: Di Matteo, T. (2007). Multi-scaling in finance. *Quantitative Finance, 7*(1), 21–36. https://doi.org/10.1080/14697680600969727
+
+PUSTAKA: Fama, E. F. (1970). Efficient capital markets: A review of theory and empirical work. *The Journal of Finance, 25*(2), 383–417. https://doi.org/10.2307/2325486
+
+PUSTAKA: Grande, M., Borondo, F., Losada, J. C., & Borondo, J. (2024). Anti-persistent values of the Hurst exponent anticipate mean reversion in pairs trading: The cryptocurrencies market as a case study. *Mathematics, 12*(18), 2911. https://doi.org/10.3390/math12182911
+
+PUSTAKA: Hiskiawan, P., William, J., & Jansel, L. F. T. (2025). A hybrid data science framework for forecasting Bitcoin prices using traditional and AI models. *Journal of Applied Informatics and Computing (JAIC), 9*(5), 2089–2101.
+
+PUSTAKA: Hochreiter, S., & Schmidhuber, J. (1997). Long short-term memory. *Neural Computation, 9*(8), 1735–1780. https://doi.org/10.1162/neco.1997.9.8.1735
+
+PUSTAKA: Holm, S. (1979). A simple sequentially rejective multiple test procedure. *Scandinavian Journal of Statistics, 6*(2), 65–70.
+
+PUSTAKA: Hurst, H. E. (1951). Long-term storage capacity of reservoirs. *Transactions of the American Society of Civil Engineers, 116*(1), 770–799.
+
+PUSTAKA: Ismail Fawaz, H., Forestier, G., Weber, J., Idoumghar, L., & Muller, P.-A. (2018). Transfer learning for time series classification. *2018 IEEE International Conference on Big Data*, 1367–1376. https://doi.org/10.1109/BigData.2018.8621990
+
+PUSTAKA: Kapoor, S., & Narayanan, A. (2023). Leakage and the reproducibility crisis in machine-learning-based science. *Patterns, 4*(9), 100804. https://doi.org/10.1016/j.patter.2023.100804
+
+PUSTAKA: Künsch, H. R. (1989). The jackknife and the bootstrap for general stationary observations. *The Annals of Statistics, 17*(3), 1217–1241.
+
+PUSTAKA: Lahiri, S. N. (2003). *Resampling methods for dependent data*. Springer.
+
+PUSTAKA: Lahmiri, S., & Bekiros, S. (2018). Chaos, randomness and multi-fractality in Bitcoin market. *Chaos, Solitons & Fractals, 106*, 28–34. https://doi.org/10.1016/j.chaos.2017.11.005
+
+PUSTAKA: Lo, A. W. (1991). Long-term memory in stock market prices. *Econometrica, 59*(5), 1279–1313. https://doi.org/10.2307/2938368
+
+PUSTAKA: Lo, A. W., & MacKinlay, A. C. (1988). Stock market prices do not follow random walks: Evidence from a simple specification test. *The Review of Financial Studies, 1*(1), 41–66. https://doi.org/10.1093/rfs/1.1.41
+
+PUSTAKA: López de Prado, M. (2018). *Advances in financial machine learning*. John Wiley & Sons.
+
+PUSTAKA: Mandelbrot, B. B. (1972). Statistical methodology for nonperiodic cycles: From the covariance to R/S analysis. *Annals of Economic and Social Measurement, 1*(3), 259–290.
+
+PUSTAKA: Mandelbrot, B. B. (1982). *The fractal geometry of nature*. W. H. Freeman and Company.
+
+PUSTAKA: Maraun, D., Rust, H. W., & Timmer, J. (2004). Tempting long-memory: On the interpretation of DFA results. *Nonlinear Processes in Geophysics, 11*(4), 495–503. https://doi.org/10.5194/npg-11-495-2004
+
+PUSTAKA: Müller, R., Kornblith, S., & Hinton, G. E. (2019). When does label smoothing help? *Advances in Neural Information Processing Systems, 32*.
+
+PUSTAKA: Muñoz-Gil, G., Volpe, G., Garcia-March, M. A., dkk. (2021). Objective comparison of methods to decode anomalous diffusion. *Nature Communications, 12*(1), 6253. https://doi.org/10.1038/s41467-021-26320-w
+
+PUSTAKA: Nakamoto, S. (2008). *Bitcoin: A peer-to-peer electronic cash system*. White paper.
+
+PUSTAKA: Nason, G. P., & Silverman, B. W. (1995). The stationary wavelet transform and some statistical applications. Dalam *Wavelets and Statistics* (Lecture Notes in Statistics, Vol. 103, hlm. 281–299). Springer.
+
+PUSTAKA: Nirraca, M., & Hartati, E. (2024). Prediksi harga Bitcoin menggunakan metode Long Short Term Memory. *Jurnal Digital, 4*(1), 55–65.
+
+PUSTAKA: Otoritas Jasa Keuangan. (2026). *Laporan perkembangan aset keuangan digital dan konsumen aset kripto Indonesia periode Desember 2025 – Januari 2026*. OJK.
+
+PUSTAKA: Peng, C.-K., Buldyrev, S. V., Havlin, S., Simons, M., Stanley, H. E., & Goldberger, A. L. (1994). Mosaic organization of DNA nucleotides. *Physical Review E, 49*(2), 1685–1689. https://doi.org/10.1103/PhysRevE.49.1685
+
+PUSTAKA: Peters, E. E. (1994). *Fractal market analysis: Applying chaos theory to investment and economics*. John Wiley & Sons.
+
+PUSTAKA: Ramadhan, M. F., Lestari, D., & Khaira, U. (2024). Prediksi harga Bitcoin menggunakan metode Long Short Term Memory. *Jurnal Pepadun, 5*(2), 104–112.
+
+PUSTAKA: Schuster, M., & Paliwal, K. K. (1997). Bidirectional recurrent neural networks. *IEEE Transactions on Signal Processing, 45*(11), 2673–2681. https://doi.org/10.1109/78.650093
+
+PUSTAKA: Stavroyiannis, S., Babalos, V., Bekiros, S., & Lahmiri, S. (2019). High frequency multifractal properties of Bitcoin. *Physica A: Statistical Mechanics and its Applications, 520*, 62–71. https://doi.org/10.1016/j.physa.2018.12.037
+
+PUSTAKA: Takaishi, T. (2018). Statistical properties and multifractality of Bitcoin. *Physica A: Statistical Mechanics and its Applications, 506*, 507–519. https://doi.org/10.1016/j.physa.2018.04.046
+
+PUSTAKA: Urquhart, A. (2016). The inefficiency of Bitcoin. *Economics Letters, 148*, 80–82. https://doi.org/10.1016/j.econlet.2016.09.019

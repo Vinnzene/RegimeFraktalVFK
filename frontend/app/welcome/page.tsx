@@ -10,7 +10,7 @@ import ThemeToggle from "@/components/ThemeToggle";
  */
 
 export const metadata: Metadata = {
-  title: "regimefraktalVFK — Kenali sifat pasar sebelum memilih strategi",
+  title: "rfraktal — Kenali sifat pasar sebelum memilih strategi",
   description:
     "Detektor regime fraktal BTC/USDT berbasis Attention-BiLSTM: berlanjut, berbalik, atau acak, lengkap dengan tingkat keyakinan dan bukti uji.",
 };
@@ -79,7 +79,7 @@ function Nav() {
         <Link href="/welcome" className="flex items-center gap-2">
           <BrandMark size={28} />
           <span className="text-[16px] font-semibold tracking-tight text-txt">
-            regimefraktal<span className="text-accent">VFK</span>
+            R<span className="text-accent">Fraktal</span>
           </span>
         </Link>
         <nav className="hidden items-center gap-6 text-[14px] text-txtDim md:flex" aria-label="Navigasi landing">

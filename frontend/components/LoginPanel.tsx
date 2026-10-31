@@ -197,7 +197,7 @@ export default function LoginPanel({
           <Link href="/welcome" className="flex w-fit items-center gap-3">
             <BrandMark size={38} />
             <span className="text-[19px] font-semibold tracking-[0.04em]">
-              regimefraktal<span className="text-[#ff8a3d]">VFK</span>
+              R<span className="text-[#ff8a3d]">Fraktal</span>
             </span>
           </Link>
 
@@ -262,7 +262,7 @@ export default function LoginPanel({
             <div className="flex flex-col items-center text-center">
               <BrandMark size={64} />
               <div className="mt-2 text-[20px] font-semibold tracking-[0.04em]">
-                regimefraktal<span className="text-[#ff8a3d]">VFK</span>
+                R<span className="text-[#ff8a3d]">Fraktal</span>
               </div>
               <h2 className="mt-5 text-[26px] font-medium tracking-tight">{title}</h2>
               <p className="mt-1 text-[13px] text-[#b9b2aa]">{subtitle}</p>

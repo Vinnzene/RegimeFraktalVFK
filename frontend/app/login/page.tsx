@@ -5,7 +5,7 @@ import { adminApp } from "@/lib/firebase-admin";
 import { demoAllowed } from "@/lib/session";
 import { currentUser } from "@/lib/server-user";
 
-export const metadata = { title: "Masuk — regimefraktalVFK" };
+export const metadata = { title: "Masuk — RFraktal" };
 
 export default async function LoginPage({ searchParams }: { searchParams: { callbackUrl?: string } }) {
   const callbackUrl = searchParams.callbackUrl?.startsWith("/") ? searchParams.callbackUrl : "/";

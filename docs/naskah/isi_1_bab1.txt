@@ -1,0 +1,96 @@
+# BAB 1|PENDAHULUAN
+
+Bab ini menguraikan latar belakang permasalahan, pembatasan masalah, rumusan permasalahan, tujuan dan manfaat penelitian, serta sistematika penulisan skripsi.
+
+## 1.1. Latar Belakang Permasalahan
+
+Perkembangan aset kripto di Indonesia menunjukkan peningkatan aktivitas yang pesat. Otoritas Jasa Keuangan (OJK) mencatat jumlah konsumen aset kripto di Indonesia mencapai 20,19 juta pada Desember 2025, dengan total nilai transaksi sepanjang 2025 sebesar Rp482,23 triliun, dan nilai transaksi Januari 2026 sebesar Rp29,24 triliun. Salah satu aset yang paling banyak dikaji dalam sains data adalah Bitcoin yang diperdagangkan terhadap Tether (BTC/USDT), karena pasangan ini memiliki likuiditas global tertinggi dan fluktuasi harga yang sangat dinamis.
+
+CATATAN: Angka OJK berasal dari naskah sebelumnya. Cocokkan dengan laporan OJK aslinya sebelum naskah final.
+
+Kajian kecerdasan buatan tentang Bitcoin di Indonesia umumnya berfokus pada peramalan harga. Ramadhan dkk. (2024) dan Nirraca dan Hartati (2024) memakai Long Short-Term Memory (LSTM) untuk memprediksi harga Bitcoin dengan metrik galat regresi, sedangkan Hiskiawan dkk. (2025) di Universitas Bunda Mulia membandingkan Linear Regression, ARIMA, Prophet, Random Forest, XGBoost, dan LSTM untuk meramalkan harga penutupan. Pendekatan tersebut menempatkan harga sebagai target kontinu dan tidak mengklasifikasikan kondisi struktural pasar yang sedang berlangsung.
+
+Kondisi struktural pasar penting karena perdagangan aset kripto kini banyak dijalankan oleh perangkat lunak otomatis dengan dua keluarga strategi yang bertumpu pada asumsi berlawanan. Strategi *mean-reversion* (misalnya *grid bot*) mengasumsikan harga cenderung kembali ke nilai tengah, sedangkan strategi *trend-following* atau momentum mengasumsikan gerakan harga cenderung berlanjut. Strategi yang dijalankan pada kondisi yang tidak sesuai dengan asumsinya merugi secara sistematis: mean-reversion terseret saat harga terus bergerak searah, momentum terkena sinyal palsu saat harga bolak-balik. Masalah ini disebut *strategy mismatch*. Pertanyaan praktis yang dihadapi pengguna adalah kondisi pasar sekarang bersifat apa, dan strategi mana yang sebaiknya tidak dijalankan.
+
+Dalam kerangka *Fractal Market Hypothesis* (Peters, 1994), sifat tersebut diukur dengan eksponen Hurst (H): H > 0,5 berarti persisten (gerakan cenderung berlanjut), H < 0,5 anti-persisten (cenderung berbalik), dan H ≈ 0,5 menyerupai jalan acak. Dua estimator klasik yang paling banyak dipakai adalah Rescaled Range (R/S) dan Detrended Fluctuation Analysis (DFA). Urquhart (2016) menemukan bahwa pasar Bitcoin awal tidak efisien, dan Bariviera (2017) menunjukkan bahwa eksponen ini pada Bitcoin berubah dari waktu ke waktu, sedangkan Al-Yahyaee dkk. (2018) serta Lahmiri dan Bekiros (2018) mengonfirmasi sifat *long memory* dan multifraktalitas pasar Bitcoin. Karena itu regime fraktal bersifat dinamis dan perlu diidentifikasi pada jendela bergulir.
+
+Penerapan langsung estimator klasik pada data intraday BTC/USDT menghadapi empat hambatan yang ditemukan dalam penelitian ini.
+
+1. **Estimator klasik tidak konsisten.** Pada 16.857 jendela BTC/USDT 1H (2019–2026), R/S dan DFA hanya sepakat pada 52,6% jendela dengan korelasi Pearson 0,573, dan pada 7,3% jendela keduanya menunjuk arah berlawanan (Tabel 4.1). Maraun dkk. (2004) telah memperingatkan bahwa kemiringan log-log pada jendela terbatas mudah terdistorsi derau.
+2. **Tidak ada kunci jawaban di data nyata.** Regime sebenarnya tidak teramati, sehingga model yang dilatih pada label R/S–DFA hanya belajar meniru estimator klasik beserta kesalahannya. Akurasi estimator itu sendiri tidak dapat diukur dari data BTC saja.
+3. **Representasi wavelet mentah tidak cukup.** Mengumpankan koefisien Stationary Wavelet Transform (SWT) langsung ke jaringan rekuren hanya mencapai *balanced accuracy* 0,38–0,42, hampir setara tebakan acak 0,333 (Tabel 4.3).
+4. **Evaluasi rawan kebocoran data.** Pembagian data acak antar-jendela yang saling tumpang tindih menggelembungkan akurasi sebesar +0,12 sampai +0,18 (Tabel 4.10), sejalan dengan peringatan López de Prado (2018) serta Kapoor dan Narayanan (2023).
+
+Penelitian ini menjawab hambatan tersebut dengan (a) mengukur ketidakkonsistenan Hurst-DFA secara terbuka; (b) membandingkan representasi SWT mentah dengan sekuens statistik persistensi (PS); (c) membangun model Attention-BiLSTM dengan masukan sekuens PS dan fitur struktural yang memuat energi multi-skala SWT; (d) melatih model pada deret sintetis yang eksponen Hurst-nya diketahui pasti, sehingga akurasinya dapat dibandingkan langsung dengan estimator Hurst-DFA klasik; (e) menguji model pada dua timeframe (1H dan 4H), pada 19 aset lain, dan pada keputusan pemilihan strategi setelah biaya; serta (f) mengimplementasikan hasilnya ke sistem web pengawas regime dengan notifikasi Telegram. Seluruh hipotesis dipraregistrasi, yaitu dikunci dalam repositori sebelum hasilnya dihitung, agar kesimpulan tidak disesuaikan dengan hasil.
+
+Berdasarkan uraian tersebut, penelitian ini disusun dengan judul "Identifikasi Regime Fraktal Dinamis BTC/USDT Multi-Timeframe Menggunakan SWT dan Attention-BiLSTM Berbasis Hurst-DFA".
+
+## 1.2. Pembatasan Masalah
+
+1. Objek utama adalah data spot BTC/USDT dari arsip resmi Binance periode 1 Januari 2019 hingga Oktober 2026.
+2. Timeframe yang dianalisis dan dibandingkan adalah 1 jam (1H, 67.927 bar) dan 4 jam (4H, 16.992 bar).
+3. Penelitian bersifat identifikasi kondisi saat ini, bukan prediksi harga atau prediksi regime di masa depan.
+4. Data yang dipakai hanya harga OHLCV (log-return harga penutupan). Berita, sentimen, data makroekonomi, dan faktor fundamental tidak digunakan.
+5. Jendela bergulir berpanjang L = 500 bar dengan langkah s = 4 bar.
+6. Kelas regime terdiri atas tiga kelas: persistent, random-like, dan anti-persistent. Pada label konsensus Hurst-DFA, jendela yang tidak disepakati kedua estimator dikategorikan *uncertain_rule* dan tidak dipakai untuk pelatihan maupun pengujian.
+7. SWT memakai wavelet Daubechies-4 (db4) dengan 4 level dekomposisi yang dihitung secara kausal.
+8. Data sintetis berkebenaran dasar dibangkitkan dari *fractional Gaussian noise* (fGn) dengan karakter kripto (ekor tebal, volatilitas stokastik, lonjakan).
+9. Uji generalisasi memakai 19 aset tambahan (6 kripto utama, PAXGUSDT, emas berjangka GC=F, IHSG, dan 10 saham IDX) tanpa pelatihan ulang.
+10. Sistem yang dibangun adalah sistem pendukung keputusan, bukan bot eksekusi transaksi, dan hasil uji strategi bukan jaminan keuntungan.
+
+## 1.3. Rumusan Permasalahan
+
+Setiap komponen judul dipetakan ke satu rumusan masalah agar seluruh judul terjawab, sebagaimana ditunjukkan pada Tabel 1.1.
+
+TABEL: Tabel 1.1 Pemetaan Komponen Judul ke Rumusan Masalah
+| Komponen judul | Rumusan masalah | Dijawab pada |
+|---|---|---|
+| Berbasis Hurst-DFA | RM1 | Subbab 4.1 dan 4.6 |
+| SWT | RM2 | Subbab 4.2 |
+| Attention-BiLSTM | RM3 | Subbab 4.3, 4.6, 4.7, dan 4.11 |
+| Multi-timeframe | RM4 | Subbab 4.5 dan 4.8 |
+| Regime fraktal dinamis BTC/USDT (kegunaan) | RM5 | Subbab 4.9 dan 4.10 |
+| Sistem identifikasi | RM6 | Subbab 4.12 |
+
+1. **RM1** Seberapa konsisten estimator Hurst R/S dan DFA dalam mengidentifikasi regime fraktal BTC/USDT, dan seberapa akurat keduanya bila kebenaran dasar diketahui?
+2. **RM2** Apakah representasi SWT memberi daya pembeda bagi identifikasi regime, dan representasi apa yang lebih informatif?
+3. **RM3** Apakah model Attention-BiLSTM lebih akurat daripada estimator Hurst-DFA klasik dan daripada model pembanding yang lebih sederhana?
+4. **RM4** Bagaimana kinerja identifikasi pada timeframe 1H dibanding 4H, dan seberapa stabil antar-periode pasar?
+5. **RM5** Apakah identifikasi regime tergeneralisasi ke aset lain dan berguna untuk memilih strategi trading setelah biaya transaksi?
+6. **RM6** Bagaimana merancang dan mengimplementasikan sistem web yang menyajikan hasil identifikasi regime multi-timeframe beserta notifikasinya?
+
+## 1.4. Tujuan dan Manfaat
+
+### 1.4.1. Tujuan Penelitian
+
+1. Mengukur kesepakatan R/S dan DFA pada BTC/USDT 1H dan 4H serta akurasinya pada data sintetis berkebenaran dasar.
+2. Membandingkan representasi SWT mentah dengan sekuens statistik persistensi dan mengukur kontribusi fitur energi SWT.
+3. Membangun dan mengevaluasi model Hybrid PS (Attention-BiLSTM) terhadap estimator klasik dan model pembanding dengan uji statistik yang memperhitungkan autokorelasi antar-jendela.
+4. Membandingkan kinerja dan stabilitas identifikasi pada 1H dan 4H melalui evaluasi *walk-forward*.
+5. Menguji generalisasi lintas aset dan kegunaan pemilihan strategi berbasis regime setelah biaya.
+6. Mengimplementasikan sistem web (FastAPI dan Next.js) dengan notifikasi Telegram.
+
+### 1.4.2. Manfaat Penelitian
+
+Manfaat teoretis penelitian ini adalah sebagai berikut.
+
+1. Memberikan bukti kuantitatif bahwa estimator Hurst-DFA klasik tidak konsisten dan kurang akurat pada data berkarakter kripto.
+2. Menyediakan protokol evaluasi dengan kebenaran dasar sintetis untuk identifikasi regime yang dapat dipakai ulang penelitian lain.
+3. Melaporkan hasil negatif secara terbuka: SWT mentah gagal, mekanisme attention tidak menambah akurasi identifikasi, dan pemilihan strategi berbasis regime tidak menambah Sharpe setelah biaya.
+
+Manfaat praktis penelitian ini adalah sebagai berikut.
+
+1. Menyediakan sistem web yang menampilkan regime BTC/USDT 1H dan 4H dari model AI, beserta tingkat keyakinan model dan pembanding estimator klasik.
+2. Memberi informasi kapan sebaiknya tidak menjalankan strategi aktif, yang didukung data uji pemilihan strategi.
+
+## 1.5. Sistematika Penulisan
+
+**BAB 1 PENDAHULUAN** membahas latar belakang permasalahan, pembatasan masalah, rumusan permasalahan, tujuan dan manfaat penelitian, serta sistematika penulisan.
+
+**BAB 2 TINJAUAN PUSTAKA** membahas landasan teori (log-return, teori fraktal, Hurst R/S, DFA, variance ratio, H(q), SWT, data sintetis fGn, LSTM, BiLSTM, attention, confusion matrix, evaluasi bebas kebocoran, evaluasi strategi, dan pengujian perangkat lunak), penelitian terdahulu, celah dan kebaruan penelitian, serta kerangka berpikir.
+
+**BAB 3 ANALISIS DAN PERANCANGAN** membahas kebutuhan penelitian, tahapan dan praregistrasi, pra-pemrosesan kausal, pelabelan konsensus Hurst-DFA, ekstraksi fitur, arsitektur Attention-BiLSTM, protokol evaluasi, benchmark sintetis, studi lanjutan, uji generalisasi, uji pemilihan strategi, perancangan sistem, dan rancangan pengujian perangkat lunak.
+
+**BAB 4 HASIL DAN PEMBAHASAN** menyajikan hasil dan pembahasan untuk RM1 sampai RM6.
+
+**BAB 5 KESIMPULAN DAN SARAN** memuat kesimpulan yang menjawab seluruh rumusan masalah serta saran untuk penelitian selanjutnya.

@@ -5,7 +5,7 @@ import AppChrome from "@/components/AppChrome";
 import { THEME_INIT_SCRIPT } from "@/lib/theme-script";
 
 export const metadata: Metadata = {
-  title: "regimefraktalVFK — Identifikasi Regime Fraktal BTC/USDT",
+  title: "rfraktal — Identifikasi Regime Fraktal BTC/USDT",
   description:
     "Dashboard riset identifikasi regime persistensi BTC/USDT dan pemilihan strategi trading berbasis regime.",
 };

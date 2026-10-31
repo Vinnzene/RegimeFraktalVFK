@@ -30,19 +30,25 @@ from app.services.model_registry import (  # noqa: E402
 from dataset import build_dataset  # noqa: E402
 
 
-def class_weights(y: np.ndarray) -> dict:
+def class_weights(y: np.ndarray, random_boost: float = 1.0) -> dict:
     """Bobot berbanding terbalik dengan frekuensi kelas.
 
     Distribusi regime tidak seimbang; tanpa bobot, model cenderung menebak
     kelas mayoritas dan balanced accuracy-nya runtuh.
+
+    Parameter `random_boost` (> 1.0) memberikan penalti kerugian ekstra pada
+    kelas `random_like` (indeks 1) untuk mengatasi underfitting akibat SNR rendah.
     """
     counts = y.sum(axis=0)
     total = counts.sum()
     n_classes = len(counts)
-    return {
+    w = {
         i: float(total / (n_classes * c)) if c > 0 else 1.0
         for i, c in enumerate(counts)
     }
+    if random_boost > 1.0 and 1 in w:
+        w[1] *= float(random_boost)
+    return w
 
 
 def evaluate_split(model, X: np.ndarray, y: np.ndarray) -> dict:

@@ -1,0 +1,406 @@
+{
+  "1h": {
+    "baseline": {
+      "config": {
+        "name": "Hybrid PS Baseline (1H)",
+        "adaptive": false,
+        "lr": 0.001,
+        "label_smoothing": 0.0,
+        "l2_reg": 0.0,
+        "random_boost": 1.0,
+        "batch_size": 64
+      },
+      "summary": {
+        "train_ba": {
+          "mean": 0.7362,
+          "std": 0.0106
+        },
+        "val_ba": {
+          "mean": 0.56,
+          "std": 0.011
+        },
+        "test_ba": {
+          "mean": 0.6806,
+          "std": 0.0173
+        },
+        "test_f1": {
+          "mean": 0.6747,
+          "std": 0.0143
+        },
+        "test_mcc": {
+          "mean": 0.635,
+          "std": 0.0135
+        },
+        "overfit_gap_val": {
+          "mean": 0.1762,
+          "std": 0.0186
+        },
+        "overfit_gap_test": {
+          "mean": 0.0556,
+          "std": 0.0251
+        },
+        "recall_random_like": {
+          "mean": 0.4167,
+          "std": 0.0491
+        },
+        "recall_persistent": {
+          "mean": 0.6768,
+          "std": 0.0103
+        },
+        "recall_anti_persistent": {
+          "mean": 0.9485,
+          "std": 0.0111
+        }
+      },
+      "per_seed": [
+        {
+          "seed": 42,
+          "epochs_ran": 13,
+          "elapsed_s": 16.8,
+          "train_ba": 0.75,
+          "val_ba": 0.5584,
+          "test_ba": 0.6747,
+          "test_f1": 0.6712,
+          "test_mcc": 0.6341,
+          "overfit_gap_val": 0.1916,
+          "overfit_gap_test": 0.0753,
+          "recall_random_like": 0.3894,
+          "recall_persistent": 0.672,
+          "recall_anti_persistent": 0.9626
+        },
+        {
+          "seed": 43,
+          "epochs_ran": 13,
+          "elapsed_s": 15.9,
+          "train_ba": 0.7243,
+          "val_ba": 0.5743,
+          "test_ba": 0.7041,
+          "test_f1": 0.6937,
+          "test_mcc": 0.652,
+          "overfit_gap_val": 0.15,
+          "overfit_gap_test": 0.0202,
+          "recall_random_like": 0.4856,
+          "recall_persistent": 0.6911,
+          "recall_anti_persistent": 0.9356
+        },
+        {
+          "seed": 44,
+          "epochs_ran": 13,
+          "elapsed_s": 16.5,
+          "train_ba": 0.7343,
+          "val_ba": 0.5474,
+          "test_ba": 0.6631,
+          "test_f1": 0.6593,
+          "test_mcc": 0.619,
+          "overfit_gap_val": 0.1869,
+          "overfit_gap_test": 0.0712,
+          "recall_random_like": 0.375,
+          "recall_persistent": 0.6672,
+          "recall_anti_persistent": 0.9472
+        }
+      ]
+    },
+    "sweet_spot": {
+      "config": {
+        "name": "Hybrid PS Sweet Spot (1H)",
+        "adaptive": true,
+        "lr": 0.0003,
+        "label_smoothing": 0.06,
+        "l2_reg": 0.0001,
+        "random_boost": 1.35,
+        "batch_size": 128
+      },
+      "summary": {
+        "train_ba": {
+          "mean": 0.7307,
+          "std": 0.0109
+        },
+        "val_ba": {
+          "mean": 0.5228,
+          "std": 0.0201
+        },
+        "test_ba": {
+          "mean": 0.6923,
+          "std": 0.0088
+        },
+        "test_f1": {
+          "mean": 0.6745,
+          "std": 0.0087
+        },
+        "test_mcc": {
+          "mean": 0.6277,
+          "std": 0.0133
+        },
+        "overfit_gap_val": {
+          "mean": 0.2079,
+          "std": 0.0115
+        },
+        "overfit_gap_test": {
+          "mean": 0.0384,
+          "std": 0.0029
+        },
+        "recall_random_like": {
+          "mean": 0.516,
+          "std": 0.0742
+        },
+        "recall_persistent": {
+          "mean": 0.6231,
+          "std": 0.0638
+        },
+        "recall_anti_persistent": {
+          "mean": 0.9377,
+          "std": 0.004
+        }
+      },
+      "per_seed": [
+        {
+          "seed": 42,
+          "epochs_ran": 18,
+          "elapsed_s": 19.5,
+          "train_ba": 0.7433,
+          "val_ba": 0.5364,
+          "test_ba": 0.7037,
+          "test_f1": 0.6839,
+          "test_mcc": 0.6384,
+          "overfit_gap_val": 0.2069,
+          "overfit_gap_test": 0.0396,
+          "recall_random_like": 0.5481,
+          "recall_persistent": 0.6274,
+          "recall_anti_persistent": 0.9356
+        },
+        {
+          "seed": 43,
+          "epochs_ran": 18,
+          "elapsed_s": 19.2,
+          "train_ba": 0.732,
+          "val_ba": 0.5376,
+          "test_ba": 0.6909,
+          "test_f1": 0.6629,
+          "test_mcc": 0.609,
+          "overfit_gap_val": 0.1944,
+          "overfit_gap_test": 0.0411,
+          "recall_random_like": 0.5865,
+          "recall_persistent": 0.543,
+          "recall_anti_persistent": 0.9433
+        },
+        {
+          "seed": 44,
+          "epochs_ran": 17,
+          "elapsed_s": 16.9,
+          "train_ba": 0.7167,
+          "val_ba": 0.4943,
+          "test_ba": 0.6823,
+          "test_f1": 0.6768,
+          "test_mcc": 0.6357,
+          "overfit_gap_val": 0.2224,
+          "overfit_gap_test": 0.0344,
+          "recall_random_like": 0.4135,
+          "recall_persistent": 0.699,
+          "recall_anti_persistent": 0.9343
+        }
+      ]
+    }
+  },
+  "4h": {
+    "baseline": {
+      "config": {
+        "name": "Hybrid PS Baseline (4H)",
+        "adaptive": false,
+        "lr": 0.001,
+        "label_smoothing": 0.0,
+        "l2_reg": 0.0,
+        "random_boost": 1.0,
+        "batch_size": 64
+      },
+      "summary": {
+        "train_ba": {
+          "mean": 0.8161,
+          "std": 0.026
+        },
+        "val_ba": {
+          "mean": 0.6171,
+          "std": 0.0201
+        },
+        "test_ba": {
+          "mean": 0.6148,
+          "std": 0.0082
+        },
+        "test_f1": {
+          "mean": 0.5975,
+          "std": 0.0133
+        },
+        "test_mcc": {
+          "mean": 0.4664,
+          "std": 0.0171
+        },
+        "overfit_gap_val": {
+          "mean": 0.199,
+          "std": 0.0312
+        },
+        "overfit_gap_test": {
+          "mean": 0.2013,
+          "std": 0.0211
+        },
+        "recall_random_like": {
+          "mean": 0.5225,
+          "std": 0.0891
+        },
+        "recall_persistent": {
+          "mean": 0.5313,
+          "std": 0.0295
+        },
+        "recall_anti_persistent": {
+          "mean": 0.7907,
+          "std": 0.0541
+        }
+      },
+      "per_seed": [
+        {
+          "seed": 42,
+          "epochs_ran": 16,
+          "elapsed_s": 7.9,
+          "train_ba": 0.7928,
+          "val_ba": 0.5934,
+          "test_ba": 0.6033,
+          "test_f1": 0.5921,
+          "test_mcc": 0.4607,
+          "overfit_gap_val": 0.1994,
+          "overfit_gap_test": 0.1895,
+          "recall_random_like": 0.4595,
+          "recall_persistent": 0.5521,
+          "recall_anti_persistent": 0.7984
+        },
+        {
+          "seed": 43,
+          "epochs_ran": 17,
+          "elapsed_s": 7.9,
+          "train_ba": 0.8031,
+          "val_ba": 0.6426,
+          "test_ba": 0.6197,
+          "test_f1": 0.5845,
+          "test_mcc": 0.4489,
+          "overfit_gap_val": 0.1605,
+          "overfit_gap_test": 0.1834,
+          "recall_random_like": 0.6486,
+          "recall_persistent": 0.4896,
+          "recall_anti_persistent": 0.7209
+        },
+        {
+          "seed": 44,
+          "epochs_ran": 23,
+          "elapsed_s": 9.6,
+          "train_ba": 0.8524,
+          "val_ba": 0.6154,
+          "test_ba": 0.6214,
+          "test_f1": 0.6158,
+          "test_mcc": 0.4896,
+          "overfit_gap_val": 0.237,
+          "overfit_gap_test": 0.231,
+          "recall_random_like": 0.4595,
+          "recall_persistent": 0.5521,
+          "recall_anti_persistent": 0.8527
+        }
+      ]
+    },
+    "sweet_spot": {
+      "config": {
+        "name": "Hybrid PS Sweet Spot (4H)",
+        "adaptive": true,
+        "lr": 0.0003,
+        "label_smoothing": 0.08,
+        "l2_reg": 0.0002,
+        "random_boost": 1.3,
+        "batch_size": 64
+      },
+      "summary": {
+        "train_ba": {
+          "mean": 0.8101,
+          "std": 0.0217
+        },
+        "val_ba": {
+          "mean": 0.6385,
+          "std": 0.0415
+        },
+        "test_ba": {
+          "mean": 0.5916,
+          "std": 0.0312
+        },
+        "test_f1": {
+          "mean": 0.5749,
+          "std": 0.0296
+        },
+        "test_mcc": {
+          "mean": 0.4397,
+          "std": 0.0496
+        },
+        "overfit_gap_val": {
+          "mean": 0.1716,
+          "std": 0.0218
+        },
+        "overfit_gap_test": {
+          "mean": 0.2185,
+          "std": 0.0501
+        },
+        "recall_random_like": {
+          "mean": 0.4865,
+          "std": 0.0382
+        },
+        "recall_persistent": {
+          "mean": 0.5,
+          "std": 0.0642
+        },
+        "recall_anti_persistent": {
+          "mean": 0.7881,
+          "std": 0.0319
+        }
+      },
+      "per_seed": [
+        {
+          "seed": 42,
+          "epochs_ran": 44,
+          "elapsed_s": 13.1,
+          "train_ba": 0.7809,
+          "val_ba": 0.5798,
+          "test_ba": 0.6163,
+          "test_f1": 0.5998,
+          "test_mcc": 0.4734,
+          "overfit_gap_val": 0.2011,
+          "overfit_gap_test": 0.1646,
+          "recall_random_like": 0.5135,
+          "recall_persistent": 0.5833,
+          "recall_anti_persistent": 0.7519
+        },
+        {
+          "seed": 43,
+          "epochs_ran": 50,
+          "elapsed_s": 14.3,
+          "train_ba": 0.8167,
+          "val_ba": 0.6677,
+          "test_ba": 0.6109,
+          "test_f1": 0.5915,
+          "test_mcc": 0.4761,
+          "overfit_gap_val": 0.149,
+          "overfit_gap_test": 0.2058,
+          "recall_random_like": 0.5135,
+          "recall_persistent": 0.4896,
+          "recall_anti_persistent": 0.8295
+        },
+        {
+          "seed": 44,
+          "epochs_ran": 50,
+          "elapsed_s": 14.9,
+          "train_ba": 0.8327,
+          "val_ba": 0.6681,
+          "test_ba": 0.5475,
+          "test_f1": 0.5333,
+          "test_mcc": 0.3696,
+          "overfit_gap_val": 0.1646,
+          "overfit_gap_test": 0.2852,
+          "recall_random_like": 0.4324,
+          "recall_persistent": 0.4271,
+          "recall_anti_persistent": 0.7829
+        }
+      ]
+    }
+  }
+}

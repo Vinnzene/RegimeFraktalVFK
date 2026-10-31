@@ -1,0 +1,219 @@
+# BAB 2|TINJAUAN PUSTAKA
+
+Bab ini menguraikan landasan teori yang menjadi dasar penelitian, penelitian terdahulu yang relevan, celah dan kebaruan penelitian, serta kerangka berpikir.
+
+## 2.1. Landasan Teori
+
+### 2.1.1. Bitcoin dan Pasangan Perdagangan BTC/USDT
+
+Bitcoin (BTC) adalah aset kripto terdesentralisasi pertama yang diperkenalkan oleh Nakamoto (2008) menggunakan buku besar terdistribusi (*blockchain*) tanpa otoritas terpusat. Bitcoin paling likuid diperdagangkan berpasangan dengan Tether (USDT), yaitu *stablecoin* yang nilainya dipatok setara satu dolar Amerika Serikat. Pasangan spot BTC/USDT di bursa seperti Binance diperdagangkan 24 jam sehari dan 7 hari seminggu tanpa penutupan sesi, sehingga menghasilkan deret waktu panjang dengan lonjakan volatilitas dan pergantian fase likuiditas yang cepat (Takaishi, 2018).
+
+### 2.1.2. Deret Waktu dan Log-Return
+
+Deret waktu (*time series*) adalah himpunan observasi yang dicatat berurutan pada interval seragam, misalnya 1 jam (1H) atau 4 jam (4H). Pada pasar kripto, setiap bar memuat harga pembukaan, tertinggi, terendah, penutupan, dan volume (OHLCV). Harga penutupan P_t bersifat non-stasioner karena memiliki akar unit, sehingga estimasi eksponen fraktal pada harga mentah selalu mendekati 1. Karena itu harga diubah menjadi log-return sesuai Persamaan (2.1).
+
+RUMUS: r_t = ln(P_t) − ln(P_{t−1}) | (2.1)
+
+Log-return menstabilkan rata-rata di sekitar nol dan bersifat aditif ketika dijumlahkan lintas waktu.
+
+### 2.1.3. Teori Fraktal dan Ketergantungan Jangka Panjang
+
+Geometri fraktal (Mandelbrot, 1982) menggambarkan proses yang memiliki kemiripan diri lintas skala. Peters (1994) mengajukan *Fractal Market Hypothesis* (FMH) sebagai alternatif *Efficient Market Hypothesis* (Fama, 1970): imbal hasil pasar tidak sepenuhnya independen, melainkan dapat memiliki memori jangka panjang (*long-range dependence*, LRD). Proses stasioner memiliki LRD bila autokorelasinya ρ(k) meluruh mengikuti hukum pangkat pada Persamaan (2.2).
+
+RUMUS: ρ(k) ∼ c_ρ · k^(2H − 2),  k → ∞ | (2.2)
+
+dengan c_ρ konstanta positif dan H eksponen Hurst. Untuk 0,5 < H < 1 jumlah autokorelasi divergen, artinya pergerakan masa lalu tetap memengaruhi fluktuasi saat ini.
+
+### 2.1.4. Eksponen Hurst dengan Metode Rescaled Range (R/S)
+
+Eksponen Hurst dikembangkan oleh Hurst (1951) dan diperkenalkan ke ekonometrika oleh Mandelbrot (1972) melalui analisis *Rescaled Range* (R/S). Jendela log-return sepanjang L dibagi menjadi sub-interval tidak bertumpuk berukuran n. Pada setiap sub-interval dihitung deviasi kumulatif terhadap rata-rata r̄_n, rentang deviasi R(n), dan simpangan baku S(n) sesuai Persamaan (2.3) sampai (2.5).
+
+RUMUS: X(k, n) = Σ_{i=1..k} (r_i − r̄_n),  k = 1, …, n | (2.3)
+
+RUMUS: R(n) = max_k X(k, n) − min_k X(k, n) | (2.4)
+
+RUMUS: S(n) = √[ (1/n) Σ_{i=1..n} (r_i − r̄_n)² ] | (2.5)
+
+Rasio R(n)/S(n) dirata-ratakan pada seluruh sub-interval dan mengikuti relasi pangkat pada Persamaan (2.6), sehingga H diperoleh sebagai kemiringan regresi ln(R/S) terhadap ln(n).
+
+RUMUS: E[R(n)/S(n)] = C · n^H  ⇔  ln E[R(n)/S(n)] = ln C + H · ln n | (2.6)
+
+Estimator R/S diketahui bias ke atas pada sampel pendek dan peka terhadap autokorelasi jangka pendek; Lo (1991) mengusulkan varian yang mengoreksi autokorelasi tersebut.
+
+### 2.1.5. Detrended Fluctuation Analysis (DFA)
+
+DFA diusulkan oleh Peng dkk. (1994) untuk mengurangi pengaruh tren lokal. Pada DFA orde pertama (DFA-1), jendela log-return diintegrasikan menjadi profil Y(k) (Persamaan 2.7), dibagi menjadi N_s = ⌊L/n⌋ segmen berukuran n, lalu tren linear y_{n,v}(k) pada setiap segmen dibuang. Fluktuasi *root-mean-square* dihitung dengan Persamaan (2.8).
+
+RUMUS: Y(k) = Σ_{i=1..k} (r_i − r̄),  k = 1, …, L | (2.7)
+
+RUMUS: F(n) = √[ (1/(N_s · n)) Σ_{v=1..N_s} Σ_{k∈v} (Y(k) − y_{n,v}(k))² ] | (2.8)
+
+Hubungan F(n) ∝ n^α memberi eksponen penskalaan α sebagai kemiringan regresi pada Persamaan (2.9). Untuk deret return, α < 0,5 menandakan anti-persisten, α ≈ 0,5 acak, dan α > 0,5 persisten.
+
+RUMUS: ln F(n) = konstanta + α · ln n | (2.9)
+
+Maraun dkk. (2004) menekankan bahwa kemiringan log-log pada jendela terbatas memiliki varians estimasi yang besar, sehingga satu estimator tunggal mudah memberi kesimpulan palsu.
+
+### 2.1.6. Regime Fraktal, Variance Ratio, dan Generalized Hurst
+
+Berdasarkan nilai eksponen persistensi, dinamika deret waktu dibagi menjadi tiga regime (Bariviera, 2017; Grande dkk., 2024).
+
+1. **Persistent (trending):** eksponen di atas ambang acak; kenaikan atau penurunan cenderung diikuti gerakan searah.
+2. **Random-like:** eksponen di sekitar 0,5; gerakan didominasi derau tanpa memori arah.
+3. **Anti-persistent (mean-reverting):** eksponen di bawah ambang acak; lonjakan ke satu arah cenderung diikuti pembalikan.
+
+Struktur persistensi juga tercermin pada statistik *variance ratio* (Lo & MacKinlay, 1988) pada Persamaan (2.10), dengan r_t^(q) jumlah q return berurutan dan ρ_k autokorelasi lag k.
+
+RUMUS: VR(q) = Var(r_t^(q)) / (q · Var(r_t)) | (2.10)
+
+Persamaan (2.10) setara dengan VR(q) = 1 + 2 Σ_{k=1..q−1} (1 − k/q) ρ_k, sehingga VR(q) > 1 menandakan autokorelasi positif (persisten) dan VR(q) < 1 negatif (anti-persisten). Untuk fGn berlaku VR(2) = 2^(2H−1), sehingga H dapat diestimasi sebagai ½(1 + log₂ VR(2)). Spektrum *generalized Hurst exponent* H(q) (Di Matteo, 2007) didefinisikan melalui momen ke-q dari kenaikan profil pada Persamaan (2.11). Bila H(q) bergantung pada q, deret bersifat multifraktal dengan lebar spektrum ΔH = H(1) − H(4).
+
+RUMUS: K_q(τ) = ⟨|Y(t+τ) − Y(t)|^q⟩ / ⟨|Y(t)|^q⟩ ∝ τ^(q·H(q)) | (2.11)
+
+### 2.1.7. Stationary Wavelet Transform (SWT)
+
+Transformasi wavelet menguraikan sinyal ke domain skala dan waktu secara bersamaan. Berbeda dengan Discrete Wavelet Transform yang melakukan *downsampling* pada setiap level, Stationary Wavelet Transform (Nason & Silverman, 1995) tidak membuang sampel; filter pada level ke-j diperlebar dengan menyisipkan nol. Untuk masukan A_0(t) = r_t, koefisien detail D_j(t) dan aproksimasi A_j(t) dihitung dengan Persamaan (2.12) dan (2.13), dengan h_j dan g_j filter lolos-tinggi dan lolos-rendah Daubechies-4 (db4) yang diperlebar pada level j.
+
+RUMUS: D_j(t) = Σ_l h_j(l) · A_{j−1}(t − l) | (2.12)
+
+RUMUS: A_j(t) = Σ_l g_j(l) · A_{j−1}(t − l) | (2.13)
+
+SWT bersifat invarian terhadap pergeseran dan setiap level memiliki panjang sama dengan sinyal asli. Untuk proses fGn, energi detail pada level j berskala sesuai Persamaan (2.14), sehingga distribusi energi antar-skala membawa informasi tentang H. Agar bebas kebocoran, SWT pada titik t hanya dihitung atas data r_{≤t}.
+
+RUMUS: E_j = Σ_t D_j(t)²  ∝  2^(j(2H − 1)) | (2.14)
+
+### 2.1.8. Data Sintetis Berkebenaran Dasar
+
+*Fractional Gaussian noise* (fGn) adalah deret stasioner dengan autokovarians pada Persamaan (2.15). fGn dapat dibangkitkan secara eksak dengan metode Davies dan Harte (1987).
+
+RUMUS: γ(k) = ½ σ² ( |k+1|^(2H) − 2|k|^(2H) + |k−1|^(2H) ) | (2.15)
+
+Karena H ditentukan oleh peneliti, label regime deret sintetis merupakan kebenaran dasar (*ground truth*). Pendekatan melatih jaringan rekuren pada lintasan sintetis lalu menerapkannya pada data nyata telah terbukti lebih akurat daripada estimator statistik untuk menaksir eksponen difusi anomali (Bo dkk., 2019; Muñoz-Gil dkk., 2021). Karakter kripto seperti ekor tebal, volatilitas berkelompok, dan lonjakan dapat ditambahkan tanpa mengubah H (Bab 3).
+
+### 2.1.9. Long Short-Term Memory dan Bidirectional LSTM
+
+LSTM (Hochreiter & Schmidhuber, 1997) adalah jaringan saraf rekuren dengan sel memori C_t yang diatur oleh gerbang lupa f_t, gerbang masukan i_t, dan gerbang keluaran o_t, sebagaimana Persamaan (2.16) sampai (2.21). σ adalah fungsi sigmoid dan ⊙ perkalian elemen.
+
+RUMUS: f_t = σ(W_f x_t + U_f h_{t−1} + b_f) | (2.16)
+
+RUMUS: i_t = σ(W_i x_t + U_i h_{t−1} + b_i) | (2.17)
+
+RUMUS: C̃_t = tanh(W_c x_t + U_c h_{t−1} + b_c) | (2.18)
+
+RUMUS: C_t = f_t ⊙ C_{t−1} + i_t ⊙ C̃_t | (2.19)
+
+RUMUS: o_t = σ(W_o x_t + U_o h_{t−1} + b_o) | (2.20)
+
+RUMUS: h_t = o_t ⊙ tanh(C_t) | (2.21)
+
+Bidirectional LSTM (Schuster & Paliwal, 1997) memproses sekuens maju dan mundur, lalu menggabungkan keduanya (Persamaan 2.22). Karena seluruh jendela 500 bar sudah ditutup pada waktu t, pemrosesan dua arah di dalam jendela tidak menggunakan data setelah t.
+
+RUMUS: h_t = [ h→_t ∥ h←_t ] | (2.22)
+
+### 2.1.10. Mekanisme Attention
+
+Attention aditif (Bahdanau dkk., 2015) merangkum keluaran BiLSTM {h_1, …, h_T} menjadi satu vektor konteks c dengan bobot yang dipelajari (Persamaan 2.23 sampai 2.25).
+
+RUMUS: e_t = vᵀ tanh(W_h h_t + b_h) | (2.23)
+
+RUMUS: α_t = exp(e_t) / Σ_{k=1..T} exp(e_k) | (2.24)
+
+RUMUS: c = Σ_{t=1..T} α_t h_t | (2.25)
+
+Keseragaman bobot diukur dengan entropi ternormalisasi pada Persamaan (2.26). Nilai 1 berarti bobot seragam sempurna, sedangkan nilai mendekati 0 berarti attention terpusat pada sedikit langkah.
+
+RUMUS: H_norm(α) = − Σ_t α_t ln α_t / ln T | (2.26)
+
+### 2.1.11. Evaluasi Klasifikasi dengan Confusion Matrix
+
+Identifikasi regime adalah klasifikasi tiga kelas, yaitu Persistent (P), Random-like (R), dan Anti-persistent (A). Kinerja diukur dengan confusion matrix 3 × 3 yang memetakan kelas aktual (baris) terhadap kelas prediksi (kolom), seperti pada Tabel 2.1.
+
+TABEL: Tabel 2.1 Struktur Confusion Matrix Tiga Kelas
+| Aktual \ Prediksi | Prediksi P | Prediksi R | Prediksi A |
+|---|---|---|---|
+| Aktual P | C_PP (benar) | C_PR | C_PA |
+| Aktual R | C_RP | C_RR (benar) | C_RA |
+| Aktual A | C_AP | C_AR | C_AA (benar) |
+
+Untuk setiap kelas c, TP_c = C_cc, FP_c adalah jumlah kolom c di luar diagonal, dan FN_c adalah jumlah baris c di luar diagonal. Metrik yang digunakan dirumuskan pada Persamaan (2.27) sampai (2.31), dengan N jumlah sampel, p_k jumlah prediksi kelas k, dan t_k jumlah aktual kelas k.
+
+RUMUS: Accuracy = (C_PP + C_RR + C_AA) / N | (2.27)
+
+RUMUS: Precision_c = TP_c / (TP_c + FP_c) | (2.28)
+
+RUMUS: Recall_c = TP_c / (TP_c + FN_c);   BA = (1/3) Σ_c Recall_c | (2.29)
+
+RUMUS: F1_c = 2 · P_c · R_c / (P_c + R_c);   Macro-F1 = (1/3) Σ_c F1_c | (2.30)
+
+RUMUS: MCC = (s · N − Σ_k p_k t_k) / √[(N² − Σ_k p_k²)(N² − Σ_k t_k²)] | (2.31)
+
+Pada Persamaan (2.30), P_c dan R_c adalah precision dan recall kelas c; pada Persamaan (2.31), s adalah jumlah elemen diagonal confusion matrix.
+
+*Balanced accuracy* (BA) dipakai sebagai metrik utama karena tahan terhadap ketimpangan jumlah sampel antar-kelas; tebakan acak memberi BA 0,333.
+
+### 2.1.12. Evaluasi Bebas Kebocoran dan Uji Statistik
+
+Jendela bergulir yang berurutan berbagi hampir semua bar, sehingga evaluasi harus mencegah informasi masa depan bocor ke data latih.
+
+1. **Split kronologis dengan purge gap** (López de Prado, 2018): data dibagi menurut urutan waktu dan jendela yang berbagi bar dengan partisi lain dibuang di setiap batas.
+2. **Walk-forward expanding**: model dilatih ulang pada data yang terus bertambah dan diuji pada periode berikutnya, sehingga stabilitas antar-periode terlihat.
+3. **Moving-block bootstrap** (Künsch, 1989; Lahiri, 2003): selang kepercayaan dihitung dengan menarik ulang blok berurutan agar autokorelasi antar-jendela tetap terjaga.
+4. **Koreksi Holm-Bonferroni** (Holm, 1979): mengendalikan peluang salah menolak hipotesis ketika banyak hipotesis diuji sekaligus.
+5. **Praregistrasi**: hipotesis, metrik, dan kriteria keputusan dikunci sebelum hasil dilihat, sehingga kesimpulan tidak disesuaikan dengan hasil (Kapoor & Narayanan, 2023).
+
+### 2.1.13. Evaluasi Strategi Setelah Biaya
+
+Kegunaan informasi regime diuji dengan simulasi strategi pada data historis secara kronologis setelah memperhitungkan biaya transaksi. Ukuran utamanya adalah rasio Sharpe tahunan bersih (Persamaan 2.32), dengan r̄ dan s rata-rata dan simpangan baku return bersih per bar, serta m jumlah bar per tahun. Ukuran pendukung adalah *maximum drawdown*, yaitu penurunan terbesar nilai portofolio dari puncak sebelumnya.
+
+RUMUS: Sharpe = (r̄ / s) · √m | (2.32)
+
+### 2.1.14. Pengujian Perangkat Lunak
+
+Pengujian perangkat lunak dilakukan berlapis. *Unit test* otomatis memverifikasi fungsi secara terpisah. Pengujian *black-box* memeriksa keluaran sistem terhadap masukan tanpa melihat kode. *User Acceptance Testing* (UAT) mengukur apakah pengguna dapat menyelesaikan tugas nyata. *System Usability Scale* (SUS) (Brooke, 1996) terdiri atas 10 butir Likert 1–5 dengan skor pada Persamaan (2.33); rata-rata skor 68 umum dipakai sebagai batas kegunaan yang dapat diterima (Bangor dkk., 2008).
+
+RUMUS: SUS = 2,5 · [ Σ_ganjil (skor − 1) + Σ_genap (5 − skor) ] | (2.33)
+
+## 2.2. Penelitian Terdahulu
+
+Ringkasan penelitian terdahulu yang relevan disajikan pada Tabel 2.2.
+
+TABEL: Tabel 2.2 Ringkasan Penelitian Terdahulu
+| No | Penulis | Metode dan data | Temuan utama | Perbedaan dengan penelitian ini |
+|---|---|---|---|---|
+| 1 | Bariviera (2017) | Hurst R/S dan DFA bergulir pada Bitcoin | Efisiensi dan memori jangka panjang Bitcoin berubah dari waktu ke waktu | Deskriptif; belum membangun model klasifikasi dan belum mengukur akurasi estimator |
+| 2 | Al-Yahyaee dkk. (2018) | MF-DFA pada Bitcoin, emas, saham, valas | Bitcoin memiliki long memory dan multifraktalitas tertinggi | Belum memakai SWT dan jaringan rekuren untuk identifikasi regime |
+| 3 | Stavroyiannis dkk. (2019) | Analisis multifraktal Bitcoin frekuensi tinggi | Sifat penskalaan berbeda antar skala waktu | Mendasari perbandingan 1H dan 4H; belum memakai klasifikasi terawasi |
+| 4 | Maraun dkk. (2004) | Kajian metodologis DFA | Kemiringan log-log pada jendela pendek dapat menyesatkan | Penelitian ini mengukur kesepakatan R/S–DFA dan akurasinya dengan kebenaran dasar |
+| 5 | Bao, Yue, & Rao (2017) | Wavelet + stacked autoencoder + LSTM | Wavelet membantu mereduksi derau sebelum LSTM | Memprediksi harga dengan wavelet non-kausal; penelitian ini memakai SWT kausal untuk klasifikasi |
+| 6 | Bo dkk. (2019) | LSTM dilatih pada lintasan difusi sintetis | Lebih akurat daripada estimator statistik untuk eksponen anomali | Diterapkan pada fisika; penelitian ini memindahkannya ke return berkarakter kripto |
+| 7 | Muñoz-Gil dkk. (2021) | AnDi Challenge: RNN, BiLSTM, CNN, statistik | Model berbasis jaringan rekuren unggul pada jendela terbatas | Data simulasi fisika; penelitian ini menambah karakter kripto dan uji data nyata |
+| 8 | Ramadhan dkk. (2024) | LSTM pada harga penutupan Bitcoin | LSTM mengikuti pola harga dengan galat tertentu | Prediksi harga (RMSE/MAE), bukan identifikasi regime |
+| 9 | Nirraca & Hartati (2024) | LSTM dengan beberapa horizon prediksi | Akurasi berbeda menurut horizon | Masih peramalan harga; belum mengkaji persistensi |
+| 10 | Hiskiawan dkk. (2025) | LR, ARIMA, Prophet, RF, XGBoost, LSTM | Perbandingan metode peramalan harga Bitcoin di UBM | Penelitian ini menggeser fokus ke identifikasi regime |
+| 11 | Grande dkk. (2024); Chen dkk. (2025) | Hurst bergulir dan strategi trading kripto | Strategi yang tidak sesuai regime merugi | Penelitian ini menguji pemilihan strategi berbasis regime setelah biaya secara terpraregistrasi |
+
+CATATAN: Seluruh rujukan perlu dicocokkan dengan sumber aslinya (judul, volume, halaman) sebelum naskah final.
+
+## 2.3. Celah dan Kebaruan Penelitian
+
+### 2.3.1. Celah Penelitian
+
+1. **Fokus peramalan harga.** Penelitian kecerdasan buatan tentang Bitcoin di Indonesia masih berfokus pada peramalan harga dengan metrik regresi, bukan pada pengenalan kondisi struktural pasar.
+2. **Akurasi estimator Hurst-DFA tidak diukur.** Estimator diterapkan langsung pada data kripto tanpa pengukuran akurasi, padahal di data nyata regime sebenarnya tidak teramati.
+3. **Label dari satu estimator.** Penelitian yang memakai pembelajaran mesin umumnya memakai satu estimator sebagai label, padahal R/S dan DFA sering tidak sepakat.
+4. **Representasi wavelet mentah.** Koefisien wavelet umumnya diumpankan langsung ke jaringan rekuren, sering dengan dekomposisi non-kausal.
+5. **Evaluasi rawan kebocoran.** Split acak pada jendela bertumpuk menggelembungkan akurasi, dan kegunaan praktis jarang diuji setelah biaya.
+
+### 2.3.2. Kebaruan Penelitian
+
+1. Mengukur akurasi estimator Hurst-DFA klasik dan model Attention-BiLSTM pada deret sintetis berkebenaran dasar yang berkarakter kripto, lalu memakai model tersebut sebagai detektor regime data nyata.
+2. Membandingkan secara terpraregistrasi representasi SWT mentah, energi SWT, dan sekuens statistik persistensi sebagai masukan Attention-BiLSTM.
+3. Menerapkan protokol evaluasi bebas kebocoran (split kronologis dengan purge, walk-forward, moving-block bootstrap, koreksi Holm, praregistrasi) dan melaporkan hasil negatif secara terbuka.
+4. Menguji satu detektor pada 20 aset tanpa latih ulang dan menguji kegunaannya untuk pemilihan strategi setelah biaya.
+5. Mengimplementasikan detektor ke sistem web pengawas regime multi-timeframe dengan notifikasi Telegram.
+
+## 2.4. Kerangka Berpikir Penelitian
+
+Kerangka berpikir penelitian ditunjukkan pada Gambar 2.1. Data BTC/USDT dipakai untuk mengukur konsistensi estimator klasik dan melatih model pada label Hurst-DFA (Fase 0). Karena label tersebut tidak dapat dipercaya sepenuhnya, akurasi diukur pada deret sintetis berkebenaran dasar (Fase 1). Model terbaik Fase 1 menjadi detektor resmi yang diuji kecepatan, generalisasi, dan kegunaannya, lalu diimplementasikan ke sistem web.
+
+GAMBAR: docs/naskah/gambar/diagram_tahapan_penelitian.png | Gambar 2.1 Kerangka Berpikir dan Tahapan Penelitian | 13.5

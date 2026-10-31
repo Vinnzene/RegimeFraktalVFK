@@ -1,0 +1,240 @@
+# BAB 3|ANALISIS DAN PERANCANGAN
+
+Bab ini menguraikan kebutuhan penelitian, tahapan dan praregistrasi, pengolahan data, pelabelan, ekstraksi fitur, arsitektur model, protokol evaluasi, rancangan eksperimen, perancangan sistem, dan rancangan pengujian perangkat lunak.
+
+## 3.1. Rekayasa Kebutuhan Penelitian
+
+### 3.1.1. Spesifikasi Dataset
+
+1. **BTC/USDT spot** dari arsip resmi Binance (data-api.binance.vision), 1 Januari 2019 pukul 00.00 UTC sampai Oktober 2026: 67.927 bar 1H dan 16.992 bar 4H. Setiap bar memuat waktu buka (UTC), open, high, low, close, dan volume.
+2. **Aset uji generalisasi**: ETH, BNB, SOL, XRP, ADA, DOGE, dan PAXG terhadap USDT dari Binance (1H); emas berjangka GC=F, IHSG, dan 10 saham IDX dari Yahoo Finance (1D, karena data 1H gratis hanya tersedia sekitar 730 hari).
+3. **Deret sintetis** fGn berkarakter kripto yang dibangkitkan sendiri (Subbab 3.8).
+
+### 3.1.2. Spesifikasi Lingkungan Komputasi
+
+1. **Perangkat keras pengembangan**: laptop Lenovo Legion 5 Pro dengan GPU lokal.
+2. **Riset dan model**: Python 3.12, TensorFlow/Keras (BiLSTM dan attention), PyWavelets (SWT), NumPy dan SciPy (R/S, DFA, statistik persistensi), pandas dan PyArrow Parquet (penyimpanan deret waktu), scikit-learn dan LightGBM (metrik dan model pembanding).
+3. **Sistem**: FastAPI (backend), Next.js 14 (frontend), Firebase Authentication dan Firestore (akun dan langganan notifikasi), Telegram Bot API, Docker Compose, dan Caddy sebagai *reverse proxy*.
+4. **Server produksi**: VPS Ubuntu dengan RAM minimal 4 GB.
+
+### 3.1.3. Kebutuhan Fungsional dan Non-Fungsional Sistem
+
+TABEL: Tabel 3.1 Kebutuhan Fungsional Sistem
+| Kode | Kebutuhan |
+|---|---|
+| F01 | Pengguna dapat masuk dengan akun email atau Google. |
+| F02 | Sistem menampilkan regime BTC/USDT terkini pada 1H dan 4H beserta probabilitas tiap kelas. |
+| F03 | Sistem menandai label berkeyakinan rendah (di bawah ambang abstain). |
+| F04 | Sistem menampilkan grafik harga dengan pita warna regime dan riwayatnya. |
+| F05 | Sistem menampilkan pembanding estimator klasik Hurst R/S dan DFA. |
+| F06 | Sistem menampilkan saran strategi beserta status bukti uji. |
+| F07 | Pengguna dapat menautkan akun Telegram dan menerima notifikasi pergantian regime. |
+| F08 | Sistem menampilkan halaman analisis SWT, H(q), metodologi, dan hasil riset. |
+
+Kebutuhan non-fungsional meliputi: (1) data hanya memakai candle yang sudah tutup agar bebas *look-ahead*; (2) respons API tidak menunggu perhitungan panjang, yang dikerjakan di latar belakang dan disimpan dalam cache; (3) kunci rahasia (token bot, kredensial Firebase) tidak disimpan di repositori; dan (4) sistem dapat dijalankan ulang dengan satu perintah Docker Compose.
+
+## 3.2. Tahapan Penelitian dan Praregistrasi
+
+Tahapan penelitian mengikuti Gambar 2.1. Setiap fase memiliki dokumen praregistrasi yang dikunci dalam repositori Git sebelum hasilnya dihitung (Tabel 3.2). Dengan cara ini hipotesis, metrik, dan aturan keputusan tidak dapat diubah setelah hasil terlihat.
+
+TABEL: Tabel 3.2 Dokumen Praregistrasi per Fase
+| Fase / studi | Dokumen praregistrasi | Pertanyaan utama |
+|---|---|---|
+| Fase 0 | praregistrasi_persistence_sequence, praregistrasi_addendum | Model mana yang paling akurat pada label Hurst-DFA BTC? |
+| Fase 0b | praregistrasi_fase0b_transfer | Apakah pralatih sintetis mengurangi overfitting? |
+| Fase 1 | praregistrasi_fase1_sintetis + adendum 1–5 | Seberapa akurat estimator klasik dan Attention-BiLSTM bila kebenaran dasar diketahui? |
+| Multi-skala | praregistrasi_multiskala | Apakah masukan 1H + 4H + 1D lebih tepat? |
+| Deteksi cepat | praregistrasi_deteksi_cepat | Dapatkah keterlambatan deteksi dipangkas? |
+| Peringatan dini | praregistrasi_peringatan_dini | Apakah peringatan dini layak dipasang? |
+| Generalisasi | praregistrasi_generalisasi_aset + adendum 1–2 | Apakah detektor berlaku di aset lain? |
+| Fase 2 | praregistrasi_fase2_strategi | Apakah pemilihan strategi berbasis regime menambah Sharpe setelah biaya? |
+
+SUMBER: Sumber: folder docs/ pada repositori penelitian.
+
+**Alasan pemilihan Attention-BiLSTM.** Masukan utama model adalah sekuens 32 langkah statistik persistensi yang merentang seluruh jendela 500 bar, sehingga yang dipelajari adalah evolusi struktur korelasi di dalam jendela. Jaringan rekuren sesuai untuk data berurutan semacam ini, dan arsitektur berbasis jaringan rekuren terbukti unggul dalam menaksir eksponen fraktal pada jendela terbatas (Bo dkk., 2019; Muñoz-Gil dkk., 2021). Pemrosesan dua arah aman karena jendela sudah ditutup pada waktu t. Attention dipakai sebagai cara merangkum 32 langkah menjadi satu vektor yang bobotnya dapat diperiksa. Kontribusi attention tidak diasumsikan, melainkan diuji sebagai hipotesis (H3) terhadap BiLSTM tanpa attention.
+
+## 3.3. Pra-pemrosesan Kausal
+
+1. **Membuang candle berjalan.** Bar yang belum ditutup pada saat pengambilan data selalu dibuang, sehingga perhitungan hanya memakai harga penutupan final.
+2. **Log-return.** Harga penutupan diubah menjadi r_t = ln P_t − ln P_{t−1} (Persamaan 2.1).
+3. **Jendela bergulir.** Setiap titik deteksi t memakai jendela W_t = {r_{t−499}, …, r_t} berpanjang L = 500 dengan langkah 4 bar. Prosedur ini menghasilkan 16.857 jendela 1H dan 4.123 jendela 4H untuk analisis konsistensi.
+4. **Normalisasi.** Rata-rata dan simpangan baku fitur dihitung hanya dari partisi latih. Untuk detektor latih-sintetis, return setiap jendela diskalakan ke simpangan baku 0,0066 per bar, sama dengan normalisasi data sintetis.
+
+## 3.4. Pelabelan Regime Berbasis Konsensus Hurst-DFA (Fase 0)
+
+Pada setiap jendela dihitung H dengan metode R/S dan α dengan DFA-1. Karena distribusi empiris keduanya bergeser (rata-rata H R/S di atas 0,55, sedangkan α di sekitar 0,50), batas kelas ditentukan dengan kuantil 1/3 dan 2/3 masing-masing estimator. Pada konfigurasi utama (*train_only*), ambang dihitung hanya dari partisi latih agar tidak memakai informasi periode uji (Tabel 3.3).
+
+TABEL: Tabel 3.3 Ambang Kuantil Estimator (Konfigurasi train_only)
+| Timeframe | Estimator | Ambang bawah (q = 1/3) | Ambang atas (q = 2/3) |
+|---|---|---|---|
+| 1H | Hurst R/S | 0,5718 | 0,5985 |
+| 1H | DFA-1 | 0,4777 | 0,5206 |
+| 4H | Hurst R/S | 0,5894 | 0,6136 |
+| 4H | DFA-1 | 0,4803 | 0,5271 |
+
+SUMBER: Sumber: ml/artifacts/label_threshold_sensitivity_1h.md dan _4h.md.
+
+Setiap estimator memetakan jendela ke anti-persistent (di bawah ambang bawah), random-like (di antara kedua ambang), atau persistent (di atas ambang atas). Bila kelas R/S sama dengan kelas DFA, jendela memperoleh label tersebut. Bila berbeda, jendela berlabel *uncertain_rule* dan tidak dipakai untuk pelatihan maupun pengujian. Proporsinya tetap dilaporkan sebagai temuan (Subbab 4.1).
+
+## 3.5. Ekstraksi Fitur
+
+### 3.5.1. Sekuens Koefisien SWT (Pembanding)
+
+Log-return dalam jendela didekomposisi dengan SWT kausal db4 hingga J = 4, menghasilkan empat pita detail (D1–D4) dan satu pita aproksimasi (A4). Diambil 32 langkah terakhir sehingga terbentuk tensor 32 × 5.
+
+### 3.5.2. Sekuens Statistik Persistensi (PS)
+
+Jendela 500 bar dibagi menjadi 32 sub-jendela berukuran 128 bar dengan pergeseran 12 bar, sehingga seluruh jendela tercakup. Pada setiap langkah dihitung 11 kanal: VR(2), VR(4), VR(8), VR(16); autokorelasi return lag 1, 2, 3, dan 5; autokorelasi |r| lag 1; laju pergantian tanda; dan ln σ. Hasilnya tensor 32 × 11.
+
+### 3.5.3. Fitur Struktural (50 Dimensi)
+
+Vektor 50 fitur merangkum seluruh jendela, terdiri atas:
+
+1. autokorelasi return pada 11 lag (1, 2, 3, 4, 5, 8, 10, 15, 20, 30, 50);
+2. autokorelasi |r| pada 5 lag (1, 2, 5, 10, 20);
+3. VR(q) pada 10 lag dan kemiringan ln VR terhadap ln q (11 fitur);
+4. **rasio energi SWT 4 level pada 3 sub-jendela (100%, 50%, dan 25% bagian akhir jendela), 12 fitur**;
+5. statistik sebaran: skewness, kurtosis, laju pergantian tanda, rasio MAD terhadap simpangan baku, dan rasio volatilitas paruh akhir terhadap paruh awal (5 fitur);
+6. H(1), H(2), H(4), lebar spektrum ΔH, dan parameter kelengkungan (6 fitur).
+
+## 3.6. Arsitektur Model Usulan: Hybrid PS (Attention-BiLSTM)
+
+Model usulan memiliki dua cabang yang digabungkan (Gambar 3.1 dan Tabel 3.4).
+
+GAMBAR: docs/naskah/gambar/diagram_arsitektur_model.png | Gambar 3.1 Arsitektur Model Hybrid PS (Attention-BiLSTM) | 13.5
+
+TABEL: Tabel 3.4 Spesifikasi Lapisan Model Hybrid PS
+| Cabang / urutan | Lapisan | Dimensi keluaran | Keterangan |
+|---|---|---|---|
+| Sekuens (1) | Input | (32, 11) | Sekuens PS |
+| Sekuens (2) | Bidirectional LSTM | (32, 128) | 64 unit per arah, return_sequences |
+| Sekuens (3) | Dropout | (32, 128) | p = 0,25 |
+| Sekuens (4) | Attention pooling aditif | (128) | Persamaan 2.23–2.25 |
+| Fitur (1) | Input | (50) | Fitur struktural |
+| Fitur (2) | Dense + Dropout | (64) | ReLU, p = 0,25 |
+| Fitur (3) | Dense | (32) | ReLU |
+| Gabungan (1) | Concatenate | (160) | 128 + 32 |
+| Gabungan (2) | Dropout + Dense | (64) | p = 0,25, ReLU |
+| Keluaran | Dense | (3) | Softmax: P, R, A |
+
+Pelatihan memakai optimizer Adam (laju belajar 0,001), *categorical cross-entropy* dengan bobot kelas berbanding terbalik terhadap frekuensi, ukuran batch 64, maksimum 80 epoch, *early stopping* (patience 12, bobot terbaik dipulihkan), dan ReduceLROnPlateau (faktor 0,5, patience 6). Setiap model dilatih dengan tiga seed (42, 43, 44).
+
+Model pembanding: kelas mayoritas, acak proporsional, regresi logistik, LightGBM, MLP fitur struktural, SWT + BiLSTM, SWT + Attention-BiLSTM, Hybrid SWT (sekuens SWT + 50 fitur), PS + BiLSTM tanpa attention, PS + Attention-BiLSTM, dan PS + Attention-BiLSTM dengan urutan langkah diacak.
+
+## 3.7. Protokol Evaluasi pada Label BTC (Fase 0)
+
+1. Split kronologis 70/15/15 dengan purge 500 bar (125 jendela) di setiap batas, sehingga tidak ada bar yang dipakai bersama oleh dua partisi (Tabel 3.5).
+2. Metrik utama BA dan Macro-F1, dilengkapi accuracy, precision, recall, dan MCC.
+3. Uji hipotesis memakai ensemble probabilitas tiga seed, moving-block bootstrap dengan blok 125 jendela dan 2.000 iterasi, serta koreksi Holm atas H1–H6 (Tabel 3.6).
+4. Walk-forward *expanding* 5 fold untuk menilai stabilitas antar-periode.
+5. Studi kebocoran: model dilatih ulang dengan protokol yang sengaja dilanggar (tanpa purge, normalisasi global, SWT non-kausal, split acak, dan gabungan semuanya).
+
+TABEL: Tabel 3.5 Jumlah Jendela Berlabel per Partisi
+| Timeframe | Latih | Validasi | Uji | Sampel efektif uji |
+|---|---|---|---|---|
+| 1H | 5.951 | 1.211 | 1.610 | ≈ 13,9 blok independen |
+| 4H | 1.446 | 354 | 261 | ≈ 3 blok independen |
+
+SUMBER: Sumber: ml/artifacts/ps_study_1h.md, ps_study_4h.md, bootstrap_eval_1h.md.
+
+TABEL: Tabel 3.6 Hipotesis Fase 0
+| Kode | Pertanyaan | Perbandingan |
+|---|---|---|
+| H1 | Apakah sekuens PS lebih informatif daripada sekuens SWT? | PS + Attention-BiLSTM vs SWT + Attention-BiLSTM |
+| H2 | Apakah urutan waktu sekuens PS membawa informasi? | PS + Attention-BiLSTM vs urutan diacak |
+| H3 | Apakah attention menambah nilai? | PS + Attention-BiLSTM vs PS + BiLSTM |
+| H4 | Apakah PS memperbaiki model hybrid? | Hybrid PS vs Hybrid SWT |
+| H5 | Apakah model usulan melampaui MLP? | Hybrid PS vs MLP fitur |
+| H6 | Apakah model sekuens murni menyamai MLP? | PS + Attention-BiLSTM vs MLP fitur |
+
+## 3.8. Benchmark Sintetis Berkebenaran Dasar (Fase 1)
+
+Karena regime BTC yang sebenarnya tidak teramati, akurasi diukur pada deret sintetis dengan H yang diketahui. Lima skenario disusun dari bersih hingga paling mirip kripto (Tabel 3.7).
+
+TABEL: Tabel 3.7 Skenario Data Sintetis
+| Kode | Deret | Tujuan |
+|---|---|---|
+| S1 | fGn Gaussian | Kondisi bersih |
+| S2 | fGn dengan marginal Student-t (ν = 3) melalui copula | Ekor tebal |
+| S3 | fGn dikalikan volatilitas stokastik AR(1) | Volatilitas berkelompok |
+| S4 | S2 + S3 + lonjakan Poisson | Paling mirip kripto (uji utama) |
+| S5 | Seperti S4, tetapi H berganti di dalam jendela | Uji batas pergantian regime |
+
+1. H diambil acak. Label: H < 0,47 anti-persistent, 0,47–0,53 random-like, H > 0,53 persistent. Ambang 0,47/0,53 dipilih dari titik impas ekonomi strategi; ambang 0,45/0,55 dipakai sebagai uji sensitivitas.
+2. Setiap deret dinormalisasi ke simpangan baku 0,0066 per bar (setara BTC 1H).
+3. Setiap skenario terdiri atas 12.000 deret latih, 3.000 validasi, dan 3.000 uji.
+4. Pembanding klasik: R/S, DFA, R/S Lo, VR(2), kemiringan VR, dan konsensus R/S–DFA, masing-masing dalam versi naif (ambang 0,47/0,53 langsung) dan terkalibrasi (ambang disetel pada data validasi).
+5. Model: M-fBm (dilatih pada S1 saja) dan M-kripto (dilatih pada S1–S4) dengan arsitektur yang dipilih menurut BA validasi.
+6. Hipotesis: H1 akurasi estimator klasik terbaik turun dari S1 ke S4; H2 M-kripto lebih akurat daripada klasik terbaik pada S4; H3 M-kripto lebih akurat daripada M-fBm pada S4. Uji memakai bootstrap per deret dan koreksi Holm.
+
+Model M-kripto dengan arsitektur Hybrid PS ditetapkan sebagai **detektor resmi sistem** dan dibekukan sebelum dipakai pada data nyata.
+
+## 3.9. Studi Lanjutan pada Detektor Resmi
+
+1. **Ablasi SWT.** Detektor dilatih ulang tanpa 12 fitur energi SWT dan dibandingkan dengan detektor lengkap, masing-masing tiga seed. Ukuran: ΔBA pada S4 dengan CI95 bootstrap berpasangan.
+2. **Pralatih sintetis + fine-tune (Fase 0b).** Model Fase 0 dilatih ulang dengan inisialisasi dari detektor sintetis untuk melihat apakah overfitting pada label BTC berkurang.
+3. **Deteksi pergantian regime dan abstain.** 40 deret S4 sepanjang 20.000 bar dengan pergantian H dibangkitkan; detektor dijalankan bergulir dengan konfirmasi 3 jendela berturut-turut, sama dengan aturan notifikasi sistem. Ukuran: median keterlambatan, salah alarm per 1.000 bar, dan proporsi pergantian terlewat. Ambang abstain τ dipilih pada validasi sebagai τ terkecil dengan BA tercakup ≥ 0,90.
+4. **Multi-skala.** Model dengan masukan 1H + 4H dan 1H + 4H + 1D dibandingkan dengan masukan 1H saja dan dengan satu skala berjendela panjang yang cakupan sejarahnya sama.
+5. **Deteksi cepat.** Dua cara memangkas keterlambatan: melatih pada jendela yang regime-nya berganti di dalamnya (label = regime terbaru) dan memendekkan jendela menjadi 256 bar.
+6. **Peringatan dini.** Detektor resmi tetap menentukan label, sedangkan model cepat hanya memberi peringatan bila mengonfirmasi kelas yang berbeda.
+
+Setiap studi memiliki aturan penerapan yang dikunci sebelumnya. Misalnya, model cepat hanya dipasang bila BA kondisi stabil turun ≤ 0,03 dan salah alarm ≤ 1,5 kali detektor resmi.
+
+## 3.10. Uji Generalisasi Lintas Aset
+
+Detektor yang sama diterapkan ke 20 aset tanpa latih ulang. Karena tidak ada kunci jawaban, deteksi dinilai dari perilaku harga sesudah jendela: Δ adalah rata-rata log VR(4) maju setelah label persistent dikurangi setelah label anti-persistent (horizon 200 bar untuk 1H dan 60 bar untuk 1D). Detektor dinilai benar bila Δ > 0. Suatu kelompok aset dinyatakan tergeneralisasi bila CI95 Δ > 0 pada sedikitnya dua pertiga aset kelompok tersebut.
+
+## 3.11. Uji Pemilihan Strategi Setelah Biaya (Fase 2)
+
+Strategi yang dibandingkan adalah momentum (MOM, tanda return 24 bar), mean-reversion (MR, z-score 24 bar), switching berbasis regime (SW: regime persistent → MOM, anti-persistent → MR, random-like → tidak trading), beli dan tahan (BH), serta tidak trading (FLAT). Biaya per sisi transaksi: kripto 0,085%, GC=F 0,03%, dan saham IDX 0,25% (hanya posisi beli). Hipotesis utama F1 menyatakan Sharpe SW lebih besar daripada Sharpe strategi tunggal terbaik, diuji dengan bootstrap blok sirkular berpasangan.
+
+## 3.12. Perancangan Sistem
+
+Arsitektur sistem ditunjukkan pada Gambar 3.2.
+
+GAMBAR: docs/naskah/gambar/diagram_arsitektur_sistem.png | Gambar 3.2 Arsitektur Sistem Pengawas Regime | 13.5
+
+1. **Pengambilan data.** Data OHLCV diunduh dari Binance dan Yahoo Finance, disimpan sebagai Parquet, dan diperbarui oleh penjadwal. Hanya candle yang sudah tutup yang disimpan.
+2. **Detektor.** Fitur PS dan struktural dihitung per titik deteksi (tiap 4 bar), lalu probabilitas tiga kelas dihitung oleh detektor Hybrid PS. Hasil disimpan dalam cache disk yang hanya menghitung titik baru. Cache gugur otomatis bila isi model berubah.
+3. **Abstain.** Label dengan keyakinan di bawah τ = 0,75 ditampilkan sebagai "keyakinan rendah".
+4. **Notifikasi.** Regime baru diumumkan melalui Telegram bila 3 jendela berturut-turut berlabel sama dengan keyakinan memadai. Setiap notifikasi dicatat sebagai catatan uji maju.
+5. **Autentikasi.** Firebase Authentication (email dan Google). Chat ID Telegram dan preferensi timeframe disimpan di Firestore.
+6. **Penerapan.** Backend, frontend, dan Caddy dijalankan dengan Docker Compose pada VPS. Caddy meneruskan /api/v1/* ke FastAPI dan sisanya ke Next.js, sehingga pengguna hanya mengakses satu alamat.
+
+TABEL: Tabel 3.8 Endpoint Utama API
+| Endpoint | Fungsi |
+|---|---|
+| GET /api/v1/analysis/ai-regime | Regime terkini dan riwayat dari detektor AI (1H/4H), probabilitas, proporsi keyakinan rendah |
+| GET /api/v1/analysis/hurst-dfa | Estimator klasik Hurst R/S dan DFA bergulir sebagai pembanding |
+| GET /api/v1/analysis/swt | Dekomposisi dan energi SWT |
+| GET /api/v1/analysis/multifractal | Spektrum H(q) |
+| GET /api/v1/ohlcv | Data harga untuk grafik |
+| GET /api/v1/meta/methodology | Parameter dan rumus metodologi |
+| GET /health | Status layanan dan bot Telegram |
+
+TABEL: Tabel 3.9 Halaman Utama Dashboard
+| Halaman | Isi |
+|---|---|
+| Ringkasan (beranda) | Regime 1H dan 4H, probabilitas kelas, tanda keyakinan rendah, grafik dengan pita regime, pembanding Hurst/DFA |
+| Strategi | Saran strategi per regime beserta status bukti Fase 2, pengaturan notifikasi Telegram |
+| Riset | SWT, H(q), perbandingan model, walk-forward, attention |
+| Metodologi dan Tentang | Penjelasan metode, batasan, dan sumber angka |
+| Masuk | Login email atau Google |
+
+## 3.13. Rancangan Pengujian Perangkat Lunak
+
+1. **Unit test otomatis** (pytest) untuk estimator, fitur, model, API, cache detektor, abstain, dan notifikasi Telegram.
+2. **Black-box**: kasus uji per kebutuhan fungsional F01–F08 dengan masukan, keluaran yang diharapkan, dan hasil.
+3. **UAT**: minimal 10 responden menjalankan lima skenario tugas (Tabel 3.10). Target: setiap tugas diselesaikan oleh ≥ 80% responden.
+4. **SUS**: kuesioner 10 butir (Persamaan 2.33), target rata-rata ≥ 68.
+
+TABEL: Tabel 3.10 Skenario Tugas UAT
+| Kode | Tugas | Kriteria berhasil |
+|---|---|---|
+| TSK01 | Masuk ke sistem lalu sebutkan kondisi pasar BTC/USDT 1H beserta keyakinan model. | Kondisi dan keyakinan sesuai layar |
+| TSK02 | Bandingkan dengan 4H; apakah kondisinya sama dan adakah tanda keyakinan rendah? | Jawaban sesuai layar |
+| TSK03 | Sebutkan strategi yang disarankan dan apakah saran itu didukung hasil uji. | Strategi dan status bukti sesuai layar |
+| TSK04 | Tunjukkan pada grafik kapan terakhir pasar dalam kondisi "Cenderung Berbalik". | Periode yang ditunjuk benar |
+| TSK05 | Aktifkan notifikasi Telegram lalu kirim pesan uji. | Pesan uji diterima di Telegram |
+
+SUMBER: Sumber: docs/uat_sus/PANDUAN_UAT_SUS.md.

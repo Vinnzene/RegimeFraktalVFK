@@ -105,7 +105,7 @@ export default function TopNav() {
       <Link href="/" className="mr-4 flex shrink-0 items-center gap-2">
         <BrandMark size={26} />
         <span className="hidden font-sans text-[13px] font-semibold tracking-tight text-txt sm:inline">
-          regimefraktal<span className="text-accent">VFK</span>
+          R<span className="text-accent">Fraktal</span>
         </span>
       </Link>
 
@@ -121,9 +121,8 @@ export default function TopNav() {
                 aria-expanded={open}
                 aria-haspopup="true"
                 onClick={() => setOpenGroup(open ? null : group.label)}
-                className={`relative flex items-center gap-1 rounded-md px-3 py-1.5 text-[12.5px] font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent ${
-                  groupActive || open ? "text-txt" : "text-txtDim hover:bg-surface/60 hover:text-txt"
-                } ${open ? "bg-surface" : ""}`}
+                className={`relative flex items-center gap-1 rounded-md px-3 py-1.5 text-[12.5px] font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent ${groupActive || open ? "text-txt" : "text-txtDim hover:bg-surface/60 hover:text-txt"
+                  } ${open ? "bg-surface" : ""}`}
               >
                 {group.label}
                 <span className={`text-[9px] text-txtMuted transition-transform ${open ? "rotate-180" : ""}`}>▼</span>
@@ -139,9 +138,8 @@ export default function TopNav() {
                         key={item.href}
                         href={item.href}
                         aria-current={active ? "page" : undefined}
-                        className={`block rounded px-3 py-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent ${
-                          active ? "bg-surface" : "hover:bg-surface/70"
-                        }`}
+                        className={`block rounded px-3 py-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent ${active ? "bg-surface" : "hover:bg-surface/70"
+                          }`}
                       >
                         <div className={`flex items-center gap-2 text-[12.5px] font-medium ${active ? "text-accent" : "text-txt"}`}>
                           {item.label}

@@ -1,0 +1,483 @@
+# BAB 4|HASIL DAN PEMBAHASAN
+
+Bab ini menyajikan hasil eksperimen dan pembahasannya untuk menjawab RM1 sampai RM6. Semua angka diambil dari artefak di folder ml/artifacts pada repositori penelitian, dengan konfigurasi utama *train_only* (config hash b2225bb25c4f). Sumber setiap tabel dicantumkan di bawahnya agar dapat diperiksa ulang.
+
+## 4.1. Konsistensi Hurst-DFA pada BTC/USDT (RM1, Bagian 1)
+
+Estimator Hurst R/S dan DFA-1 dihitung pada 16.857 jendela 1H dan 4.123 jendela 4H. Tabel 4.1 menyajikan kesepakatan keduanya, sedangkan Tabel 4.2 menyajikan distribusi label konsensus.
+
+TABEL: Tabel 4.1 Kesepakatan Estimator Hurst R/S dan DFA-1
+| Timeframe | Jendela | Korelasi Pearson | Sepakat | Tidak sepakat | Berlawanan (P vs A) |
+|---|---|---|---|---|---|
+| 1H | 16.857 | 0,573 | 8.867 (52,6%) | 7.990 (47,4%) | 1.231 (7,3%) |
+| 4H | 4.123 | 0,550 | 2.173 (52,7%) | 1.950 (47,3%) | 293 (7,1%) |
+
+SUMBER: Sumber: ml/artifacts/label_consistency.md.
+
+TABEL: Tabel 4.2 Distribusi Label Konsensus Hurst-DFA
+| Timeframe | Persistent | Random-like | Anti-persistent | Uncertain_rule |
+|---|---|---|---|---|
+| 1H | 3.203 (19,0%) | 2.225 (13,2%) | 3.439 (20,4%) | 7.990 (47,4%) |
+| 4H | 767 (18,6%) | 548 (13,3%) | 858 (20,8%) | 1.950 (47,3%) |
+
+SUMBER: Sumber: ml/artifacts/label_consistency.md.
+
+GAMBAR: ml/artifacts/figures/fig_label_consistency_1h.png | Gambar 4.1 Sebaran Hurst R/S terhadap DFA-1 dan Proporsi Ketidaksepakatan per Tahun (1H) | 14
+
+**Pembahasan.** Hampir separuh jendela tidak dapat diberi label karena kedua estimator tidak sepakat, dan pola ini sama pada 1H dan 4H. Pada 7,3% jendela 1H satu estimator menyatakan persistent sedangkan yang lain anti-persistent. Proporsi ketidaksepakatan juga relatif stabil antar tahun (Gambar 4.1), sehingga ketidakkonsistenan ini bukan akibat satu periode pasar tertentu. Hasil ini menunjukkan bahwa label dari satu estimator tidak dapat dipercaya begitu saja, sesuai peringatan Maraun dkk. (2004). Akurasi estimator itu sendiri belum dapat dinilai dari data nyata; hal ini dijawab pada Subbab 4.6.
+
+## 4.2. Peran SWT (RM2)
+
+### 4.2.1. Koefisien SWT Mentah Tidak Cukup
+
+Tabel 4.3 membandingkan Attention-BiLSTM dengan masukan koefisien SWT dan dengan masukan sekuens PS pada label Hurst-DFA BTC.
+
+TABEL: Tabel 4.3 Balanced Accuracy Uji: Sekuens SWT vs Sekuens PS (Rata-rata ± Std 3 Seed)
+| Model | Masukan | 1H | 4H |
+|---|---|---|---|
+| Tebakan acak | – | 0,333 | 0,333 |
+| SWT + Attention-BiLSTM | Koefisien SWT 32 × 5 | 0,382 ± 0,015 | 0,421 ± 0,054 |
+| PS + Attention-BiLSTM | Sekuens PS 32 × 11 | 0,678 ± 0,025 | 0,525 ± 0,044 |
+
+SUMBER: Sumber: ml/artifacts/ps_study_1h.md dan ps_study_4h.md.
+
+Pada 1H, mengganti koefisien SWT dengan sekuens PS menaikkan Macro-F1 sebesar +0,277 [+0,173; +0,368] dengan p Holm < 0,0005, sehingga H1 terbukti. Pada 4H selisihnya tidak signifikan. Gambar 4.2 memperlihatkan perbandingan seluruh model.
+
+GAMBAR: ml/artifacts/figures/fig_ps_comparison.png | Gambar 4.2 Balanced Accuracy Uji Seluruh Model pada Label Hurst-DFA (1H dan 4H) | 14
+
+### 4.2.2. Kontribusi Fitur Energi SWT pada Detektor Resmi
+
+Detektor resmi memuat 12 fitur rasio energi SWT. Kontribusinya diukur dengan melatih ulang detektor tanpa fitur tersebut (Tabel 4.4).
+
+TABEL: Tabel 4.4 Ablasi Fitur Energi SWT, BA Uji Sintetis (Rata-rata ± Std 3 Seed)
+| Varian | S1 | S2 | S3 | S4 | S4k |
+|---|---|---|---|---|---|
+| A0 Detektor resmi (50 fitur, dengan energi SWT) | 0,861 ± 0,001 | 0,847 ± 0,002 | 0,822 ± 0,001 | 0,815 ± 0,001 | 0,834 ± 0,003 |
+| A1 Tanpa energi SWT (38 fitur) | 0,861 ± 0,002 | 0,846 ± 0,003 | 0,820 ± 0,002 | 0,812 ± 0,002 | 0,834 ± 0,003 |
+
+SUMBER: Sumber: ml/artifacts/swt_ablation.md. S4k = S4 dengan ambang kelas sensitivitas.
+
+Pada S4, ΔBA (A0 − A1) dengan probabilitas rata-rata tiga seed adalah −0,0003 dengan CI95 [−0,0053; +0,0049]. Kontribusi fitur energi SWT tidak terdeteksi.
+
+### 4.2.3. Sumber Daya Pembeda
+
+TABEL: Tabel 4.5 Ablasi Kelompok Fitur pada Hybrid PS (BA Uji)
+| Varian | 1H BA | Δ | 4H BA | Δ |
+|---|---|---|---|---|
+| Lengkap | 0,698 | – | 0,593 | – |
+| Tanpa H(q) | 0,694 | −0,004 | 0,600 | +0,007 |
+| Tanpa VR | 0,660 | −0,039 | 0,532 | −0,061 |
+| Tanpa VR dan autokorelasi | 0,674 | −0,024 | 0,500 | −0,092 |
+
+SUMBER: Sumber: ml/artifacts/leakage_study_1h_ps.md dan leakage_study_4h_ps.md.
+
+**Pembahasan RM2.** SWT dalam bentuk koefisien mentah tidak memberi daya pembeda yang berarti (BA 0,38 pada 1H, hanya sedikit di atas tebakan acak). Dalam bentuk rasio energi antar-skala, SWT juga tidak menambah akurasi detektor: membuang 12 fitur energi SWT mengubah BA kurang dari 0,005 dengan CI95 yang memuat nol. Informasi multi-skala yang dibawa energi SWT sudah tertangkap oleh variance ratio dan autokorelasi multi-lag, yang juga mengukur struktur korelasi lintas skala; Tabel 4.5 menunjukkan bahwa kedua kelompok inilah sumber utama daya pembeda. Dengan demikian, peran SWT dalam penelitian ini adalah sebagai representasi yang diuji, dan hasilnya dilaporkan apa adanya: representasi yang lebih informatif adalah sekuens statistik persistensi. Sesuai praregistrasi, detektor resmi tidak diubah.
+
+## 4.3. Kinerja Model pada Label Hurst-DFA BTC (RM3, Bagian 1; Fase 0)
+
+### 4.3.1. Perbandingan Model pada Timeframe 1H
+
+TABEL: Tabel 4.6 Kinerja Uji 1H (Rata-rata ± Std 3 Seed, N = 1.610)
+| Model | BA | Macro-F1 | MCC | Recall P | Recall R | Recall A |
+|---|---|---|---|---|---|---|
+| Kelas mayoritas | 0,333 | 0,216 | 0,000 | 0,000 | 0,000 | 1,000 |
+| Acak proporsional | 0,338 ± 0,004 | 0,329 | 0,006 | 0,358 | 0,255 | 0,401 |
+| Regresi logistik | 0,665 | 0,648 | 0,573 | 0,699 | 0,505 | 0,791 |
+| LightGBM | 0,622 ± 0,008 | 0,612 | 0,525 | 0,602 | 0,433 | 0,832 |
+| MLP fitur | 0,632 ± 0,020 | 0,619 | 0,530 | 0,661 | 0,474 | 0,761 |
+| SWT + BiLSTM | 0,385 ± 0,013 | 0,379 | 0,096 | 0,329 | 0,173 | 0,655 |
+| SWT + Attention-BiLSTM | 0,382 ± 0,015 | 0,372 | 0,086 | 0,332 | 0,175 | 0,639 |
+| Hybrid SWT | 0,653 ± 0,033 | 0,643 | 0,572 | 0,719 | 0,428 | 0,811 |
+| PS + BiLSTM (tanpa attention) | 0,669 ± 0,009 | 0,662 | 0,621 | 0,653 | 0,404 | 0,950 |
+| PS + Attention-BiLSTM | 0,678 ± 0,025 | 0,663 | 0,613 | 0,601 | 0,486 | 0,948 |
+| **Hybrid PS (usulan)** | **0,698 ± 0,011** | **0,691** | **0,652** | 0,717 | 0,449 | 0,930 |
+
+SUMBER: Sumber: ml/artifacts/ps_study_1h.md dan main_eval_1h.md.
+
+Tabel 4.7 menyajikan confusion matrix model usulan dari ensemble probabilitas tiga seed, yang juga dipakai untuk uji hipotesis.
+
+TABEL: Tabel 4.7 Confusion Matrix Hybrid PS (Ensemble 3 Seed) pada Data Uji 1H
+| Aktual \ Prediksi | Persistent | Random-like | Anti-persistent | Total | Recall |
+|---|---|---|---|---|---|
+| Persistent | 447 | 154 | 27 | 628 | 0,712 |
+| Random-like | 63 | 94 | 51 | 208 | 0,452 |
+| Anti-persistent | 3 | 46 | 725 | 774 | 0,937 |
+| Total prediksi | 513 | 294 | 803 | 1.610 | BA = 0,700 |
+| Precision | 0,871 | 0,320 | 0,903 | – | Accuracy = 0,786 |
+| F1 | 0,784 | 0,375 | 0,919 | – | Macro-F1 = 0,692; MCC = 0,656 |
+
+SUMBER: Sumber: dihitung dari ml/artifacts/ensemble_test_probs_1h.parquet.
+
+GAMBAR: ml/artifacts/figures/fig_confusion_hybrid_ps.png | Gambar 4.3 Confusion Matrix Hybrid PS 1H dan 4H (Jumlah Tiga Seed, Persen per Baris) | 14
+
+### 4.3.2. Perbandingan Model pada Timeframe 4H
+
+TABEL: Tabel 4.8 Kinerja Uji 4H (Rata-rata ± Std 3 Seed, N = 261)
+| Model | BA | Macro-F1 | MCC | Recall P | Recall R | Recall A |
+|---|---|---|---|---|---|---|
+| Regresi logistik | 0,524 | 0,532 | 0,407 | 0,375 | 0,282 | 0,915 |
+| LightGBM | 0,571 ± 0,004 | 0,549 | 0,408 | 0,417 | 0,564 | 0,732 |
+| MLP fitur | 0,574 ± 0,024 | 0,576 | 0,466 | 0,600 | 0,282 | 0,840 |
+| SWT + Attention-BiLSTM | 0,421 ± 0,054 | 0,380 | 0,197 | 0,671 | 0,128 | 0,465 |
+| Hybrid SWT | 0,586 ± 0,031 | 0,584 | 0,458 | 0,671 | 0,342 | 0,744 |
+| PS + BiLSTM (tanpa attention) | 0,446 ± 0,062 | 0,350 | 0,242 | 0,050 | 0,735 | 0,554 |
+| PS + Attention-BiLSTM | 0,525 ± 0,044 | 0,490 | 0,350 | 0,296 | 0,538 | 0,742 |
+| **Hybrid PS (usulan)** | **0,593 ± 0,013** | 0,580 | 0,453 | 0,429 | 0,504 | 0,845 |
+
+SUMBER: Sumber: ml/artifacts/ps_study_4h.md.
+
+### 4.3.3. Uji Hipotesis
+
+TABEL: Tabel 4.9 Hasil Uji Hipotesis Fase 0 (ΔMacro-F1 Ensemble, Bootstrap Blok 125, Koreksi Holm)
+| H | Pertanyaan | 1H: Δ [CI95] | 1H: p Holm | Keputusan 1H | Keputusan 4H |
+|---|---|---|---|---|---|
+| H1 | PS lebih informatif dari SWT | +0,277 [+0,173; +0,368] | < 0,0005 | **Terbukti** | Setara |
+| H2 | Urutan waktu PS bermakna | +0,015 [−0,007; +0,034] | 0,366 | Setara | Berlawanan |
+| H3 | Attention menambah nilai | −0,014 [−0,052; +0,021] | 0,767 | Setara | Setara |
+| H4 | Hybrid PS > Hybrid SWT | +0,027 [−0,042; +0,086] | 0,420 | Setara | Setara |
+| H5 | Hybrid PS > MLP | +0,067 [+0,008; +0,127] | 0,0575 | **Tidak terbukti** | Setara |
+| H6 | PS + Attention ≥ MLP | +0,039 [−0,033; +0,107] | 0,378 | Setara | Berlawanan |
+
+SUMBER: Sumber: ml/artifacts/bootstrap_eval_1h.md dan bootstrap_eval_4h.md.
+
+Pembanding tambahan di luar praregistrasi awal (tanpa koreksi Holm): Hybrid PS lebih baik daripada LightGBM pada 1H (+0,079 [+0,032; +0,129]) dan setara dengan regresi logistik (+0,039 [−0,029; +0,104]).
+
+**Pembahasan.** Pada label Hurst-DFA BTC, Hybrid PS memiliki BA tertinggi pada 1H (0,698) dan 4H (0,593). Confusion matrix menunjukkan bahwa model sangat jarang menukar dua kelas yang berlawanan: hanya 27 dari 628 jendela persistent diprediksi anti-persistent, dan hanya 3 dari 774 jendela anti-persistent diprediksi persistent. Kesalahan terkonsentrasi pada kelas random-like (recall 0,452, precision 0,320), karena kelas ini berada di antara dua ambang kuantil sehingga paling mudah tertukar dengan kelas tetangganya.
+
+Namun keunggulan Hybrid PS atas MLP tidak lolos koreksi uji berganda (p Holm 0,0575), dan model ini setara dengan regresi logistik yang jauh lebih sederhana. Attention juga tidak menambah akurasi (H3). Keterbatasan mendasar fase ini adalah bahwa model hanya diukur terhadap label Hurst-DFA yang hampir separuhnya tidak konsisten (Subbab 4.1). Karena itu klaim utama tentang akurasi model diuji pada Fase 1 dengan kebenaran dasar (Subbab 4.6).
+
+## 4.4. Dampak Kebocoran Data
+
+TABEL: Tabel 4.10 Balanced Accuracy Hybrid PS pada Protokol Bersih dan Bocor
+| Protokol | 1H | Δ | 4H | Δ |
+|---|---|---|---|---|
+| Bersih (kronologis + purge + normalisasi latih) | 0,698 | – | 0,593 | – |
+| Tanpa purge gap | 0,682 | −0,016 | 0,516 | −0,077 |
+| Normalisasi global | 0,693 | −0,006 | 0,582 | −0,010 |
+| **Split acak** | **0,822** | **+0,124** | **0,773** | **+0,180** |
+
+SUMBER: Sumber: ml/artifacts/leakage_study_1h_ps.md dan leakage_study_4h_ps.md.
+
+GAMBAR: ml/artifacts/figures/fig_leakage.png | Gambar 4.4 Inflasi Balanced Accuracy akibat Protokol Bocor pada Model Hybrid SWT | 14
+
+**Pembahasan.** Split acak menggelembungkan BA sebesar +0,12 (1H) dan +0,18 (4H) karena jendela bertetangga berbagi hingga 496 dari 500 bar, sehingga model praktis telah melihat data uji saat pelatihan. Pola yang sama terjadi pada model Hybrid SWT (Gambar 4.4), sedangkan SWT non-kausal hanya mengubah BA +0,005 (1H) dan −0,025 (4H). Penelitian yang melaporkan akurasi klasifikasi regime dengan split acak pada jendela bertumpuk berpotensi melebih-lebihkan kinerja sebesar ini.
+
+## 4.5. Stabilitas Antar-Periode dan Overfitting (RM4, Bagian 1)
+
+### 4.5.1. Evaluasi Walk-Forward
+
+TABEL: Tabel 4.11 Balanced Accuracy Walk-Forward Expanding 5 Fold
+| Model | Fold 1 | Fold 2 | Fold 3 | Fold 4 | Fold 5 | 1H rata-rata ± std | 4H rata-rata ± std |
+|---|---|---|---|---|---|---|---|
+| MLP fitur | 0,423 | 0,554 | 0,559 | 0,552 | 0,641 | 0,546 ± 0,070 | 0,476 ± 0,090 |
+| Regresi logistik | 0,480 | 0,603 | 0,590 | 0,535 | 0,672 | **0,576 ± 0,065** | 0,448 ± 0,081 |
+| LightGBM | 0,433 | 0,539 | 0,566 | 0,527 | 0,633 | 0,540 ± 0,065 | 0,428 ± 0,137 |
+| Hybrid SWT | 0,463 | 0,545 | 0,566 | 0,584 | 0,646 | 0,561 ± 0,059 | **0,478 ± 0,101** |
+| Hybrid PS | 0,464 | 0,569 | 0,536 | 0,595 | 0,685 | 0,570 ± 0,072 | 0,443 ± 0,093 |
+
+SUMBER: Sumber: ml/artifacts/walk_forward_neural_1h_ps.md dan walk_forward_neural_4h_ps.md. Kolom fold berisi BA 1H.
+
+GAMBAR: ml/artifacts/figures/fig_walk_forward_ps.png | Gambar 4.5 Balanced Accuracy per Fold Walk-Forward (1H dan 4H) | 14
+
+Pada 1H, Hybrid PS mengungguli MLP pada 4 dari 5 fold dan memiliki BA fold terakhir tertinggi (0,685), tetapi regresi logistik memiliki rata-rata tertinggi. Pada 4H tidak ada model yang konsisten unggul, dan Hybrid PS berada di bawah MLP. BA seluruh model juga lebih rendah daripada pada split uji tunggal, sehingga kinerja bergantung pada periode pasar.
+
+### 4.5.2. Upaya Mengurangi Overfitting: Pralatih Sintetis + Fine-Tune (Fase 0b)
+
+Fase 0 menunjukkan selisih BA latih − uji sekitar 0,20 pada 4H, tanda overfitting. Mengikuti saran literatur untuk data kecil dan label berderau (Ismail Fawaz dkk., 2018; Müller dkk., 2019), dilakukan eksperimen terpraregistrasi dengan split yang identik dengan Fase 0.
+
+TABEL: Tabel 4.12 Hasil Fase 0b (Rata-rata 3 Seed)
+| Model | 1H BA latih | 1H BA uji | 4H BA latih | 4H BA uji | 4H selisih |
+|---|---|---|---|---|---|
+| B0 Hybrid PS dari nol | 0,759 | 0,711 | 0,811 | 0,607 | 0,204 |
+| T1 Pralatih sintetis + fine-tune | 0,712 | 0,633 | 0,735 | 0,541 | 0,193 |
+| T2 T1 + label smoothing 0,1 | 0,777 | 0,651 | 0,755 | 0,510 | 0,245 |
+| T0 Detektor sintetis tanpa fine-tune | – | 0,372 | – | 0,343 | – |
+
+SUMBER: Sumber: ml/artifacts/transfer_finetune_1h.md dan transfer_finetune_4h.md.
+
+TABEL: Tabel 4.13 Hipotesis Fase 0b (ΔMacro-F1, Koreksi Holm atas 4 Uji)
+| Hipotesis | 1H Δ [CI95] | 4H Δ [CI95] | Keputusan |
+|---|---|---|---|
+| T-H1 Pralatih > dari nol | −0,074 [−0,121; −0,032] | −0,048 [−0,274; +0,098] | 1H berlawanan; 4H tidak terbukti |
+| T-H2 Label smoothing > T1 | +0,019 [−0,017; +0,061] | −0,009 [−0,030; +0,010] | Tidak terbukti |
+
+**Pembahasan.** Pada 1H terjadi *negative transfer*: pralatih pada data sintetis justru menurunkan akurasi pada label Hurst-DFA BTC. Pada 4H selisih latih − uji T1 sedikit lebih kecil, tetapi karena BA latih dan uji sama-sama turun, sehingga bukan perbaikan generalisasi. Penjelasannya terlihat dari T0: detektor sintetis tanpa fine-tune hanya mencapai BA 0,34–0,37 terhadap label BTC. Label BTC (kuantil 1/3 dan 2/3 R/S–DFA, misalnya "persistent" berarti R/S > 0,60) dan label sintetis (H sebenarnya terhadap 0,47/0,53) mengukur konsep yang berbeda. Overfitting Fase 0 bersumber dari definisi label dan sedikitnya sampel efektif, bukan dari kurangnya pengetahuan awal model. Detektor resmi sistem tidak diganti.
+
+## 4.6. Benchmark Sintetis: Hurst-DFA Klasik vs Attention-BiLSTM (RM1 Bagian 2, RM3 Bagian 2; Fase 1)
+
+TABEL: Tabel 4.14 Balanced Accuracy Uji pada Data Sintetis (n = 500 per Jendela)
+| Metode | S1 | S2 | S3 | S4 | S5 | S4k |
+|---|---|---|---|---|---|---|
+| R/S naif | 0,452 | 0,424 | 0,418 | 0,401 | 0,340 | 0,411 |
+| DFA naif | 0,683 | 0,667 | 0,611 | 0,584 | 0,323 | 0,632 |
+| **Konsensus R/S–DFA naif** | 0,369 | 0,330 | 0,302 | **0,268** | 0,120 | 0,305 |
+| R/S terkalibrasi | 0,720 | 0,709 | 0,686 | 0,662 | 0,288 | 0,691 |
+| DFA terkalibrasi | 0,711 | 0,675 | 0,635 | 0,581 | 0,313 | 0,647 |
+| VR(2) terkalibrasi (klasik terbaik) | 0,795 | 0,748 | 0,662 | **0,654** | 0,338 | 0,703 |
+| M-fBm (LightGBM, latih S1) | 0,866 | 0,827 | 0,767 | 0,735 | 0,309 | 0,795 |
+| **M-kripto: Hybrid PS (Attention-BiLSTM)** | 0,863 | 0,848 | 0,819 | **0,813** | 0,276 | 0,836 |
+| M-kripto: LightGBM | 0,864 | 0,842 | 0,798 | 0,805 | 0,274 | 0,812 |
+| M-kripto: MLP | 0,863 | 0,838 | 0,803 | 0,801 | 0,279 | 0,808 |
+| M-kripto: regresi logistik | 0,850 | 0,835 | 0,806 | 0,794 | 0,285 | 0,814 |
+
+SUMBER: Sumber: ml/artifacts/synthetic_benchmark.md.
+
+GAMBAR: docs/naskah/gambar/grafik_benchmark_sintetis.png | Gambar 4.6 Balanced Accuracy Konsensus Hurst-DFA, Estimator Klasik Terbaik, dan Attention-BiLSTM per Skenario | 14
+
+TABEL: Tabel 4.15 Hasil Uji Hipotesis Fase 1 (Ambang Utama 0,47/0,53)
+| H | Pernyataan | Selisih BA [CI95] | p Holm | Keputusan |
+|---|---|---|---|---|
+| H1 | Akurasi estimator klasik turun pada kondisi kripto (S1 − S4) | +0,141 [+0,119; +0,163] | < 0,0005 | **Terbukti** |
+| H2 | Attention-BiLSTM (M-kripto) > klasik terbaik pada S4 | +0,159 [+0,141; +0,177] | < 0,0005 | **Terbukti** |
+| H3 | Latih berkarakter kripto > latih fBm saja pada S4 | +0,078 [+0,063; +0,092] | < 0,0005 | **Terbukti** |
+
+Ketiga hipotesis juga terbukti pada ambang sensitivitas 0,45/0,55.
+
+**Pembahasan.**
+
+1. Estimator Hurst-DFA naif sangat tidak akurat pada deret berkarakter kripto. Konsensus R/S–DFA hanya mencapai BA 0,268 pada S4, di bawah tebakan acak, karena banyak jendela jatuh ke "tidak pasti" dan R/S bias ke atas. Ini menjelaskan temuan Subbab 4.1 dengan kebenaran dasar.
+2. Akurasi estimator klasik turun ketika karakter kripto (ekor tebal, volatilitas berkelompok, lonjakan) ditambahkan (H1).
+3. Model Attention-BiLSTM yang dilatih pada data berkarakter kripto lebih akurat 0,159 daripada estimator klasik terbaik (H2), dan melatih dengan karakter kripto lebih baik daripada melatih pada fBm bersih (H3).
+4. Keunggulan atas model pembelajaran mesin lain yang dilatih pada data yang sama kecil (LightGBM 0,805; MLP 0,801; regresi logistik 0,794) dan tidak diuji formal. Kontribusi utama berasal dari cara melatih (data sintetis berkarakter kripto), bukan semata dari arsitektur.
+5. Semua metode gagal pada S5 (regime berganti di dalam jendela, BA sekitar 0,3). Identifikasi tepat setelah pergantian regime memerlukan waktu, yang diukur pada Subbab 4.7.
+
+## 4.7. Kecepatan dan Ketepatan Identifikasi
+
+### 4.7.1. Deteksi Pergantian Regime dan Abstain
+
+Detektor dijalankan bergulir pada 40 deret S4 sepanjang 20.000 bar dengan 392 titik pergantian, memakai konfirmasi 3 jendela berturut-turut seperti aturan notifikasi sistem.
+
+TABEL: Tabel 4.16 Kecepatan dan Salah Alarm Deteksi Pergantian Regime
+| Metode | Median keterlambatan (bar) | Salah alarm / 1.000 bar | Pergantian terlewat |
+|---|---|---|---|
+| **Detektor resmi (Attention-BiLSTM)** | **296** | 0,91 | **5,9%** |
+| Konsensus R/S–DFA naif | 604 | 0,24 | 67,9% |
+| Konsensus R/S–DFA terkalibrasi | 388 | 1,41 | 5,9% |
+| VR(2) terkalibrasi | 302 | 2,41 | 2,3% |
+| Detektor resmi + abstain (τ = 0,75) | 368 | 0,30 | 12,5% |
+
+SUMBER: Sumber: ml/artifacts/regime_change_study.md.
+
+Hipotesis bahwa detektor lebih cepat sekaligus tidak lebih banyak salah alarm daripada konsensus naif tidak terbukti. Detektor dua kali lebih cepat (selisih median keterlambatan CI95 [−463; −192] bar) dan jauh lebih jarang melewatkan pergantian (5,9% dibanding 67,9%), tetapi salah alarmnya lebih banyak (+0,58 sampai +0,76 per 1.000 bar). Salah alarm konsensus naif rendah karena konsensus jarang mengonfirmasi apa pun: dua pertiga pergantian tidak pernah terdeteksi. Dibanding konsensus terkalibrasi, detektor lebih cepat (296 dibanding 388 bar) dan lebih jarang salah alarm (0,91 dibanding 1,41).
+
+Ambang abstain dipilih pada validasi sebagai τ terkecil dengan BA tercakup ≥ 0,90, yaitu τ = 0,75. Pada uji S4, BA jendela yang tercakup naik menjadi 0,905 pada 67,9% jendela (tanpa abstain 0,813 pada 100% jendela), dan salah alarm turun ke 0,30 per 1.000 bar, setara konsensus naif, dengan keterlambatan tetap jauh lebih kecil (368 dibanding 604 bar). Pada BTC, 56,6% jendela 1H dan 48,7% jendela 4H berlabel keyakinan rendah. Keterlambatan sekitar 300 bar (sekitar 12 hari pada 1H) adalah konsekuensi panjang jendela 500 bar.
+
+### 4.7.2. Multi-Timeframe sebagai Masukan
+
+TABEL: Tabel 4.17 Ketepatan dan Kecepatan Model Multi-Skala (Data Sintetis)
+| Model | Masukan | Cakupan sejarah (bar 1H) | BA S4 | Keterlambatan median | Salah alarm / 1.000 bar | Terlewat |
+|---|---|---|---|---|---|---|
+| M1 | 1H (500 bar) | 500 | 0,817 | **306** | 0,83 | **5,2%** |
+| M2 | 1H + 4H | 2.000 | 0,847 | 424 | 0,59 | 15,1% |
+| M3 | 1H + 4H + 1D | 12.000 | 0,857 | 403 | 1,13 | 17,7% |
+| M4 | 1H, jendela 2.000 bar | 2.000 | **0,897** | 891 | 0,40 | 36,5% |
+
+SUMBER: Sumber: ml/artifacts/multiscale_study.md.
+
+TABEL: Tabel 4.18 Hipotesis Multi-Skala
+| Hipotesis | ΔBA [CI95] | Keputusan (Holm) |
+|---|---|---|
+| MS-H1 1H+4H > 1H | +0,032 [+0,020; +0,043] | Terbukti |
+| MS-H2 1H+4H+1D > 1H | +0,041 [+0,028; +0,054] | Terbukti |
+| MS-H3 1H+4H > 1H berjendela panjang (cakupan sama) | −0,046 [−0,059; −0,034] | Berlawanan |
+
+Menambah timeframe yang lebih kasar meningkatkan ketepatan (+0,03 sampai +0,04), tetapi satu skala dengan jendela sepanjang cakupan yang sama (M4) lebih tepat lagi. Peningkatan itu berasal dari sejarah yang lebih panjang, bukan dari informasi multi-skala itu sendiri. Hal ini sejalan dengan teori: pada proses *self-similar*, agregasi ke skala kasar tidak menambah informasi tentang H. Sejarah yang lebih panjang dibayar dengan kecepatan: keterlambatan naik 32–39% (M2, M3) sampai 191% (M4), dan pergantian yang terlewat naik dari 5% menjadi 15–37%. Sesuai aturan praregistrasi (keterlambatan naik ≤ 25% dan salah alarm tidak lebih tinggi), tidak ada model multi-skala yang direkomendasikan. Multi-timeframe dalam sistem tetap berupa identifikasi 1H dan 4H yang ditampilkan berdampingan.
+
+### 4.7.3. Mempercepat Deteksi
+
+TABEL: Tabel 4.19 Kecepatan vs Ketepatan Model Deteksi Cepat
+| Model | BA S4 (stabil) | BA S5 (berganti) | Keterlambatan median | Salah alarm / 1.000 bar | Terlewat | Bobot attention 8 langkah terakhir |
+|---|---|---|---|---|---|---|
+| D0 Detektor resmi (500) | **0,818** | 0,281 | 296 | **0,91** | 5,9% | 0,27 |
+| A 500 + latih pergantian | 0,680 | **0,615** | 120 | 2,85 | 0,3% | **0,91** |
+| B0 Jendela 256 | 0,749 | 0,274 | 177 | 1,93 | 1,0% | 0,33 |
+| B 256 + latih pergantian | 0,636 | 0,520 | **72** | 5,31 | 0,0% | 0,90 |
+
+SUMBER: Sumber: ml/artifacts/fast_detection_study.md.
+
+Model A lebih cepat 176 bar [−196; −158] dan model B lebih cepat 224 bar [−244; −205] daripada D0; kedua hipotesis kecepatan terbukti. Melatih model pada pergantian regime mempercepat deteksi 2,5 kali (296 menjadi 120 bar, sekitar 12 menjadi 5 hari pada 1H), dan bila digabung jendela pendek menjadi 4 kali (72 bar, sekitar 3 hari).
+
+Temuan penting lainnya adalah bahwa attention menjadi bermakna pada tugas ini. Pada model yang dilatih pada pergantian, 91% bobot attention terpusat pada 8 langkah terakhir (bobot seragam = 25%): model belajar melihat bagian terbaru jendela. Pada detektor resmi bobotnya hampir seragam (27%), sejalan dengan H3 yang tidak terbukti. Peran attention bergantung pada tugasnya.
+
+Harganya besar: BA kondisi stabil turun 0,14–0,18 dan salah alarm naik 3–6 kali. Sesuai aturan praregistrasi (BA S4 turun ≤ 0,03 dan salah alarm ≤ 1,5 kali D0), tidak ada model cepat yang dipasang.
+
+### 4.7.4. Peringatan Dini Dua Kecepatan
+
+Detektor resmi tetap menentukan label, sedangkan model A hanya memberi peringatan bila mengonfirmasi kelas yang berbeda dari keadaan detektor resmi.
+
+TABEL: Tabel 4.20 Hasil Uji Peringatan Dini (369 Pergantian, 40 Deret)
+| Ukuran | Nilai |
+|---|---|
+| Median waktu yang dihemat | 148 bar (sekitar 6 hari pada 1H), CI95 [130; 164], terbukti |
+| Pergantian yang didahului peringatan benar | 89,2% |
+| Ketepatan peringatan | 34,4% |
+| Peringatan salah per 1.000 bar | 2,55 (sekitar 1 per 16 hari pada 1H) |
+
+SUMBER: Sumber: ml/artifacts/early_warning_study.md.
+
+Peringatan dini datang sekitar 6 hari lebih awal dan mendahului hampir 9 dari 10 pergantian, tetapi hanya sepertiga peringatan yang benar. Karena syarat praregistrasi adalah ketepatan ≥ 70% dan salah ≤ 1,0 per 1.000 bar, peringatan dini tidak dipasang di sistem.
+
+GAMBAR: docs/naskah/gambar/grafik_tradeoff_kecepatan.png | Gambar 4.7 Trade-off Kecepatan dan Ketepatan Deteksi pada Data Sintetis | 13
+
+**Pembahasan.** Gambar 4.7 merangkum Subbab 4.7: setiap upaya meningkatkan ketepatan (sejarah lebih panjang) memperlambat deteksi, dan setiap upaya mempercepat deteksi menurunkan ketepatan serta menambah sinyal palsu. Tidak ada model yang unggul di keduanya, sehingga detektor 500 bar dengan konfirmasi 3 jendela dan abstain τ = 0,75 tetap menjadi pilihan yang seimbang.
+
+## 4.8. Perbandingan Timeframe 1H dan 4H (RM4, Bagian 2)
+
+TABEL: Tabel 4.21 Ringkasan Perbandingan 1H dan 4H
+| Aspek | 1H | 4H |
+|---|---|---|
+| Rentang waktu jendela 500 bar | sekitar 3 minggu | sekitar 12 minggu |
+| Sampel uji Fase 0 | 1.610 jendela (≈ 13,9 blok independen) | 261 jendela (≈ 3 blok independen) |
+| BA uji Hybrid PS | 0,698 | 0,593 |
+| Hybrid PS vs MLP (uji tunggal) | +0,067 F1, p Holm 0,0575 | Setara |
+| BA walk-forward Hybrid PS | 0,570 ± 0,072 | 0,443 ± 0,093 |
+| Label keyakinan rendah detektor AI di BTC | 56,6% | 48,7% |
+| Proporsi label detektor AI di BTC | acak 76%, anti-persistent 23%, persistent 1% | acak 85%, anti-persistent 15%, persistent 0,6% |
+
+**Pembahasan.** Kinerja dan stabilitas pada 4H lebih rendah karena jumlah sampel efektifnya jauh lebih kecil: jendela 4H mencakup rentang waktu empat kali lebih panjang, sehingga jumlah jendela independen di data uji hanya sekitar tiga. Klaim keunggulan model karena itu hanya berlaku di 1H. Detektor resmi dilatih pada data sintetis tanpa satuan waktu dan menormalisasi setiap jendela, sehingga dapat diterapkan ke kedua timeframe dengan aturan yang sama. Pada BTC, detektor paling sering memberi label random-like dan sangat jarang persistent pada kedua timeframe.
+
+## 4.9. Generalisasi Lintas Aset (RM5, Bagian 1)
+
+TABEL: Tabel 4.22 Ringkasan Uji Validitas ke Depan pada 20 Aset
+| Kelompok | Jumlah aset | Aset dengan CI95 Δ > 0 | Tergeneralisasi (≥ 2/3 aset) |
+|---|---|---|---|
+| Kripto 1H | 7 | 2 (ETH, DOGE) | Tidak |
+| Emas | 2 | 0 | Tidak |
+| Saham IDX 1D | 11 | 0 | Tidak |
+
+SUMBER: Sumber: ml/artifacts/generalization.md.
+
+GAMBAR: ml/artifacts/figures/fig_generalization.png | Gambar 4.8 Selisih log VR(4) Maju setelah Label Persistent dan Anti-persistent per Aset dan Detektor | 14
+
+Dibandingkan detektor lain (jumlah aset lebih baik / lebih buruk dari 20 aset), detektor latih-sintetis berada pada 0/0 terhadap detektor yang dilatih pada label BTC, 2/0 terhadap konsensus Hurst-DFA, dan 1/0 terhadap VR(2) terkalibrasi.
+
+**Pembahasan.** Kriteria generalisasi kelompok tidak terpenuhi. Penyebab utamanya adalah bahwa di kripto 1H detektor memberi label persistent hanya pada sekitar 1% waktu, sehingga perbandingan perilaku setelah label persistent dan anti-persistent berdasar sampel yang sangat kecil. Di sisi lain, detektor latih-sintetis tidak pernah lebih buruk daripada detektor lain di aset mana pun.
+
+## 4.10. Pemilihan Strategi Setelah Biaya (RM5, Bagian 2; Fase 2)
+
+TABEL: Tabel 4.23 Hasil Strategi pada BTC/USDT 1H Setelah Biaya 0,085% per Sisi
+| Strategi | Sharpe tahunan bersih | Drawdown maksimum | Waktu di pasar |
+|---|---|---|---|
+| Switching berbasis regime (detektor AI) | −2,18 | −99% | 19% |
+| Momentum 24 bar | −2,39 | −100% | 100% |
+| Mean-reversion 24 bar | −2,04 | −100% | 78% |
+| Beli dan tahan | +0,97 | −77% | 100% |
+
+SUMBER: Sumber: ml/artifacts/strategy_selection.md.
+
+TABEL: Tabel 4.24 Ringkasan Fase 2 per Kelompok (Jumlah Aset Lebih Baik / Lebih Buruk)
+| Kelompok | F1: SW vs strategi tunggal terbaik | F2: SW vs beli-tahan | Aset dengan drawdown SW lebih kecil dari strategi tunggal terbaik |
+|---|---|---|---|
+| Kripto (7) | 0 / 0 | 0 / 7 | 7 |
+| Emas (2) | 0 / 0 | 0 / 2 | 2 |
+| Saham IDX (11) | 0 / 0 | 0 / 1 | 8 |
+
+SUMBER: Sumber: ml/artifacts/strategy_selection.md.
+
+GAMBAR: ml/artifacts/figures/fig_strategy_selection.png | Gambar 4.9 Kurva Ekuitas Strategi Switching, Momentum, Mean-Reversion, dan Beli-Tahan (Skala Logaritmik) | 14
+
+Analisis eksploratif menunjukkan bahwa saat detektor memberi label random-like, momentum dan mean-reversion di BTC 1H sama-sama rugi besar (Sharpe −2,46 dan −1,47). Setelah label anti-persistent, harga lebih sering berbalik daripada setelah label random-like pada 7 dari 7 aset kripto.
+
+**Pembahasan.** Hipotesis utama F1 tidak berlaku di kelompok mana pun: memilih strategi berdasarkan regime tidak menambah Sharpe dibanding strategi tunggal terbaik. Di kripto 1H semua strategi aktif sederhana rugi setelah biaya 0,085% per sisi, sehingga perbedaan antar strategi aktif lebih banyak ditentukan oleh frekuensi transaksi. Nilai praktis yang didukung data adalah sebagai filter "jangan trading" saat kondisi random-like: strategi switching hanya berada di pasar 19% waktu pada BTC 1H, dan drawdown-nya lebih kecil daripada strategi tunggal terbaik pada 7 dari 7 aset kripto. Selisih drawdown di kripto tidak berarti secara praktis (−99% dibanding −100%), karena semua strategi aktif kehilangan hampir seluruh modal setelah biaya. Di saham IDX, switching menghasilkan Sharpe setara dengan drawdown lebih kecil pada 8 dari 11 saham (IHSG: Sharpe +0,81 dan drawdown −20%, dibanding beli-tahan +0,65 dan −61%).
+
+## 4.11. Attention dan Persistensi ke Depan
+
+Entropi ternormalisasi bobot attention Hybrid PS adalah 0,92 pada 1H dan 0,81 pada 4H. Bobot yang hampir seragam ini sejalan dengan H3: pada tugas identifikasi regime yang stabil, attention berfungsi seperti rata-rata dan tidak menambah akurasi. Sebaliknya, pada model yang dilatih mendeteksi pergantian, attention terpusat pada langkah terbaru (Subbab 4.7.3).
+
+TABEL: Tabel 4.25 Retensi Label Hurst-DFA 1H dan Prediksi ke Depan
+| Horizon (bar) | Retensi persistent (dasar 0,35) | Retensi random-like (dasar 0,26) | Retensi anti-persistent (dasar 0,39) | BA baseline naif | BA Hybrid PS | Kesimpulan |
+|---|---|---|---|---|---|---|
+| 4 | 0,933 | 0,659 | 0,957 | 0,850 | 0,704 | Naif unggul |
+| 8 | 0,903 | 0,534 | 0,939 | 0,792 | 0,697 | Naif unggul |
+| 16 | 0,852 | 0,361 | 0,913 | 0,709 | 0,688 | Setara |
+| 32 | 0,793 | 0,308 | 0,884 | 0,662 | 0,657 | Setara |
+| 64 | 0,704 | 0,216 | 0,841 | 0,587 | 0,628 | Setara |
+| 128 | 0,577 | 0,178 | 0,747 | 0,501 | 0,539 | Setara |
+
+SUMBER: Sumber: ml/artifacts/forward_persistence_1h.md.
+
+GAMBAR: ml/artifacts/figures/fig_forward_persistence_1h.png | Gambar 4.10 Retensi Regime ke Depan dan Kinerja Prediksi per Horizon (1H) | 14
+
+**Pembahasan.** Regime persistent dan anti-persistent bertahan jauh di atas tingkat dasar hingga 128 bar, sedangkan random-like cepat meluruh. Untuk memprediksi label k bar ke depan, baseline naif "label saat ini" mengungguli model pada k ≤ 8 bar dan setara pada k ≥ 16 bar. Model karena itu berfungsi sebagai alat identifikasi kondisi saat ini, bukan peramal regime, sesuai batasan penelitian.
+
+## 4.12. Implementasi dan Pengujian Sistem (RM6)
+
+### 4.12.1. Implementasi
+
+Sistem diimplementasikan sesuai rancangan Subbab 3.12 dan dijalankan pada VPS dengan Docker Compose (backend FastAPI, frontend Next.js, dan Caddy). Halaman ringkasan menampilkan regime 1H dan 4H dari detektor AI, probabilitas ketiga kelas, tanda "keyakinan rendah" bila keyakinan di bawah 0,75, grafik harga dengan pita warna regime, dan pembanding estimator Hurst/DFA. Halaman strategi menampilkan saran per regime beserta status bukti Fase 2 dan pengaturan notifikasi Telegram. Bot Telegram menautkan chat ke akun melalui kode sekali pakai dari dashboard dan mendukung perintah /start, /status, dan /stop. Status bot (aktif, kontak terakhir, galat terakhir) dapat dipantau melalui endpoint /health.
+
+CATATAN: Sisipkan tangkapan layar berikut, masing-masing dengan keterangan bergaya "Keterangan Gambar" agar masuk Daftar Gambar: (1) halaman login, (2) ringkasan pasar 1H dan 4H dengan probabilitas, (3) grafik dengan pita regime, (4) halaman strategi dan bukti Fase 2, (5) halaman analisis SWT, (6) notifikasi di Telegram.
+
+### 4.12.2. Unit Test
+
+Seluruh 330 unit test backend lulus (pytest, 26 Oktober 2026). Rinciannya per kelompok disajikan pada Tabel 4.26.
+
+TABEL: Tabel 4.26 Rekapitulasi Unit Test Backend
+| Kelompok | Cakupan | Jumlah tes | Hasil |
+|---|---|---|---|
+| Estimator dan fitur | Hurst R/S, R/S Lo, DFA, H(q), SWT kausal, sekuens PS, sumber ambang | 36 | Lulus |
+| Data | Ingestion dan pembaruan data | 19 | Lulus |
+| Model dan inference | Inference, data sintetis, block bootstrap, abstain detektor | 28 | Lulus |
+| API | Endpoint FastAPI | 15 | Lulus |
+| Notifikasi | Bot dan notifikasi Telegram | 9 | Lulus |
+| Order flow | Analisis order flow | 6 | Lulus |
+| Regresi | Pencegahan galat yang pernah terjadi | 63 | Lulus |
+| Setup engine | Modul analisis setup tahap 1–9 | 154 | Lulus |
+| **Total** | | **330** | **Lulus** |
+
+SUMBER: Sumber: keluaran pytest pada folder backend/tests.
+
+### 4.12.3. Pengujian Black-Box, UAT, dan SUS
+
+CATATAN: Bagian ini BELUM DILAKSANAKAN. Isi tabel di bawah hanya setelah pengujian nyata dengan responden (panduan: docs/uat_sus/PANDUAN_UAT_SUS.md; pengolahan: scripts/olah_uat_sus.py). Jangan memakai angka contoh.
+
+TABEL: Tabel 4.27 Hasil Pengujian Black-Box
+| Kode | Skenario | Hasil yang diharapkan | Hasil pengujian |
+|---|---|---|---|
+| F01 | Login email dan Google | Masuk ke dashboard | (diisi) |
+| F02 | Membuka ringkasan 1H dan 4H | Regime dan probabilitas tampil | (diisi) |
+| F03 | Label berkeyakinan rendah | Tanda keyakinan rendah tampil | (diisi) |
+| F04 | Grafik dengan pita regime | Pita warna dan legenda tampil | (diisi) |
+| F05 | Pembanding Hurst/DFA | Nilai H dan α tampil | (diisi) |
+| F06 | Halaman strategi | Saran dan status bukti tampil | (diisi) |
+| F07 | Menautkan Telegram dan pesan uji | Pesan uji diterima | (diisi) |
+| F08 | Halaman SWT, H(q), metodologi | Grafik dan penjelasan tampil | (diisi) |
+
+TABEL: Tabel 4.28 Hasil UAT per Tugas
+| Tugas | Responden berhasil | Persentase | Target ≥ 80% |
+|---|---|---|---|
+| TSK01 | (diisi) | (diisi) | (diisi) |
+| TSK02 | (diisi) | (diisi) | (diisi) |
+| TSK03 | (diisi) | (diisi) | (diisi) |
+| TSK04 | (diisi) | (diisi) | (diisi) |
+| TSK05 | (diisi) | (diisi) | (diisi) |
+
+TABEL: Tabel 4.29 Hasil SUS
+| Ukuran | Nilai |
+|---|---|
+| Jumlah responden | (diisi) |
+| Rata-rata skor SUS | (diisi) |
+| Simpangan baku | (diisi) |
+| Target rata-rata ≥ 68 | (diisi) |
+
+## 4.13. Keterbatasan
+
+1. Di data nyata tidak ada kebenaran dasar. Akurasi model hanya diukur pada data sintetis, sedangkan di data nyata dinilai secara tidak langsung melalui perilaku harga ke depan.
+2. Data sintetis belum menangkap pergantian regime di dalam jendela dengan baik (S5 gagal untuk semua metode), dan deteksi pergantian memerlukan sekitar 300 bar.
+3. Keunggulan Attention-BiLSTM atas model pembelajaran mesin yang lebih sederhana kecil dan tidak signifikan; attention tidak terbukti menambah akurasi identifikasi.
+4. Klaim pada 4H lebih lemah karena sampel efektifnya kecil.
+5. Generalisasi lintas aset tidak terpenuhi menurut kriteria praregistrasi.
+6. Strategi yang diuji pada Fase 2 sederhana (lookback 24 bar); strategi lain dapat memberi hasil berbeda.
+7. Pengujian black-box, UAT, dan SUS belum dilaksanakan pada saat naskah ini disusun.
+
+## 4.14. Rangkuman Jawaban Rumusan Masalah
+
+TABEL: Tabel 4.30 Rangkuman Jawaban RM1–RM6
+| RM | Jawaban |
+|---|---|
+| RM1 Hurst-DFA | R/S dan DFA hanya sepakat pada 52,6% jendela 1H. Dengan kebenaran dasar, konsensus R/S–DFA naif hanya mencapai BA 0,268 pada deret mirip kripto; estimator klasik terbaik 0,654. |
+| RM2 SWT | Koefisien SWT mentah gagal (BA 0,38). Sekuens PS jauh lebih informatif (H1 terbukti di 1H). Kontribusi energi SWT tidak terdeteksi (ΔBA −0,0003, CI95 [−0,005; +0,005]). |
+| RM3 Attention-BiLSTM | Pada kebenaran dasar, Attention-BiLSTM lebih akurat +0,159 daripada estimator Hurst-DFA klasik terbaik dan mendeteksi pergantian dua kali lebih cepat daripada konsensus naif. Pada label BTC, keunggulan atas MLP tidak terbukti; attention tidak menambah akurasi identifikasi. |
+| RM4 Multi-timeframe | 1H lebih kuat dan stabil daripada 4H; klaim keunggulan hanya berlaku di 1H. Masukan multi-skala menambah ketepatan, tetapi karena sejarah lebih panjang dan dengan deteksi lebih lambat. |
+| RM5 Kegunaan | Generalisasi kelompok tidak terpenuhi. Pemilihan strategi tidak menambah Sharpe setelah biaya; detektor berguna sebagai filter "jangan trading" dan, di saham IDX, sebagai pengurang drawdown. |
+| RM6 Sistem | Dashboard web dan bot Telegram berjalan dengan detektor AI untuk 1H dan 4H pada VPS; 330 unit test lulus. Black-box, UAT, dan SUS belum dilaksanakan. |
