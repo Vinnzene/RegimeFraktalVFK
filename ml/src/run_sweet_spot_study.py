@@ -57,9 +57,9 @@ def run_experiment_for_timeframe(
     seeds = seeds or [cfg.model.seed, cfg.model.seed + 1, cfg.model.seed + 2]
     classes = list(REGIME_CLASSES)
 
-    print(f"\n==========================================")
+    print("\n==========================================")
     print(f" Menjalankan Sweet Spot Study - {timeframe.upper()}")
-    print(f"==========================================")
+    print("==========================================")
 
     base = build_base(timeframe, seq_len, classes)
     close = get_repository().get_ohlcv("BTCUSDT", timeframe)["close"].to_numpy()
@@ -113,8 +113,9 @@ def run_experiment_for_timeframe(
             tf.keras.backend.clear_session()
             tf.keras.utils.set_random_seed(seed)
 
-            seq_shape = data_splits["train"][0].shape[1:]
-            n_feat = data_splits["train"][1].shape[1]
+            raw_shape = data_splits["train"][0].shape
+            seq_shape: tuple[int, int] = (int(raw_shape[1]), int(raw_shape[2]))
+            n_feat = int(data_splits["train"][1].shape[1])
 
             if cfg_val["adaptive"]:
                 model = build_adaptive_hybrid_attention_bilstm(

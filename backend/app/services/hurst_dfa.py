@@ -153,38 +153,73 @@ def hurst_lo(x: np.ndarray, min_scale: int = 8, count: int = 12) -> float:
     return float(np.polyfit(np.log(scales[ok]), np.log(rs[ok]), 1)[0])
 
 
+def compute_rolling_er(
+    log_returns: np.ndarray,
+    positions: Iterable[int],
+    window: int = 500,
+) -> Dict[str, np.ndarray]:
+    """Hitung Directional Efficiency Ratio (Kaufman ER) multiskala secara kausal."""
+    x = np.asarray(log_returns, dtype=float)
+    x_clean = np.nan_to_num(x, nan=0.0)
+    c1 = np.concatenate([[0.0], np.cumsum(x_clean)])
+    ca = np.concatenate([[0.0], np.cumsum(np.abs(x_clean))])
+    pos = np.asarray(list(positions), dtype=int)
+    if pos.size == 0:
+        empty = np.array([], dtype=float)
+        return {"er_full": empty, "er_128": empty, "er_64": empty}
+
+    def _er_w(w: int) -> np.ndarray:
+        start = np.maximum(0, pos - w + 1)
+        s1 = np.abs(c1[pos + 1] - c1[start])
+        sa = ca[pos + 1] - ca[start]
+        return s1 / (sa + 1e-12)
+
+    return {
+        "er_full": _er_w(window),
+        "er_128": _er_w(min(128, window)),
+        "er_64": _er_w(min(64, window)),
+    }
+
+
 def rolling_hurst_dfa(
     log_returns: np.ndarray,
     window: int,
     step: int = 1,
     positions: Optional[Iterable[int]] = None,
 ) -> pd.DataFrame:
-    """Hitung H dan alpha secara rolling.
+    """Hitung H, alpha, dan Directional Efficiency Ratio secara rolling kausal.
 
     Nilai pada indeks t dihitung dari log_returns[t-window+1 : t+1] sehingga
     tidak pernah menyentuh data setelah t.
     """
     x = np.asarray(log_returns, dtype=float)
     n = x.size
+    cols = ["index", "hurst", "dfa_alpha", "er_full", "er_128", "er_64"]
     if n < window:
-        return pd.DataFrame(columns=["index", "hurst", "dfa_alpha"])
+        return pd.DataFrame(columns=cols)
 
     idx: List[int] = (
         list(positions) if positions is not None else list(range(window - 1, n, step))
     )
+    valid_idx = [int(t) for t in idx if window - 1 <= t < n]
+    if not valid_idx:
+        return pd.DataFrame(columns=cols)
+
+    er_dict = compute_rolling_er(x, valid_idx, window=window)
     rows = []
-    for t in idx:
-        if t < window - 1 or t >= n:
-            continue
+    for i, t in enumerate(valid_idx):
         seg = x[t - window + 1 : t + 1]
         rows.append(
             {
-                "index": int(t),
+                "index": t,
                 "hurst": hurst_rs(seg),
                 "dfa_alpha": dfa_alpha(seg),
+                "er_full": float(er_dict["er_full"][i]),
+                "er_128": float(er_dict["er_128"][i]),
+                "er_64": float(er_dict["er_64"][i]),
             }
         )
-    return pd.DataFrame(rows, columns=["index", "hurst", "dfa_alpha"])
+    return pd.DataFrame(rows, columns=cols)
 
 
 def fbm_increments(n: int, hurst: float, seed: int = 0) -> np.ndarray:

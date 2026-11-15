@@ -9,9 +9,8 @@ from __future__ import annotations
 
 import uuid
 from collections import OrderedDict
-from typing import Dict, Optional
+from typing import Optional
 
-import numpy as np
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 

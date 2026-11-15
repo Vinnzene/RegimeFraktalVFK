@@ -26,6 +26,11 @@ def _naive(seg: np.ndarray) -> dict:
     out["acabs_1"] = ac(np.abs(seg), 1)
     out["sign_flip"] = float(((seg[1:] * seg[:-1]) < 0).mean())
     out["log_vol"] = float(np.log(seg.std() + 1e-12))
+    out["er_w"] = float(abs(seg.sum()) / (np.abs(seg).sum() + 1e-12))
+    w_fast = max(2, seg.size // 2)
+    seg_fast = seg[-w_fast:]
+    out["er_fast"] = float(abs(seg_fast.sum()) / (np.abs(seg_fast).sum() + 1e-12))
+    out["trend_tstat"] = float(abs(seg.sum()) / (seg.std() * np.sqrt(seg.size) + 1e-12))
     return out
 
 

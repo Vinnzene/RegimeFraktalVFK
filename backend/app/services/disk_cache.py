@@ -16,7 +16,6 @@ from __future__ import annotations
 import hashlib
 import json
 import time
-from pathlib import Path
 from typing import Callable, Dict, Optional
 
 from app.core.config import ARTIFACTS_DIR, PROCESSED_DIR, get_config

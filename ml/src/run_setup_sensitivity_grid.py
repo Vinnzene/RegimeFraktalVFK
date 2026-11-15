@@ -11,7 +11,6 @@ Menghasilkan:
 
 from __future__ import annotations
 
-import os
 import sys
 from pathlib import Path
 import numpy as np
@@ -21,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[2]
 BACKEND_DIR = ROOT / "backend"
 sys.path.insert(0, str(BACKEND_DIR))
 
-from app.services.setup_engine.config import load_setup_config, SetupEngineConfig
+from app.services.setup_engine.config import load_setup_config
 from app.services.setup_engine.walk_forward import run_walk_forward
 import app.services.setup_engine.walk_forward as wf
 from app.services.setup_engine.setup_evaluation import run_evaluation, export_csvs

@@ -4,7 +4,7 @@ from __future__ import annotations
 import os
 import pandas as pd
 import numpy as np
-from typing import Dict, Any, List, cast
+from typing import Dict, Any, cast
 
 def _wilson_score_interval(successes: int, trials: int, confidence: float = 0.95) -> tuple[float, float]:
     if trials == 0:

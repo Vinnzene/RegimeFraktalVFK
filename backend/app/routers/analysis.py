@@ -21,7 +21,7 @@ from app.services.inference import (
     sequence_length,
 )
 from app.services.model_registry import attention_weights
-from app.services.multifractal import DEFAULT_Q, hq_spectrum, rolling_hq
+from app.services.multifractal import DEFAULT_Q, rolling_hq
 from app.services.regime_labeling import (
     regime_distribution,
     regime_durations,

@@ -41,12 +41,12 @@ tidak bergantung titik awal kumulatif CVD.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import numpy as np
 import pandas as pd
 
-from app.services.setup_engine.config import SetupEngineConfig, timeframe_seconds
+from app.services.setup_engine.config import SetupEngineConfig
 from app.services.setup_engine.data_contract import DataContractError, LookAheadError, normalize_regime
 from app.services.setup_engine.market_structure import MarketStructure
 from app.services.setup_engine.regime_context import (

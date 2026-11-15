@@ -16,7 +16,6 @@ from app.services.setup_engine.config import (
 )
 from app.services.setup_engine.data_contract import (
     MARKET_CONTRACT,
-    REGIME_CONTRACT,
     DataContractError,
     LookAheadError,
     Regime,

@@ -33,7 +33,7 @@ PS_AC_LAGS = (1, 2, 3, 5)
 PS_CHANNELS: List[str] = (
     [f"vr_{q}" for q in PS_VR_Q]
     + [f"ac_{l}" for l in PS_AC_LAGS]
-    + ["acabs_1", "sign_flip", "log_vol"]
+    + ["acabs_1", "sign_flip", "log_vol", "er_w", "er_fast", "trend_tstat"]
 )
 
 
@@ -119,6 +119,19 @@ def channel_series(log_ret: np.ndarray, sub_window: int) -> Dict[str, np.ndarray
     cf = _csum(flip)
     out["sign_flip"] = full((cf[ends + 1] - cf[ends + 2 - W]) / (W - 1))
     out["log_vol"] = full(np.log(np.sqrt(var1) + 1e-12))
+
+    # Directional Efficiency Ratio (Kaufman ER) pada sub-jendela W dan W_fast (W//2),
+    # serta Normalized Cumulative Return / Trend t-Statistic.
+    c_abs = _csum(np.abs(x))
+    s_abs = _window_sum(c_abs, ends, W)
+    out["er_w"] = full(np.abs(s1) / (s_abs + 1e-12))
+
+    W_fast = max(2, W // 2)
+    s1_fast = _window_sum(c1, ends, W_fast)
+    s_abs_fast = _window_sum(c_abs, ends, W_fast)
+    out["er_fast"] = full(np.abs(s1_fast) / (s_abs_fast + 1e-12))
+
+    out["trend_tstat"] = full(np.abs(s1) / (np.sqrt(var1) * np.sqrt(W) + 1e-12))
     return out
 
 

@@ -20,11 +20,10 @@ import json
 import sys
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Sequence, Tuple, cast
+from typing import Any, Dict, List, cast
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 from sklearn.metrics import balanced_accuracy_score, f1_score
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -32,12 +31,7 @@ sys.path.insert(0, str(ROOT / "backend"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from app.core.config import ARTIFACTS_DIR, REGIME_CLASSES, get_config  # noqa: E402
-from app.db.repository import get_repository  # noqa: E402
-from app.services.feature_builder import apply_scaler, fit_scaler  # noqa: E402
-from app.services.hurst_dfa import to_log_return  # noqa: E402
-from app.services.persistence_sequence import build_persistence_sequences  # noqa: E402
 from block_bootstrap_eval import (  # noqa: E402
-    compute_effective_sample_size,
     get_or_train_ensemble_predictions,
     moving_block_bootstrap_comparison,
 )

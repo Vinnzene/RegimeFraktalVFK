@@ -45,7 +45,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from app.core.config import ARTIFACTS_DIR, REGIME_CLASSES, get_config  # noqa: E402
 from app.services.feature_builder import apply_scaler, fit_scaler  # noqa: E402
-from app.services.regime_labeling import calibrate_thresholds, label_from_exponents  # noqa: E402
+from app.services.regime_labeling import (  # noqa: E402
+    calibrate_thresholds,
+    compute_er_quantile_score,
+    label_from_exponents,
+)
 from app.services.splitting import bars_to_rows  # noqa: E402
 from app.services.walk_forward import generate_folds  # noqa: E402
 from leakage_study import build_base  # noqa: E402
@@ -96,7 +100,17 @@ def fold_labels(base: Dict, fold: Dict, purge: int, classes: List[str], cfg) -> 
         "hurst": calibrate_thresholds(base["hurst"][tr0:fit_end], q),
         "dfa": calibrate_thresholds(base["dfa"][tr0:fit_end], q),
     }
-    labels = [label_from_exponents(h, a, thr["hurst"], thr["dfa"]) for h, a in zip(base["hurst"], base["dfa"])]
+    import pandas as pd  # noqa: PLC0415
+
+    df_all = pd.DataFrame({k: base[k] for k in ("er_full", "er_128", "er_64") if k in base})
+    er_scores = compute_er_quantile_score(df_all, df_all.iloc[tr0:fit_end]) if not df_all.empty else None
+    if er_scores is not None:
+        labels = [
+            label_from_exponents(h, a, thr["hurst"], thr["dfa"], efficiency_ratio=float(er), soft_consensus=True)
+            for h, a, er in zip(base["hurst"], base["dfa"], er_scores)
+        ]
+    else:
+        labels = [label_from_exponents(h, a, thr["hurst"], thr["dfa"]) for h, a in zip(base["hurst"], base["dfa"])]
     y = np.zeros((len(labels), len(classes)))
     for i, lab in enumerate(labels):
         if lab in classes:

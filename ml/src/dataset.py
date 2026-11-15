@@ -47,7 +47,6 @@ from app.services.hurst_dfa import rolling_hurst_dfa, to_log_return  # noqa: E40
 from app.services.regime_labeling import (  # noqa: E402
     build_targets,
     label_series,
-    trainable_mask,
 )
 from app.services.order_flow import (  # noqa: E402
     ORDER_FLOW_CHANNELS,
@@ -56,7 +55,6 @@ from app.services.order_flow import (  # noqa: E402
     prepare_order_flow_windows,
 )
 from app.services.splitting import bars_to_rows, split_indices  # noqa: E402
-from app.services.swt import causal_swt_at  # noqa: E402
 
 
 # Pembentukan fitur memakai fungsi yang sama dengan backend inference.
@@ -82,6 +80,9 @@ def build_dataset(
     cvd_method: str = "zscore",
     purge_bars_override: int | None = None,
     threshold_source: str | None = None,
+    timeframe: str | None = None,
+    soft_consensus: bool = True,
+    extra_train_symbols: Sequence[str] | None = None,
 ) -> Dict[str, Any]:
     """Rakit X, Y, dan indeks split dari deret harga penutupan.
 
@@ -149,7 +150,14 @@ def build_dataset(
     log_ret = to_log_return(close)
 
     window = min(cfg.analysis.L, max(64, len(log_ret) // 4))
-    stride_bars = step or max(1, cfg.analysis.stride_bars)
+    if step is not None:
+        stride_bars = max(1, int(step))
+    elif timeframe == "4h" or (10000 <= len(close) <= 25000):
+        # Khusus timeframe 4H gunakan stride = 2 agar kepadatan sampel jendela
+        # meningkat 2x lipat dengan tetap menjaga purge_gap = 500 bar utuh.
+        stride_bars = 2
+    else:
+        stride_bars = max(1, cfg.analysis.stride_bars)
 
     effective_h = h_bars if h_bars is not None else cfg.model.h
     purge_bars = (
@@ -179,6 +187,7 @@ def build_dataset(
         quantiles=cfg.analysis.threshold_quantiles,
         threshold_source=threshold_source,
         train_mask=train_mask,
+        soft_consensus=soft_consensus,
     )
     labels = labeled["regime"].tolist()
     positions = labeled["index"].astype(int).tolist()
@@ -352,8 +361,68 @@ def build_dataset(
             return np.empty((0, 1), dtype=float)
         return hurst_targets[sel].reshape(-1, 1)
 
+    train_tuple = take(split["train"])  # type: ignore[arg-type]
+    if extra_train_symbols:
+        from app.db.repository import get_repository  # noqa: PLC0415
+
+        repo = get_repository()
+        tf_key = timeframe or ("4h" if 10000 <= len(close) <= 25000 else "1h")
+        x_tr_list = [train_tuple[0]]
+        f_tr_list = [train_tuple[1]]
+        y_tr_list = [train_tuple[2]]
+        # Batas indeks bar maksimal pada periode Train (sebelum purge_1)
+        max_train_bar = int(positions[max(0, split["train"][1] - 1)]) + 1
+        for sym in extra_train_symbols:
+            try:
+                ex_df = repo.get_ohlcv(sym, tf_key)
+                ex_close = ex_df["close"].to_numpy(dtype=float)[:max_train_bar]
+                if len(ex_close) <= window + 64:
+                    continue
+                ex_lr = to_log_return(ex_close)
+                ex_met = rolling_hurst_dfa(ex_lr, window=window, step=stride_bars)
+                ex_lab = label_series(
+                    ex_met,
+                    cfg.analysis.hurst_threshold,
+                    cfg.analysis.dfa_threshold,
+                    mode=cfg.analysis.threshold_mode,
+                    quantiles=cfg.analysis.threshold_quantiles,
+                    threshold_source="full_history",
+                    soft_consensus=soft_consensus,
+                )
+                ex_pos = ex_lab["index"].astype(int).tolist()
+                ex_targets = ex_lab["regime"].tolist()
+                ex_sel = [idx_i for idx_i, t_val in enumerate(ex_targets) if t_val in target_classes]
+                if not ex_sel:
+                    continue
+                ex_pos_sel = [ex_pos[idx_i] for idx_i in ex_sel]
+                ex_X = build_features(ex_lr, ex_pos_sel, level=cfg.analysis.J, seq_len=seq_len, swt_window=window)
+                ex_X = apply_scaler(ex_X, scaler)
+                ex_F = (
+                    build_feature_matrix(ex_lr, ex_pos_sel, window=window, swt_level=cfg.analysis.J)
+                    if with_structural
+                    else np.empty((len(ex_pos_sel), 0), dtype=float)
+                )
+                if with_multifractal:
+                    ex_MF = build_multifractal_matrix(ex_lr, ex_pos_sel, window=window)
+                    ex_F = np.hstack([ex_F, ex_MF]) if ex_F.shape[1] else ex_MF
+                if ex_F.shape[1] and feature_scaler["mean"]:
+                    ex_F = (ex_F - np.asarray(feature_scaler["mean"])) / np.asarray(feature_scaler["std"])
+                ex_y = np.zeros((len(ex_sel), n_classes))
+                for j_idx, idx_i in enumerate(ex_sel):
+                    ex_y[j_idx, class_index[str(ex_targets[idx_i])]] = 1.0
+                x_tr_list.append(ex_X)
+                f_tr_list.append(ex_F)
+                y_tr_list.append(ex_y)
+            except Exception:  # noqa: BLE001
+                continue
+        train_tuple = (
+            np.concatenate(x_tr_list, axis=0),
+            np.concatenate(f_tr_list, axis=0),
+            np.concatenate(y_tr_list, axis=0),
+        )
+
     result: Dict[str, Any] = {
-        "train": take(split["train"]),  # type: ignore[arg-type]
+        "train": train_tuple,
         "validation": take(split["validation"]),  # type: ignore[arg-type]
         "test": take(split["test"]),  # type: ignore[arg-type]
         "split": split,

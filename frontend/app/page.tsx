@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import CandlestickChart from "@/components/CandlestickChart";
 import CollapsiblePanel from "@/components/CollapsiblePanel";
 import DataStatusBar from "@/components/DataStatusBar";
@@ -99,7 +100,14 @@ export default function DashboardPage() {
             Sifat gerakan harga menurut detektor Attention-BiLSTM dan apa artinya untuk strategi Anda.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <Link
+            href="/walk-forward-evaluation"
+            className="flex items-center gap-1.5 rounded-md border border-accent/40 bg-accent/10 px-2.5 py-1 text-[12px] font-medium text-accent transition-colors hover:bg-accent/20"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+            Uji Walk-Forward 2019–2026 (12 Aset) →
+          </Link>
           <span className="text-[12px] text-txtMuted">Skala waktu</span>
           <TimeframeToggle />
         </div>

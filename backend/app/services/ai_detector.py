@@ -99,9 +99,18 @@ def window_features(w: np.ndarray, m: Dict[str, Any]) -> Dict[str, np.ndarray]:
     sd = w.std()
     wn = w * (m["sigma_per_bar"] / sd) if sd > 0 else w
     t = len(wn) - 1
+    st = build_feature_matrix(wn, [t], L, 4)[0]
+    mf = build_mf(wn, [t], L)[0]
+    n_expected_feat = len(m.get("feature_mean", []))
+    if 0 < n_expected_feat < len(st) + len(mf):
+        st = st[: n_expected_feat - len(mf)]
+    ps = build_persistence_sequences(wn, [t], L, int(m["sub_window"]), int(m["seq_len"]))[0].astype(np.float32)
+    n_expected_ps = len(m.get("ps_scaler", {}).get("mean", []))
+    if 0 < n_expected_ps < ps.shape[-1]:
+        ps = ps[:, :n_expected_ps]
     return {
-        "feat": np.concatenate([build_feature_matrix(wn, [t], L, 4)[0], build_mf(wn, [t], L)[0]]),
-        "ps": build_persistence_sequences(wn, [t], L, int(m["sub_window"]), int(m["seq_len"]))[0].astype(np.float32),
+        "feat": np.concatenate([st, mf]),
+        "ps": ps,
     }
 
 

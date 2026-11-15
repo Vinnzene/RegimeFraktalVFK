@@ -30,7 +30,7 @@ membaik karena kebocoran, bukan karena modelnya bekerja.
 
 from __future__ import annotations
 
-from typing import Callable, Dict, List, Optional, Sequence, Tuple
+from typing import Callable, Dict, List, Optional, Sequence
 
 import numpy as np
 

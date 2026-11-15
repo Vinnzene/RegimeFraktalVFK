@@ -44,8 +44,6 @@ def resolve_outcomes(
         tp = setup["take_profit"]
         sl = setup["stop_loss"]
         is_long = setup["direction"] == "LONG"
-        rr = setup["rr"]
-        risk = setup["risk"]
         
         # Cari index bar entry di 30m
         idx_match = m30.index[m30["timestamp"] == entry_time].tolist()

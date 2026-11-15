@@ -42,11 +42,10 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Dict, List, Optional, Sequence
 
-import numpy as np
 import pandas as pd
 
 from app.services.setup_engine.config import SetupEngineConfig
-from app.services.setup_engine.data_contract import Regime, normalize_regime
+from app.services.setup_engine.data_contract import normalize_regime
 
 
 class RegimeContext(str, Enum):

@@ -1,6 +1,5 @@
 """Uji kontrak endpoint dan aturan domain yang tidak boleh dilanggar."""
 
-import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app

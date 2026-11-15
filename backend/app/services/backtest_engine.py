@@ -16,7 +16,7 @@ Aturan posisi (ditetapkan di muka, tidak bisa dipilih user):
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional, Sequence
+from typing import Dict, Sequence
 
 import numpy as np
 

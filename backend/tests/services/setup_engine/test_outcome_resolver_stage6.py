@@ -4,9 +4,7 @@ from __future__ import annotations
 
 import logging
 
-import numpy as np
 import pandas as pd
-import pytest
 
 from app.services.setup_engine.config import SetupEngineConfig
 from app.services.setup_engine.outcome_resolver import resolve_outcomes

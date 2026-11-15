@@ -25,7 +25,7 @@ from typing import Any, Dict, List, Optional, Sequence
 
 import numpy as np
 
-from app.core.config import ARTIFACTS_DIR, REGIME_CLASSES, get_config
+from app.core.config import ARTIFACTS_DIR, REGIME_CLASSES
 from app.services.regime_labeling import (
     UNCERTAIN_RULE,
     apply_tau,

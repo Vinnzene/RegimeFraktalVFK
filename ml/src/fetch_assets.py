@@ -42,9 +42,11 @@ ASSETS: Dict[str, Dict[str, Any]] = {
     "XRPUSDT": {"group": "kripto", "source": "binance", "tfs": ["1h", "4h"]},
     "ADAUSDT": {"group": "kripto", "source": "binance", "tfs": ["1h", "4h"]},
     "DOGEUSDT": {"group": "kripto", "source": "binance", "tfs": ["1h", "4h"]},
-    # Emas
+    "TAOUSDT": {"group": "kripto", "source": "binance", "tfs": ["1h", "4h"]},
+    # Emas & Perak (Logam Mulia / XAUUSD & XAGUSD Proxy)
     "PAXGUSDT": {"group": "emas", "source": "binance", "tfs": ["1h", "4h"]},
     "GCF": {"group": "emas", "source": "yahoo", "ticker": "GC=F", "tfs": ["1h", "1d"]},
+    "SIF": {"group": "perak", "source": "yahoo", "ticker": "SI=F", "tfs": ["1h", "1d"]},
     # Saham Indonesia (IDX) dan IHSG
     "JKSE": {"group": "saham_idx", "source": "yahoo", "ticker": "^JKSE", "tfs": ["1h", "1d"]},
     "BBCAJK": {"group": "saham_idx", "source": "yahoo", "ticker": "BBCA.JK", "tfs": ["1h", "1d"]},

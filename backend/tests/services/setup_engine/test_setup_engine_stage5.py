@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-import numpy as np
 import pandas as pd
 import pytest
 
 from app.services.setup_engine.config import SetupEngineConfig
-from app.services.setup_engine.data_contract import DataContractError
 from app.services.setup_engine.directional_bias_engine import Bias
 from app.services.setup_engine.setup_engine import SetupRejectionReason, generate_setups
 

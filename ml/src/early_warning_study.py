@@ -61,7 +61,8 @@ def train_a(seed: int, meta: Dict[str, Any]):
 
     tf.keras.backend.clear_session()
     tf.keras.utils.set_random_seed(seed)
-    model = compile_model(build_hybrid_attention_bilstm(tr["ps"].shape[1:], tr["feat"].shape[1], 3))
+    ps_shape: tuple[int, int] = (int(tr["ps"].shape[1]), int(tr["ps"].shape[2]))
+    model = compile_model(build_hybrid_attention_bilstm(ps_shape, int(tr["feat"].shape[1]), 3))
     model.fit(
         X(tr), onehot(tr["h"]), validation_data=(X(va), onehot(va["h"])),
         epochs=80, batch_size=64, class_weight=class_weights(onehot(tr["h"])), shuffle=True, verbose=0,

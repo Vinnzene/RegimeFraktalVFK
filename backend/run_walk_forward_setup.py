@@ -4,7 +4,7 @@ import argparse
 import pandas as pd
 import numpy as np
 
-from app.services.setup_engine.config import SetupEngineConfig, load_setup_config
+from app.services.setup_engine.config import load_setup_config
 from app.services.setup_engine.walk_forward import run_walk_forward
 from app.services.setup_engine.setup_evaluation import run_evaluation, export_csvs
 from app.services.setup_engine.visualization import (

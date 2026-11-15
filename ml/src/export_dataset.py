@@ -128,7 +128,6 @@ def export_dataset(timeframe: str, binary: bool) -> tuple[Path, Path]:
     cfg = get_config()
     repo = get_repository()
     ohlcv = repo.get_ohlcv(cfg.data.symbol, timeframe)
-    regime_df = repo.get_regime(cfg.data.symbol, timeframe)
 
     classes = BINARY_CLASSES if binary else list(REGIME_CLASSES)
     mode = "binary" if binary else "multiclass"

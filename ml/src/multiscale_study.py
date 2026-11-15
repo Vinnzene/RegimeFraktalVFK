@@ -116,7 +116,8 @@ def train_model(key: str, tr: Dict[str, np.ndarray], va: Dict[str, np.ndarray], 
 
     tf.keras.backend.clear_session()
     tf.keras.utils.set_random_seed(seed)
-    model = compile_model(build_hybrid_attention_bilstm(S_tr.shape[1:], F_tr.shape[1], 3))
+    s_shape: tuple[int, int] = (int(S_tr.shape[1]), int(S_tr.shape[2]))
+    model = compile_model(build_hybrid_attention_bilstm(s_shape, int(F_tr.shape[1]), 3))
     model.fit(
         [apply_scaler(S_tr, sc), (F_tr - mu) / sd], y_tr,
         validation_data=([apply_scaler(S_va, sc), (F_va - mu) / sd], y_va),

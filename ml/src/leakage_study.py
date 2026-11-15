@@ -56,10 +56,10 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "backend"))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from app.core.config import ARTIFACTS_DIR, REGIME_CLASSES, get_config  # noqa: E402
+from app.core.config import ARTIFACTS_DIR, PROCESSED_DIR, REGIME_CLASSES, get_config  # noqa: E402
 from app.db.repository import get_repository  # noqa: E402
 from app.services.feature_builder import apply_scaler, build_sequence_features, fit_scaler  # noqa: E402
-from app.services.hurst_dfa import to_log_return  # noqa: E402
+from app.services.hurst_dfa import compute_rolling_er, rolling_hurst_dfa, to_log_return  # noqa: E402
 from app.services.multifractal import build_feature_matrix as build_multifractal_matrix  # noqa: E402
 from app.services.regime_labeling import label_series  # noqa: E402
 from app.services.splitting import bars_to_rows, split_indices  # noqa: E402
@@ -123,13 +123,36 @@ def build_base(
     repo = get_repository()
     close = repo.get_ohlcv("BTCUSDT", timeframe)["close"].to_numpy()
     log_ret = to_log_return(close)
-    regime = repo.get_regime("BTCUSDT", timeframe)
+    regime = repo.get_regime("BTCUSDT", timeframe).copy()
     window = int(regime["effective_window"].iloc[0])
-    stride = int(regime["stride_bars"].iloc[0])
+    stride = 2 if timeframe == "4h" else int(regime["stride_bars"].iloc[0])
     expected = min(cfg.analysis.L, max(64, len(log_ret) // 4))
-    if window != expected or stride != max(1, cfg.analysis.stride_bars):
+    if window != expected:
         raise SystemExit("tabel regime tidak cocok dengan config; jalankan ulang compute_regime")
+
+    if timeframe == "4h" and stride == 2 and int(regime["stride_bars"].iloc[0]) != 2:
+        import pandas as pd  # noqa: PLC0415
+
+        cache_s2 = PROCESSED_DIR / "cache" / "regime_btcusdt_4h_s2.parquet"
+        all_pos = list(range(window - 1, len(log_ret), stride))
+        if cache_s2.exists():
+            c_df = pd.read_parquet(cache_s2)
+            if len(c_df) == len(all_pos):
+                regime = c_df
+        if len(regime) != len(all_pos):
+            existing_pos = set(regime["index"].astype(int).tolist())
+            missing_pos = [p for p in all_pos if p not in existing_pos]
+            fresh = rolling_hurst_dfa(log_ret, window=window, positions=missing_pos)
+            reused = regime[["index", "hurst", "dfa_alpha"]].copy()
+            regime = pd.concat([reused, fresh[["index", "hurst", "dfa_alpha"]]], ignore_index=True)
+            regime = regime.sort_values("index").reset_index(drop=True)
+            cache_s2.parent.mkdir(parents=True, exist_ok=True)
+            regime.to_parquet(cache_s2, index=False)
+
     positions = regime["index"].to_numpy(dtype=int)
+    er_dict = compute_rolling_er(log_ret, positions.tolist(), window=window)
+    for k_er, v_er in er_dict.items():
+        regime[k_er] = v_er
 
     if threshold_source == "train_only":
         purge_rows = bars_to_rows(cfg.analysis.L, stride)
@@ -145,6 +168,7 @@ def build_base(
             quantiles=cfg.analysis.threshold_quantiles,
             threshold_source="train_only",
             train_mask=train_mask,
+            soft_consensus=True,
         )
         labels = labeled["regime"].tolist()
         resolved_thresholds = {
@@ -152,10 +176,19 @@ def build_base(
             "dfa": [float(labeled["dfa_lower"].iloc[0]), float(labeled["dfa_upper"].iloc[0])],
         }
     else:
-        labels = regime["regime"].tolist()
+        labeled = label_series(
+            regime,
+            cfg.analysis.hurst_threshold,
+            cfg.analysis.dfa_threshold,
+            mode=cfg.analysis.threshold_mode,
+            quantiles=cfg.analysis.threshold_quantiles,
+            threshold_source="full_history",
+            soft_consensus=True,
+        )
+        labels = labeled["regime"].tolist()
         resolved_thresholds = {
-            "hurst": [float(regime["hurst_lower"].iloc[0]), float(regime["hurst_upper"].iloc[0])],
-            "dfa": [float(regime["dfa_lower"].iloc[0]), float(regime["dfa_upper"].iloc[0])],
+            "hurst": [float(labeled["hurst_lower"].iloc[0]), float(labeled["hurst_upper"].iloc[0])],
+            "dfa": [float(labeled["dfa_lower"].iloc[0]), float(labeled["dfa_upper"].iloc[0])],
         }
 
     mask = np.array([l in classes for l in labels])
@@ -181,6 +214,9 @@ def build_base(
         # fold walk-forward; TIDAK boleh dipakai sebagai fitur.
         "hurst": regime["hurst"].to_numpy(dtype=float),
         "dfa": regime["dfa_alpha"].to_numpy(dtype=float),
+        "er_full": regime["er_full"].to_numpy(dtype=float),
+        "er_128": regime["er_128"].to_numpy(dtype=float),
+        "er_64": regime["er_64"].to_numpy(dtype=float),
         "threshold_source": threshold_source,
         "thresholds": resolved_thresholds,
     }

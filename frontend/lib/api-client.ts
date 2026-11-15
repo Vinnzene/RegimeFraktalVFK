@@ -131,17 +131,96 @@ function decodeColumnar(r: ColumnarOhlcv): OhlcvResponse {
  */
 const historyCache = new Map<string, Promise<OhlcvResponse>>();
 
-function ohlcvHistory(tf: string): Promise<OhlcvResponse> {
-  const hit = historyCache.get(tf);
+function ohlcvHistory(tf: string, symbol = "BTCUSDT"): Promise<OhlcvResponse> {
+  const key = `${symbol.toUpperCase()}_${tf.toLowerCase()}`;
+  const hit = historyCache.get(key);
   if (hit) return hit;
-  const p = get<ColumnarOhlcv>("/api/v1/ohlcv", { tf, format: "columnar" })
+  const p = get<ColumnarOhlcv>("/api/v1/ohlcv", {
+    symbol: symbol.toUpperCase(),
+    tf: tf.toLowerCase(),
+    format: "columnar",
+  })
     .then(decodeColumnar)
     .catch((e) => {
-      historyCache.delete(tf);
+      historyCache.delete(key);
       throw e;
     });
-  historyCache.set(tf, p);
+  historyCache.set(key, p);
   return p;
+}
+
+export interface WalkForwardPoint {
+  time: number;
+  year: number;
+  hurst: number;
+  dfa_alpha: number;
+  er_score: number;
+  ret_500: number;
+  true_regime: AiRegimeClass;
+  pred_regime: AiRegimeClass;
+  regime: string;
+  confidence: number;
+  is_correct: boolean;
+}
+
+export interface WalkForwardAssetSummary {
+  symbol: string;
+  name: string;
+  category: string;
+  timeframe: string;
+  status: string;
+  total_bars: number;
+  start_date: string;
+  end_date: string;
+  years_available: number[];
+  overall_test_windows: number;
+  overall_correct_identifications: number;
+  overall_identification_rate_pct: number;
+  per_class_identification: Record<
+    string,
+    { total: number; correct: number; rate_pct: number }
+  >;
+  per_market_condition_identification: Record<
+    string,
+    { total: number; correct: number; rate_pct: number }
+  >;
+  yearly_results: {
+    test_year: number;
+    train_years_range: string;
+    n_train: number;
+    n_val: number;
+    n_test: number;
+    correct_identifications: number;
+    identification_rate_pct: number;
+    per_class: Record<string, { total: number; correct: number; rate_pct: number }>;
+    per_market_condition: Record<string, { total: number; correct: number; rate_pct: number }>;
+  }[];
+}
+
+export interface WalkForwardMultiAssetResponse {
+  available: boolean;
+  experiment: string;
+  model_architecture: string;
+  overall_summary: {
+    total_asset_timeframe_pairs: number;
+    grand_total_test_windows: number;
+    grand_total_correct_identifications: number;
+    grand_overall_identification_rate_pct: number;
+  };
+  assets_evaluated: WalkForwardAssetSummary[];
+}
+
+export interface WalkForwardTimelineResponse {
+  symbol: string;
+  timeframe: string;
+  year_filter: number | null;
+  source: string;
+  count: number;
+  correct_count: number;
+  identification_rate_pct: number;
+  asset_summary: WalkForwardAssetSummary | null;
+  year_segments: { segment: string; start_time: number; end_time: number }[];
+  series: WalkForwardPoint[];
 }
 
 export const api = {
@@ -151,13 +230,13 @@ export const api = {
   connectivity: () => get<any>("/api/v1/data/connectivity"),
   refreshData: (full = false, tf?: string) =>
     post<any>("/api/v1/data/refresh", { full, tf }),
-  ohlcv: (tf: string, limit?: number) =>
-    get<OhlcvResponse>("/api/v1/ohlcv", { tf, limit }),
-  /** Seluruh riwayat candle dalam format kolom, di-cache per timeframe. */
+  ohlcv: (tf: string, limit?: number, symbol = "BTCUSDT") =>
+    get<OhlcvResponse>("/api/v1/ohlcv", { symbol, tf, limit }),
+  /** Seluruh riwayat candle dalam format kolom, di-cache per aset & timeframe. */
   ohlcvHistory,
   /** Buang cache riwayat, dipakai setelah refresh data. */
   clearOhlcvHistory: (tf?: string) =>
-    tf ? historyCache.delete(tf) : historyCache.clear(),
+    tf ? historyCache.delete(`BTCUSDT_${tf.toLowerCase()}`) : historyCache.clear(),
   regime: (tf: string) =>
     get<{
       series: RegimePoint[];
@@ -185,6 +264,14 @@ export const api = {
     get<any>("/api/v1/model/consistency", { tf, mode }),
   walkForward: (tf: string, mode = "binary", labeling = "threshold") =>
     get<any>("/api/v1/model/walk-forward", { tf, mode, labeling }),
+  walkForwardMultiAsset: () =>
+    get<WalkForwardMultiAssetResponse>("/api/v1/model/walk-forward-multi-asset"),
+  walkForwardTimeline: (symbol: string, tf: string, year?: number) =>
+    get<WalkForwardTimelineResponse>("/api/v1/model/walk-forward-timeline", {
+      symbol,
+      tf,
+      year,
+    }),
   orderflowAblation: (tf: string) => get<any>("/api/v1/model/orderflow-ablation", { tf }),
   orderflowTimeline: (tf: string, limit = 600) =>
     get<any>("/api/v1/model/orderflow-timeline", { tf, limit }),

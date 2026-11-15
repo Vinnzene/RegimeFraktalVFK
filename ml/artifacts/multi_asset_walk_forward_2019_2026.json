@@ -1,0 +1,7331 @@
+{
+  "experiment": "Expanding Year-by-Year Walk-Forward Regime Identification (Starting 2019 -> 2026)",
+  "methodology": "Pada setiap tahun uji Y (2020 s/d 2026), model Hybrid PS Attention-BiLSTM dan ambang kuantil Hurst-DFA + Efficiency Ratio dikalibrasi murni menggunakan data masa lalu (<= Y-1) dengan purge_gap = 500 bar. Tidak ada data masa depan yang bocor.",
+  "elapsed_seconds": 879.7,
+  "results": [
+    {
+      "symbol": "BTCUSDT",
+      "name": "Bitcoin (BTC/USDT)",
+      "group": "Kripto Utama",
+      "timeframe": "1h",
+      "stride": 4,
+      "date_range": "2019-01-21 s/d 2026-10-22",
+      "available_years": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 11036,
+        "correct": 7061,
+        "pct": 63.98,
+        "balanced_pct": 53.22,
+        "per_class": {
+          "persistent": {
+            "total": 5365,
+            "correct": 3829,
+            "pct": 71.37
+          },
+          "random_like": {
+            "total": 1734,
+            "correct": 192,
+            "pct": 11.07
+          },
+          "anti_persistent": {
+            "total": 3937,
+            "correct": 3040,
+            "pct": 77.22
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 5067,
+            "correct": 3221,
+            "pct": 63.57
+          },
+          "downtrend": {
+            "total": 3456,
+            "correct": 2353,
+            "pct": 68.08
+          },
+          "sideways": {
+            "total": 2513,
+            "correct": 1487,
+            "pct": 59.17
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 1630,
+          "correct": 820,
+          "pct": 50.31,
+          "balanced_pct": 44.8,
+          "per_class": {
+            "persistent": {
+              "total": 781,
+              "correct": 412,
+              "pct": 52.75
+            },
+            "random_like": {
+              "total": 309,
+              "correct": 44,
+              "pct": 14.24
+            },
+            "anti_persistent": {
+              "total": 540,
+              "correct": 364,
+              "pct": 67.41
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 950,
+              "correct": 470,
+              "pct": 49.47
+            },
+            "downtrend": {
+              "total": 295,
+              "correct": 141,
+              "pct": 47.8
+            },
+            "sideways": {
+              "total": 385,
+              "correct": 209,
+              "pct": 54.29
+            }
+          },
+          "train_cutoff": "<= 2019"
+        },
+        "2021": {
+          "total": 1529,
+          "correct": 806,
+          "pct": 52.71,
+          "balanced_pct": 40.07,
+          "per_class": {
+            "persistent": {
+              "total": 796,
+              "correct": 683,
+              "pct": 85.8
+            },
+            "random_like": {
+              "total": 386,
+              "correct": 36,
+              "pct": 9.33
+            },
+            "anti_persistent": {
+              "total": 347,
+              "correct": 87,
+              "pct": 25.07
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 691,
+              "correct": 382,
+              "pct": 55.28
+            },
+            "downtrend": {
+              "total": 505,
+              "correct": 373,
+              "pct": 73.86
+            },
+            "sideways": {
+              "total": 333,
+              "correct": 51,
+              "pct": 15.32
+            }
+          },
+          "train_cutoff": "<= 2020"
+        },
+        "2022": {
+          "total": 1640,
+          "correct": 1052,
+          "pct": 64.15,
+          "balanced_pct": 51.87,
+          "per_class": {
+            "persistent": {
+              "total": 886,
+              "correct": 592,
+              "pct": 66.82
+            },
+            "random_like": {
+              "total": 193,
+              "correct": 20,
+              "pct": 10.36
+            },
+            "anti_persistent": {
+              "total": 561,
+              "correct": 440,
+              "pct": 78.43
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 455,
+              "correct": 278,
+              "pct": 61.1
+            },
+            "downtrend": {
+              "total": 881,
+              "correct": 593,
+              "pct": 67.31
+            },
+            "sideways": {
+              "total": 304,
+              "correct": 181,
+              "pct": 59.54
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 1631,
+          "correct": 1079,
+          "pct": 66.16,
+          "balanced_pct": 53.45,
+          "per_class": {
+            "persistent": {
+              "total": 796,
+              "correct": 541,
+              "pct": 67.96
+            },
+            "random_like": {
+              "total": 206,
+              "correct": 21,
+              "pct": 10.19
+            },
+            "anti_persistent": {
+              "total": 629,
+              "correct": 517,
+              "pct": 82.19
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 901,
+              "correct": 584,
+              "pct": 64.82
+            },
+            "downtrend": {
+              "total": 352,
+              "correct": 231,
+              "pct": 65.62
+            },
+            "sideways": {
+              "total": 378,
+              "correct": 264,
+              "pct": 69.84
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 1581,
+          "correct": 969,
+          "pct": 61.29,
+          "balanced_pct": 52.27,
+          "per_class": {
+            "persistent": {
+              "total": 693,
+              "correct": 501,
+              "pct": 72.29
+            },
+            "random_like": {
+              "total": 302,
+              "correct": 29,
+              "pct": 9.6
+            },
+            "anti_persistent": {
+              "total": 586,
+              "correct": 439,
+              "pct": 74.91
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 842,
+              "correct": 564,
+              "pct": 66.98
+            },
+            "downtrend": {
+              "total": 383,
+              "correct": 212,
+              "pct": 55.35
+            },
+            "sideways": {
+              "total": 356,
+              "correct": 193,
+              "pct": 54.21
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 1576,
+          "correct": 1168,
+          "pct": 74.11,
+          "balanced_pct": 60.38,
+          "per_class": {
+            "persistent": {
+              "total": 704,
+              "correct": 546,
+              "pct": 77.56
+            },
+            "random_like": {
+              "total": 224,
+              "correct": 26,
+              "pct": 11.61
+            },
+            "anti_persistent": {
+              "total": 648,
+              "correct": 596,
+              "pct": 91.98
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 537,
+              "correct": 394,
+              "pct": 73.37
+            },
+            "downtrend": {
+              "total": 600,
+              "correct": 464,
+              "pct": 77.33
+            },
+            "sideways": {
+              "total": 439,
+              "correct": 310,
+              "pct": 70.62
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 1449,
+          "correct": 1167,
+          "pct": 80.54,
+          "balanced_pct": 62.51,
+          "per_class": {
+            "persistent": {
+              "total": 709,
+              "correct": 554,
+              "pct": 78.14
+            },
+            "random_like": {
+              "total": 114,
+              "correct": 16,
+              "pct": 14.04
+            },
+            "anti_persistent": {
+              "total": 626,
+              "correct": 597,
+              "pct": 95.37
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 691,
+              "correct": 549,
+              "pct": 79.45
+            },
+            "downtrend": {
+              "total": 440,
+              "correct": 339,
+              "pct": 77.05
+            },
+            "sideways": {
+              "total": 318,
+              "correct": 279,
+              "pct": 87.74
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "BTCUSDT",
+      "name": "Bitcoin (BTC/USDT)",
+      "group": "Kripto Utama",
+      "timeframe": "4h",
+      "stride": 2,
+      "date_range": "2019-03-25 s/d 2026-10-21",
+      "available_years": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 5618,
+        "correct": 3724,
+        "pct": 66.29,
+        "balanced_pct": 57.87,
+        "per_class": {
+          "persistent": {
+            "total": 2419,
+            "correct": 1819,
+            "pct": 75.2
+          },
+          "random_like": {
+            "total": 743,
+            "correct": 222,
+            "pct": 29.88
+          },
+          "anti_persistent": {
+            "total": 2456,
+            "correct": 1683,
+            "pct": 68.53
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 2428,
+            "correct": 1591,
+            "pct": 65.53
+          },
+          "downtrend": {
+            "total": 1559,
+            "correct": 1106,
+            "pct": 70.94
+          },
+          "sideways": {
+            "total": 1631,
+            "correct": 1027,
+            "pct": 62.97
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 684,
+          "correct": 372,
+          "pct": 54.39,
+          "balanced_pct": 40.53,
+          "per_class": {
+            "persistent": {
+              "total": 134,
+              "correct": 81,
+              "pct": 60.45
+            },
+            "random_like": {
+              "total": 63,
+              "correct": 1,
+              "pct": 1.59
+            },
+            "anti_persistent": {
+              "total": 487,
+              "correct": 290,
+              "pct": 59.55
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 289,
+              "correct": 181,
+              "pct": 62.63
+            },
+            "downtrend": {
+              "total": 60,
+              "correct": 38,
+              "pct": 63.33
+            },
+            "sideways": {
+              "total": 335,
+              "correct": 153,
+              "pct": 45.67
+            }
+          },
+          "train_cutoff": "<= 2019"
+        },
+        "2021": {
+          "total": 944,
+          "correct": 591,
+          "pct": 62.61,
+          "balanced_pct": 55.09,
+          "per_class": {
+            "persistent": {
+              "total": 106,
+              "correct": 67,
+              "pct": 63.21
+            },
+            "random_like": {
+              "total": 97,
+              "correct": 35,
+              "pct": 36.08
+            },
+            "anti_persistent": {
+              "total": 741,
+              "correct": 489,
+              "pct": 65.99
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 418,
+              "correct": 198,
+              "pct": 47.37
+            },
+            "downtrend": {
+              "total": 137,
+              "correct": 117,
+              "pct": 85.4
+            },
+            "sideways": {
+              "total": 389,
+              "correct": 276,
+              "pct": 70.95
+            }
+          },
+          "train_cutoff": "<= 2020"
+        },
+        "2022": {
+          "total": 879,
+          "correct": 676,
+          "pct": 76.91,
+          "balanced_pct": 60.15,
+          "per_class": {
+            "persistent": {
+              "total": 572,
+              "correct": 548,
+              "pct": 95.8
+            },
+            "random_like": {
+              "total": 162,
+              "correct": 50,
+              "pct": 30.86
+            },
+            "anti_persistent": {
+              "total": 145,
+              "correct": 78,
+              "pct": 53.79
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 83,
+              "correct": 76,
+              "pct": 91.57
+            },
+            "downtrend": {
+              "total": 649,
+              "correct": 523,
+              "pct": 80.59
+            },
+            "sideways": {
+              "total": 147,
+              "correct": 77,
+              "pct": 52.38
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 911,
+          "correct": 656,
+          "pct": 72.01,
+          "balanced_pct": 62.03,
+          "per_class": {
+            "persistent": {
+              "total": 697,
+              "correct": 546,
+              "pct": 78.34
+            },
+            "random_like": {
+              "total": 89,
+              "correct": 61,
+              "pct": 68.54
+            },
+            "anti_persistent": {
+              "total": 125,
+              "correct": 49,
+              "pct": 39.2
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 629,
+              "correct": 505,
+              "pct": 80.29
+            },
+            "downtrend": {
+              "total": 151,
+              "correct": 88,
+              "pct": 58.28
+            },
+            "sideways": {
+              "total": 131,
+              "correct": 63,
+              "pct": 48.09
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 828,
+          "correct": 462,
+          "pct": 55.8,
+          "balanced_pct": 52.39,
+          "per_class": {
+            "persistent": {
+              "total": 373,
+              "correct": 259,
+              "pct": 69.44
+            },
+            "random_like": {
+              "total": 216,
+              "correct": 63,
+              "pct": 29.17
+            },
+            "anti_persistent": {
+              "total": 239,
+              "correct": 140,
+              "pct": 58.58
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 514,
+              "correct": 311,
+              "pct": 60.51
+            },
+            "downtrend": {
+              "total": 108,
+              "correct": 54,
+              "pct": 50.0
+            },
+            "sideways": {
+              "total": 206,
+              "correct": 97,
+              "pct": 47.09
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 830,
+          "correct": 526,
+          "pct": 63.37,
+          "balanced_pct": 43.14,
+          "per_class": {
+            "persistent": {
+              "total": 257,
+              "correct": 70,
+              "pct": 27.24
+            },
+            "random_like": {
+              "total": 85,
+              "correct": 9,
+              "pct": 10.59
+            },
+            "anti_persistent": {
+              "total": 488,
+              "correct": 447,
+              "pct": 91.6
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 277,
+              "correct": 102,
+              "pct": 36.82
+            },
+            "downtrend": {
+              "total": 244,
+              "correct": 154,
+              "pct": 63.11
+            },
+            "sideways": {
+              "total": 309,
+              "correct": 270,
+              "pct": 87.38
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 542,
+          "correct": 441,
+          "pct": 81.37,
+          "balanced_pct": 60.17,
+          "per_class": {
+            "persistent": {
+              "total": 280,
+              "correct": 248,
+              "pct": 88.57
+            },
+            "random_like": {
+              "total": 31,
+              "correct": 3,
+              "pct": 9.68
+            },
+            "anti_persistent": {
+              "total": 231,
+              "correct": 190,
+              "pct": 82.25
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 218,
+              "correct": 218,
+              "pct": 100.0
+            },
+            "downtrend": {
+              "total": 210,
+              "correct": 132,
+              "pct": 62.86
+            },
+            "sideways": {
+              "total": 114,
+              "correct": 91,
+              "pct": 79.82
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "ETHUSDT",
+      "name": "Ethereum (ETH/USDT)",
+      "group": "Kripto Utama",
+      "timeframe": "1h",
+      "stride": 8,
+      "date_range": "2019-01-21 s/d 2026-10-19",
+      "available_years": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 5390,
+        "correct": 3537,
+        "pct": 65.62,
+        "balanced_pct": 52.22,
+        "per_class": {
+          "persistent": {
+            "total": 2471,
+            "correct": 2043,
+            "pct": 82.68
+          },
+          "random_like": {
+            "total": 864,
+            "correct": 19,
+            "pct": 2.2
+          },
+          "anti_persistent": {
+            "total": 2055,
+            "correct": 1475,
+            "pct": 71.78
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 2417,
+            "correct": 1681,
+            "pct": 69.55
+          },
+          "downtrend": {
+            "total": 1838,
+            "correct": 1290,
+            "pct": 70.18
+          },
+          "sideways": {
+            "total": 1135,
+            "correct": 566,
+            "pct": 49.87
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 744,
+          "correct": 385,
+          "pct": 51.75,
+          "balanced_pct": 42.02,
+          "per_class": {
+            "persistent": {
+              "total": 294,
+              "correct": 191,
+              "pct": 64.97
+            },
+            "random_like": {
+              "total": 130,
+              "correct": 1,
+              "pct": 0.77
+            },
+            "anti_persistent": {
+              "total": 320,
+              "correct": 193,
+              "pct": 60.31
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 425,
+              "correct": 241,
+              "pct": 56.71
+            },
+            "downtrend": {
+              "total": 142,
+              "correct": 76,
+              "pct": 53.52
+            },
+            "sideways": {
+              "total": 177,
+              "correct": 68,
+              "pct": 38.42
+            }
+          },
+          "train_cutoff": "<= 2019"
+        },
+        "2021": {
+          "total": 793,
+          "correct": 448,
+          "pct": 56.49,
+          "balanced_pct": 49.85,
+          "per_class": {
+            "persistent": {
+              "total": 249,
+              "correct": 184,
+              "pct": 73.9
+            },
+            "random_like": {
+              "total": 188,
+              "correct": 6,
+              "pct": 3.19
+            },
+            "anti_persistent": {
+              "total": 356,
+              "correct": 258,
+              "pct": 72.47
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 412,
+              "correct": 261,
+              "pct": 63.35
+            },
+            "downtrend": {
+              "total": 178,
+              "correct": 115,
+              "pct": 64.61
+            },
+            "sideways": {
+              "total": 203,
+              "correct": 72,
+              "pct": 35.47
+            }
+          },
+          "train_cutoff": "<= 2020"
+        },
+        "2022": {
+          "total": 781,
+          "correct": 510,
+          "pct": 65.3,
+          "balanced_pct": 50.78,
+          "per_class": {
+            "persistent": {
+              "total": 451,
+              "correct": 372,
+              "pct": 82.48
+            },
+            "random_like": {
+              "total": 131,
+              "correct": 2,
+              "pct": 1.53
+            },
+            "anti_persistent": {
+              "total": 199,
+              "correct": 136,
+              "pct": 68.34
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 269,
+              "correct": 183,
+              "pct": 68.03
+            },
+            "downtrend": {
+              "total": 408,
+              "correct": 271,
+              "pct": 66.42
+            },
+            "sideways": {
+              "total": 104,
+              "correct": 56,
+              "pct": 53.85
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 718,
+          "correct": 444,
+          "pct": 61.84,
+          "balanced_pct": 49.32,
+          "per_class": {
+            "persistent": {
+              "total": 280,
+              "correct": 202,
+              "pct": 72.14
+            },
+            "random_like": {
+              "total": 100,
+              "correct": 6,
+              "pct": 6.0
+            },
+            "anti_persistent": {
+              "total": 338,
+              "correct": 236,
+              "pct": 69.82
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 300,
+              "correct": 173,
+              "pct": 57.67
+            },
+            "downtrend": {
+              "total": 213,
+              "correct": 160,
+              "pct": 75.12
+            },
+            "sideways": {
+              "total": 205,
+              "correct": 111,
+              "pct": 54.15
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 826,
+          "correct": 597,
+          "pct": 72.28,
+          "balanced_pct": 53.58,
+          "per_class": {
+            "persistent": {
+              "total": 371,
+              "correct": 334,
+              "pct": 90.03
+            },
+            "random_like": {
+              "total": 83,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 372,
+              "correct": 263,
+              "pct": 70.7
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 404,
+              "correct": 331,
+              "pct": 81.93
+            },
+            "downtrend": {
+              "total": 260,
+              "correct": 188,
+              "pct": 72.31
+            },
+            "sideways": {
+              "total": 162,
+              "correct": 78,
+              "pct": 48.15
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 832,
+          "correct": 583,
+          "pct": 70.07,
+          "balanced_pct": 53.98,
+          "per_class": {
+            "persistent": {
+              "total": 495,
+              "correct": 456,
+              "pct": 92.12
+            },
+            "random_like": {
+              "total": 154,
+              "correct": 4,
+              "pct": 2.6
+            },
+            "anti_persistent": {
+              "total": 183,
+              "correct": 123,
+              "pct": 67.21
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 270,
+              "correct": 201,
+              "pct": 74.44
+            },
+            "downtrend": {
+              "total": 410,
+              "correct": 313,
+              "pct": 76.34
+            },
+            "sideways": {
+              "total": 152,
+              "correct": 69,
+              "pct": 45.39
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 696,
+          "correct": 570,
+          "pct": 81.9,
+          "balanced_pct": 61.51,
+          "per_class": {
+            "persistent": {
+              "total": 331,
+              "correct": 304,
+              "pct": 91.84
+            },
+            "random_like": {
+              "total": 78,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 287,
+              "correct": 266,
+              "pct": 92.68
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 337,
+              "correct": 291,
+              "pct": 86.35
+            },
+            "downtrend": {
+              "total": 227,
+              "correct": 167,
+              "pct": 73.57
+            },
+            "sideways": {
+              "total": 132,
+              "correct": 112,
+              "pct": 84.85
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "ETHUSDT",
+      "name": "Ethereum (ETH/USDT)",
+      "group": "Kripto Utama",
+      "timeframe": "4h",
+      "stride": 4,
+      "date_range": "2019-03-25 s/d 2026-10-19",
+      "available_years": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 2855,
+        "correct": 1881,
+        "pct": 65.88,
+        "balanced_pct": 54.07,
+        "per_class": {
+          "persistent": {
+            "total": 1501,
+            "correct": 1182,
+            "pct": 78.75
+          },
+          "random_like": {
+            "total": 465,
+            "correct": 47,
+            "pct": 10.11
+          },
+          "anti_persistent": {
+            "total": 889,
+            "correct": 652,
+            "pct": 73.34
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 1336,
+            "correct": 899,
+            "pct": 67.29
+          },
+          "downtrend": {
+            "total": 965,
+            "correct": 639,
+            "pct": 66.22
+          },
+          "sideways": {
+            "total": 554,
+            "correct": 343,
+            "pct": 61.91
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 434,
+          "correct": 266,
+          "pct": 61.29,
+          "balanced_pct": 43.92,
+          "per_class": {
+            "persistent": {
+              "total": 339,
+              "correct": 234,
+              "pct": 69.03
+            },
+            "random_like": {
+              "total": 44,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 51,
+              "correct": 32,
+              "pct": 62.75
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 302,
+              "correct": 176,
+              "pct": 58.28
+            },
+            "downtrend": {
+              "total": 97,
+              "correct": 68,
+              "pct": 70.1
+            },
+            "sideways": {
+              "total": 35,
+              "correct": 22,
+              "pct": 62.86
+            }
+          },
+          "train_cutoff": "<= 2019"
+        },
+        "2021": {
+          "total": 409,
+          "correct": 242,
+          "pct": 59.17,
+          "balanced_pct": 52.59,
+          "per_class": {
+            "persistent": {
+              "total": 86,
+              "correct": 73,
+              "pct": 84.88
+            },
+            "random_like": {
+              "total": 80,
+              "correct": 4,
+              "pct": 5.0
+            },
+            "anti_persistent": {
+              "total": 243,
+              "correct": 165,
+              "pct": 67.9
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 210,
+              "correct": 128,
+              "pct": 60.95
+            },
+            "downtrend": {
+              "total": 25,
+              "correct": 7,
+              "pct": 28.0
+            },
+            "sideways": {
+              "total": 174,
+              "correct": 107,
+              "pct": 61.49
+            }
+          },
+          "train_cutoff": "<= 2020"
+        },
+        "2022": {
+          "total": 452,
+          "correct": 359,
+          "pct": 79.42,
+          "balanced_pct": 64.65,
+          "per_class": {
+            "persistent": {
+              "total": 255,
+              "correct": 235,
+              "pct": 92.16
+            },
+            "random_like": {
+              "total": 63,
+              "correct": 11,
+              "pct": 17.46
+            },
+            "anti_persistent": {
+              "total": 134,
+              "correct": 113,
+              "pct": 84.33
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 69,
+              "correct": 60,
+              "pct": 86.96
+            },
+            "downtrend": {
+              "total": 300,
+              "correct": 241,
+              "pct": 80.33
+            },
+            "sideways": {
+              "total": 83,
+              "correct": 58,
+              "pct": 69.88
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 362,
+          "correct": 192,
+          "pct": 53.04,
+          "balanced_pct": 51.4,
+          "per_class": {
+            "persistent": {
+              "total": 161,
+              "correct": 77,
+              "pct": 47.83
+            },
+            "random_like": {
+              "total": 71,
+              "correct": 28,
+              "pct": 39.44
+            },
+            "anti_persistent": {
+              "total": 130,
+              "correct": 87,
+              "pct": 66.92
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 170,
+              "correct": 68,
+              "pct": 40.0
+            },
+            "downtrend": {
+              "total": 98,
+              "correct": 52,
+              "pct": 53.06
+            },
+            "sideways": {
+              "total": 94,
+              "correct": 72,
+              "pct": 76.6
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 453,
+          "correct": 259,
+          "pct": 57.17,
+          "balanced_pct": 47.5,
+          "per_class": {
+            "persistent": {
+              "total": 248,
+              "correct": 203,
+              "pct": 81.85
+            },
+            "random_like": {
+              "total": 114,
+              "correct": 4,
+              "pct": 3.51
+            },
+            "anti_persistent": {
+              "total": 91,
+              "correct": 52,
+              "pct": 57.14
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 261,
+              "correct": 175,
+              "pct": 67.05
+            },
+            "downtrend": {
+              "total": 122,
+              "correct": 58,
+              "pct": 47.54
+            },
+            "sideways": {
+              "total": 70,
+              "correct": 26,
+              "pct": 37.14
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 418,
+          "correct": 313,
+          "pct": 74.88,
+          "balanced_pct": 57.8,
+          "per_class": {
+            "persistent": {
+              "total": 251,
+              "correct": 201,
+              "pct": 80.08
+            },
+            "random_like": {
+              "total": 47,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 120,
+              "correct": 112,
+              "pct": 93.33
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 231,
+              "correct": 201,
+              "pct": 87.01
+            },
+            "downtrend": {
+              "total": 147,
+              "correct": 92,
+              "pct": 62.59
+            },
+            "sideways": {
+              "total": 40,
+              "correct": 20,
+              "pct": 50.0
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 327,
+          "correct": 250,
+          "pct": 76.45,
+          "balanced_pct": 58.2,
+          "per_class": {
+            "persistent": {
+              "total": 161,
+              "correct": 159,
+              "pct": 98.76
+            },
+            "random_like": {
+              "total": 46,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 120,
+              "correct": 91,
+              "pct": 75.83
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 93,
+              "correct": 91,
+              "pct": 97.85
+            },
+            "downtrend": {
+              "total": 176,
+              "correct": 121,
+              "pct": 68.75
+            },
+            "sideways": {
+              "total": 58,
+              "correct": 38,
+              "pct": 65.52
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "TAOUSDT",
+      "name": "Bittensor AI (TAO/USDT)",
+      "group": "Kripto AI",
+      "timeframe": "1h",
+      "stride": 4,
+      "date_range": "2024-05-02 s/d 2026-11-15",
+      "available_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 3782,
+        "correct": 2773,
+        "pct": 73.32,
+        "balanced_pct": 57.6,
+        "per_class": {
+          "persistent": {
+            "total": 1937,
+            "correct": 1690,
+            "pct": 87.25
+          },
+          "random_like": {
+            "total": 533,
+            "correct": 27,
+            "pct": 5.07
+          },
+          "anti_persistent": {
+            "total": 1312,
+            "correct": 1056,
+            "pct": 80.49
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 1389,
+            "correct": 1025,
+            "pct": 73.79
+          },
+          "downtrend": {
+            "total": 1776,
+            "correct": 1383,
+            "pct": 77.87
+          },
+          "sideways": {
+            "total": 617,
+            "correct": 365,
+            "pct": 59.16
+          }
+        }
+      },
+      "by_year": {
+        "2024": {
+          "total": 610,
+          "correct": 346,
+          "pct": 56.72,
+          "balanced_pct": 49.15,
+          "per_class": {
+            "persistent": {
+              "total": 254,
+              "correct": 169,
+              "pct": 66.54
+            },
+            "random_like": {
+              "total": 134,
+              "correct": 4,
+              "pct": 2.99
+            },
+            "anti_persistent": {
+              "total": 222,
+              "correct": 173,
+              "pct": 77.93
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 258,
+              "correct": 169,
+              "pct": 65.5
+            },
+            "downtrend": {
+              "total": 169,
+              "correct": 77,
+              "pct": 45.56
+            },
+            "sideways": {
+              "total": 183,
+              "correct": 100,
+              "pct": 54.64
+            }
+          },
+          "train_cutoff": "Awal 2024 (Kausal)"
+        },
+        "2025": {
+          "total": 1709,
+          "correct": 1246,
+          "pct": 72.91,
+          "balanced_pct": 53.99,
+          "per_class": {
+            "persistent": {
+              "total": 1052,
+              "correct": 960,
+              "pct": 91.25
+            },
+            "random_like": {
+              "total": 236,
+              "correct": 15,
+              "pct": 6.36
+            },
+            "anti_persistent": {
+              "total": 421,
+              "correct": 271,
+              "pct": 64.37
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 515,
+              "correct": 376,
+              "pct": 73.01
+            },
+            "downtrend": {
+              "total": 1014,
+              "correct": 801,
+              "pct": 78.99
+            },
+            "sideways": {
+              "total": 180,
+              "correct": 69,
+              "pct": 38.33
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 1463,
+          "correct": 1181,
+          "pct": 80.72,
+          "balanced_pct": 61.76,
+          "per_class": {
+            "persistent": {
+              "total": 631,
+              "correct": 561,
+              "pct": 88.91
+            },
+            "random_like": {
+              "total": 163,
+              "correct": 8,
+              "pct": 4.91
+            },
+            "anti_persistent": {
+              "total": 669,
+              "correct": 612,
+              "pct": 91.48
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 616,
+              "correct": 480,
+              "pct": 77.92
+            },
+            "downtrend": {
+              "total": 593,
+              "correct": 505,
+              "pct": 85.16
+            },
+            "sideways": {
+              "total": 254,
+              "correct": 196,
+              "pct": 77.17
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "TAOUSDT",
+      "name": "Bittensor AI (TAO/USDT)",
+      "group": "Kripto AI",
+      "timeframe": "4h",
+      "stride": 2,
+      "date_range": "2024-07-03 s/d 2026-11-15",
+      "available_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 1556,
+        "correct": 881,
+        "pct": 56.62,
+        "balanced_pct": 48.32,
+        "per_class": {
+          "persistent": {
+            "total": 342,
+            "correct": 229,
+            "pct": 66.96
+          },
+          "random_like": {
+            "total": 219,
+            "correct": 35,
+            "pct": 15.98
+          },
+          "anti_persistent": {
+            "total": 995,
+            "correct": 617,
+            "pct": 62.01
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 473,
+            "correct": 205,
+            "pct": 43.34
+          },
+          "downtrend": {
+            "total": 644,
+            "correct": 397,
+            "pct": 61.65
+          },
+          "sideways": {
+            "total": 439,
+            "correct": 279,
+            "pct": 63.55
+          }
+        }
+      },
+      "by_year": {
+        "2024": {
+          "total": 89,
+          "correct": 63,
+          "pct": 70.79,
+          "balanced_pct": 57.14,
+          "per_class": {
+            "persistent": {
+              "total": 13,
+              "correct": 13,
+              "pct": 100.0
+            },
+            "random_like": {
+              "total": 6,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 70,
+              "correct": 50,
+              "pct": 71.43
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 39,
+              "correct": 18,
+              "pct": 46.15
+            },
+            "downtrend": {
+              "total": 35,
+              "correct": 35,
+              "pct": 100.0
+            },
+            "sideways": {
+              "total": 15,
+              "correct": 10,
+              "pct": 66.67
+            }
+          },
+          "train_cutoff": "Awal 2024 (Kausal)"
+        },
+        "2025": {
+          "total": 903,
+          "correct": 506,
+          "pct": 56.04,
+          "balanced_pct": 39.63,
+          "per_class": {
+            "persistent": {
+              "total": 108,
+              "correct": 26,
+              "pct": 24.07
+            },
+            "random_like": {
+              "total": 122,
+              "correct": 35,
+              "pct": 28.69
+            },
+            "anti_persistent": {
+              "total": 673,
+              "correct": 445,
+              "pct": 66.12
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 180,
+              "correct": 82,
+              "pct": 45.56
+            },
+            "downtrend": {
+              "total": 341,
+              "correct": 188,
+              "pct": 55.13
+            },
+            "sideways": {
+              "total": 382,
+              "correct": 236,
+              "pct": 61.78
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 564,
+          "correct": 312,
+          "pct": 55.32,
+          "balanced_pct": 44.8,
+          "per_class": {
+            "persistent": {
+              "total": 221,
+              "correct": 190,
+              "pct": 85.97
+            },
+            "random_like": {
+              "total": 91,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 252,
+              "correct": 122,
+              "pct": 48.41
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 254,
+              "correct": 105,
+              "pct": 41.34
+            },
+            "downtrend": {
+              "total": 268,
+              "correct": 174,
+              "pct": 64.93
+            },
+            "sideways": {
+              "total": 42,
+              "correct": 33,
+              "pct": 78.57
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "PAXGUSDT",
+      "name": "Gold Spot Tokenized (PAXG / XAUUSD 24/7)",
+      "group": "Emas & Logam Mulia (XAU/XAG)",
+      "timeframe": "1h",
+      "stride": 8,
+      "date_range": "2020-09-18 s/d 2026-10-19",
+      "available_years": [
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 5624,
+        "correct": 4558,
+        "pct": 81.05,
+        "balanced_pct": 60.97,
+        "per_class": {
+          "persistent": {
+            "total": 4169,
+            "correct": 3946,
+            "pct": 94.65
+          },
+          "random_like": {
+            "total": 776,
+            "correct": 101,
+            "pct": 13.02
+          },
+          "anti_persistent": {
+            "total": 679,
+            "correct": 511,
+            "pct": 75.26
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 2934,
+            "correct": 2386,
+            "pct": 81.32
+          },
+          "downtrend": {
+            "total": 2217,
+            "correct": 1925,
+            "pct": 86.83
+          },
+          "sideways": {
+            "total": 473,
+            "correct": 247,
+            "pct": 52.22
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 148,
+          "correct": 146,
+          "pct": 98.65,
+          "balanced_pct": 98.65,
+          "per_class": {
+            "persistent": {
+              "total": 148,
+              "correct": 146,
+              "pct": 98.65
+            },
+            "random_like": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 53,
+              "correct": 53,
+              "pct": 100.0
+            },
+            "downtrend": {
+              "total": 95,
+              "correct": 93,
+              "pct": 97.89
+            },
+            "sideways": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "Awal 2020 (Kausal)"
+        },
+        "2021": {
+          "total": 918,
+          "correct": 686,
+          "pct": 74.73,
+          "balanced_pct": 61.2,
+          "per_class": {
+            "persistent": {
+              "total": 739,
+              "correct": 631,
+              "pct": 85.39
+            },
+            "random_like": {
+              "total": 123,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 56,
+              "correct": 55,
+              "pct": 98.21
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 415,
+              "correct": 304,
+              "pct": 73.25
+            },
+            "downtrend": {
+              "total": 439,
+              "correct": 349,
+              "pct": 79.5
+            },
+            "sideways": {
+              "total": 64,
+              "correct": 33,
+              "pct": 51.56
+            }
+          },
+          "train_cutoff": "<= 2020"
+        },
+        "2022": {
+          "total": 1056,
+          "correct": 1023,
+          "pct": 96.88,
+          "balanced_pct": 33.17,
+          "per_class": {
+            "persistent": {
+              "total": 1028,
+              "correct": 1023,
+              "pct": 99.51
+            },
+            "random_like": {
+              "total": 27,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 1,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 547,
+              "correct": 520,
+              "pct": 95.06
+            },
+            "downtrend": {
+              "total": 507,
+              "correct": 503,
+              "pct": 99.21
+            },
+            "sideways": {
+              "total": 2,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 898,
+          "correct": 660,
+          "pct": 73.5,
+          "balanced_pct": 62.94,
+          "per_class": {
+            "persistent": {
+              "total": 389,
+              "correct": 377,
+              "pct": 96.92
+            },
+            "random_like": {
+              "total": 155,
+              "correct": 33,
+              "pct": 21.29
+            },
+            "anti_persistent": {
+              "total": 354,
+              "correct": 250,
+              "pct": 70.62
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 452,
+              "correct": 372,
+              "pct": 82.3
+            },
+            "downtrend": {
+              "total": 290,
+              "correct": 205,
+              "pct": 70.69
+            },
+            "sideways": {
+              "total": 156,
+              "correct": 83,
+              "pct": 53.21
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 857,
+          "correct": 553,
+          "pct": 64.53,
+          "balanced_pct": 62.89,
+          "per_class": {
+            "persistent": {
+              "total": 379,
+              "correct": 335,
+              "pct": 88.39
+            },
+            "random_like": {
+              "total": 272,
+              "correct": 47,
+              "pct": 17.28
+            },
+            "anti_persistent": {
+              "total": 206,
+              "correct": 171,
+              "pct": 83.01
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 449,
+              "correct": 257,
+              "pct": 57.24
+            },
+            "downtrend": {
+              "total": 217,
+              "correct": 177,
+              "pct": 81.57
+            },
+            "sideways": {
+              "total": 191,
+              "correct": 119,
+              "pct": 62.3
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 951,
+          "correct": 790,
+          "pct": 83.07,
+          "balanced_pct": 51.05,
+          "per_class": {
+            "persistent": {
+              "total": 802,
+              "correct": 755,
+              "pct": 94.14
+            },
+            "random_like": {
+              "total": 109,
+              "correct": 18,
+              "pct": 16.51
+            },
+            "anti_persistent": {
+              "total": 40,
+              "correct": 17,
+              "pct": 42.5
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 694,
+              "correct": 588,
+              "pct": 84.73
+            },
+            "downtrend": {
+              "total": 218,
+              "correct": 192,
+              "pct": 88.07
+            },
+            "sideways": {
+              "total": 39,
+              "correct": 10,
+              "pct": 25.64
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 796,
+          "correct": 700,
+          "pct": 87.94,
+          "balanced_pct": 61.47,
+          "per_class": {
+            "persistent": {
+              "total": 684,
+              "correct": 679,
+              "pct": 99.27
+            },
+            "random_like": {
+              "total": 90,
+              "correct": 3,
+              "pct": 3.33
+            },
+            "anti_persistent": {
+              "total": 22,
+              "correct": 18,
+              "pct": 81.82
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 324,
+              "correct": 292,
+              "pct": 90.12
+            },
+            "downtrend": {
+              "total": 451,
+              "correct": 406,
+              "pct": 90.02
+            },
+            "sideways": {
+              "total": 21,
+              "correct": 2,
+              "pct": 9.52
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "PAXGUSDT",
+      "name": "Gold Spot Tokenized (PAXG / XAUUSD 24/7)",
+      "group": "Emas & Logam Mulia (XAU/XAG)",
+      "timeframe": "4h",
+      "stride": 4,
+      "date_range": "2020-11-19 s/d 2026-10-19",
+      "available_years": [
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 2370,
+        "correct": 1705,
+        "pct": 71.94,
+        "balanced_pct": 52.9,
+        "per_class": {
+          "persistent": {
+            "total": 1544,
+            "correct": 1328,
+            "pct": 86.01
+          },
+          "random_like": {
+            "total": 245,
+            "correct": 33,
+            "pct": 13.47
+          },
+          "anti_persistent": {
+            "total": 581,
+            "correct": 344,
+            "pct": 59.21
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 1527,
+            "correct": 1160,
+            "pct": 75.97
+          },
+          "downtrend": {
+            "total": 666,
+            "correct": 449,
+            "pct": 67.42
+          },
+          "sideways": {
+            "total": 177,
+            "correct": 96,
+            "pct": 54.24
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 24,
+          "correct": 16,
+          "pct": 66.67,
+          "balanced_pct": 33.33,
+          "per_class": {
+            "persistent": {
+              "total": 6,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "random_like": {
+              "total": 2,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 16,
+              "correct": 16,
+              "pct": 100.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 8,
+              "correct": 6,
+              "pct": 75.0
+            },
+            "downtrend": {
+              "total": 6,
+              "correct": 1,
+              "pct": 16.67
+            },
+            "sideways": {
+              "total": 10,
+              "correct": 9,
+              "pct": 90.0
+            }
+          },
+          "train_cutoff": "Awal 2020 (Kausal)"
+        },
+        "2021": {
+          "total": 146,
+          "correct": 76,
+          "pct": 52.05,
+          "balanced_pct": 28.94,
+          "per_class": {
+            "persistent": {
+              "total": 31,
+              "correct": 2,
+              "pct": 6.45
+            },
+            "random_like": {
+              "total": 17,
+              "correct": 1,
+              "pct": 5.88
+            },
+            "anti_persistent": {
+              "total": 98,
+              "correct": 73,
+              "pct": 74.49
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 52,
+              "correct": 30,
+              "pct": 57.69
+            },
+            "downtrend": {
+              "total": 50,
+              "correct": 22,
+              "pct": 44.0
+            },
+            "sideways": {
+              "total": 44,
+              "correct": 24,
+              "pct": 54.55
+            }
+          },
+          "train_cutoff": "Awal 2021 (Kausal)"
+        },
+        "2022": {
+          "total": 417,
+          "correct": 234,
+          "pct": 56.12,
+          "balanced_pct": 41.74,
+          "per_class": {
+            "persistent": {
+              "total": 280,
+              "correct": 196,
+              "pct": 70.0
+            },
+            "random_like": {
+              "total": 71,
+              "correct": 22,
+              "pct": 30.99
+            },
+            "anti_persistent": {
+              "total": 66,
+              "correct": 16,
+              "pct": 24.24
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 179,
+              "correct": 129,
+              "pct": 72.07
+            },
+            "downtrend": {
+              "total": 233,
+              "correct": 103,
+              "pct": 44.21
+            },
+            "sideways": {
+              "total": 5,
+              "correct": 2,
+              "pct": 40.0
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 492,
+          "correct": 374,
+          "pct": 76.02,
+          "balanced_pct": 58.35,
+          "per_class": {
+            "persistent": {
+              "total": 201,
+              "correct": 173,
+              "pct": 86.07
+            },
+            "random_like": {
+              "total": 29,
+              "correct": 4,
+              "pct": 13.79
+            },
+            "anti_persistent": {
+              "total": 262,
+              "correct": 197,
+              "pct": 75.19
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 297,
+              "correct": 196,
+              "pct": 65.99
+            },
+            "downtrend": {
+              "total": 123,
+              "correct": 122,
+              "pct": 99.19
+            },
+            "sideways": {
+              "total": 72,
+              "correct": 56,
+              "pct": 77.78
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 414,
+          "correct": 265,
+          "pct": 64.01,
+          "balanced_pct": 44.41,
+          "per_class": {
+            "persistent": {
+              "total": 282,
+              "correct": 221,
+              "pct": 78.37
+            },
+            "random_like": {
+              "total": 45,
+              "correct": 4,
+              "pct": 8.89
+            },
+            "anti_persistent": {
+              "total": 87,
+              "correct": 40,
+              "pct": 45.98
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 351,
+              "correct": 232,
+              "pct": 66.1
+            },
+            "downtrend": {
+              "total": 32,
+              "correct": 28,
+              "pct": 87.5
+            },
+            "sideways": {
+              "total": 31,
+              "correct": 5,
+              "pct": 16.13
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 480,
+          "correct": 418,
+          "pct": 87.08,
+          "balanced_pct": 38.7,
+          "per_class": {
+            "persistent": {
+              "total": 422,
+              "correct": 414,
+              "pct": 98.1
+            },
+            "random_like": {
+              "total": 15,
+              "correct": 2,
+              "pct": 13.33
+            },
+            "anti_persistent": {
+              "total": 43,
+              "correct": 2,
+              "pct": 4.65
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 421,
+              "correct": 362,
+              "pct": 85.99
+            },
+            "downtrend": {
+              "total": 59,
+              "correct": 56,
+              "pct": 94.92
+            },
+            "sideways": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 397,
+          "correct": 322,
+          "pct": 81.11,
+          "balanced_pct": 33.33,
+          "per_class": {
+            "persistent": {
+              "total": 322,
+              "correct": 322,
+              "pct": 100.0
+            },
+            "random_like": {
+              "total": 66,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 9,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 219,
+              "correct": 205,
+              "pct": 93.61
+            },
+            "downtrend": {
+              "total": 163,
+              "correct": 117,
+              "pct": 71.78
+            },
+            "sideways": {
+              "total": 15,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "GCF",
+      "name": "Gold Futures COMEX (GC=F / XAUUSD)",
+      "group": "Emas & Logam Mulia (XAU/XAG)",
+      "timeframe": "1h",
+      "stride": 4,
+      "date_range": "2024-06-27 s/d 2026-10-19",
+      "available_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 2324,
+        "correct": 1517,
+        "pct": 65.28,
+        "balanced_pct": 59.46,
+        "per_class": {
+          "persistent": {
+            "total": 721,
+            "correct": 579,
+            "pct": 80.31
+          },
+          "random_like": {
+            "total": 526,
+            "correct": 113,
+            "pct": 21.48
+          },
+          "anti_persistent": {
+            "total": 1077,
+            "correct": 825,
+            "pct": 76.6
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 1137,
+            "correct": 831,
+            "pct": 73.09
+          },
+          "downtrend": {
+            "total": 443,
+            "correct": 290,
+            "pct": 65.46
+          },
+          "sideways": {
+            "total": 744,
+            "correct": 396,
+            "pct": 53.23
+          }
+        }
+      },
+      "by_year": {
+        "2024": {
+          "total": 300,
+          "correct": 265,
+          "pct": 88.33,
+          "balanced_pct": 59.26,
+          "per_class": {
+            "persistent": {
+              "total": 33,
+              "correct": 27,
+              "pct": 81.82
+            },
+            "random_like": {
+              "total": 19,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 248,
+              "correct": 238,
+              "pct": 95.97
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 163,
+              "correct": 154,
+              "pct": 94.48
+            },
+            "downtrend": {
+              "total": 47,
+              "correct": 30,
+              "pct": 63.83
+            },
+            "sideways": {
+              "total": 90,
+              "correct": 81,
+              "pct": 90.0
+            }
+          },
+          "train_cutoff": "Awal 2024 (Kausal)"
+        },
+        "2025": {
+          "total": 1155,
+          "correct": 713,
+          "pct": 61.73,
+          "balanced_pct": 58.13,
+          "per_class": {
+            "persistent": {
+              "total": 498,
+              "correct": 385,
+              "pct": 77.31
+            },
+            "random_like": {
+              "total": 302,
+              "correct": 95,
+              "pct": 31.46
+            },
+            "anti_persistent": {
+              "total": 355,
+              "correct": 233,
+              "pct": 65.63
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 727,
+              "correct": 517,
+              "pct": 71.11
+            },
+            "downtrend": {
+              "total": 117,
+              "correct": 83,
+              "pct": 70.94
+            },
+            "sideways": {
+              "total": 311,
+              "correct": 113,
+              "pct": 36.33
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 869,
+          "correct": 539,
+          "pct": 62.03,
+          "balanced_pct": 57.12,
+          "per_class": {
+            "persistent": {
+              "total": 190,
+              "correct": 167,
+              "pct": 87.89
+            },
+            "random_like": {
+              "total": 205,
+              "correct": 18,
+              "pct": 8.78
+            },
+            "anti_persistent": {
+              "total": 474,
+              "correct": 354,
+              "pct": 74.68
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 247,
+              "correct": 160,
+              "pct": 64.78
+            },
+            "downtrend": {
+              "total": 279,
+              "correct": 177,
+              "pct": 63.44
+            },
+            "sideways": {
+              "total": 343,
+              "correct": 202,
+              "pct": 58.89
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "GCF",
+      "name": "Gold Futures COMEX (GC=F / XAUUSD)",
+      "group": "Emas & Logam Mulia (XAU/XAG)",
+      "timeframe": "1d",
+      "stride": 1,
+      "date_range": "2011-12-27 s/d 2026-10-16",
+      "available_years": [
+        2011,
+        2012,
+        2013,
+        2014,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 1449,
+        "correct": 1150,
+        "pct": 79.37,
+        "balanced_pct": 58.8,
+        "per_class": {
+          "persistent": {
+            "total": 241,
+            "correct": 212,
+            "pct": 87.97
+          },
+          "random_like": {
+            "total": 131,
+            "correct": 2,
+            "pct": 1.53
+          },
+          "anti_persistent": {
+            "total": 1077,
+            "correct": 936,
+            "pct": 86.91
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 1099,
+            "correct": 994,
+            "pct": 90.45
+          },
+          "downtrend": {
+            "total": 53,
+            "correct": 3,
+            "pct": 5.66
+          },
+          "sideways": {
+            "total": 297,
+            "correct": 153,
+            "pct": 51.52
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 248,
+          "correct": 248,
+          "pct": 100.0,
+          "balanced_pct": 100.0,
+          "per_class": {
+            "persistent": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "random_like": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 248,
+              "correct": 248,
+              "pct": 100.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 244,
+              "correct": 244,
+              "pct": 100.0
+            },
+            "downtrend": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "sideways": {
+              "total": 4,
+              "correct": 4,
+              "pct": 100.0
+            }
+          },
+          "train_cutoff": "<= 2019"
+        },
+        "2021": {
+          "total": 228,
+          "correct": 228,
+          "pct": 100.0,
+          "balanced_pct": 100.0,
+          "per_class": {
+            "persistent": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "random_like": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 228,
+              "correct": 228,
+              "pct": 100.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 136,
+              "correct": 136,
+              "pct": 100.0
+            },
+            "downtrend": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "sideways": {
+              "total": 92,
+              "correct": 92,
+              "pct": 100.0
+            }
+          },
+          "train_cutoff": "<= 2020"
+        },
+        "2022": {
+          "total": 197,
+          "correct": 91,
+          "pct": 46.19,
+          "balanced_pct": 21.34,
+          "per_class": {
+            "persistent": {
+              "total": 13,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "random_like": {
+              "total": 22,
+              "correct": 2,
+              "pct": 9.09
+            },
+            "anti_persistent": {
+              "total": 162,
+              "correct": 89,
+              "pct": 54.94
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 42,
+              "correct": 31,
+              "pct": 73.81
+            },
+            "downtrend": {
+              "total": 53,
+              "correct": 3,
+              "pct": 5.66
+            },
+            "sideways": {
+              "total": 102,
+              "correct": 57,
+              "pct": 55.88
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 173,
+          "correct": 50,
+          "pct": 28.9,
+          "balanced_pct": 33.9,
+          "per_class": {
+            "persistent": {
+              "total": 49,
+              "correct": 49,
+              "pct": 100.0
+            },
+            "random_like": {
+              "total": 65,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 59,
+              "correct": 1,
+              "pct": 1.69
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 88,
+              "correct": 50,
+              "pct": 56.82
+            },
+            "downtrend": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "sideways": {
+              "total": 85,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 185,
+          "correct": 144,
+          "pct": 77.84,
+          "balanced_pct": 33.33,
+          "per_class": {
+            "persistent": {
+              "total": 144,
+              "correct": 144,
+              "pct": 100.0
+            },
+            "random_like": {
+              "total": 36,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 5,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 171,
+              "correct": 144,
+              "pct": 84.21
+            },
+            "downtrend": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "sideways": {
+              "total": 14,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 233,
+          "correct": 204,
+          "pct": 87.55,
+          "balanced_pct": 50.55,
+          "per_class": {
+            "persistent": {
+              "total": 35,
+              "correct": 19,
+              "pct": 54.29
+            },
+            "random_like": {
+              "total": 8,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 190,
+              "correct": 185,
+              "pct": 97.37
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 233,
+              "correct": 204,
+              "pct": 87.55
+            },
+            "downtrend": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "sideways": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 185,
+          "correct": 185,
+          "pct": 100.0,
+          "balanced_pct": 100.0,
+          "per_class": {
+            "persistent": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "random_like": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 185,
+              "correct": 185,
+              "pct": 100.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 185,
+              "correct": 185,
+              "pct": 100.0
+            },
+            "downtrend": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "sideways": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "SIF",
+      "name": "Silver / Perak Futures COMEX (SI=F / XAGUSD)",
+      "group": "Emas & Logam Mulia (XAU/XAG)",
+      "timeframe": "1h",
+      "stride": 4,
+      "date_range": "2024-07-26 s/d 2026-11-13",
+      "available_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 2289,
+        "correct": 1596,
+        "pct": 69.72,
+        "balanced_pct": 59.77,
+        "per_class": {
+          "persistent": {
+            "total": 909,
+            "correct": 678,
+            "pct": 74.59
+          },
+          "random_like": {
+            "total": 319,
+            "correct": 83,
+            "pct": 26.02
+          },
+          "anti_persistent": {
+            "total": 1061,
+            "correct": 835,
+            "pct": 78.7
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 1132,
+            "correct": 788,
+            "pct": 69.61
+          },
+          "downtrend": {
+            "total": 663,
+            "correct": 456,
+            "pct": 68.78
+          },
+          "sideways": {
+            "total": 494,
+            "correct": 352,
+            "pct": 71.26
+          }
+        }
+      },
+      "by_year": {
+        "2024": {
+          "total": 185,
+          "correct": 154,
+          "pct": 83.24,
+          "balanced_pct": 58.55,
+          "per_class": {
+            "persistent": {
+              "total": 40,
+              "correct": 35,
+              "pct": 87.5
+            },
+            "random_like": {
+              "total": 10,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 135,
+              "correct": 119,
+              "pct": 88.15
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 75,
+              "correct": 65,
+              "pct": 86.67
+            },
+            "downtrend": {
+              "total": 73,
+              "correct": 61,
+              "pct": 83.56
+            },
+            "sideways": {
+              "total": 37,
+              "correct": 28,
+              "pct": 75.68
+            }
+          },
+          "train_cutoff": "Awal 2024 (Kausal)"
+        },
+        "2025": {
+          "total": 1155,
+          "correct": 871,
+          "pct": 75.41,
+          "balanced_pct": 56.4,
+          "per_class": {
+            "persistent": {
+              "total": 491,
+              "correct": 380,
+              "pct": 77.39
+            },
+            "random_like": {
+              "total": 98,
+              "correct": 6,
+              "pct": 6.12
+            },
+            "anti_persistent": {
+              "total": 566,
+              "correct": 485,
+              "pct": 85.69
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 772,
+              "correct": 585,
+              "pct": 75.78
+            },
+            "downtrend": {
+              "total": 143,
+              "correct": 112,
+              "pct": 78.32
+            },
+            "sideways": {
+              "total": 240,
+              "correct": 174,
+              "pct": 72.5
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 949,
+          "correct": 571,
+          "pct": 60.17,
+          "balanced_pct": 56.75,
+          "per_class": {
+            "persistent": {
+              "total": 378,
+              "correct": 263,
+              "pct": 69.58
+            },
+            "random_like": {
+              "total": 211,
+              "correct": 77,
+              "pct": 36.49
+            },
+            "anti_persistent": {
+              "total": 360,
+              "correct": 231,
+              "pct": 64.17
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 285,
+              "correct": 138,
+              "pct": 48.42
+            },
+            "downtrend": {
+              "total": 447,
+              "correct": 283,
+              "pct": 63.31
+            },
+            "sideways": {
+              "total": 217,
+              "correct": 150,
+              "pct": 69.12
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "SIF",
+      "name": "Silver / Perak Futures COMEX (SI=F / XAGUSD)",
+      "group": "Emas & Logam Mulia (XAU/XAG)",
+      "timeframe": "1d",
+      "stride": 1,
+      "date_range": "2011-12-27 s/d 2026-11-12",
+      "available_years": [
+        2011,
+        2012,
+        2013,
+        2014,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 1295,
+        "correct": 891,
+        "pct": 68.8,
+        "balanced_pct": 52.58,
+        "per_class": {
+          "persistent": {
+            "total": 386,
+            "correct": 233,
+            "pct": 60.36
+          },
+          "random_like": {
+            "total": 180,
+            "correct": 17,
+            "pct": 9.44
+          },
+          "anti_persistent": {
+            "total": 729,
+            "correct": 641,
+            "pct": 87.93
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 843,
+            "correct": 592,
+            "pct": 70.23
+          },
+          "downtrend": {
+            "total": 208,
+            "correct": 167,
+            "pct": 80.29
+          },
+          "sideways": {
+            "total": 244,
+            "correct": 132,
+            "pct": 54.1
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 162,
+          "correct": 88,
+          "pct": 54.32,
+          "balanced_pct": 33.85,
+          "per_class": {
+            "persistent": {
+              "total": 65,
+              "correct": 1,
+              "pct": 1.54
+            },
+            "random_like": {
+              "total": 10,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 87,
+              "correct": 87,
+              "pct": 100.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 93,
+              "correct": 21,
+              "pct": 22.58
+            },
+            "downtrend": {
+              "total": 17,
+              "correct": 17,
+              "pct": 100.0
+            },
+            "sideways": {
+              "total": 52,
+              "correct": 50,
+              "pct": 96.15
+            }
+          },
+          "train_cutoff": "<= 2019"
+        },
+        "2021": {
+          "total": 128,
+          "correct": 110,
+          "pct": 85.94,
+          "balanced_pct": 33.33,
+          "per_class": {
+            "persistent": {
+              "total": 110,
+              "correct": 110,
+              "pct": 100.0
+            },
+            "random_like": {
+              "total": 16,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 2,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 125,
+              "correct": 110,
+              "pct": 88.0
+            },
+            "downtrend": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "sideways": {
+              "total": 3,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "<= 2020"
+        },
+        "2022": {
+          "total": 218,
+          "correct": 159,
+          "pct": 72.94,
+          "balanced_pct": 58.39,
+          "per_class": {
+            "persistent": {
+              "total": 38,
+              "correct": 6,
+              "pct": 15.79
+            },
+            "random_like": {
+              "total": 15,
+              "correct": 11,
+              "pct": 73.33
+            },
+            "anti_persistent": {
+              "total": 165,
+              "correct": 142,
+              "pct": 86.06
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 70,
+              "correct": 21,
+              "pct": 30.0
+            },
+            "downtrend": {
+              "total": 95,
+              "correct": 93,
+              "pct": 97.89
+            },
+            "sideways": {
+              "total": 53,
+              "correct": 45,
+              "pct": 84.91
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 181,
+          "correct": 70,
+          "pct": 38.67,
+          "balanced_pct": 36.78,
+          "per_class": {
+            "persistent": {
+              "total": 64,
+              "correct": 64,
+              "pct": 100.0
+            },
+            "random_like": {
+              "total": 59,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 58,
+              "correct": 6,
+              "pct": 10.34
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 15,
+              "correct": 14,
+              "pct": 93.33
+            },
+            "downtrend": {
+              "total": 91,
+              "correct": 55,
+              "pct": 60.44
+            },
+            "sideways": {
+              "total": 75,
+              "correct": 1,
+              "pct": 1.33
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 174,
+          "correct": 64,
+          "pct": 36.78,
+          "balanced_pct": 40.19,
+          "per_class": {
+            "persistent": {
+              "total": 81,
+              "correct": 51,
+              "pct": 62.96
+            },
+            "random_like": {
+              "total": 79,
+              "correct": 6,
+              "pct": 7.59
+            },
+            "anti_persistent": {
+              "total": 14,
+              "correct": 7,
+              "pct": 50.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 139,
+              "correct": 56,
+              "pct": 40.29
+            },
+            "downtrend": {
+              "total": 5,
+              "correct": 2,
+              "pct": 40.0
+            },
+            "sideways": {
+              "total": 30,
+              "correct": 6,
+              "pct": 20.0
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 234,
+          "correct": 204,
+          "pct": 87.18,
+          "balanced_pct": 51.06,
+          "per_class": {
+            "persistent": {
+              "total": 28,
+              "correct": 1,
+              "pct": 3.57
+            },
+            "random_like": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 206,
+              "correct": 203,
+              "pct": 98.54
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 203,
+              "correct": 174,
+              "pct": 85.71
+            },
+            "downtrend": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "sideways": {
+              "total": 31,
+              "correct": 30,
+              "pct": 96.77
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 198,
+          "correct": 196,
+          "pct": 98.99,
+          "balanced_pct": 49.75,
+          "per_class": {
+            "persistent": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "random_like": {
+              "total": 1,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 197,
+              "correct": 196,
+              "pct": 99.49
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 198,
+              "correct": 196,
+              "pct": 98.99
+            },
+            "downtrend": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "sideways": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "BNBUSDT",
+      "name": "BNB (BNB/USDT)",
+      "group": "Kripto Utama",
+      "timeframe": "1h",
+      "stride": 8,
+      "date_range": "2019-01-21 s/d 2026-10-19",
+      "available_years": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 5586,
+        "correct": 4144,
+        "pct": 74.19,
+        "balanced_pct": 59.33,
+        "per_class": {
+          "persistent": {
+            "total": 2445,
+            "correct": 2060,
+            "pct": 84.25
+          },
+          "random_like": {
+            "total": 847,
+            "correct": 39,
+            "pct": 4.6
+          },
+          "anti_persistent": {
+            "total": 2294,
+            "correct": 2045,
+            "pct": 89.15
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 2390,
+            "correct": 1762,
+            "pct": 73.72
+          },
+          "downtrend": {
+            "total": 1721,
+            "correct": 1321,
+            "pct": 76.76
+          },
+          "sideways": {
+            "total": 1475,
+            "correct": 1061,
+            "pct": 71.93
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 781,
+          "correct": 540,
+          "pct": 69.14,
+          "balanced_pct": 53.41,
+          "per_class": {
+            "persistent": {
+              "total": 176,
+              "correct": 106,
+              "pct": 60.23
+            },
+            "random_like": {
+              "total": 145,
+              "correct": 12,
+              "pct": 8.28
+            },
+            "anti_persistent": {
+              "total": 460,
+              "correct": 422,
+              "pct": 91.74
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 314,
+              "correct": 203,
+              "pct": 64.65
+            },
+            "downtrend": {
+              "total": 148,
+              "correct": 98,
+              "pct": 66.22
+            },
+            "sideways": {
+              "total": 319,
+              "correct": 239,
+              "pct": 74.92
+            }
+          },
+          "train_cutoff": "<= 2019"
+        },
+        "2021": {
+          "total": 881,
+          "correct": 621,
+          "pct": 70.49,
+          "balanced_pct": 54.58,
+          "per_class": {
+            "persistent": {
+              "total": 503,
+              "correct": 426,
+              "pct": 84.69
+            },
+            "random_like": {
+              "total": 129,
+              "correct": 2,
+              "pct": 1.55
+            },
+            "anti_persistent": {
+              "total": 249,
+              "correct": 193,
+              "pct": 77.51
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 506,
+              "correct": 400,
+              "pct": 79.05
+            },
+            "downtrend": {
+              "total": 211,
+              "correct": 145,
+              "pct": 68.72
+            },
+            "sideways": {
+              "total": 164,
+              "correct": 76,
+              "pct": 46.34
+            }
+          },
+          "train_cutoff": "<= 2020"
+        },
+        "2022": {
+          "total": 769,
+          "correct": 584,
+          "pct": 75.94,
+          "balanced_pct": 60.56,
+          "per_class": {
+            "persistent": {
+              "total": 409,
+              "correct": 385,
+              "pct": 94.13
+            },
+            "random_like": {
+              "total": 127,
+              "correct": 6,
+              "pct": 4.72
+            },
+            "anti_persistent": {
+              "total": 233,
+              "correct": 193,
+              "pct": 82.83
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 237,
+              "correct": 170,
+              "pct": 71.73
+            },
+            "downtrend": {
+              "total": 392,
+              "correct": 331,
+              "pct": 84.44
+            },
+            "sideways": {
+              "total": 140,
+              "correct": 83,
+              "pct": 59.29
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 795,
+          "correct": 612,
+          "pct": 76.98,
+          "balanced_pct": 59.08,
+          "per_class": {
+            "persistent": {
+              "total": 187,
+              "correct": 143,
+              "pct": 76.47
+            },
+            "random_like": {
+              "total": 112,
+              "correct": 9,
+              "pct": 8.04
+            },
+            "anti_persistent": {
+              "total": 496,
+              "correct": 460,
+              "pct": 92.74
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 277,
+              "correct": 208,
+              "pct": 75.09
+            },
+            "downtrend": {
+              "total": 256,
+              "correct": 176,
+              "pct": 68.75
+            },
+            "sideways": {
+              "total": 262,
+              "correct": 228,
+              "pct": 87.02
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 831,
+          "correct": 628,
+          "pct": 75.57,
+          "balanced_pct": 59.06,
+          "per_class": {
+            "persistent": {
+              "total": 353,
+              "correct": 303,
+              "pct": 85.84
+            },
+            "random_like": {
+              "total": 120,
+              "correct": 1,
+              "pct": 0.83
+            },
+            "anti_persistent": {
+              "total": 358,
+              "correct": 324,
+              "pct": 90.5
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 401,
+              "correct": 277,
+              "pct": 69.08
+            },
+            "downtrend": {
+              "total": 186,
+              "correct": 154,
+              "pct": 82.8
+            },
+            "sideways": {
+              "total": 244,
+              "correct": 197,
+              "pct": 80.74
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 805,
+          "correct": 562,
+          "pct": 69.81,
+          "balanced_pct": 57.63,
+          "per_class": {
+            "persistent": {
+              "total": 395,
+              "correct": 308,
+              "pct": 77.97
+            },
+            "random_like": {
+              "total": 136,
+              "correct": 6,
+              "pct": 4.41
+            },
+            "anti_persistent": {
+              "total": 274,
+              "correct": 248,
+              "pct": 90.51
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 325,
+              "correct": 231,
+              "pct": 71.08
+            },
+            "downtrend": {
+              "total": 263,
+              "correct": 192,
+              "pct": 73.0
+            },
+            "sideways": {
+              "total": 217,
+              "correct": 139,
+              "pct": 64.06
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 724,
+          "correct": 597,
+          "pct": 82.46,
+          "balanced_pct": 62.51,
+          "per_class": {
+            "persistent": {
+              "total": 422,
+              "correct": 389,
+              "pct": 92.18
+            },
+            "random_like": {
+              "total": 78,
+              "correct": 3,
+              "pct": 3.85
+            },
+            "anti_persistent": {
+              "total": 224,
+              "correct": 205,
+              "pct": 91.52
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 330,
+              "correct": 273,
+              "pct": 82.73
+            },
+            "downtrend": {
+              "total": 265,
+              "correct": 225,
+              "pct": 84.91
+            },
+            "sideways": {
+              "total": 129,
+              "correct": 99,
+              "pct": 76.74
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "BNBUSDT",
+      "name": "BNB (BNB/USDT)",
+      "group": "Kripto Utama",
+      "timeframe": "4h",
+      "stride": 4,
+      "date_range": "2019-03-25 s/d 2026-10-19",
+      "available_years": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 2890,
+        "correct": 1934,
+        "pct": 66.92,
+        "balanced_pct": 55.54,
+        "per_class": {
+          "persistent": {
+            "total": 1253,
+            "correct": 997,
+            "pct": 79.57
+          },
+          "random_like": {
+            "total": 492,
+            "correct": 45,
+            "pct": 9.15
+          },
+          "anti_persistent": {
+            "total": 1145,
+            "correct": 892,
+            "pct": 77.9
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 1136,
+            "correct": 786,
+            "pct": 69.19
+          },
+          "downtrend": {
+            "total": 928,
+            "correct": 650,
+            "pct": 70.04
+          },
+          "sideways": {
+            "total": 826,
+            "correct": 498,
+            "pct": 60.29
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 430,
+          "correct": 274,
+          "pct": 63.72,
+          "balanced_pct": 47.74,
+          "per_class": {
+            "persistent": {
+              "total": 202,
+              "correct": 135,
+              "pct": 66.83
+            },
+            "random_like": {
+              "total": 46,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 182,
+              "correct": 139,
+              "pct": 76.37
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 196,
+              "correct": 108,
+              "pct": 55.1
+            },
+            "downtrend": {
+              "total": 119,
+              "correct": 98,
+              "pct": 82.35
+            },
+            "sideways": {
+              "total": 115,
+              "correct": 68,
+              "pct": 59.13
+            }
+          },
+          "train_cutoff": "<= 2019"
+        },
+        "2021": {
+          "total": 443,
+          "correct": 278,
+          "pct": 62.75,
+          "balanced_pct": 52.71,
+          "per_class": {
+            "persistent": {
+              "total": 188,
+              "correct": 177,
+              "pct": 94.15
+            },
+            "random_like": {
+              "total": 76,
+              "correct": 10,
+              "pct": 13.16
+            },
+            "anti_persistent": {
+              "total": 179,
+              "correct": 91,
+              "pct": 50.84
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 298,
+              "correct": 247,
+              "pct": 82.89
+            },
+            "downtrend": {
+              "total": 15,
+              "correct": 5,
+              "pct": 33.33
+            },
+            "sideways": {
+              "total": 130,
+              "correct": 26,
+              "pct": 20.0
+            }
+          },
+          "train_cutoff": "<= 2020"
+        },
+        "2022": {
+          "total": 430,
+          "correct": 262,
+          "pct": 60.93,
+          "balanced_pct": 56.27,
+          "per_class": {
+            "persistent": {
+              "total": 172,
+              "correct": 116,
+              "pct": 67.44
+            },
+            "random_like": {
+              "total": 104,
+              "correct": 21,
+              "pct": 20.19
+            },
+            "anti_persistent": {
+              "total": 154,
+              "correct": 125,
+              "pct": 81.17
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 70,
+              "correct": 34,
+              "pct": 48.57
+            },
+            "downtrend": {
+              "total": 230,
+              "correct": 145,
+              "pct": 63.04
+            },
+            "sideways": {
+              "total": 130,
+              "correct": 83,
+              "pct": 63.85
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 395,
+          "correct": 263,
+          "pct": 66.58,
+          "balanced_pct": 40.87,
+          "per_class": {
+            "persistent": {
+              "total": 94,
+              "correct": 29,
+              "pct": 30.85
+            },
+            "random_like": {
+              "total": 40,
+              "correct": 1,
+              "pct": 2.5
+            },
+            "anti_persistent": {
+              "total": 261,
+              "correct": 233,
+              "pct": 89.27
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 87,
+              "correct": 62,
+              "pct": 71.26
+            },
+            "downtrend": {
+              "total": 166,
+              "correct": 87,
+              "pct": 52.41
+            },
+            "sideways": {
+              "total": 142,
+              "correct": 114,
+              "pct": 80.28
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 430,
+          "correct": 309,
+          "pct": 71.86,
+          "balanced_pct": 59.41,
+          "per_class": {
+            "persistent": {
+              "total": 288,
+              "correct": 254,
+              "pct": 88.19
+            },
+            "random_like": {
+              "total": 84,
+              "correct": 9,
+              "pct": 10.71
+            },
+            "anti_persistent": {
+              "total": 58,
+              "correct": 46,
+              "pct": 79.31
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 246,
+              "correct": 169,
+              "pct": 68.7
+            },
+            "downtrend": {
+              "total": 111,
+              "correct": 103,
+              "pct": 92.79
+            },
+            "sideways": {
+              "total": 73,
+              "correct": 37,
+              "pct": 50.68
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 397,
+          "correct": 245,
+          "pct": 61.71,
+          "balanced_pct": 54.07,
+          "per_class": {
+            "persistent": {
+              "total": 70,
+              "correct": 53,
+              "pct": 75.71
+            },
+            "random_like": {
+              "total": 99,
+              "correct": 4,
+              "pct": 4.04
+            },
+            "anti_persistent": {
+              "total": 228,
+              "correct": 188,
+              "pct": 82.46
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 149,
+              "correct": 79,
+              "pct": 53.02
+            },
+            "downtrend": {
+              "total": 60,
+              "correct": 39,
+              "pct": 65.0
+            },
+            "sideways": {
+              "total": 188,
+              "correct": 127,
+              "pct": 67.55
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 365,
+          "correct": 303,
+          "pct": 83.01,
+          "balanced_pct": 60.61,
+          "per_class": {
+            "persistent": {
+              "total": 239,
+              "correct": 233,
+              "pct": 97.49
+            },
+            "random_like": {
+              "total": 43,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 83,
+              "correct": 70,
+              "pct": 84.34
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 90,
+              "correct": 87,
+              "pct": 96.67
+            },
+            "downtrend": {
+              "total": 227,
+              "correct": 173,
+              "pct": 76.21
+            },
+            "sideways": {
+              "total": 48,
+              "correct": 43,
+              "pct": 89.58
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "SOLUSDT",
+      "name": "Solana (SOL/USDT)",
+      "group": "Kripto Utama",
+      "timeframe": "1h",
+      "stride": 8,
+      "date_range": "2020-09-01 s/d 2026-10-19",
+      "available_years": [
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 5081,
+        "correct": 3318,
+        "pct": 65.3,
+        "balanced_pct": 53.09,
+        "per_class": {
+          "persistent": {
+            "total": 2818,
+            "correct": 2242,
+            "pct": 79.56
+          },
+          "random_like": {
+            "total": 862,
+            "correct": 65,
+            "pct": 7.54
+          },
+          "anti_persistent": {
+            "total": 1401,
+            "correct": 1011,
+            "pct": 72.16
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 2209,
+            "correct": 1544,
+            "pct": 69.9
+          },
+          "downtrend": {
+            "total": 1998,
+            "correct": 1329,
+            "pct": 66.52
+          },
+          "sideways": {
+            "total": 874,
+            "correct": 445,
+            "pct": 50.92
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 154,
+          "correct": 129,
+          "pct": 83.77,
+          "balanced_pct": 46.4,
+          "per_class": {
+            "persistent": {
+              "total": 121,
+              "correct": 116,
+              "pct": 95.87
+            },
+            "random_like": {
+              "total": 3,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 30,
+              "correct": 13,
+              "pct": 43.33
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 57,
+              "correct": 57,
+              "pct": 100.0
+            },
+            "downtrend": {
+              "total": 89,
+              "correct": 67,
+              "pct": 75.28
+            },
+            "sideways": {
+              "total": 8,
+              "correct": 5,
+              "pct": 62.5
+            }
+          },
+          "train_cutoff": "Awal 2020 (Kausal)"
+        },
+        "2021": {
+          "total": 832,
+          "correct": 496,
+          "pct": 59.62,
+          "balanced_pct": 51.69,
+          "per_class": {
+            "persistent": {
+              "total": 609,
+              "correct": 398,
+              "pct": 65.35
+            },
+            "random_like": {
+              "total": 114,
+              "correct": 5,
+              "pct": 4.39
+            },
+            "anti_persistent": {
+              "total": 109,
+              "correct": 93,
+              "pct": 85.32
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 518,
+              "correct": 354,
+              "pct": 68.34
+            },
+            "downtrend": {
+              "total": 228,
+              "correct": 86,
+              "pct": 37.72
+            },
+            "sideways": {
+              "total": 86,
+              "correct": 56,
+              "pct": 65.12
+            }
+          },
+          "train_cutoff": "<= 2020"
+        },
+        "2022": {
+          "total": 848,
+          "correct": 449,
+          "pct": 52.95,
+          "balanced_pct": 49.03,
+          "per_class": {
+            "persistent": {
+              "total": 440,
+              "correct": 311,
+              "pct": 70.68
+            },
+            "random_like": {
+              "total": 235,
+              "correct": 22,
+              "pct": 9.36
+            },
+            "anti_persistent": {
+              "total": 173,
+              "correct": 116,
+              "pct": 67.05
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 189,
+              "correct": 102,
+              "pct": 53.97
+            },
+            "downtrend": {
+              "total": 526,
+              "correct": 298,
+              "pct": 56.65
+            },
+            "sideways": {
+              "total": 133,
+              "correct": 49,
+              "pct": 36.84
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 832,
+          "correct": 516,
+          "pct": 62.02,
+          "balanced_pct": 52.65,
+          "per_class": {
+            "persistent": {
+              "total": 385,
+              "correct": 307,
+              "pct": 79.74
+            },
+            "random_like": {
+              "total": 157,
+              "correct": 21,
+              "pct": 13.38
+            },
+            "anti_persistent": {
+              "total": 290,
+              "correct": 188,
+              "pct": 64.83
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 434,
+              "correct": 289,
+              "pct": 66.59
+            },
+            "downtrend": {
+              "total": 262,
+              "correct": 174,
+              "pct": 66.41
+            },
+            "sideways": {
+              "total": 136,
+              "correct": 53,
+              "pct": 38.97
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 819,
+          "correct": 531,
+          "pct": 64.84,
+          "balanced_pct": 53.22,
+          "per_class": {
+            "persistent": {
+              "total": 266,
+              "correct": 210,
+              "pct": 78.95
+            },
+            "random_like": {
+              "total": 149,
+              "correct": 3,
+              "pct": 2.01
+            },
+            "anti_persistent": {
+              "total": 404,
+              "correct": 318,
+              "pct": 78.71
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 383,
+              "correct": 258,
+              "pct": 67.36
+            },
+            "downtrend": {
+              "total": 183,
+              "correct": 128,
+              "pct": 69.95
+            },
+            "sideways": {
+              "total": 253,
+              "correct": 145,
+              "pct": 57.31
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 857,
+          "correct": 623,
+          "pct": 72.7,
+          "balanced_pct": 50.9,
+          "per_class": {
+            "persistent": {
+              "total": 591,
+              "correct": 533,
+              "pct": 90.19
+            },
+            "random_like": {
+              "total": 119,
+              "correct": 8,
+              "pct": 6.72
+            },
+            "anti_persistent": {
+              "total": 147,
+              "correct": 82,
+              "pct": 55.78
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 280,
+              "correct": 203,
+              "pct": 72.5
+            },
+            "downtrend": {
+              "total": 448,
+              "correct": 370,
+              "pct": 82.59
+            },
+            "sideways": {
+              "total": 129,
+              "correct": 50,
+              "pct": 38.76
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 739,
+          "correct": 574,
+          "pct": 77.67,
+          "balanced_pct": 59.5,
+          "per_class": {
+            "persistent": {
+              "total": 406,
+              "correct": 367,
+              "pct": 90.39
+            },
+            "random_like": {
+              "total": 85,
+              "correct": 6,
+              "pct": 7.06
+            },
+            "anti_persistent": {
+              "total": 248,
+              "correct": 201,
+              "pct": 81.05
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 348,
+              "correct": 281,
+              "pct": 80.75
+            },
+            "downtrend": {
+              "total": 262,
+              "correct": 206,
+              "pct": 78.63
+            },
+            "sideways": {
+              "total": 129,
+              "correct": 87,
+              "pct": 67.44
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "SOLUSDT",
+      "name": "Solana (SOL/USDT)",
+      "group": "Kripto Utama",
+      "timeframe": "4h",
+      "stride": 4,
+      "date_range": "2020-11-02 s/d 2026-10-19",
+      "available_years": [
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 2323,
+        "correct": 1592,
+        "pct": 68.53,
+        "balanced_pct": 48.34,
+        "per_class": {
+          "persistent": {
+            "total": 1604,
+            "correct": 1288,
+            "pct": 80.3
+          },
+          "random_like": {
+            "total": 240,
+            "correct": 6,
+            "pct": 2.5
+          },
+          "anti_persistent": {
+            "total": 479,
+            "correct": 298,
+            "pct": 62.21
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 964,
+            "correct": 667,
+            "pct": 69.19
+          },
+          "downtrend": {
+            "total": 1072,
+            "correct": 796,
+            "pct": 74.25
+          },
+          "sideways": {
+            "total": 287,
+            "correct": 129,
+            "pct": 44.95
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 45,
+          "correct": 26,
+          "pct": 57.78,
+          "balanced_pct": 33.33,
+          "per_class": {
+            "persistent": {
+              "total": 26,
+              "correct": 26,
+              "pct": 100.0
+            },
+            "random_like": {
+              "total": 8,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 11,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "downtrend": {
+              "total": 40,
+              "correct": 26,
+              "pct": 65.0
+            },
+            "sideways": {
+              "total": 5,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "Awal 2020 (Kausal)"
+        },
+        "2021": {
+          "total": 190,
+          "correct": 73,
+          "pct": 38.42,
+          "balanced_pct": 32.72,
+          "per_class": {
+            "persistent": {
+              "total": 154,
+              "correct": 62,
+              "pct": 40.26
+            },
+            "random_like": {
+              "total": 17,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 19,
+              "correct": 11,
+              "pct": 57.89
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 158,
+              "correct": 64,
+              "pct": 40.51
+            },
+            "downtrend": {
+              "total": 13,
+              "correct": 1,
+              "pct": 7.69
+            },
+            "sideways": {
+              "total": 19,
+              "correct": 8,
+              "pct": 42.11
+            }
+          },
+          "train_cutoff": "Awal 2021 (Kausal)"
+        },
+        "2022": {
+          "total": 458,
+          "correct": 353,
+          "pct": 77.07,
+          "balanced_pct": 57.43,
+          "per_class": {
+            "persistent": {
+              "total": 404,
+              "correct": 321,
+              "pct": 79.46
+            },
+            "random_like": {
+              "total": 17,
+              "correct": 2,
+              "pct": 11.76
+            },
+            "anti_persistent": {
+              "total": 37,
+              "correct": 30,
+              "pct": 81.08
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 31,
+              "correct": 22,
+              "pct": 70.97
+            },
+            "downtrend": {
+              "total": 396,
+              "correct": 310,
+              "pct": 78.28
+            },
+            "sideways": {
+              "total": 31,
+              "correct": 21,
+              "pct": 67.74
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 412,
+          "correct": 331,
+          "pct": 80.34,
+          "balanced_pct": 38.18,
+          "per_class": {
+            "persistent": {
+              "total": 323,
+              "correct": 323,
+              "pct": 100.0
+            },
+            "random_like": {
+              "total": 34,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 55,
+              "correct": 8,
+              "pct": 14.55
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 234,
+              "correct": 199,
+              "pct": 85.04
+            },
+            "downtrend": {
+              "total": 131,
+              "correct": 126,
+              "pct": 96.18
+            },
+            "sideways": {
+              "total": 47,
+              "correct": 6,
+              "pct": 12.77
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 426,
+          "correct": 249,
+          "pct": 58.45,
+          "balanced_pct": 46.49,
+          "per_class": {
+            "persistent": {
+              "total": 268,
+              "correct": 193,
+              "pct": 72.01
+            },
+            "random_like": {
+              "total": 75,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 83,
+              "correct": 56,
+              "pct": 67.47
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 269,
+              "correct": 175,
+              "pct": 65.06
+            },
+            "downtrend": {
+              "total": 89,
+              "correct": 41,
+              "pct": 46.07
+            },
+            "sideways": {
+              "total": 68,
+              "correct": 33,
+              "pct": 48.53
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 404,
+          "correct": 260,
+          "pct": 64.36,
+          "balanced_pct": 54.48,
+          "per_class": {
+            "persistent": {
+              "total": 257,
+              "correct": 191,
+              "pct": 74.32
+            },
+            "random_like": {
+              "total": 69,
+              "correct": 4,
+              "pct": 5.8
+            },
+            "anti_persistent": {
+              "total": 78,
+              "correct": 65,
+              "pct": 83.33
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 174,
+              "correct": 119,
+              "pct": 68.39
+            },
+            "downtrend": {
+              "total": 171,
+              "correct": 117,
+              "pct": 68.42
+            },
+            "sideways": {
+              "total": 59,
+              "correct": 24,
+              "pct": 40.68
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 388,
+          "correct": 300,
+          "pct": 77.32,
+          "balanced_pct": 55.1,
+          "per_class": {
+            "persistent": {
+              "total": 172,
+              "correct": 172,
+              "pct": 100.0
+            },
+            "random_like": {
+              "total": 20,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 196,
+              "correct": 128,
+              "pct": 65.31
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 98,
+              "correct": 88,
+              "pct": 89.8
+            },
+            "downtrend": {
+              "total": 232,
+              "correct": 175,
+              "pct": 75.43
+            },
+            "sideways": {
+              "total": 58,
+              "correct": 37,
+              "pct": 63.79
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "XRPUSDT",
+      "name": "Ripple (XRP/USDT)",
+      "group": "Kripto Utama",
+      "timeframe": "1h",
+      "stride": 8,
+      "date_range": "2019-01-21 s/d 2026-10-19",
+      "available_years": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 5701,
+        "correct": 4316,
+        "pct": 75.71,
+        "balanced_pct": 60.15,
+        "per_class": {
+          "persistent": {
+            "total": 2973,
+            "correct": 2622,
+            "pct": 88.19
+          },
+          "random_like": {
+            "total": 782,
+            "correct": 68,
+            "pct": 8.7
+          },
+          "anti_persistent": {
+            "total": 1946,
+            "correct": 1626,
+            "pct": 83.56
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 2171,
+            "correct": 1720,
+            "pct": 79.23
+          },
+          "downtrend": {
+            "total": 2430,
+            "correct": 1864,
+            "pct": 76.71
+          },
+          "sideways": {
+            "total": 1100,
+            "correct": 732,
+            "pct": 66.55
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 779,
+          "correct": 600,
+          "pct": 77.02,
+          "balanced_pct": 61.85,
+          "per_class": {
+            "persistent": {
+              "total": 386,
+              "correct": 346,
+              "pct": 89.64
+            },
+            "random_like": {
+              "total": 100,
+              "correct": 14,
+              "pct": 14.0
+            },
+            "anti_persistent": {
+              "total": 293,
+              "correct": 240,
+              "pct": 81.91
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 410,
+              "correct": 327,
+              "pct": 79.76
+            },
+            "downtrend": {
+              "total": 257,
+              "correct": 203,
+              "pct": 78.99
+            },
+            "sideways": {
+              "total": 112,
+              "correct": 70,
+              "pct": 62.5
+            }
+          },
+          "train_cutoff": "<= 2019"
+        },
+        "2021": {
+          "total": 852,
+          "correct": 662,
+          "pct": 77.7,
+          "balanced_pct": 55.27,
+          "per_class": {
+            "persistent": {
+              "total": 532,
+              "correct": 508,
+              "pct": 95.49
+            },
+            "random_like": {
+              "total": 101,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 219,
+              "correct": 154,
+              "pct": 70.32
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 360,
+              "correct": 303,
+              "pct": 84.17
+            },
+            "downtrend": {
+              "total": 354,
+              "correct": 286,
+              "pct": 80.79
+            },
+            "sideways": {
+              "total": 138,
+              "correct": 73,
+              "pct": 52.9
+            }
+          },
+          "train_cutoff": "<= 2020"
+        },
+        "2022": {
+          "total": 842,
+          "correct": 550,
+          "pct": 65.32,
+          "balanced_pct": 53.55,
+          "per_class": {
+            "persistent": {
+              "total": 462,
+              "correct": 381,
+              "pct": 82.47
+            },
+            "random_like": {
+              "total": 156,
+              "correct": 14,
+              "pct": 8.97
+            },
+            "anti_persistent": {
+              "total": 224,
+              "correct": 155,
+              "pct": 69.2
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 233,
+              "correct": 145,
+              "pct": 62.23
+            },
+            "downtrend": {
+              "total": 444,
+              "correct": 316,
+              "pct": 71.17
+            },
+            "sideways": {
+              "total": 165,
+              "correct": 89,
+              "pct": 53.94
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 839,
+          "correct": 689,
+          "pct": 82.12,
+          "balanced_pct": 57.46,
+          "per_class": {
+            "persistent": {
+              "total": 179,
+              "correct": 120,
+              "pct": 67.04
+            },
+            "random_like": {
+              "total": 89,
+              "correct": 6,
+              "pct": 6.74
+            },
+            "anti_persistent": {
+              "total": 571,
+              "correct": 563,
+              "pct": 98.6
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 306,
+              "correct": 258,
+              "pct": 84.31
+            },
+            "downtrend": {
+              "total": 232,
+              "correct": 165,
+              "pct": 71.12
+            },
+            "sideways": {
+              "total": 301,
+              "correct": 266,
+              "pct": 88.37
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 797,
+          "correct": 604,
+          "pct": 75.78,
+          "balanced_pct": 60.17,
+          "per_class": {
+            "persistent": {
+              "total": 273,
+              "correct": 228,
+              "pct": 83.52
+            },
+            "random_like": {
+              "total": 99,
+              "correct": 11,
+              "pct": 11.11
+            },
+            "anti_persistent": {
+              "total": 425,
+              "correct": 365,
+              "pct": 85.88
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 290,
+              "correct": 219,
+              "pct": 75.52
+            },
+            "downtrend": {
+              "total": 291,
+              "correct": 215,
+              "pct": 73.88
+            },
+            "sideways": {
+              "total": 216,
+              "correct": 170,
+              "pct": 78.7
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 901,
+          "correct": 707,
+          "pct": 78.47,
+          "balanced_pct": 54.26,
+          "per_class": {
+            "persistent": {
+              "total": 652,
+              "correct": 631,
+              "pct": 96.78
+            },
+            "random_like": {
+              "total": 138,
+              "correct": 14,
+              "pct": 10.14
+            },
+            "anti_persistent": {
+              "total": 111,
+              "correct": 62,
+              "pct": 55.86
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 298,
+              "correct": 252,
+              "pct": 84.56
+            },
+            "downtrend": {
+              "total": 501,
+              "correct": 421,
+              "pct": 84.03
+            },
+            "sideways": {
+              "total": 102,
+              "correct": 34,
+              "pct": 33.33
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 691,
+          "correct": 504,
+          "pct": 72.94,
+          "balanced_pct": 59.0,
+          "per_class": {
+            "persistent": {
+              "total": 489,
+              "correct": 408,
+              "pct": 83.44
+            },
+            "random_like": {
+              "total": 99,
+              "correct": 9,
+              "pct": 9.09
+            },
+            "anti_persistent": {
+              "total": 103,
+              "correct": 87,
+              "pct": 84.47
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 274,
+              "correct": 216,
+              "pct": 78.83
+            },
+            "downtrend": {
+              "total": 351,
+              "correct": 258,
+              "pct": 73.5
+            },
+            "sideways": {
+              "total": 66,
+              "correct": 30,
+              "pct": 45.45
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "XRPUSDT",
+      "name": "Ripple (XRP/USDT)",
+      "group": "Kripto Utama",
+      "timeframe": "4h",
+      "stride": 4,
+      "date_range": "2019-03-25 s/d 2026-10-19",
+      "available_years": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 2813,
+        "correct": 1901,
+        "pct": 67.58,
+        "balanced_pct": 54.57,
+        "per_class": {
+          "persistent": {
+            "total": 1528,
+            "correct": 1146,
+            "pct": 75.0
+          },
+          "random_like": {
+            "total": 414,
+            "correct": 16,
+            "pct": 3.86
+          },
+          "anti_persistent": {
+            "total": 871,
+            "correct": 739,
+            "pct": 84.85
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 1200,
+            "correct": 926,
+            "pct": 77.17
+          },
+          "downtrend": {
+            "total": 1094,
+            "correct": 642,
+            "pct": 58.68
+          },
+          "sideways": {
+            "total": 519,
+            "correct": 333,
+            "pct": 64.16
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 431,
+          "correct": 284,
+          "pct": 65.89,
+          "balanced_pct": 52.64,
+          "per_class": {
+            "persistent": {
+              "total": 278,
+              "correct": 187,
+              "pct": 67.27
+            },
+            "random_like": {
+              "total": 46,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 107,
+              "correct": 97,
+              "pct": 90.65
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 233,
+              "correct": 155,
+              "pct": 66.52
+            },
+            "downtrend": {
+              "total": 150,
+              "correct": 113,
+              "pct": 75.33
+            },
+            "sideways": {
+              "total": 48,
+              "correct": 16,
+              "pct": 33.33
+            }
+          },
+          "train_cutoff": "<= 2019"
+        },
+        "2021": {
+          "total": 450,
+          "correct": 362,
+          "pct": 80.44,
+          "balanced_pct": 59.19,
+          "per_class": {
+            "persistent": {
+              "total": 323,
+              "correct": 316,
+              "pct": 97.83
+            },
+            "random_like": {
+              "total": 70,
+              "correct": 3,
+              "pct": 4.29
+            },
+            "anti_persistent": {
+              "total": 57,
+              "correct": 43,
+              "pct": 75.44
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 286,
+              "correct": 245,
+              "pct": 85.66
+            },
+            "downtrend": {
+              "total": 124,
+              "correct": 95,
+              "pct": 76.61
+            },
+            "sideways": {
+              "total": 40,
+              "correct": 22,
+              "pct": 55.0
+            }
+          },
+          "train_cutoff": "<= 2020"
+        },
+        "2022": {
+          "total": 381,
+          "correct": 204,
+          "pct": 53.54,
+          "balanced_pct": 47.4,
+          "per_class": {
+            "persistent": {
+              "total": 110,
+              "correct": 64,
+              "pct": 58.18
+            },
+            "random_like": {
+              "total": 92,
+              "correct": 11,
+              "pct": 11.96
+            },
+            "anti_persistent": {
+              "total": 179,
+              "correct": 129,
+              "pct": 72.07
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 50,
+              "correct": 23,
+              "pct": 46.0
+            },
+            "downtrend": {
+              "total": 250,
+              "correct": 144,
+              "pct": 57.6
+            },
+            "sideways": {
+              "total": 81,
+              "correct": 37,
+              "pct": 45.68
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 403,
+          "correct": 265,
+          "pct": 65.76,
+          "balanced_pct": 44.92,
+          "per_class": {
+            "persistent": {
+              "total": 143,
+              "correct": 53,
+              "pct": 37.06
+            },
+            "random_like": {
+              "total": 43,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 217,
+              "correct": 212,
+              "pct": 97.7
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 163,
+              "correct": 111,
+              "pct": 68.1
+            },
+            "downtrend": {
+              "total": 101,
+              "correct": 30,
+              "pct": 29.7
+            },
+            "sideways": {
+              "total": 139,
+              "correct": 124,
+              "pct": 89.21
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 449,
+          "correct": 267,
+          "pct": 59.47,
+          "balanced_pct": 49.07,
+          "per_class": {
+            "persistent": {
+              "total": 265,
+              "correct": 171,
+              "pct": 64.53
+            },
+            "random_like": {
+              "total": 66,
+              "correct": 2,
+              "pct": 3.03
+            },
+            "anti_persistent": {
+              "total": 118,
+              "correct": 94,
+              "pct": 79.66
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 189,
+              "correct": 158,
+              "pct": 83.6
+            },
+            "downtrend": {
+              "total": 151,
+              "correct": 52,
+              "pct": 34.44
+            },
+            "sideways": {
+              "total": 109,
+              "correct": 57,
+              "pct": 52.29
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 355,
+          "correct": 219,
+          "pct": 61.69,
+          "balanced_pct": 50.82,
+          "per_class": {
+            "persistent": {
+              "total": 188,
+              "correct": 162,
+              "pct": 86.17
+            },
+            "random_like": {
+              "total": 81,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 86,
+              "correct": 57,
+              "pct": 66.28
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 187,
+              "correct": 142,
+              "pct": 75.94
+            },
+            "downtrend": {
+              "total": 111,
+              "correct": 44,
+              "pct": 39.64
+            },
+            "sideways": {
+              "total": 57,
+              "correct": 33,
+              "pct": 57.89
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 344,
+          "correct": 300,
+          "pct": 87.21,
+          "balanced_pct": 62.44,
+          "per_class": {
+            "persistent": {
+              "total": 221,
+              "correct": 193,
+              "pct": 87.33
+            },
+            "random_like": {
+              "total": 16,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 107,
+              "correct": 107,
+              "pct": 100.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 92,
+              "correct": 92,
+              "pct": 100.0
+            },
+            "downtrend": {
+              "total": 207,
+              "correct": 164,
+              "pct": 79.23
+            },
+            "sideways": {
+              "total": 45,
+              "correct": 44,
+              "pct": 97.78
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "ADAUSDT",
+      "name": "Cardano (ADA/USDT)",
+      "group": "Kripto Utama",
+      "timeframe": "1h",
+      "stride": 8,
+      "date_range": "2019-01-21 s/d 2026-10-19",
+      "available_years": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 5719,
+        "correct": 4321,
+        "pct": 75.56,
+        "balanced_pct": 58.54,
+        "per_class": {
+          "persistent": {
+            "total": 2853,
+            "correct": 2556,
+            "pct": 89.59
+          },
+          "random_like": {
+            "total": 693,
+            "correct": 49,
+            "pct": 7.07
+          },
+          "anti_persistent": {
+            "total": 2173,
+            "correct": 1716,
+            "pct": 78.97
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 2205,
+            "correct": 1694,
+            "pct": 76.83
+          },
+          "downtrend": {
+            "total": 2335,
+            "correct": 1835,
+            "pct": 78.59
+          },
+          "sideways": {
+            "total": 1179,
+            "correct": 792,
+            "pct": 67.18
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 784,
+          "correct": 529,
+          "pct": 67.47,
+          "balanced_pct": 50.3,
+          "per_class": {
+            "persistent": {
+              "total": 513,
+              "correct": 402,
+              "pct": 78.36
+            },
+            "random_like": {
+              "total": 92,
+              "correct": 3,
+              "pct": 3.26
+            },
+            "anti_persistent": {
+              "total": 179,
+              "correct": 124,
+              "pct": 69.27
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 480,
+              "correct": 313,
+              "pct": 65.21
+            },
+            "downtrend": {
+              "total": 194,
+              "correct": 144,
+              "pct": 74.23
+            },
+            "sideways": {
+              "total": 110,
+              "correct": 72,
+              "pct": 65.45
+            }
+          },
+          "train_cutoff": "<= 2019"
+        },
+        "2021": {
+          "total": 831,
+          "correct": 617,
+          "pct": 74.25,
+          "balanced_pct": 58.78,
+          "per_class": {
+            "persistent": {
+              "total": 273,
+              "correct": 261,
+              "pct": 95.6
+            },
+            "random_like": {
+              "total": 117,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 441,
+              "correct": 356,
+              "pct": 80.73
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 321,
+              "correct": 246,
+              "pct": 76.64
+            },
+            "downtrend": {
+              "total": 230,
+              "correct": 172,
+              "pct": 74.78
+            },
+            "sideways": {
+              "total": 280,
+              "correct": 199,
+              "pct": 71.07
+            }
+          },
+          "train_cutoff": "<= 2020"
+        },
+        "2022": {
+          "total": 813,
+          "correct": 620,
+          "pct": 76.26,
+          "balanced_pct": 55.49,
+          "per_class": {
+            "persistent": {
+              "total": 455,
+              "correct": 430,
+              "pct": 94.51
+            },
+            "random_like": {
+              "total": 94,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 264,
+              "correct": 190,
+              "pct": 71.97
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 175,
+              "correct": 122,
+              "pct": 69.71
+            },
+            "downtrend": {
+              "total": 488,
+              "correct": 405,
+              "pct": 82.99
+            },
+            "sideways": {
+              "total": 150,
+              "correct": 93,
+              "pct": 62.0
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 899,
+          "correct": 803,
+          "pct": 89.32,
+          "balanced_pct": 64.55,
+          "per_class": {
+            "persistent": {
+              "total": 332,
+              "correct": 307,
+              "pct": 92.47
+            },
+            "random_like": {
+              "total": 47,
+              "correct": 3,
+              "pct": 6.38
+            },
+            "anti_persistent": {
+              "total": 520,
+              "correct": 493,
+              "pct": 94.81
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 402,
+              "correct": 338,
+              "pct": 84.08
+            },
+            "downtrend": {
+              "total": 307,
+              "correct": 294,
+              "pct": 95.77
+            },
+            "sideways": {
+              "total": 190,
+              "correct": 171,
+              "pct": 90.0
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 833,
+          "correct": 644,
+          "pct": 77.31,
+          "balanced_pct": 60.86,
+          "per_class": {
+            "persistent": {
+              "total": 386,
+              "correct": 335,
+              "pct": 86.79
+            },
+            "random_like": {
+              "total": 102,
+              "correct": 9,
+              "pct": 8.82
+            },
+            "anti_persistent": {
+              "total": 345,
+              "correct": 300,
+              "pct": 86.96
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 308,
+              "correct": 261,
+              "pct": 84.74
+            },
+            "downtrend": {
+              "total": 356,
+              "correct": 248,
+              "pct": 69.66
+            },
+            "sideways": {
+              "total": 169,
+              "correct": 135,
+              "pct": 79.88
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 879,
+          "correct": 587,
+          "pct": 66.78,
+          "balanced_pct": 52.25,
+          "per_class": {
+            "persistent": {
+              "total": 499,
+              "correct": 441,
+              "pct": 88.38
+            },
+            "random_like": {
+              "total": 130,
+              "correct": 27,
+              "pct": 20.77
+            },
+            "anti_persistent": {
+              "total": 250,
+              "correct": 119,
+              "pct": 47.6
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 252,
+              "correct": 204,
+              "pct": 80.95
+            },
+            "downtrend": {
+              "total": 459,
+              "correct": 321,
+              "pct": 69.93
+            },
+            "sideways": {
+              "total": 168,
+              "correct": 62,
+              "pct": 36.9
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 680,
+          "correct": 521,
+          "pct": 76.62,
+          "balanced_pct": 59.84,
+          "per_class": {
+            "persistent": {
+              "total": 395,
+              "correct": 380,
+              "pct": 96.2
+            },
+            "random_like": {
+              "total": 111,
+              "correct": 7,
+              "pct": 6.31
+            },
+            "anti_persistent": {
+              "total": 174,
+              "correct": 134,
+              "pct": 77.01
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 267,
+              "correct": 210,
+              "pct": 78.65
+            },
+            "downtrend": {
+              "total": 301,
+              "correct": 251,
+              "pct": 83.39
+            },
+            "sideways": {
+              "total": 112,
+              "correct": 60,
+              "pct": 53.57
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "ADAUSDT",
+      "name": "Cardano (ADA/USDT)",
+      "group": "Kripto Utama",
+      "timeframe": "4h",
+      "stride": 4,
+      "date_range": "2019-03-25 s/d 2026-10-19",
+      "available_years": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 2681,
+        "correct": 1919,
+        "pct": 71.58,
+        "balanced_pct": 54.75,
+        "per_class": {
+          "persistent": {
+            "total": 1625,
+            "correct": 1312,
+            "pct": 80.74
+          },
+          "random_like": {
+            "total": 323,
+            "correct": 4,
+            "pct": 1.24
+          },
+          "anti_persistent": {
+            "total": 733,
+            "correct": 603,
+            "pct": 82.26
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 988,
+            "correct": 798,
+            "pct": 80.77
+          },
+          "downtrend": {
+            "total": 1237,
+            "correct": 813,
+            "pct": 65.72
+          },
+          "sideways": {
+            "total": 456,
+            "correct": 308,
+            "pct": 67.54
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 459,
+          "correct": 415,
+          "pct": 90.41,
+          "balanced_pct": 33.33,
+          "per_class": {
+            "persistent": {
+              "total": 415,
+              "correct": 415,
+              "pct": 100.0
+            },
+            "random_like": {
+              "total": 21,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 23,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 262,
+              "correct": 234,
+              "pct": 89.31
+            },
+            "downtrend": {
+              "total": 184,
+              "correct": 181,
+              "pct": 98.37
+            },
+            "sideways": {
+              "total": 13,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "<= 2019"
+        },
+        "2021": {
+          "total": 400,
+          "correct": 337,
+          "pct": 84.25,
+          "balanced_pct": 58.37,
+          "per_class": {
+            "persistent": {
+              "total": 165,
+              "correct": 127,
+              "pct": 76.97
+            },
+            "random_like": {
+              "total": 21,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 214,
+              "correct": 210,
+              "pct": 98.13
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 236,
+              "correct": 186,
+              "pct": 78.81
+            },
+            "downtrend": {
+              "total": 59,
+              "correct": 57,
+              "pct": 96.61
+            },
+            "sideways": {
+              "total": 105,
+              "correct": 94,
+              "pct": 89.52
+            }
+          },
+          "train_cutoff": "<= 2020"
+        },
+        "2022": {
+          "total": 357,
+          "correct": 182,
+          "pct": 50.98,
+          "balanced_pct": 45.46,
+          "per_class": {
+            "persistent": {
+              "total": 200,
+              "correct": 115,
+              "pct": 57.5
+            },
+            "random_like": {
+              "total": 71,
+              "correct": 4,
+              "pct": 5.63
+            },
+            "anti_persistent": {
+              "total": 86,
+              "correct": 63,
+              "pct": 73.26
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 20,
+              "correct": 5,
+              "pct": 25.0
+            },
+            "downtrend": {
+              "total": 285,
+              "correct": 155,
+              "pct": 54.39
+            },
+            "sideways": {
+              "total": 52,
+              "correct": 22,
+              "pct": 42.31
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 350,
+          "correct": 228,
+          "pct": 65.14,
+          "balanced_pct": 49.89,
+          "per_class": {
+            "persistent": {
+              "total": 141,
+              "correct": 97,
+              "pct": 68.79
+            },
+            "random_like": {
+              "total": 47,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 162,
+              "correct": 131,
+              "pct": 80.86
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 91,
+              "correct": 66,
+              "pct": 72.53
+            },
+            "downtrend": {
+              "total": 142,
+              "correct": 77,
+              "pct": 54.23
+            },
+            "sideways": {
+              "total": 117,
+              "correct": 85,
+              "pct": 72.65
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 386,
+          "correct": 251,
+          "pct": 65.03,
+          "balanced_pct": 52.58,
+          "per_class": {
+            "persistent": {
+              "total": 241,
+              "correct": 174,
+              "pct": 72.2
+            },
+            "random_like": {
+              "total": 55,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 90,
+              "correct": 77,
+              "pct": 85.56
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 165,
+              "correct": 136,
+              "pct": 82.42
+            },
+            "downtrend": {
+              "total": 152,
+              "correct": 70,
+              "pct": 46.05
+            },
+            "sideways": {
+              "total": 69,
+              "correct": 45,
+              "pct": 65.22
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 372,
+          "correct": 167,
+          "pct": 44.89,
+          "balanced_pct": 40.46,
+          "per_class": {
+            "persistent": {
+              "total": 203,
+              "correct": 127,
+              "pct": 62.56
+            },
+            "random_like": {
+              "total": 101,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 68,
+              "correct": 40,
+              "pct": 58.82
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 130,
+              "correct": 87,
+              "pct": 66.92
+            },
+            "downtrend": {
+              "total": 183,
+              "correct": 57,
+              "pct": 31.15
+            },
+            "sideways": {
+              "total": 59,
+              "correct": 23,
+              "pct": 38.98
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 357,
+          "correct": 339,
+          "pct": 94.96,
+          "balanced_pct": 63.32,
+          "per_class": {
+            "persistent": {
+              "total": 260,
+              "correct": 257,
+              "pct": 98.85
+            },
+            "random_like": {
+              "total": 7,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 90,
+              "correct": 82,
+              "pct": 91.11
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 84,
+              "correct": 84,
+              "pct": 100.0
+            },
+            "downtrend": {
+              "total": 232,
+              "correct": 216,
+              "pct": 93.1
+            },
+            "sideways": {
+              "total": 41,
+              "correct": 39,
+              "pct": 95.12
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "DOGEUSDT",
+      "name": "Dogecoin (DOGE/USDT)",
+      "group": "Kripto Utama",
+      "timeframe": "1h",
+      "stride": 8,
+      "date_range": "2019-07-26 s/d 2026-10-19",
+      "available_years": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 5852,
+        "correct": 4342,
+        "pct": 74.2,
+        "balanced_pct": 58.06,
+        "per_class": {
+          "persistent": {
+            "total": 3692,
+            "correct": 3384,
+            "pct": 91.66
+          },
+          "random_like": {
+            "total": 969,
+            "correct": 108,
+            "pct": 11.15
+          },
+          "anti_persistent": {
+            "total": 1191,
+            "correct": 850,
+            "pct": 71.37
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 2275,
+            "correct": 1760,
+            "pct": 77.36
+          },
+          "downtrend": {
+            "total": 2708,
+            "correct": 2107,
+            "pct": 77.81
+          },
+          "sideways": {
+            "total": 869,
+            "correct": 475,
+            "pct": 54.66
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 837,
+          "correct": 579,
+          "pct": 69.18,
+          "balanced_pct": 54.2,
+          "per_class": {
+            "persistent": {
+              "total": 380,
+              "correct": 252,
+              "pct": 66.32
+            },
+            "random_like": {
+              "total": 98,
+              "correct": 7,
+              "pct": 7.14
+            },
+            "anti_persistent": {
+              "total": 359,
+              "correct": 320,
+              "pct": 89.14
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 367,
+              "correct": 264,
+              "pct": 71.93
+            },
+            "downtrend": {
+              "total": 236,
+              "correct": 121,
+              "pct": 51.27
+            },
+            "sideways": {
+              "total": 234,
+              "correct": 194,
+              "pct": 82.91
+            }
+          },
+          "train_cutoff": "<= 2019"
+        },
+        "2021": {
+          "total": 912,
+          "correct": 719,
+          "pct": 78.84,
+          "balanced_pct": 34.3,
+          "per_class": {
+            "persistent": {
+              "total": 725,
+              "correct": 712,
+              "pct": 98.21
+            },
+            "random_like": {
+              "total": 149,
+              "correct": 7,
+              "pct": 4.7
+            },
+            "anti_persistent": {
+              "total": 38,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 455,
+              "correct": 399,
+              "pct": 87.69
+            },
+            "downtrend": {
+              "total": 383,
+              "correct": 316,
+              "pct": 82.51
+            },
+            "sideways": {
+              "total": 74,
+              "correct": 4,
+              "pct": 5.41
+            }
+          },
+          "train_cutoff": "<= 2020"
+        },
+        "2022": {
+          "total": 893,
+          "correct": 686,
+          "pct": 76.82,
+          "balanced_pct": 46.5,
+          "per_class": {
+            "persistent": {
+              "total": 647,
+              "correct": 642,
+              "pct": 99.23
+            },
+            "random_like": {
+              "total": 139,
+              "correct": 4,
+              "pct": 2.88
+            },
+            "anti_persistent": {
+              "total": 107,
+              "correct": 40,
+              "pct": 37.38
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 273,
+              "correct": 234,
+              "pct": 85.71
+            },
+            "downtrend": {
+              "total": 517,
+              "correct": 433,
+              "pct": 83.75
+            },
+            "sideways": {
+              "total": 103,
+              "correct": 19,
+              "pct": 18.45
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 774,
+          "correct": 474,
+          "pct": 61.24,
+          "balanced_pct": 57.08,
+          "per_class": {
+            "persistent": {
+              "total": 200,
+              "correct": 141,
+              "pct": 70.5
+            },
+            "random_like": {
+              "total": 201,
+              "correct": 50,
+              "pct": 24.88
+            },
+            "anti_persistent": {
+              "total": 373,
+              "correct": 283,
+              "pct": 75.87
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 247,
+              "correct": 120,
+              "pct": 48.58
+            },
+            "downtrend": {
+              "total": 288,
+              "correct": 201,
+              "pct": 69.79
+            },
+            "sideways": {
+              "total": 239,
+              "correct": 153,
+              "pct": 64.02
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 846,
+          "correct": 617,
+          "pct": 72.93,
+          "balanced_pct": 56.71,
+          "per_class": {
+            "persistent": {
+              "total": 554,
+              "correct": 531,
+              "pct": 95.85
+            },
+            "random_like": {
+              "total": 184,
+              "correct": 14,
+              "pct": 7.61
+            },
+            "anti_persistent": {
+              "total": 108,
+              "correct": 72,
+              "pct": 66.67
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 402,
+              "correct": 308,
+              "pct": 76.62
+            },
+            "downtrend": {
+              "total": 338,
+              "correct": 253,
+              "pct": 74.85
+            },
+            "sideways": {
+              "total": 106,
+              "correct": 56,
+              "pct": 52.83
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 946,
+          "correct": 773,
+          "pct": 81.71,
+          "balanced_pct": 42.2,
+          "per_class": {
+            "persistent": {
+              "total": 815,
+              "correct": 758,
+              "pct": 93.01
+            },
+            "random_like": {
+              "total": 101,
+              "correct": 7,
+              "pct": 6.93
+            },
+            "anti_persistent": {
+              "total": 30,
+              "correct": 8,
+              "pct": 26.67
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 305,
+              "correct": 256,
+              "pct": 83.93
+            },
+            "downtrend": {
+              "total": 614,
+              "correct": 512,
+              "pct": 83.39
+            },
+            "sideways": {
+              "total": 27,
+              "correct": 5,
+              "pct": 18.52
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 644,
+          "correct": 494,
+          "pct": 76.71,
+          "balanced_pct": 61.85,
+          "per_class": {
+            "persistent": {
+              "total": 371,
+              "correct": 348,
+              "pct": 93.8
+            },
+            "random_like": {
+              "total": 97,
+              "correct": 19,
+              "pct": 19.59
+            },
+            "anti_persistent": {
+              "total": 176,
+              "correct": 127,
+              "pct": 72.16
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 226,
+              "correct": 179,
+              "pct": 79.2
+            },
+            "downtrend": {
+              "total": 332,
+              "correct": 271,
+              "pct": 81.63
+            },
+            "sideways": {
+              "total": 86,
+              "correct": 44,
+              "pct": 51.16
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "DOGEUSDT",
+      "name": "Dogecoin (DOGE/USDT)",
+      "group": "Kripto Utama",
+      "timeframe": "4h",
+      "stride": 4,
+      "date_range": "2019-09-27 s/d 2026-10-19",
+      "available_years": [
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 2954,
+        "correct": 2132,
+        "pct": 72.17,
+        "balanced_pct": 60.13,
+        "per_class": {
+          "persistent": {
+            "total": 1575,
+            "correct": 1290,
+            "pct": 81.9
+          },
+          "random_like": {
+            "total": 367,
+            "correct": 88,
+            "pct": 23.98
+          },
+          "anti_persistent": {
+            "total": 1012,
+            "correct": 754,
+            "pct": 74.51
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 1223,
+            "correct": 1092,
+            "pct": 89.29
+          },
+          "downtrend": {
+            "total": 1229,
+            "correct": 700,
+            "pct": 56.96
+          },
+          "sideways": {
+            "total": 502,
+            "correct": 340,
+            "pct": 67.73
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 369,
+          "correct": 307,
+          "pct": 83.2,
+          "balanced_pct": 58.09,
+          "per_class": {
+            "persistent": {
+              "total": 117,
+              "correct": 105,
+              "pct": 89.74
+            },
+            "random_like": {
+              "total": 13,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 239,
+              "correct": 202,
+              "pct": 84.52
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 161,
+              "correct": 139,
+              "pct": 86.34
+            },
+            "downtrend": {
+              "total": 187,
+              "correct": 153,
+              "pct": 81.82
+            },
+            "sideways": {
+              "total": 21,
+              "correct": 15,
+              "pct": 71.43
+            }
+          },
+          "train_cutoff": "<= 2019"
+        },
+        "2021": {
+          "total": 467,
+          "correct": 309,
+          "pct": 66.17,
+          "balanced_pct": 42.3,
+          "per_class": {
+            "persistent": {
+              "total": 277,
+              "correct": 277,
+              "pct": 100.0
+            },
+            "random_like": {
+              "total": 71,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 119,
+              "correct": 32,
+              "pct": 26.89
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 269,
+              "correct": 251,
+              "pct": 93.31
+            },
+            "downtrend": {
+              "total": 118,
+              "correct": 46,
+              "pct": 38.98
+            },
+            "sideways": {
+              "total": 80,
+              "correct": 12,
+              "pct": 15.0
+            }
+          },
+          "train_cutoff": "<= 2020"
+        },
+        "2022": {
+          "total": 433,
+          "correct": 242,
+          "pct": 55.89,
+          "balanced_pct": 59.82,
+          "per_class": {
+            "persistent": {
+              "total": 196,
+              "correct": 107,
+              "pct": 54.59
+            },
+            "random_like": {
+              "total": 74,
+              "correct": 57,
+              "pct": 77.03
+            },
+            "anti_persistent": {
+              "total": 163,
+              "correct": 78,
+              "pct": 47.85
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 102,
+              "correct": 91,
+              "pct": 89.22
+            },
+            "downtrend": {
+              "total": 199,
+              "correct": 74,
+              "pct": 37.19
+            },
+            "sideways": {
+              "total": 132,
+              "correct": 77,
+              "pct": 58.33
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 402,
+          "correct": 307,
+          "pct": 76.37,
+          "balanced_pct": 52.91,
+          "per_class": {
+            "persistent": {
+              "total": 96,
+              "correct": 45,
+              "pct": 46.88
+            },
+            "random_like": {
+              "total": 49,
+              "correct": 6,
+              "pct": 12.24
+            },
+            "anti_persistent": {
+              "total": 257,
+              "correct": 256,
+              "pct": 99.61
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 101,
+              "correct": 66,
+              "pct": 65.35
+            },
+            "downtrend": {
+              "total": 128,
+              "correct": 85,
+              "pct": 66.41
+            },
+            "sideways": {
+              "total": 173,
+              "correct": 156,
+              "pct": 90.17
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 461,
+          "correct": 344,
+          "pct": 74.62,
+          "balanced_pct": 65.94,
+          "per_class": {
+            "persistent": {
+              "total": 290,
+              "correct": 230,
+              "pct": 79.31
+            },
+            "random_like": {
+              "total": 58,
+              "correct": 21,
+              "pct": 36.21
+            },
+            "anti_persistent": {
+              "total": 113,
+              "correct": 93,
+              "pct": 82.3
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 281,
+              "correct": 237,
+              "pct": 84.34
+            },
+            "downtrend": {
+              "total": 130,
+              "correct": 62,
+              "pct": 47.69
+            },
+            "sideways": {
+              "total": 50,
+              "correct": 45,
+              "pct": 90.0
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 456,
+          "correct": 331,
+          "pct": 72.59,
+          "balanced_pct": 46.36,
+          "per_class": {
+            "persistent": {
+              "total": 398,
+              "correct": 325,
+              "pct": 81.66
+            },
+            "random_like": {
+              "total": 54,
+              "correct": 4,
+              "pct": 7.41
+            },
+            "anti_persistent": {
+              "total": 4,
+              "correct": 2,
+              "pct": 50.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 212,
+              "correct": 211,
+              "pct": 99.53
+            },
+            "downtrend": {
+              "total": 239,
+              "correct": 120,
+              "pct": 50.21
+            },
+            "sideways": {
+              "total": 5,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 366,
+          "correct": 292,
+          "pct": 79.78,
+          "balanced_pct": 59.26,
+          "per_class": {
+            "persistent": {
+              "total": 201,
+              "correct": 201,
+              "pct": 100.0
+            },
+            "random_like": {
+              "total": 48,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 117,
+              "correct": 91,
+              "pct": 77.78
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 97,
+              "correct": 97,
+              "pct": 100.0
+            },
+            "downtrend": {
+              "total": 228,
+              "correct": 160,
+              "pct": 70.18
+            },
+            "sideways": {
+              "total": 41,
+              "correct": 35,
+              "pct": 85.37
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    },
+    {
+      "symbol": "ANTMJK",
+      "name": "Aneka Tambang Emas/Nikel (ANTM.JK)",
+      "group": "Komoditas & Saham",
+      "timeframe": "1d",
+      "stride": 1,
+      "date_range": "2012-01-12 s/d 2026-10-15",
+      "available_years": [
+        2012,
+        2013,
+        2014,
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020,
+        2021,
+        2022,
+        2023,
+        2024,
+        2025,
+        2026
+      ],
+      "overall_walk_forward": {
+        "total": 1398,
+        "correct": 1065,
+        "pct": 76.18,
+        "balanced_pct": 57.92,
+        "per_class": {
+          "persistent": {
+            "total": 1028,
+            "correct": 931,
+            "pct": 90.56
+          },
+          "random_like": {
+            "total": 228,
+            "correct": 42,
+            "pct": 18.42
+          },
+          "anti_persistent": {
+            "total": 142,
+            "correct": 92,
+            "pct": 64.79
+          }
+        },
+        "by_condition": {
+          "uptrend": {
+            "total": 741,
+            "correct": 653,
+            "pct": 88.12
+          },
+          "downtrend": {
+            "total": 474,
+            "correct": 332,
+            "pct": 70.04
+          },
+          "sideways": {
+            "total": 183,
+            "correct": 80,
+            "pct": 43.72
+          }
+        }
+      },
+      "by_year": {
+        "2020": {
+          "total": 224,
+          "correct": 217,
+          "pct": 96.88,
+          "balanced_pct": 50.0,
+          "per_class": {
+            "persistent": {
+              "total": 217,
+              "correct": 217,
+              "pct": 100.0
+            },
+            "random_like": {
+              "total": 7,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 67,
+              "correct": 67,
+              "pct": 100.0
+            },
+            "downtrend": {
+              "total": 157,
+              "correct": 150,
+              "pct": 95.54
+            },
+            "sideways": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "<= 2019"
+        },
+        "2021": {
+          "total": 237,
+          "correct": 237,
+          "pct": 100.0,
+          "balanced_pct": 100.0,
+          "per_class": {
+            "persistent": {
+              "total": 237,
+              "correct": 237,
+              "pct": 100.0
+            },
+            "random_like": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 237,
+              "correct": 237,
+              "pct": 100.0
+            },
+            "downtrend": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "sideways": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "<= 2020"
+        },
+        "2022": {
+          "total": 181,
+          "correct": 177,
+          "pct": 97.79,
+          "balanced_pct": 62.22,
+          "per_class": {
+            "persistent": {
+              "total": 177,
+              "correct": 176,
+              "pct": 99.44
+            },
+            "random_like": {
+              "total": 4,
+              "correct": 1,
+              "pct": 25.0
+            },
+            "anti_persistent": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 181,
+              "correct": 177,
+              "pct": 97.79
+            },
+            "downtrend": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "sideways": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "<= 2021"
+        },
+        "2023": {
+          "total": 199,
+          "correct": 171,
+          "pct": 85.93,
+          "balanced_pct": 33.33,
+          "per_class": {
+            "persistent": {
+              "total": 171,
+              "correct": 171,
+              "pct": 100.0
+            },
+            "random_like": {
+              "total": 27,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 1,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "downtrend": {
+              "total": 182,
+              "correct": 171,
+              "pct": 93.96
+            },
+            "sideways": {
+              "total": 17,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "<= 2022"
+        },
+        "2024": {
+          "total": 202,
+          "correct": 35,
+          "pct": 17.33,
+          "balanced_pct": 25.13,
+          "per_class": {
+            "persistent": {
+              "total": 90,
+              "correct": 4,
+              "pct": 4.44
+            },
+            "random_like": {
+              "total": 70,
+              "correct": 3,
+              "pct": 4.29
+            },
+            "anti_persistent": {
+              "total": 42,
+              "correct": 28,
+              "pct": 66.67
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "downtrend": {
+              "total": 133,
+              "correct": 10,
+              "pct": 7.52
+            },
+            "sideways": {
+              "total": 69,
+              "correct": 25,
+              "pct": 36.23
+            }
+          },
+          "train_cutoff": "<= 2023"
+        },
+        "2025": {
+          "total": 189,
+          "correct": 104,
+          "pct": 55.03,
+          "balanced_pct": 52.94,
+          "per_class": {
+            "persistent": {
+              "total": 4,
+              "correct": 2,
+              "pct": 50.0
+            },
+            "random_like": {
+              "total": 86,
+              "correct": 38,
+              "pct": 44.19
+            },
+            "anti_persistent": {
+              "total": 99,
+              "correct": 64,
+              "pct": 64.65
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 90,
+              "correct": 48,
+              "pct": 53.33
+            },
+            "downtrend": {
+              "total": 2,
+              "correct": 1,
+              "pct": 50.0
+            },
+            "sideways": {
+              "total": 97,
+              "correct": 55,
+              "pct": 56.7
+            }
+          },
+          "train_cutoff": "<= 2024"
+        },
+        "2026": {
+          "total": 166,
+          "correct": 124,
+          "pct": 74.7,
+          "balanced_pct": 46.97,
+          "per_class": {
+            "persistent": {
+              "total": 132,
+              "correct": 124,
+              "pct": 93.94
+            },
+            "random_like": {
+              "total": 34,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "anti_persistent": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "by_condition": {
+            "uptrend": {
+              "total": 166,
+              "correct": 124,
+              "pct": 74.7
+            },
+            "downtrend": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            },
+            "sideways": {
+              "total": 0,
+              "correct": 0,
+              "pct": 0.0
+            }
+          },
+          "train_cutoff": "<= 2025"
+        }
+      }
+    }
+  ]
+}

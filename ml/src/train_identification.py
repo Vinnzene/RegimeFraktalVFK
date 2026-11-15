@@ -37,7 +37,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from app.core.config import ARTIFACTS_DIR, REGIME_CLASSES, get_config  # noqa: E402
 from app.db.repository import get_repository  # noqa: E402
 from app.services.model_registry import (  # noqa: E402
-    balanced_accuracy,
     matthews_corrcoef,
 )
 from dataset import build_dataset  # noqa: E402

@@ -24,13 +24,11 @@ from app.services.data_ingestion import (
     OHLCV_COLUMNS as INGESTION_OHLCV_COLUMNS,
 )
 from app.services.data_ingestion import (
-    IngestionError,
-    ensure_schema,
     fetch_klines,
     fetch_latest,
     merge_ohlcv,
 )
-from app.services.hurst_dfa import rolling_hurst_dfa, to_log_return
+from app.services.hurst_dfa import compute_rolling_er, rolling_hurst_dfa, to_log_return
 from app.services.regime_labeling import label_series
 
 # Skema kolom diambil dari data_ingestion agar hanya ada satu definisi.
@@ -90,9 +88,10 @@ def validate_identifiers(symbol: str, timeframe: str, config: AppConfig) -> Tupl
         raise InvalidIdentifier(
             f"symbol '{symbol}' tidak valid — hanya huruf/angka, maksimal 20 karakter."
         )
-    if timeframe not in config.data.timeframes:
+    allowed_tfs = set(config.data.timeframes) | {"1d", "30m", "5m"}
+    if timeframe not in allowed_tfs:
         raise InvalidIdentifier(
-            f"timeframe '{timeframe}' tidak dikenal — pilih {config.data.timeframes}."
+            f"timeframe '{timeframe}' tidak dikenal — pilih {sorted(allowed_tfs)}."
         )
     return symbol.upper(), timeframe
 
@@ -432,6 +431,11 @@ class ParquetRepository(Repository):
             empty.attrs["config_hash"] = cfg.config_hash
             empty.attrs["n_bars"] = len(ohlcv)
             return empty
+
+        if not all(col in metrics.columns for col in ("er_full", "er_128", "er_64")):
+            er_dict = compute_rolling_er(log_ret, metrics["index"].astype(int).tolist(), window=window)
+            for k_er, v_er in er_dict.items():
+                metrics[k_er] = v_er
 
         labeled = label_series(
             metrics,

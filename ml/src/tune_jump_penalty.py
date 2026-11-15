@@ -31,7 +31,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "backend"))
 
-from app.core.config import ARTIFACTS_DIR, REGIME_CLASSES, get_config  # noqa: E402
+from app.core.config import ARTIFACTS_DIR, get_config  # noqa: E402
 from app.db.repository import get_repository  # noqa: E402
 from app.services.jump_model import label_with_jump_model  # noqa: E402
 

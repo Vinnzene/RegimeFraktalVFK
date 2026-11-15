@@ -24,6 +24,7 @@ const GROUPS: NavGroup[] = [
     label: "Pasar",
     items: [
       { href: "/", label: "Ringkasan", hint: "Kondisi pasar 1H & 4H menurut detektor AI + grafik harga" },
+      { href: "/walk-forward-evaluation", label: "Walk-Forward (2019–2026)", hint: "Uji identifikasi berjalan 2019→2026 pada 12 aset (BTC, ETH, TAO, Emas, Perak) + grafik TradingView" },
       { href: "/analisis", label: "Analisis Aset", hint: "Detektor regime untuk pair/ticker apa pun (Binance, Yahoo) · 10 per hari" },
       { href: "/analisa-teknikal", label: "Analisa Teknikal", hint: "Tarik garis, fibonacci, dan indikator (TradingView)" },
       { href: "/orderflow-live", label: "Order Flow Live", hint: "Heatmap order book, footprint, delta & CVD (kripto)" },
@@ -40,6 +41,7 @@ const GROUPS: NavGroup[] = [
   {
     label: "Riset",
     items: [
+      { href: "/walk-forward-evaluation", label: "Walk-Forward Multi-Aset", hint: "Bukti identifikasi regime berjalan 2019→2026 (12 aset, h=0)" },
       { href: "/regime-explorer", label: "Hurst-DFA Klasik", hint: "Pembanding: label konsensus R/S–DFA, perpindahan & durasi" },
       { href: "/timeframe-comparison", label: "Hurst-DFA 1H vs 4H", hint: "Pembanding klasik pada dua skala waktu" },
       { href: "/multifractal", label: "Multifraktal", hint: "Spektrum H(q) momen q=1,2,4 dan lebar ΔH" },
@@ -52,7 +54,6 @@ const GROUPS: NavGroup[] = [
       { href: "/model-comparison", label: "Perbandingan Model", hint: "Arsip: model lama berlabel Hurst-DFA" },
       { href: "/attention", label: "Fokus Model", hint: "Arsip: bobot attention model SWT lama" },
       { href: "/backtest", label: "Uji Strategi (lama)", hint: "Arsip: backtest eksploratif sebelum Fase 2" },
-      { href: "/walk-forward-evaluation", label: "Setup Engine", hint: "Arsip: simulasi setup engine, digantikan Fase 2" },
       { href: "/order-flow", label: "Order Flow (riset)", hint: "Arsip: ablation OFI & CVD (Model A–D)" },
     ],
   },
@@ -153,6 +154,19 @@ export default function TopNav() {
             </div>
           );
         })}
+
+        <Link
+          href="/walk-forward-evaluation"
+          className={`ml-2 flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[12px] font-medium transition-colors ${
+            isActive(pathname, "/walk-forward-evaluation")
+              ? "border-accent bg-accent/15 text-accent"
+              : "border-edge bg-surface/50 text-txt hover:border-accent/60 hover:text-accent"
+          }`}
+          title="Uji Walk-Forward Identifikasi Regime (2019→2026) pada 12 aset + grafik TradingView"
+        >
+          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+          Walk-Forward 2019–2026
+        </Link>
       </nav>
 
       <div className="ml-auto flex items-center gap-2">

@@ -15,7 +15,7 @@ penguji tidak bisa membedakan "data ambigu" dari "model lemah".
 
 from __future__ import annotations
 
-from typing import Dict, Iterable, List, Optional, Sequence, Tuple, cast
+from typing import Dict, Iterable, List, Optional, Sequence, cast
 
 import numpy as np
 import pandas as pd
@@ -99,22 +99,77 @@ def resolve_thresholds(
     }
 
 
+def compute_er_quantile_score(
+    df: pd.DataFrame,
+    calib_df: pd.DataFrame,
+) -> Optional[np.ndarray]:
+    """Hitung skor kuantil efisiensi arah multiskala relatif terhadap calib_df (bebas leakage)."""
+    if all(col in df.columns for col in ("er_full", "er_128", "er_64")):
+        def _ecdf(col_name: str) -> np.ndarray:
+            ref = np.asarray(calib_df[col_name], dtype=float)
+            ref = np.sort(ref[np.isfinite(ref)])
+            if ref.size == 0:
+                return np.full(len(df), 0.5, dtype=float)
+            vals = np.asarray(df[col_name], dtype=float)
+            return np.searchsorted(ref, vals, side="right") / float(ref.size)
+
+        q500 = _ecdf("er_full")
+        q128 = _ecdf("er_128")
+        q64 = _ecdf("er_64")
+        q_max = np.maximum(q500, np.maximum(q128, q64))
+        q_min = np.minimum(q500, np.minimum(q128, q64))
+        q_mean = 0.50 * q500 + 0.30 * q128 + 0.20 * q64
+        er_q = np.where(q_max >= 0.60, q_max, np.where(q_min <= 0.35, q_min, q_mean))
+        er_q = np.where((q500 >= 0.80) & (q128 >= 0.75), np.maximum(er_q, 0.86), np.minimum(er_q, 0.84))
+        return er_q
+    if "efficiency_ratio" in df.columns:
+        return np.asarray(df["efficiency_ratio"], dtype=float)
+    return None
+
+
 def label_from_exponents(
     hurst: float,
     alpha: float,
     hurst_threshold: Sequence[float],
     dfa_threshold: Sequence[float],
+    efficiency_ratio: Optional[float] = None,
+    soft_consensus: bool = True,
+    er_threshold: Sequence[float] = (0.35, 0.60),
 ) -> str:
-    """Label ground truth dari sepasang (H, alpha).
+    """Label ground truth dari sepasang (H, alpha) dengan Trend-Aware Soft Consensus.
 
-    Kalau kedua estimator tidak menghasilkan kelas yang sama, window ditandai
-    uncertain_rule — TIDAK dipaksa masuk salah satu dari 3 kategori.
+    Aturan konsensus kuantil utama dipertahankan bila h_class == a_class (dengan
+    koreksi ke persistent apabila keduanya random_like namun efficiency_ratio
+    menunjukkan tren terarah sangat kuat >= 0.85). Apabila h_class != a_class dan
+    soft_consensus aktif:
+    - Jika salah satu persistent dan pasangannya random_like dengan ER >= q_0.60,
+      tetapkan sebagai persistent.
+    - Jika salah satu anti_persistent dan pasangannya random_like dengan ER <= q_0.35,
+      tetapkan sebagai anti_persistent.
+    - Konflik diametral (persistent vs anti_persistent) tetap uncertain_rule.
     """
     h_class = _bucket(hurst, hurst_threshold[0], hurst_threshold[1])
     a_class = _bucket(alpha, dfa_threshold[0], dfa_threshold[1])
     if h_class is None or a_class is None:
         return UNCERTAIN_RULE
-    return h_class if h_class == a_class else UNCERTAIN_RULE
+    if h_class == a_class:
+        if (
+            soft_consensus
+            and h_class == RANDOM_LIKE
+            and efficiency_ratio is not None
+            and np.isfinite(efficiency_ratio)
+            and efficiency_ratio >= 0.85
+        ):
+            return PERSISTENT
+        return h_class
+    if not soft_consensus or efficiency_ratio is None or not np.isfinite(efficiency_ratio):
+        return UNCERTAIN_RULE
+    pair = {h_class, a_class}
+    if pair == {PERSISTENT, RANDOM_LIKE} and efficiency_ratio >= float(er_threshold[1]):
+        return PERSISTENT
+    if pair == {ANTI_PERSISTENT, RANDOM_LIKE} and efficiency_ratio <= float(er_threshold[0]):
+        return ANTI_PERSISTENT
+    return UNCERTAIN_RULE
 
 
 def label_series(
@@ -126,6 +181,7 @@ def label_series(
     threshold_source: str = "full_history",
     train_mask: Sequence[bool] | np.ndarray | None = None,
     resolved_thresholds: Dict[str, object] | None = None,
+    soft_consensus: bool = True,
 ) -> pd.DataFrame:
     """Tambahkan kolom `regime` pada DataFrame berisi kolom hurst & dfa_alpha.
 
@@ -148,10 +204,29 @@ def label_series(
     h_thr = cast(Sequence[float], resolved["hurst"])
     a_thr = cast(Sequence[float], resolved["dfa"])
 
-    out["regime"] = [
-        label_from_exponents(h, a, h_thr, a_thr)
-        for h, a in zip(out["hurst"], out["dfa_alpha"])
-    ]
+    calib_df = out
+    if threshold_source == "train_only":
+        if train_mask is not None:
+            mask_arr = np.asarray(train_mask, dtype=bool)
+            if len(mask_arr) == len(out):
+                calib_df = out.iloc[mask_arr]
+        elif "split" in out.columns:
+            calib_df = out[out["split"] == "train"]
+
+    er_scores = compute_er_quantile_score(out, calib_df) if soft_consensus else None
+    if er_scores is not None:
+        out["efficiency_ratio"] = er_scores
+        out["regime"] = [
+            label_from_exponents(
+                h, a, h_thr, a_thr, efficiency_ratio=float(er), soft_consensus=soft_consensus
+            )
+            for h, a, er in zip(out["hurst"], out["dfa_alpha"], er_scores)
+        ]
+    else:
+        out["regime"] = [
+            label_from_exponents(h, a, h_thr, a_thr, soft_consensus=False)
+            for h, a in zip(out["hurst"], out["dfa_alpha"])
+        ]
     out["hurst_lower"] = h_thr[0]
     out["hurst_upper"] = h_thr[1]
     out["dfa_lower"] = a_thr[0]

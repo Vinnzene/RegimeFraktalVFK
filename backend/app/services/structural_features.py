@@ -55,6 +55,7 @@ FEATURE_DIM = (
     + 1  # kemiringan VR terhadap log q
     + len(SWT_FRACTIONS) * SWT_LEVELS_KEPT
     + 5  # statistik sebaran
+    + 6  # Directional Efficiency Ratio (Kaufman ER) & Trend t-Stat / Signed Slope
 )
 
 
@@ -67,6 +68,7 @@ def feature_names() -> List[str]:
     for frac in SWT_FRACTIONS:
         names += [f"swt_energy_w{frac}_d{i}" for i in range(SWT_LEVELS_KEPT)]
     names += ["sign_flip_rate", "kurtosis", "skewness", "mad_over_std", "vol_ratio_half"]
+    names += ["er_full", "er_128", "er_64", "trend_tstat_full", "trend_tstat_128", "signed_trend_slope"]
     return names
 
 
@@ -137,6 +139,21 @@ def compute_features(
     out.append(float(absr.mean() / (std + 1e-12)))
     half = seg.size // 2
     out.append(float(seg[half:].std() / (seg[:half].std() + 1e-12)))
+
+    # Directional Efficiency Ratio (Kaufman ER) pada jendela penuh, W=128, W=64,
+    # serta Normalized Cumulative Return / Trend t-Stat & Signed Trend Slope.
+    w128 = min(128, seg.size)
+    w64 = min(64, seg.size)
+    seg128 = seg[-w128:]
+    seg64 = seg[-w64:]
+    std128 = float(seg128.std())
+    er_full = float(abs(seg.sum()) / (absr.sum() + 1e-12))
+    er_128 = float(abs(seg128.sum()) / (np.abs(seg128).sum() + 1e-12))
+    er_64 = float(abs(seg64.sum()) / (np.abs(seg64).sum() + 1e-12))
+    trend_tstat_full = float(abs(seg.sum()) / (std * np.sqrt(seg.size) + 1e-12))
+    trend_tstat_128 = float(abs(seg128.sum()) / (std128 * np.sqrt(w128) + 1e-12))
+    signed_trend_slope = float(seg.sum() / (std * np.sqrt(seg.size) + 1e-12))
+    out.extend([er_full, er_128, er_64, trend_tstat_full, trend_tstat_128, signed_trend_slope])
 
     if len(out) != FEATURE_DIM:  # pragma: no cover - penjaga konsistensi
         out = (out + [0.0] * FEATURE_DIM)[:FEATURE_DIM]

@@ -21,6 +21,8 @@ ml/artifacts/*
 !ml/artifacts/*.md
 !ml/artifacts/*.json
 !ml/artifacts/figures/
+!ml/artifacts/walk_forward_series/
+!ml/artifacts/walk_forward_series/*.parquet
 
 data/export/
 **/reports/**/*.html
@@ -37,3 +39,5 @@ data/export/
 # Kunci service account Firebase dan rahasia lain.
 secrets/
 backend/.env
+THESIS_*.md
+pyrefly.toml

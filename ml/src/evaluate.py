@@ -12,7 +12,6 @@ import sys
 from pathlib import Path
 from typing import List, Optional, Sequence
 
-import numpy as np
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "backend"))
@@ -22,10 +21,9 @@ from app.core.config import get_config  # noqa: E402
 from app.db.repository import get_repository  # noqa: E402
 from app.services.model_registry import (  # noqa: E402
     balanced_accuracy,
-    evaluate_against_truth,
     matthews_corrcoef,
 )
-from app.services.regime_labeling import UNCERTAIN_RULE, build_targets  # noqa: E402
+from app.services.regime_labeling import UNCERTAIN_RULE  # noqa: E402
 from dataset import build_dataset  # noqa: E402
 
 
