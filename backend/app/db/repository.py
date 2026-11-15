@@ -432,7 +432,10 @@ class ParquetRepository(Repository):
             empty.attrs["n_bars"] = len(ohlcv)
             return empty
 
-        if not all(col in metrics.columns for col in ("er_full", "er_128", "er_64")):
+        if not all(
+            col in metrics.columns and not metrics[col].isna().any()
+            for col in ("er_full", "er_128", "er_64")
+        ):
             er_dict = compute_rolling_er(log_ret, metrics["index"].astype(int).tolist(), window=window)
             for k_er, v_er in er_dict.items():
                 metrics[k_er] = v_er

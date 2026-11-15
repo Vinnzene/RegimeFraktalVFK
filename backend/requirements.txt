@@ -7,6 +7,8 @@ numpy
 pyarrow
 PyWavelets
 joblib
+scipy
+scikit-learn
 plotly
 requests
 python-dotenv
