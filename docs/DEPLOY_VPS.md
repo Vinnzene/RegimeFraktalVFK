@@ -60,7 +60,8 @@ scp ml/artifacts/swt_bilstm_*.keras ml/artifacts/swt_attention_bilstm_*.keras \
 
 # Opsional tetapi disarankan: data + cache yang sudah dihitung, agar server
 # tidak menghitung ulang dari nol (label klasik ±4 menit, detektor AI ±5 menit).
-scp -r data/processed root@<IP-VPS>:/opt/regime/data/
+# Termasuk data/raw/*.parquet untuk 12 aset pada halaman Walk-Forward (2019–2026).
+scp -r data/raw data/processed root@<IP-VPS>:/opt/regime/data/
 ```
 
 `ml/artifacts/detector_meta.json` sudah ikut di git. Bila `backend/.env` belum

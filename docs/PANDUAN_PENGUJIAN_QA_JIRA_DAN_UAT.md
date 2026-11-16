@@ -72,6 +72,8 @@ Pengujian sistem pada skripsi ini dibagi menjadi dua pilar utama sesuai kaidah b
 | `RFVFK-TC13` | Alert Dispatcher | Tautan akun Telegram pengguna | Buka `t.me/<bot>?start=<token>` | Token satu kali pakai divalidasi backend, Chat ID tersimpan ke Firestore pengguna, Telegram membalas konfirmasi. | **PASSED** |
 | `RFVFK-TC14` | Alert Dispatcher | Siaran notifikasi pergantian regime stabil | Simulasi regime stabil $N=3$ window | Bot Telegram mengirimkan alert perubahan regime ke ponsel pengguna, catatan ditulis ke `regime_notifications.jsonl`. | **PASSED** |
 | `RFVFK-TC15` | Audit Engine | Validasi integritas konfigurasi SHA-256 | Ubah parameter di `config.yaml` | Footer halaman dashboard menampilkan SHA-256 hash aktif yang berubah saat konfigurasi diubah. | **PASSED** |
+| `RFVFK-TC16` | API Backend | Endpoint Walk-Forward Multi-Aset (`GET /api/v1/model/walk-forward-multi-asset`) | Panggilan HTTP GET ke endpoint | Mengembalikan JSON ringkasan evaluasi 12 aset (23 pasangan aset-timeframe, rata-rata BA 88,24%) dalam waktu $<50\text{ ms}$. | **PASSED** |
+| `RFVFK-TC17` | Frontend UI | Halaman & Grafik TradingView Walk-Forward (`/walk-forward-evaluation`) | Pilih aset (`BTCUSDT`, `PAXGUSDT`, dll.) & timeframe (`1h`, `4h`, `1d`) | Grafik candlestick 2019–2026 merender pita warna regime *out-of-sample*, matriks transisi, dan tabel akurasi per tahun secara reaktif. | **PASSED** |
 
 ### 2.3 Rekapitulasi Defect / Bug Lifecycle di Jira
 Selama tahap pengembangan dan QA, tercatat 4 tiket defect yang berhasil diidentifikasi dan diselesaikan sebelum UAT:
