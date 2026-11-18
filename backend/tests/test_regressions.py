@@ -16,6 +16,7 @@ from app.db.repository import (
     REGIME_COLUMNS,
     InvalidIdentifier,
     ParquetRepository,
+    get_repository,
     validate_identifiers,
 )
 from app.main import app
@@ -74,16 +75,24 @@ def test_endpoint_regime_punya_segmen_test_tidak_kosong() -> None:
 
 
 def test_h_windows_memakai_stride_bukan_effective_window() -> None:
-    """h=500 bar dengan stride 4 harus jadi 125 window, bukan 1."""
+    """h=500 bar dengan stride 4 harus jadi 125 window, bukan 1; h=0 harus 0 window."""
+    # Konversi satuan yang dijaga uji ini, terlepas dari h di config.
+    assert bars_to_rows(500, 4) == 125 != bars_to_rows(500, 500)
     cfg = get_config()
     r = client.get("/api/v1/model/compare", params={"tf": "1h"})
     body = r.json()
-    assert body["h_windows"] == bars_to_rows(cfg.model.h, body["stride_bars"])
-    assert body["h_windows"] != bars_to_rows(cfg.model.h, cfg.analysis.L)
+    if cfg.model.h <= 0:
+        # Identifikasi: target = label jendela itu sendiri, bukan 1 baris ke depan.
+        assert body["h_windows"] == 0
+    else:
+        assert body["h_windows"] == bars_to_rows(cfg.model.h, body["stride_bars"])
+        assert body["h_windows"] != bars_to_rows(cfg.model.h, cfg.analysis.L)
 
 
 def test_stride_bars_ikut_tersimpan_di_hasil_regime() -> None:
-    repo = ParquetRepository()
+    # Repositori terisolasi dari conftest (folder sementara). ParquetRepository()
+    # bawaan menunjuk data/processed asli dan menimpa cache regime dashboard.
+    repo = get_repository()
     df = repo.get_regime("BTCUSDT", "1h")
     assert "stride_bars" in df.columns
     assert stride_bars_of(df) >= 1

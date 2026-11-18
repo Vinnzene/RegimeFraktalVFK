@@ -18,6 +18,8 @@ import { ApiState, useApi } from "@/components/useApi";
 import { api } from "@/lib/api-client";
 import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
 
+const pct = (v: number) => `${(v * 100).toLocaleString("id-ID", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
+
 function ShareBar({ title, note, rows }: { title: string; note: string; rows: { key: string; share: number }[] }) {
   return (
     <div>
@@ -93,11 +95,11 @@ export default function DashboardPage() {
             <h1 className="text-[26px] font-bold tracking-tight text-txt">{symbol.replace("USDT", "/USDT")}</h1>
             <span className="rounded-md border border-edge bg-panel px-2 py-0.5 text-[12px] font-medium text-txt">Ringkasan</span>
             <span className="rounded-md bg-surface px-2 py-0.5 text-[12px] font-medium text-txtDim">
-              Detektor AI · {timeframe.toUpperCase()}
+              Identifikasi AI · {timeframe.toUpperCase()}
             </span>
           </div>
           <p className="mt-1 text-[13px] text-txtMuted">
-            Sifat gerakan harga menurut detektor Attention-BiLSTM dan apa artinya untuk strategi Anda.
+            Sifat gerakan harga menurut model identifikasi Hybrid PS Attention-BiLSTM dan apa artinya untuk strategi Anda.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
@@ -174,13 +176,15 @@ export default function DashboardPage() {
 
           <HowToRead />
 
-          <CollapsiblePanel title="Tentang detektor" subtitle="Model AI yang menentukan kondisi pasar">
+          <CollapsiblePanel title="Tentang model identifikasi" subtitle="Model AI yang menentukan kondisi pasar">
             <ParameterBar showTimeframe={false} />
             {detector && (
               <dl className="mt-3 grid gap-2 text-[12.5px] sm:grid-cols-2">
                 <div className="rounded-lg bg-surface/70 px-3 py-2">
                   <dt className="text-txtMuted">Model</dt>
-                  <dd className="mt-0.5 text-txt">{detector.name}</dd>
+                  <dd className="mt-0.5 text-txt">
+                    {detector.name} · ensemble {detector.ensemble_seeds.length} seed
+                  </dd>
                 </div>
                 <div className="rounded-lg bg-surface/70 px-3 py-2">
                   <dt className="text-txtMuted">Masukan</dt>
@@ -191,20 +195,23 @@ export default function DashboardPage() {
                   <dd className="mt-0.5 text-txt">{detector.trained_on}</dd>
                 </div>
                 <div className="rounded-lg bg-surface/70 px-3 py-2">
-                  <dt className="text-txtMuted">Akurasi seimbang uji sintetis (S4, deret mirip kripto)</dt>
+                  <dt className="text-txtMuted">Identifikasi benar, partisi uji {detector.model_timeframe.toUpperCase()}</dt>
                   <dd className="mt-0.5 font-mono text-txt">
-                    {detector.test_ba_synthetic?.S4 !== undefined ? detector.test_ba_synthetic.S4.toFixed(3) : "–"}
-                    <span className="ml-2 font-sans text-txtMuted">estimator klasik terbaik 0,654</span>
+                    {detector.test_backtest.correct.toLocaleString("id-ID")}/{detector.test_backtest.n.toLocaleString("id-ID")} ({pct(detector.test_backtest.accuracy)})
+                    <span className="ml-2 font-sans text-txtMuted">
+                      rata-rata 3 kelas {pct(detector.test_backtest.balanced_accuracy)}
+                      {detector.walk_forward_pooled ? ` · walk-forward ${pct(detector.walk_forward_pooled.accuracy)}` : ""}
+                    </span>
                   </dd>
                 </div>
               </dl>
             )}
             <p className="mt-3 text-[12px] leading-relaxed text-txtDim">
-              Detektor menilai {detector?.window ?? 500} batang terakhir setiap {detector?.stride_bars ?? 4} batang. Kelas
-              ditentukan oleh eksponen Hurst: di bawah {detector?.class_thresholds_h[0].toLocaleString("id-ID") ?? "0,47"}{" "}
-              cenderung berbalik, di atas {detector?.class_thresholds_h[1].toLocaleString("id-ID") ?? "0,53"} cenderung
-              berlanjut. Model tidak pernah melihat data BTC saat dilatih, sehingga seluruh riwayat di grafik adalah data luar
-              sampel. Validitas ke depan diuji pada BTC 1H; pada 4H detektor dipakai apa adanya tanpa uji tambahan.
+              Model menilai {detector?.window ?? 500} batang terakhir setiap {detector?.stride_bars ?? 4} batang dan
+              mengidentifikasi regime jendela itu sendiri (h = 0, bukan prediksi). Label yang dipelajari: {detector?.label ?? "konsensus Hurst R/S–DFA-1"}
+              {detector ? ` (ambang Hurst ${detector.label_thresholds.hurst.map((v) => v.toLocaleString("id-ID")).join("–")}, DFA ${detector.label_thresholds.dfa.map((v) => v.toLocaleString("id-ID")).join("–")})` : ""}.
+              Riwayat sebelum batas latih adalah data latih model; angka di atas diukur pada partisi uji yang tidak dipakai melatih.
+              Model paling lemah mengenali kondisi acak (random-like).
             </p>
           </CollapsiblePanel>
 

@@ -61,7 +61,7 @@ export const STRATEGY_PLAN: Record<Regime, StrategyPlan> = {
     action: "Model tidak cukup yakin (keyakinan di bawah 75%). Perlakukan seperti kondisi acak: jangan membuka posisi baru.",
     tone: "wait",
     evidence:
-      "Pada uji sintetis, label dengan keyakinan ≥ 75% tepat 90,5%, sedangkan seluruh label 81,3%. Aturan Fase 2 memperlakukan kondisi tidak pasti sama dengan acak: tidak memegang posisi.",
+      "Pada set validasi BTC, jendela dengan keyakinan ≥ 75% teridentifikasi benar 85,7% (1H) dan 94,8% (4H), lebih tinggi daripada seluruh jendela (61,8% dan 72,5%). Aturan Fase 2 memperlakukan kondisi tidak pasti sama dengan acak: tidak memegang posisi.",
     verdict: "untested",
   },
 };
@@ -74,7 +74,7 @@ export const VERDICT_META: Record<StrategyPlan["verdict"], { label: string; clas
 
 /** Hasil Fase 2 BTC/USDT 1H (Sharpe tahunan bersih; drawdown maksimum; % waktu memegang posisi). */
 export const FASE2_BTC_1H: { key: string; name: string; sharpe: number; maxDd: number; exposure: number; note?: string }[] = [
-  { key: "SW", name: "Switching berbasis regime (detektor AI)", sharpe: -2.18, maxDd: -0.99, exposure: 0.19 },
+  { key: "SW", name: "Switching berbasis regime (detektor sintetis Fase 2)", sharpe: -2.18, maxDd: -0.99, exposure: 0.19 },
   { key: "MOM", name: "Momentum 24 bar terus-menerus", sharpe: -2.39, maxDd: -1.0, exposure: 1.0 },
   { key: "MR", name: "Mean-reversion 24 bar terus-menerus", sharpe: -2.04, maxDd: -1.0, exposure: 0.78 },
   { key: "BH", name: "Beli dan tahan", sharpe: 0.97, maxDd: -0.77, exposure: 1.0 },

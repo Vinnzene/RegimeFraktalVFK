@@ -30,9 +30,19 @@ export default function ParameterBar({ showTimeframe = true }: { showTimeframe?:
   const items: [string, string | number, string][] = [
     ["L", config.analysis.L, "Panjang jendela: jumlah batang harga yang dianalisis sekaligus"],
     ["J", config.analysis.J, "Jumlah level dekomposisi wavelet (SWT)"],
-    ["H thr", config.analysis.hurst_threshold.join("/"), "Batas bawah/atas Hurst untuk membagi kondisi"],
-    ["α thr", config.analysis.dfa_threshold.join("/"), "Batas bawah/atas DFA untuk membagi kondisi"],
-    ["h", config.model.h, "Horizon: berapa batang ke depan yang diprediksi model"],
+    ...((config.analysis.threshold_mode ?? "quantile") === "quantile"
+      ? ([
+          [
+            "ambang",
+            `kuantil 1/3–2/3 ${config.analysis.threshold_source === "full_history" ? "seluruh riwayat" : "data latih"}`,
+            "Batas Hurst dan DFA dihitung dari distribusi estimator pada partisi latih",
+          ],
+        ] as [string, string | number, string][])
+      : ([
+          ["H thr", config.analysis.hurst_threshold.join("/"), "Batas bawah/atas Hurst untuk membagi kondisi"],
+          ["α thr", config.analysis.dfa_threshold.join("/"), "Batas bawah/atas DFA untuk membagi kondisi"],
+        ] as [string, string | number, string][])),
+    ["h", config.model.h, "Horizon: 0 = identifikasi regime jendela saat ini (bukan prediksi ke depan)"],
     ["purge", config.model.purge_gap, "Jarak pengaman antara data latih dan uji agar tidak bocor"],
     ["τ", config.model.tau, "Batas keyakinan minimum model; di bawahnya ditandai 'Model Ragu'"],
     ["input", config.analysis.input, "Jenis data masukan"],

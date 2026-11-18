@@ -106,7 +106,7 @@ export const SETUP_GUIDE: RegimeGuide[] = [
     tools: [],
     evidence: {
       level: "didukung",
-      text: "Pada data uji sintetis, label dengan keyakinan ≥ 75% jauh lebih tepat (akurasi seimbang 0,905) daripada seluruh label (0,813).",
+      text: "Pada set validasi BTC, jendela dengan keyakinan ≥ 75% teridentifikasi benar 85,7% (1H) dan 94,8% (4H), lebih tinggi daripada seluruh jendela (61,8% dan 72,5%).",
     },
   },
 ];

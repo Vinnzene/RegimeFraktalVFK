@@ -84,9 +84,9 @@ export default function AboutPage() {
             apakah pergerakan pada suatu periode cenderung berlanjut (persistent), menyerupai
             random walk (random-like), atau cenderung berbalik arah (anti-persistent).
             Regime didefinisikan oleh eksponen Hurst. Estimator klasik Hurst R/S dan DFA
-            ternyata sering tidak sepakat dan kurang akurat pada data kripto, sehingga
-            identifikasi dilakukan oleh Attention-BiLSTM yang dilatih pada deret sintetis
-            dengan nilai Hurst yang diketahui, memakai fitur persistensi dan energi multiskala
+            sering tidak sepakat, sehingga label disusun dengan Trend-Aware Soft Consensus dan
+            identifikasinya dipelajari oleh Hybrid PS Attention-BiLSTM dari data latih BTC,
+            memakai sekuens statistik persistensi dan fitur struktural termasuk energi multiskala
             Stationary Wavelet Transform.
           </p>
         </Panel>
@@ -130,7 +130,8 @@ export default function AboutPage() {
           <ul className="space-y-1.5 text-[11px] leading-relaxed text-txtDim">
             {[
               "R/S dan DFA hanya sepakat pada 52,6% window BTC 1H.",
-              "Attention-BiLSTM latih-sintetis lebih akurat dari Hurst-DFA klasik terbaik: 0,813 vs 0,654.",
+              "Hybrid PS mengidentifikasi 81,00% jendela uji 1H dan 74,64% jendela uji 4H (walk-forward 1H 64,82%); kelas acak paling sulit dikenali.",
+              "Pada benchmark sintetis Fase 1, Attention-BiLSTM latih-sintetis lebih akurat dari Hurst-DFA klasik terbaik: 0,813 vs 0,654.",
               "Koefisien SWT mentah gagal (BA 0,38); energi SWT dan attention tidak terbukti menambah akurasi.",
               "Menggabungkan timeframe lebih tepat (+0,03) tetapi lebih lambat mendeteksi pergantian (+39%).",
               "Pemilihan strategi berbasis regime tidak menambah Sharpe setelah biaya; kegunaannya sebagai filter \"jangan trading\".",

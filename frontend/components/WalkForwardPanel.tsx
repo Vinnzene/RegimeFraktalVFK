@@ -116,7 +116,7 @@ export default function WalkForwardPanel({ timeframe }: { timeframe: string }) {
   return (
     <Panel
       title="Validasi Walk-Forward"
-      subtitle="Model dilatih ulang pada tiap fold; seluruh prediksi digabung menjadi satu confusion matrix."
+      subtitle="Model dilatih ulang pada tiap fold; seluruh hasil identifikasi digabung menjadi satu confusion matrix."
       params={{
         labeling: d.labeling,
         fold: data.n_splits,
@@ -197,7 +197,7 @@ export default function WalkForwardPanel({ timeframe }: { timeframe: string }) {
             <table className="w-full text-2xs tabular-nums">
               <thead>
                 <tr className="border-b border-edge text-txtMuted">
-                  <th className="py-1 text-left font-medium">aktual \ prediksi</th>
+                  <th className="py-1 text-left font-medium">aktual \ identifikasi</th>
                   {(agg.classes ?? []).map((c: string) => (
                     <th key={c} className="py-1 text-right font-medium">
                       {regimeLabel(c).split(" ")[0]}

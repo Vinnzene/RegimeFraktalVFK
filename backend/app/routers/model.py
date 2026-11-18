@@ -151,7 +151,9 @@ def compare(tf: str = Query("1h"), symbol: str = Query("BTCUSDT")) -> dict:
     # effective_window membuat h=500 bar terbaca sebagai 1 window (4 bar)
     # dan tidak sebanding dengan horizon yang dipakai saat training.
     stride = stride_bars_of(df)
-    h_windows = bars_to_rows(cfg.model.h, stride)
+    # h = 0 berarti identifikasi (target = label jendela itu sendiri); bars_to_rows
+    # membulatkan ke minimal 1 baris sehingga tidak boleh dipakai untuk h = 0.
+    h_windows = 0 if cfg.model.h <= 0 else bars_to_rows(cfg.model.h, stride)
     targets = build_targets(labels, h_windows)
 
     models: Dict[str, dict] = {}

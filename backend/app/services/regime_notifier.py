@@ -7,9 +7,9 @@ sering "berkedip" antar window bertetangga (lihat jump_model.py); tanpa
 konfirmasi pelanggan menerima pesan bolak-balik. Window `uncertain_rule` tidak
 memicu notifikasi dan memutus rentetan konfirmasi.
 
-Label berasal dari detektor AI resmi (`ai_detector.py`), sama dengan dashboard.
+Label berasal dari model identifikasi resmi (`ai_detector.py`), sama dengan dashboard.
 Label dengan keyakinan di bawah τ = 0,75 diperlakukan sebagai tidak pasti dan
-memutus rentetan konfirmasi (salah alarm turun ±3× pada uji sintetis).
+memutus rentetan konfirmasi.
 Saat pertama kali berjalan, atau saat sumber label berganti (keadaan lama
 dicatat dari label konsensus Hurst–DFA), regime terkini hanya dicatat sebagai
 keadaan awal tanpa mengirim pesan, supaya tidak ada siaran palsu.
@@ -66,7 +66,9 @@ STRATEGY = {
         "Didukung uji Fase 2: momentum dan mean-reversion sama-sama rugi besar saat kondisi ini.",
     ),
 }
-SOURCE = "ai"
+# Diganti saat model berganti agar keadaan lama direset tanpa siaran palsu.
+# "ai" = detektor latih-sintetis lama; "ai_id1" = model identifikasi Bab 4 (h = 0).
+SOURCE = "ai_id1"
 
 _lock = threading.Lock()
 
@@ -116,7 +118,7 @@ def format_message(event: Dict[str, Any], dashboard_url: str) -> str:
         "",
         f"Harga: {_fmt_num(event.get('price'), 2)} USDT",
         f"Terkonfirmasi {event['confirm_windows']} window berturut-turut (sejak {_fmt_time(event['first_window_time'])})",
-        f"Keyakinan detektor AI: {_fmt_num(None if event.get('confidence') is None else event['confidence'] * 100, 0)}%",
+        f"Keyakinan model identifikasi: {_fmt_num(None if event.get('confidence') is None else event['confidence'] * 100, 0)}%",
         "",
         f"Strategi: <b>{html.escape(strategy)}</b>",
         html.escape(action),
@@ -210,7 +212,7 @@ def status_text() -> str:
     from app.services import ai_detector
 
     cfg = get_config()
-    lines = ["<b>Kondisi regime BTC/USDT terbaru (detektor AI)</b>"]
+    lines = ["<b>Kondisi regime BTC/USDT terbaru (identifikasi AI)</b>"]
     for tf in cfg.data.timeframes:
         try:
             df = ai_detector.series(cfg.data.symbol, tf)

@@ -152,7 +152,8 @@
       "S4": 0.813,
       "S4k": 0.8357
     },
-    "catatan": "Return tiap window dinormalisasi ke sigma_per_bar sebelum fitur dihitung, sama seperti data latih."
+    "catatan": "Return tiap window dinormalisasi ke sigma_per_bar sebelum fitur dihitung, sama seperti data latih.",
+    "catatan_status": "Tidak lagi dipakai aplikasi sejak 18 Nov 2026; diganti d_identifikasi (model Bab 4)."
   },
   "d_btc": {
     "file": "detector/dbtc_logreg.joblib",
@@ -295,5 +296,158 @@
         0.5206
       ]
     }
-  }
+  },
+  "d_identifikasi": {
+    "1h": {
+      "files": [
+        "review/models/hybrid_ps_updated_1h_s42.keras",
+        "review/models/hybrid_ps_updated_1h_s43.keras",
+        "review/models/hybrid_ps_updated_1h_s44.keras"
+      ],
+      "scaler_file": "review/models/hybrid_ps_updated_1h_scaler.json",
+      "classes": [
+        "persistent",
+        "random_like",
+        "anti_persistent"
+      ],
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "ensemble": "rata-rata softmax 3 seed",
+      "window": 500,
+      "stride": 4,
+      "sub_window": 128,
+      "seq_len": 32,
+      "swt_level": 4,
+      "input_shape": {
+        "ps": [
+          32,
+          14
+        ],
+        "features": 56
+      },
+      "sigma_normalization": false,
+      "horizon_bars": 0,
+      "task": "identifikasi",
+      "label": "Trend-Aware Soft Consensus Hurst R/S + DFA-1 + ER multiskala, ambang kuantil 1/3–2/3 train-only",
+      "label_thresholds_train_only": {
+        "hurst": [
+          0.5718,
+          0.5985
+        ],
+        "dfa": [
+          0.4778,
+          0.5207
+        ]
+      },
+      "trained_on": "BTC/USDT 1H partisi latih 70% (2019–2024)",
+      "source_script": "ml/src/run_updated_evaluation.py (replikasi & simpan: ml/src/review_eval.py --variant normal --save-models)",
+      "test_backtest": {
+        "n": 2005,
+        "correct": 1624,
+        "accuracy": 0.81,
+        "balanced_accuracy": 0.6376,
+        "macro_f1": 0.6359,
+        "mcc": 0.6709
+      },
+      "walk_forward_pooled": {
+        "n": 10442,
+        "correct": 6769,
+        "accuracy": 0.6482,
+        "balanced_accuracy": 0.5425
+      },
+      "abstain_validation": {
+        "tau": 0.75,
+        "coverage": 0.2506,
+        "accuracy_covered": 0.8571,
+        "note": "label tetap argmax; tau hanya penanda keyakinan rendah. Aturan lama (BA tercakup >= 0,90) tidak tercapai pada tau mana pun."
+      },
+      "split_times": {
+        "train_end_time": 1716796800,
+        "validation_start_time": 1718611200,
+        "validation_end_time": 1754697600,
+        "test_start_time": 1756512000,
+        "test_end_time": 1792627200,
+        "note": "waktu bar terakhir jendela; data sesudah test_end_time belum pernah dievaluasi"
+      }
+    },
+    "4h": {
+      "files": [
+        "review/models/hybrid_ps_updated_4h_s42.keras",
+        "review/models/hybrid_ps_updated_4h_s43.keras",
+        "review/models/hybrid_ps_updated_4h_s44.keras"
+      ],
+      "scaler_file": "review/models/hybrid_ps_updated_4h_scaler.json",
+      "classes": [
+        "persistent",
+        "random_like",
+        "anti_persistent"
+      ],
+      "seeds": [
+        42,
+        43,
+        44
+      ],
+      "ensemble": "rata-rata softmax 3 seed",
+      "window": 500,
+      "stride": 2,
+      "sub_window": 128,
+      "seq_len": 32,
+      "swt_level": 4,
+      "input_shape": {
+        "ps": [
+          32,
+          14
+        ],
+        "features": 56
+      },
+      "sigma_normalization": false,
+      "horizon_bars": 0,
+      "task": "identifikasi",
+      "label": "Trend-Aware Soft Consensus Hurst R/S + DFA-1 + ER multiskala, ambang kuantil 1/3–2/3 train-only",
+      "label_thresholds_train_only": {
+        "hurst": [
+          0.5891,
+          0.6135
+        ],
+        "dfa": [
+          0.4797,
+          0.5271
+        ]
+      },
+      "trained_on": "BTC/USDT 4H partisi latih 70% (2019–2024) + augmentasi ETH/BNB 8.406 jendela",
+      "source_script": "ml/src/run_updated_evaluation.py (replikasi & simpan: ml/src/review_eval.py --variant normal --save-models)",
+      "test_backtest": {
+        "n": 761,
+        "correct": 568,
+        "accuracy": 0.7464,
+        "balanced_accuracy": 0.594,
+        "macro_f1": 0.5991,
+        "mcc": 0.552
+      },
+      "walk_forward_pooled": {
+        "n": 5149,
+        "correct": 2947,
+        "accuracy": 0.5723,
+        "balanced_accuracy": 0.4944
+      },
+      "abstain_validation": {
+        "tau": 0.75,
+        "coverage": 0.493,
+        "accuracy_covered": 0.9477,
+        "note": "label tetap argmax; tau hanya penanda keyakinan rendah. Aturan lama (BA tercakup >= 0,90) tidak tercapai pada tau mana pun."
+      },
+      "split_times": {
+        "train_end_time": 1710792000,
+        "validation_start_time": 1718020800,
+        "validation_end_time": 1751688000,
+        "test_start_time": 1758916800,
+        "test_end_time": 1792612800,
+        "note": "waktu bar terakhir jendela; data sesudah test_end_time belum pernah dievaluasi"
+      }
+    }
+  },
+  "resmi": "d_identifikasi"
 }

@@ -50,7 +50,12 @@ scp -r secrets root@<IP-VPS>:/opt/regime/
 scp frontend/.env.local root@<IP-VPS>:/opt/regime/frontend/.env.local
 scp backend/.env        root@<IP-VPS>:/opt/regime/backend/.env
 
-# Model detektor resmi (tidak di-commit) + metadata
+# Model identifikasi resmi (Hybrid PS Bab 4, 3 seed × 1H/4H + scaler; tidak di-commit).
+# WAJIB: detector_meta.json (di git) menunjuk ke berkas ini.
+ssh root@<IP-VPS> "mkdir -p /opt/regime/ml/artifacts/review"
+scp -r ml/artifacts/review/models root@<IP-VPS>:/opt/regime/ml/artifacts/review/
+
+# Detektor latih-sintetis lama (opsional, arsip penelitian)
 scp -r ml/artifacts/detector root@<IP-VPS>:/opt/regime/ml/artifacts/
 
 # Model arsip Fase 0 untuk halaman Perbandingan Model, Fokus Model, dan
@@ -143,7 +148,8 @@ docker compose --env-file infra/.env -f infra/docker-compose.vps.yml up -d --bui
 |---|---|
 | Login berhasil lalu kembali ke halaman login | `COOKIE_SECURE` masih `true` di HTTP |
 | Halaman tampil tetapi data "gagal dimuat" | Backend belum siap / gagal; lihat `logs backend` |
-| "Detektor AI belum tersedia" | `ml/artifacts/detector/hybrid_ps_sintetis.keras` belum disalin |
+| "Model identifikasi belum tersedia" (503 di `/analysis/ai-regime`) | `ml/artifacts/review/models/hybrid_ps_updated_*` belum disalin (langkah 3) |
+| "Model identifikasi sedang menghitung riwayat" | Normal setelah model baru dipasang: seluruh riwayat 1H dan 4H dihitung ulang di latar belakang (±5–10 menit pada 2 vCPU) |
 | "Sebagian model tidak tersedia di server" (arsip) / API 503 | Model arsip `.keras` belum disalin (langkah 3). Server sengaja tidak mengisi angka pengganti; `ALLOW_MODEL_PLACEHOLDER=true` hanya untuk pengembangan |
 | Notifikasi tidak terkirim | `TELEGRAM_BOT_TOKEN` kosong di `backend/.env` atau kunci Firebase tidak terbaca |
 | Backend mati karena memori | RAM < 4 GB; tambah swap: `fallocate -l 4G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile` |

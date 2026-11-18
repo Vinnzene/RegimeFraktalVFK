@@ -16,16 +16,16 @@ export const metadata: Metadata = {
 };
 
 const STATS = [
-  { value: "0,813", label: "akurasi seimbang pada deret sintetis berkarakter kripto" },
-  { value: "+0,159", label: "di atas estimator Hurst-DFA klasik terbaik" },
-  { value: "2×", label: "lebih cepat mendeteksi pergantian regime dibanding konsensus Hurst-DFA" },
-  { value: "20", label: "aset diuji tanpa latih ulang" },
+  { value: "81,00%", label: "jendela uji BTC/USDT 1H teridentifikasi benar (1.624 dari 2.005)" },
+  { value: "74,64%", label: "jendela uji BTC/USDT 4H teridentifikasi benar (568 dari 761)" },
+  { value: "64,82%", label: "ketepatan gabungan walk-forward 5 fold 1H" },
+  { value: "3", label: "seed dirata-rata dalam satu ensemble" },
 ];
 
 const FEATURES = [
   {
     title: "Kondisi pasar 1H & 4H",
-    text: "Detektor AI menilai 500 bar terakhir dan menyatakan apakah gerakan cenderung berlanjut, berbalik, atau acak, beserta keyakinannya.",
+    text: "Model identifikasi AI menilai 500 bar terakhir dan menyatakan apakah gerakan cenderung berlanjut, berbalik, atau acak, beserta keyakinannya.",
   },
   {
     title: "Jujur saat ragu",
@@ -37,7 +37,7 @@ const FEATURES = [
   },
   {
     title: "Analisis aset apa pun",
-    text: "Pilih pair Binance atau saham, indeks, emas, dan forex dari Yahoo Finance, lalu jalankan detektor yang sama.",
+    text: "Pilih pair Binance atau saham, indeks, emas, dan forex dari Yahoo Finance, lalu jalankan model identifikasi yang sama (eksperimental di luar BTC/USDT).",
   },
   {
     title: "Notifikasi Telegram",
@@ -53,16 +53,16 @@ const STEPS = [
   { n: "01", title: "Data tertutup saja", text: "Hanya candle yang sudah tutup. Harga diubah menjadi log-return dan dinilai per jendela 500 bar." },
   {
     n: "02",
-    title: "Belajar dari kunci jawaban",
-    text: "Model Attention-BiLSTM dilatih pada deret sintetis yang eksponen Hurst-nya diketahui pasti, dengan ekor tebal, volatilitas berkelompok, dan lonjakan seperti kripto.",
+    title: "Belajar dari konsensus Hurst–DFA",
+    text: "Hybrid PS Attention-BiLSTM dilatih pada 70% riwayat BTC/USDT untuk mengenali label konsensus Hurst R/S–DFA-1 (Trend-Aware Soft Consensus) pada jendela itu sendiri, lalu diuji pada periode yang tidak pernah dilihat.",
   },
-  { n: "03", title: "Label + keyakinan", text: "Setiap 4 bar sistem memberi label dan probabilitas tiap kelas. Notifikasi dikirim setelah tiga konfirmasi berturut-turut." },
+  { n: "03", title: "Label + keyakinan", text: "Setiap 4 bar (1H) atau 2 bar (4H) sistem memberi label dan probabilitas tiap kelas. Notifikasi dikirim setelah tiga konfirmasi berturut-turut." },
 ];
 
 const BARS = [
-  { label: "Konsensus Hurst R/S–DFA", value: 0.268, tone: "bg-txtMuted/50" },
-  { label: "Estimator klasik terbaik (VR(2) terkalibrasi)", value: 0.654, tone: "bg-txtMuted" },
-  { label: "Attention-BiLSTM (sistem ini)", value: 0.813, tone: "bg-accent" },
+  { label: "SWT + Attention-BiLSTM", value: 0.4858, tone: "bg-txtMuted/50" },
+  { label: "Structural MLP", value: 0.7142, tone: "bg-txtMuted" },
+  { label: "Hybrid PS Attention-BiLSTM (sistem ini)", value: 0.81, tone: "bg-accent" },
 ];
 
 const LIMITS = [
@@ -214,20 +214,20 @@ export default function WelcomePage() {
         <section id="bukti" className="mx-auto max-w-[1200px] scroll-mt-20 px-5 py-20">
           <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-center">
             <div>
-              <h2 className="text-[34px] font-semibold leading-tight tracking-[-0.02em] sm:text-[44px]">Diuji dengan kunci jawaban.</h2>
+              <h2 className="text-[34px] font-semibold leading-tight tracking-[-0.02em] sm:text-[44px]">Diuji pada periode yang tidak dilihat.</h2>
               <p className="mt-3 text-[16px] leading-relaxed text-txtDim">
-                Di pasar nyata, regime yang sebenarnya tidak pernah terlihat. Karena itu akurasi diukur pada deret sintetis yang eksponen
-                Hurst-nya diketahui, dengan karakter kripto. Seluruh hipotesis dikunci sebelum hasilnya dihitung.
+                Model dilatih pada 70% awal riwayat BTC/USDT, lalu diukur pada 15% terakhir yang dipisah purge 500 bar. Ambang label
+                dihitung dari data latih saja. Kondisi acak (random-like) adalah kelas yang paling sulit dikenali.
               </p>
             </div>
             <div className="rounded-2xl border border-edge bg-panel p-6 shadow-panel">
-              <div className="text-[13px] font-medium text-txtDim">Akurasi seimbang (skenario mirip kripto, jendela 500 bar)</div>
+              <div className="text-[13px] font-medium text-txtDim">Persentase identifikasi benar, partisi uji BTC/USDT 1H (jendela 500 bar)</div>
               <div className="mt-5 space-y-5">
                 {BARS.map((b) => (
                   <div key={b.label}>
                     <div className="flex items-baseline justify-between gap-3 text-[14px]">
                       <span className="text-txt">{b.label}</span>
-                      <span className="font-mono font-semibold text-txt">{b.value.toLocaleString("id-ID", { minimumFractionDigits: 3 })}</span>
+                      <span className="font-mono font-semibold text-txt">{(b.value * 100).toLocaleString("id-ID", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%</span>
                     </div>
                     <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-surface">
                       <div className={`h-full rounded-full ${b.tone}`} style={{ width: `${b.value * 100}%` }} />
@@ -235,7 +235,7 @@ export default function WelcomePage() {
                   </div>
                 ))}
               </div>
-              <p className="mt-5 text-[12.5px] text-txtMuted">Tebakan acak = 0,333. Sumber: benchmark sintetis Fase 1 (3.000 deret uji).</p>
+              <p className="mt-5 text-[12.5px] text-txtMuted">Ensemble 3 seed, 2.005 jendela uji. Rata-rata ketiga kelas Hybrid PS 63,76%. Sumber: evaluasi Bab 4.</p>
             </div>
           </div>
         </section>

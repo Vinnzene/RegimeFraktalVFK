@@ -53,10 +53,10 @@ export default function MethodologyPage() {
             <p className="mt-3 text-[11px] leading-relaxed text-txtDim">
               Uncertain (rule) hanya muncul pada label klasik Hurst-DFA: R/S dan DFA memberi
               kesimpulan berbeda pada window yang sama (47,4% window BTC 1H). Uncertain
-              (low-conf) muncul pada detektor AI: probabilitas tertinggi di bawah ambang τ = 0,75.
-              Ambang ini dipilih di data validasi sintetis; di atasnya ketepatan naik dari 0,813
-              ke 0,905 dengan 68% window tetap berlabel. Keduanya dipisah karena yang satu
-              keterbatasan data, yang lain keterbatasan model.
+              (low-conf) muncul pada model identifikasi AI: probabilitas tertinggi di bawah ambang τ = 0,75.
+              Pada set validasi, jendela dengan keyakinan ≥ 0,75 (25% di 1H, 49% di 4H) teridentifikasi
+              benar 85,7% (1H) dan 94,8% (4H). Label tetap argmax; τ hanya penanda. Keduanya dipisah
+              karena yang satu keterbatasan data, yang lain keterbatasan model.
             </p>
           </Panel>
 
@@ -75,17 +75,16 @@ export default function MethodologyPage() {
 
           <Panel
             title="Alur Pemrosesan"
-            subtitle="Urutan yang dijalankan detektor sistem, dari harga mentah hingga label regime."
+            subtitle="Urutan yang dijalankan model identifikasi sistem, dari harga mentah hingga label regime."
           >
             <ol className="space-y-2 text-[11px] leading-relaxed text-txtDim">
               {[
                 "Harga penutupan diubah menjadi log-return. Harga level tidak dipakai karena bersifat non-stasioner (unit root) sehingga estimasi Hurst akan selalu mendekati 1. Candle yang belum tutup dibuang.",
-                "Rolling window 500 bar dibentuk setiap 4 bar. Window pada titik t hanya memuat data sampai t; tugasnya identifikasi kondisi saat ini, bukan prediksi.",
-                "Return dalam window diskalakan ke simpangan baku 0,0066 (sama dengan data latih sintetis).",
-                "Fitur dihitung: sekuens statistik persistensi 32 × 11 (variance ratio, autokorelasi, volatilitas per sub-window) dan 50 fitur struktural, termasuk 12 rasio energi SWT (db4, 4 level, causal).",
-                "Attention-BiLSTM (Hybrid PS) mengeluarkan probabilitas tiga kelas. Model dilatih pada deret sintetis yang eksponen Hurst-nya diketahui (H < 0,47 berbalik, 0,47–0,53 acak, > 0,53 berlanjut), tidak pada label BTC.",
+                "Rolling window 500 bar dibentuk setiap 4 bar (1H) atau 2 bar (4H). Window pada titik t hanya memuat data sampai t; tugasnya identifikasi kondisi saat ini (h = 0), bukan prediksi.",
+                "Fitur dihitung tanpa penskalaan ulang: sekuens statistik persistensi 32 × 14 (variance ratio, autokorelasi, volatilitas, efficiency ratio per sub-window) dan 56 fitur (50 struktural termasuk 12 rasio energi SWT db4 4 level causal, + 6 multifraktal), lalu distandarkan dengan statistik partisi latih.",
+                "Ensemble 3 seed Hybrid PS Attention-BiLSTM mengeluarkan probabilitas tiga kelas. Model dilatih pada partisi latih BTC (70%) untuk mengenali label Trend-Aware Soft Consensus Hurst R/S–DFA-1 dengan ambang kuantil train-only.",
                 "Bila probabilitas tertinggi di bawah τ = 0,75, kondisi ditandai keyakinan rendah (Uncertain low-conf).",
-                "Hurst R/S dan DFA α tetap dihitung untuk setiap window sebagai pembanding klasik, bukan penentu label.",
+                "Hurst R/S dan DFA α dihitung untuk setiap window; konsensusnya adalah label yang dipelajari model dan ditampilkan di halaman Hurst-DFA Klasik.",
                 "Pergantian regime diumumkan (dashboard dan Telegram) bila 3 window berturut-turut berlabel sama.",
               ].map((step, i) => (
                 <li key={i} className="flex gap-3">

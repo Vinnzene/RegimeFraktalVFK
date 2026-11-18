@@ -129,7 +129,7 @@ export default function ConsistencyPanel({ timeframe }: { timeframe: string }) {
         <div>
           <div className="mb-1.5 text-[12px] font-semibold text-txt">Matriks konfusi</div>
           <p className="mb-2 text-2xs text-txtMuted">
-            Baris = regime Hurst-DFA, kolom = prediksi model.
+            Baris = regime Hurst-DFA, kolom = hasil identifikasi model.
           </p>
           <div className="overflow-x-auto">
             <table className="w-full text-2xs tabular-nums">
@@ -210,7 +210,7 @@ export default function ConsistencyPanel({ timeframe }: { timeframe: string }) {
           Kesesuaian nilai eksponen
         </div>
         <p className="mb-2 text-2xs leading-relaxed text-txtMuted">
-          Rata-rata Hurst dan DFA pada window yang <span className="text-txtDim">diprediksi</span>{" "}
+          Rata-rata Hurst dan DFA pada window yang <span className="text-txtDim">diidentifikasi</span>{" "}
           model, dibandingkan dengan kategori Hurst-DFA sebenarnya. Selisih kecil berarti
           model menangkap karakteristik statistiknya, bukan sekadar mencocokkan label.
         </p>

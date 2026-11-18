@@ -35,12 +35,12 @@ export default function Disclaimer({
     archive: {
       tone: "border-uncertainRule/60 bg-uncertainRule/15 text-txtDim",
       title: "Arsip Fase 0",
-      body: "Halaman ini memakai model dan label lama (Hurst-DFA BTC) dari tahap awal penelitian. Kondisi pasar yang dipakai sistem berasal dari detektor AI di halaman Ringkasan; hasil terbaru ada di halaman Strategi dan Tentang.",
+      body: "Halaman ini memakai model dan label lama (Hurst-DFA BTC) dari tahap awal penelitian. Kondisi pasar yang dipakai sistem berasal dari model identifikasi AI di halaman Ringkasan; hasil terbaru ada di halaman Strategi dan Tentang.",
     },
     classic: {
       tone: "border-edge bg-surface/50 text-txtDim",
-      title: "Pembanding klasik",
-      body: "Label di halaman ini berasal dari konsensus estimator Hurst R/S dan DFA, bukan dari detektor AI. Kedua estimator hanya sepakat pada ±53% window dan kurang akurat pada data kripto, sehingga ditampilkan sebagai pembanding.",
+      title: "Label konsensus Hurst–DFA",
+      body: "Label di halaman ini dihitung langsung dari estimator Hurst R/S dan DFA-1 (Trend-Aware Soft Consensus, ambang kuantil data latih). Label inilah yang dipelajari model identifikasi AI di halaman Ringkasan. Jendela yang kedua estimatornya tidak sepakat ditandai uncertain (rule).",
     },
   }[variant];
 

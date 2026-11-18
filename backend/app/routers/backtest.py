@@ -80,7 +80,7 @@ def run(req: BacktestRequest) -> dict:
         probs_matrix, pred_source = probabilities_for(req.symbol, req.tf, df, req.model_key)
         regimes = [str(apply_tau(p, tau)["final_label"]) for p in to_dicts(probs_matrix)]
         origin = "model terlatih" if pred_source == "trained_artifact" else "stand-in"
-        source_note = f"prediksi {req.model_key} pada t ({origin}, tau={tau})"
+        source_note = f"keluaran model {req.model_key} pada t ({origin}, tau={tau})"
         pred_note = pred_source
     else:
         # Rule-based causal: label Hurst-DFA dari window yang berakhir di t.

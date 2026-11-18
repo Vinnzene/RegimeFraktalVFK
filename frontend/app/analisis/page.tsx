@@ -164,8 +164,8 @@ export default function AnalisisPage() {
       </form>
 
       <p className="rounded-xl border border-warn/40 bg-warn/10 px-4 py-2.5 text-[12.5px] leading-relaxed text-txtDim">
-        <b className="text-txt">Eksperimental untuk aset selain BTC/USDT 1H.</b> Detektor diuji pada data sintetis dan divalidasi pada BTC
-        1H; pada uji 19 aset lain, kriteria generalisasi belum terpenuhi. Gunakan hasil untuk aset lain sebagai gambaran, bukan kepastian.
+        <b className="text-txt">Eksperimental untuk aset selain BTC/USDT 1H dan 4H.</b> Model identifikasi dilatih dan diuji pada BTC/USDT
+        1H dan 4H saja; untuk aset dan timeframe lain belum ada validasi. Gunakan hasil untuk aset lain sebagai gambaran, bukan kepastian.
       </p>
 
       <section className="rounded-xl border border-edge bg-panel shadow-panel">

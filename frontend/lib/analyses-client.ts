@@ -1,4 +1,4 @@
-import type { AiRegimeClass, AiRegimePoint, Candle } from "@/lib/api-client";
+import type { AiRegimeClass, AiRegimePoint, Candle, DetectorInfo } from "@/lib/api-client";
 import type { RandomBand } from "@/components/RegimeOverview";
 
 /** Klien halaman Analisis Aset; memanggil rute Next.js /api/analyses (sesi login). */
@@ -38,7 +38,7 @@ export type AnalysisResult = {
   first_time?: number;
   last_time?: number;
   experimental?: boolean;
-  detector?: { name: string; window: number; stride_bars: number; abstain_tau: number; validated_on: string; test_ba_synthetic?: Record<string, number> };
+  detector?: Partial<DetectorInfo> & { name: string; window: number; stride_bars: number; abstain_tau: number; validated_on: string };
   random_band?: RandomBand;
   candles?: Record<keyof Candle, number[]>;
   series?: (AiRegimePoint & { hurst: number; dfa_alpha: number })[];

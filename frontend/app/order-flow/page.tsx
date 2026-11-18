@@ -136,7 +136,7 @@ export default function OrderFlowPage() {
                   <th className="text-right" title="Jumlah pergantian regime per 100 window pada rentang test">
                     Transisi/100
                   </th>
-                  <th className="text-right" title="Porsi prediksi di bawah ambang keyakinan Ï„">Ragu (Ï„)</th>
+                  <th className="text-right" title="Porsi hasil model di bawah ambang keyakinan Ï„">Ragu (Ï„)</th>
                 </tr>
               </thead>
               <tbody>
@@ -198,7 +198,7 @@ export default function OrderFlowPage() {
                   <table className="w-full text-[10px] tabular-nums">
                     <thead>
                       <tr className="text-txtMuted">
-                        <th className="text-left">aktual \ prediksi</th>
+                        <th className="text-left">aktual \ hasil model</th>
                         {ab.classes.map((c: string) => (
                           <th key={c} className="text-right">{regimeLabel(c).split(" ")[0].slice(0, 5)}</th>
                         ))}

@@ -259,7 +259,7 @@ export default function StrategiPage() {
       {current && plan && (
         <section className="panel grid gap-5 lg:grid-cols-[1fr_1.2fr]" style={{ borderLeft: `3px solid ${REGIME_META[current].color}` }}>
           <div className="space-y-2">
-            <div className="metric-label">Kondisi pasar saat ini menurut detektor AI · {timeframe.toUpperCase()}</div>
+            <div className="metric-label">Kondisi pasar saat ini menurut model identifikasi AI · {timeframe.toUpperCase()}</div>
             <div className="text-[24px] font-semibold tracking-tight" style={{ color: REGIME_META[current].color }}>
               {REGIME_PLAIN[current].name}
             </div>

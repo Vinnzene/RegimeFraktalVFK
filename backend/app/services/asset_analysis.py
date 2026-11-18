@@ -1,9 +1,9 @@
 """Analisis regime untuk aset apa pun (Binance atau Yahoo Finance).
 
-Detektor resmi dilatih pada deret sintetis tanpa satuan waktu dan setiap
-jendela dinormalisasi ke volatilitas standar, sehingga dapat diterapkan ke
-pair lain apa adanya. Validitasnya hanya diuji pada BTC 1H; untuk aset lain
-hasil ditandai eksperimental (uji generalisasi tidak memenuhi kriteria).
+Model identifikasi resmi (Hybrid PS Attention-BiLSTM, h = 0) dilatih pada BTC/USDT
+1H dan 4H. Aset dan timeframe lain memakai model timeframe terdekat
+(`ai_detector.MODEL_TF`) apa adanya, tanpa normalisasi ulang, sehingga hasilnya
+ditandai eksperimental: model hanya dievaluasi pada BTC/USDT 1H dan 4H.
 
 Alur: data diambil sinkron saat permintaan masuk (simbol yang salah langsung
 ditolak dan tidak memakan kuota), lalu deteksi dijalankan di antrean latar
@@ -132,7 +132,7 @@ def _fetch_yahoo(ticker: str, timeframe: str, bars: int) -> pd.DataFrame:
 
 def fetch(source: str, symbol: str, timeframe: str, bars: int) -> pd.DataFrame:
     df = _fetch_binance(symbol, timeframe, bars) if source == "binance" else _fetch_yahoo(symbol, timeframe, bars)
-    window = ai_detector.meta()["window"]
+    window = ai_detector.meta(timeframe)["window"]
     if len(df) < window + 100:
         raise AnalysisError(
             f"Data {symbol} {timeframe} hanya {len(df)} bar; detektor memerlukan minimal {window + 100} bar."
@@ -143,10 +143,10 @@ def fetch(source: str, symbol: str, timeframe: str, bars: int) -> pd.DataFrame:
 # ------------------------------------------------------------------ analisis
 
 
-def analyze(df: pd.DataFrame, progress=lambda f: None) -> Dict[str, Any]:
-    """Deteksi pada grid yang sama dengan sistem: jendela 500 return, tiap 4 bar."""
-    m = ai_detector.meta()
-    L, stride = int(m["window"]), ai_detector.STRIDE
+def analyze(df: pd.DataFrame, timeframe: str = "1h", progress=lambda f: None) -> Dict[str, Any]:
+    """Identifikasi pada grid yang sama dengan sistem: jendela 500 return, stride model."""
+    m = ai_detector.meta(timeframe)
+    L, stride = int(m["window"]), ai_detector.stride_for(timeframe)
     close = df["close"].to_numpy(float)
     times = df["time"].to_numpy(np.int64)
     r = np.diff(np.log(close))
@@ -200,8 +200,9 @@ def _run(job_id: str, request: Dict[str, Any], df: pd.DataFrame) -> None:
     try:
         _jobs[job_id]["status"] = "running"
         t0 = time.time()
-        out = analyze(df, progress)
-        m = ai_detector.meta()
+        out = analyze(df, request["timeframe"], progress)
+        info = ai_detector.describe(request["timeframe"])
+        m = ai_detector.meta(request["timeframe"])
         from app.routers.analysis import random_band  # noqa: PLC0415
 
         result = {
@@ -213,15 +214,8 @@ def _run(job_id: str, request: Dict[str, Any], df: pd.DataFrame) -> None:
             "n_bars": int(len(df)),
             "first_time": int(df["time"].iloc[0]),
             "last_time": int(df["time"].iloc[-1]),
-            "detector": {
-                "name": "Hybrid PS (Attention-BiLSTM), latih-sintetis",
-                "window": int(m["window"]),
-                "stride_bars": ai_detector.STRIDE,
-                "abstain_tau": ai_detector.ABSTAIN_TAU,
-                "test_ba_synthetic": m.get("test_ba_reproduced"),
-                "validated_on": "BTC/USDT 1H",
-            },
-            "experimental": not (request["source"] == "binance" and request["symbol"] == "BTCUSDT" and request["timeframe"] == "1h"),
+            "detector": {**info, "validated_on": "BTC/USDT 1H dan 4H"},
+            "experimental": not (request["source"] == "binance" and request["symbol"] == "BTCUSDT" and request["timeframe"] in ("1h", "4h")),
             "random_band": random_band(int(m["window"])),
             "candles": df[["time", "open", "high", "low", "close", "volume"]].to_dict(orient="list"),
             **out,
@@ -239,7 +233,7 @@ def _run(job_id: str, request: Dict[str, Any], df: pd.DataFrame) -> None:
 def submit(source: str, symbol: str, timeframe: str, bars: int) -> Dict[str, Any]:
     """Validasi + ambil data sekarang; deteksi menyusul di antrean."""
     source, symbol, timeframe, bars = validate(source, symbol, timeframe, bars)
-    ai_detector.meta()  # gagal cepat bila detektor belum terpasang
+    ai_detector.meta(timeframe)  # gagal cepat bila model belum terpasang
     df = fetch(source, symbol, timeframe, bars)
     job_id = uuid.uuid4().hex[:16]
     request = {"source": source, "symbol": symbol, "timeframe": timeframe, "bars_requested": bars}

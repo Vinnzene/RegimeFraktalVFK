@@ -58,7 +58,7 @@ export interface RegimePoint {
 
 export type AiRegimeClass = "persistent" | "random_like" | "anti_persistent";
 
-/** Titik deteksi detektor AI; `hurst`, `dfa_alpha`, `segment` tidak ada (bukan label konsensus). */
+/** Titik identifikasi model AI; `hurst`, `dfa_alpha`, `segment` tidak ada (bukan label konsensus). */
 export interface AiRegimePoint extends RegimePoint {
   confidence: number;
   p_persistent: number;
@@ -66,20 +66,49 @@ export interface AiRegimePoint extends RegimePoint {
   p_anti_persistent: number;
 }
 
+export interface IdentificationScore {
+  n: number;
+  correct: number;
+  accuracy: number;
+  balanced_accuracy: number;
+  macro_f1?: number;
+  mcc?: number;
+}
+
+/** Model identifikasi resmi (Hybrid PS Attention-BiLSTM, h = 0). */
+export interface DetectorInfo {
+  name: string;
+  task: string;
+  horizon_bars: number;
+  inputs: string;
+  trained_on: string;
+  label: string;
+  label_thresholds: { hurst: [number, number]; dfa: [number, number] };
+  classes: AiRegimeClass[];
+  window: number;
+  stride_bars: number;
+  model_timeframe: string;
+  ensemble_seeds: number[];
+  test_backtest: IdentificationScore;
+  walk_forward_pooled: IdentificationScore | null;
+  abstain_tau: number;
+  abstain_validation: { tau: number; coverage: number; accuracy_covered: number; note: string } | null;
+}
+
+export interface SplitTimes {
+  train_end_time: number;
+  validation_start_time: number;
+  validation_end_time: number;
+  test_start_time: number;
+  test_end_time: number;
+}
+
 export interface AiRegimeResponse {
   timeframe: string;
   symbol: string;
   config_hash: string;
-  detector: {
-    name: string;
-    inputs: string;
-    trained_on: string;
-    class_thresholds_h: [number, number];
-    window: number;
-    stride_bars: number;
-    test_ba_synthetic: Record<string, number> | null;
-    abstain_tau: number;
-  };
+  detector: DetectorInfo;
+  split_boundaries: SplitTimes | null;
   current_regime: AiRegimeClass | null;
   current_time: number | null;
   current_probabilities: Record<AiRegimeClass, number> | null;
@@ -244,7 +273,7 @@ export const api = {
       current_regime: string;
       config_hash: string;
     }>("/api/v1/analysis/regime", { tf }),
-  /** Regime dari detektor resmi (Hybrid PS latih-sintetis). */
+  /** Regime hasil identifikasi model resmi (Hybrid PS Attention-BiLSTM, h = 0). */
   aiRegime: (tf: string) => get<AiRegimeResponse>("/api/v1/analysis/ai-regime", { tf }),
   hurstDfa: (tf: string, limit?: number) =>
     get<any>("/api/v1/analysis/hurst-dfa", { tf, limit }),

@@ -18,6 +18,9 @@ export interface AppConfig {
     J: number;
     hurst_threshold: [number, number];
     dfa_threshold: [number, number];
+    threshold_mode?: string;
+    threshold_source?: string;
+    threshold_quantiles?: [number, number];
     input: string;
   };
   model: { h: number; stride: number; purge_gap: number; tau: number; seed: number };

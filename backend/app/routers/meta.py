@@ -31,11 +31,12 @@ def methodology() -> dict:
     from app.services import ai_detector
 
     cfg = get_config()
-    # Ambang kelas detektor resmi (kebenaran dasar H), bukan ambang `fixed` lama di config.
+    # Ambang label train-only model identifikasi resmi (1H), bukan ambang `fixed` lama di config.
     try:
-        lo_h, hi_h = ai_detector.meta()["thresholds"]
+        thr = ai_detector.meta("1h")["label_thresholds_train_only"]
+        (h_lo, h_hi), (a_lo, a_hi) = thr["hurst"], thr["dfa"]
     except ai_detector.DetectorUnavailable:
-        lo_h, hi_h = 0.47, 0.53
+        h_lo, h_hi, a_lo, a_hi = 0.5718, 0.5985, 0.4778, 0.5207
     return {
         "config_hash": cfg.config_hash,
         "sections": [
@@ -66,20 +67,19 @@ def methodology() -> dict:
             },
             {
                 "id": "threshold",
-                "title": "Kriteria Regime",
+                "title": "Kriteria Regime (Trend-Aware Soft Consensus)",
                 "formula": (
-                    rf"R = \begin{{cases}} \text{{Anti-persistent}} & H < {lo_h} \\ "
-                    rf"\text{{Random-like}} & {lo_h} \le H \le {hi_h} \\ "
-                    rf"\text{{Persistent}} & H > {hi_h} \end{{cases}}"
+                    rf"R = \begin{{cases}} \text{{Persistent}} & H > {h_hi} \wedge \alpha > {a_hi} \\ "
+                    rf"\text{{Anti-persistent}} & H < {h_lo} \wedge \alpha < {a_lo} \\ "
+                    rf"\text{{Random-like}} & \text{{keduanya di dalam pita}} \\ "
+                    rf"\text{{uncertain\_rule}} & \text{{tidak sepakat}} \end{{cases}}"
                 ),
                 "body": (
-                    f"Detektor AI mempelajari kelas ini dari deret sintetis yang "
-                    f"nilai H-nya diketahui, dengan ambang {lo_h}/{hi_h} yang "
-                    "diturunkan dari titik impas ekonomi strategi momentum dan "
-                    "mean-reversion setelah biaya (sensitivitas 0,45/0,55). Label "
-                    "klasik R/S dan DFA memakai ambang kuantil 1/3 dan 2/3 data "
-                    "latih; bila keduanya tidak sepakat, window ditandai "
-                    "uncertain_rule."
+                    f"Ambang = kuantil 1/3 dan 2/3 partisi latih 1H (Hurst R/S {h_lo}/{h_hi}, DFA-1 {a_lo}/{a_hi}). "
+                    "Ketidaksepakatan bertetangga diselesaikan dengan skor kuantil Efficiency Ratio multiskala: "
+                    "persistent bila ER_q >= 0,60, anti-persistent bila ER_q <= 0,35; konflik persistent vs "
+                    "anti-persistent tetap uncertain_rule. Model identifikasi (Hybrid PS Attention-BiLSTM) "
+                    "dilatih untuk mengenali label ini pada jendela yang sama (h = 0)."
                 ),
             },
             {
@@ -101,9 +101,9 @@ def methodology() -> dict:
                 "body": (
                     "BiLSTM membaca sekuens dua arah; attention memberi bobot "
                     "alpha_t pada tiap timestep sehingga kontribusi tiap bagian "
-                    "sekuens dapat diperiksa. Pada detektor, bobotnya hampir "
-                    "seragam (entropi 0,92) dan attention tidak terbukti menambah "
-                    "akurasi (H3): model memakai informasi dari seluruh window."
+                    "sekuens dapat diperiksa. Pada ablasi pipeline Bab 4, mengganti "
+                    "attention dengan global average pooling memberi akurasi setara "
+                    "(1H 81,00% vs 81,00%), jadi attention tidak terbukti menambah akurasi."
                 ),
             },
             {
@@ -112,10 +112,10 @@ def methodology() -> dict:
                 "formula": r"X_t = f(x_{t-L+1}, \dots, x_t),\quad \hat{Y}_t = \text{Regime}(W_t)",
                 "body": (
                     "Fitur hanya memakai data sampai t dan target adalah regime "
-                    "window yang sama (identifikasi, bukan prediksi). Detektor "
-                    "dilatih pada data sintetis, sehingga seluruh riwayat BTC "
-                    "adalah data luar sampel. Pada eksperimen berlabel BTC, split "
-                    "time-based tanpa shuffle dengan purge 500 bar di tiap batas; "
+                    "window yang sama (identifikasi, h = 0, bukan prediksi). Model "
+                    "dilatih pada partisi latih BTC (70%), jadi riwayat sebelum batas "
+                    "latih adalah data latih model. Split time-based tanpa shuffle "
+                    "dengan purge 500 bar di tiap batas; ambang label dari partisi latih saja; "
                     "split acak terbukti menggelembungkan akurasi +0,12 sampai +0,18."
                 ),
             },

@@ -30,6 +30,7 @@ from app.services.data_ingestion import (
 )
 from app.services.hurst_dfa import compute_rolling_er, rolling_hurst_dfa, to_log_return
 from app.services.regime_labeling import label_series
+from app.services.splitting import bars_to_rows, split_indices
 
 # Skema kolom diambil dari data_ingestion agar hanya ada satu definisi.
 # Mendefinisikannya ulang di sini pernah membuat kolom order flow hilang saat
@@ -440,12 +441,28 @@ class ParquetRepository(Repository):
             for k_er, v_er in er_dict.items():
                 metrics[k_er] = v_er
 
+        # Ambang (dan skor kuantil ER) mengikuti analysis.threshold_source. Pada
+        # train_only, kalibrasi memakai partisi latih dengan split dan purge yang
+        # sama seperti evaluasi Bab 4 (purge = L bar), sehingga label dashboard
+        # sama dengan label yang dipelajari model identifikasi.
+        train_mask = None
+        if cfg.analysis.threshold_source == "train_only":
+            sp = split_indices(len(metrics), cfg.split.ratios, bars_to_rows(window, step))
+            train_mask = np.zeros(len(metrics), dtype=bool)
+            train_mask[: sp["train"][1]] = True
+        # [0.3333, 0.6667] di config dibaca sebagai tersil eksak (1/3, 2/3), sama
+        # dengan backtest Bab 4; selisih pembulatannya menggeser ambang 1e-4.
+        quantiles = list(cfg.analysis.threshold_quantiles)
+        if all(abs(q - t) < 1e-3 for q, t in zip(quantiles, (1 / 3, 2 / 3))):
+            quantiles = [1 / 3, 2 / 3]
         labeled = label_series(
             metrics,
             cfg.analysis.hurst_threshold,
             cfg.analysis.dfa_threshold,
             mode=cfg.analysis.threshold_mode,
-            quantiles=cfg.analysis.threshold_quantiles,
+            quantiles=quantiles,
+            threshold_source=cfg.analysis.threshold_source,
+            train_mask=train_mask,
         )
         # +1 karena log-return memangkas satu bar di awal.
         bar_idx = (labeled["index"].to_numpy() + 1).astype(int)

@@ -101,7 +101,7 @@ function Result({ d }: { d: AnalysisResult }) {
           </div>
           <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
             <MetricCard
-              title={`DETEKTOR AI ${d.timeframe.toUpperCase()}`}
+              title={`IDENTIFIKASI AI ${d.timeframe.toUpperCase()}`}
               value={conf !== null ? pctConf(conf, tau) : "–"}
               status={`${REGIME_PLAIN[key].name}${low ? " · ragu" : ""}`}
               statusColor={color}
@@ -144,7 +144,7 @@ function Result({ d }: { d: AnalysisResult }) {
 
         <div className="mt-4 border-t border-edge pt-3">
           <p className="text-[13px] leading-relaxed text-txtDim">
-            Detektor AI menilai {d.symbol} {d.timeframe.toUpperCase()} {REGIME_PLAIN[key].name.toLowerCase()}
+            Model identifikasi AI menilai {d.symbol} {d.timeframe.toUpperCase()} {REGIME_PLAIN[key].name.toLowerCase()}
             {conf !== null ? ` dengan keyakinan ${pctConf(conf, tau)}` : ""}
             {low ? `, di bawah batas ${pct(tau)} sehingga diperlakukan sebagai tidak pasti` : ""}.{" "}
             {band &&
@@ -181,9 +181,9 @@ function Result({ d }: { d: AnalysisResult }) {
               <div>
                 <div className="mb-1.5 text-[12px] font-medium text-txt">Batas validitas</div>
                 <p>
-                  Detektor diuji pada data sintetis berkebenaran dasar dan divalidasi pada {d.detector?.validated_on ?? "BTC/USDT 1H"}.
+                  Model identifikasi dilatih dan diuji pada {d.detector?.validated_on ?? "BTC/USDT 1H dan 4H"}.
                   {d.experimental
-                    ? " Untuk aset dan timeframe ini belum ada validasi khusus; pada uji 19 aset lain kriteria generalisasi belum terpenuhi."
+                    ? " Untuk aset dan timeframe ini belum ada validasi khusus."
                     : ""}
                 </p>
               </div>
@@ -271,7 +271,7 @@ export default function AnalisisDetailPage({ params }: { params: { id: string } 
       )}
       {!error && data?.experimental && data.status === "done" && (
         <p className="rounded-xl border border-warn/40 bg-warn/10 px-4 py-2.5 text-[12.5px] text-txtDim">
-          <b className="text-txt">Eksperimental.</b> Detektor divalidasi pada BTC/USDT 1H; untuk {data.symbol} {data.timeframe.toUpperCase()} hasil ini
+          <b className="text-txt">Eksperimental.</b> Model identifikasi divalidasi pada BTC/USDT 1H dan 4H; untuk {data.symbol} {data.timeframe.toUpperCase()} hasil ini
           belum divalidasi khusus.
         </p>
       )}

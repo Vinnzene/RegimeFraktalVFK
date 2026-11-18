@@ -45,16 +45,14 @@ analysis:
   input: log_return    # WAJIB log_return; harga level punya unit root
 
 model:
-  h: 500               # horizon target (default = L)
+  h: 0                 # horizon target: 0 = identifikasi regime jendela itu sendiri (Bab 4)
   stride: 1            # jarak antar sampel training
-  purge_gap: 1000      # = L + h, gap dibuang di batas split
-  # Confidence threshold untuk uncertain_lowconf.
-  # 0.40 dipilih setelah melihat distribusi keluaran model terlatih: max(P)
-  # berpusat di ~0.34 (tebakan seragam 3 kelas). Dengan tau=0.5 seluruh window
-  # menjadi uncertain_lowconf sehingga panel kehilangan daya beda. Angka ini
-  # bagian dari analisis sensitivitas, bukan ketetapan — slider di halaman
-  # Model Comparison memang disediakan untuk mengujinya.
-  tau: 0.40
+  purge_gap: 500       # = L + h, gap dibuang di batas split
+  # Confidence threshold untuk uncertain_lowconf, sama dengan ai_detector.ABSTAIN_TAU.
+  # Label identifikasi tetap argmax; tau hanya menandai jendela ragu. Pada set
+  # validasi backtest, keyakinan >= 0,75 mencakup 25% (1H) / 49% (4H) jendela
+  # dengan ketepatan 85,7% / 94,8%. (Nilai lama 0,40 untuk model SWT h = 500.)
+  tau: 0.75
   seed: 42
 
 split:

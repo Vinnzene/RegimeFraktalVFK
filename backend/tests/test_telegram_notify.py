@@ -145,4 +145,4 @@ def test_state_from_old_label_source_is_reset_without_broadcast(tmp_path):
     assert rn.check({"1h": frame([A, A, A])}, store, send, "http://x", state, logp, k=3) == []
     assert send.sent == []
     entry = json.loads(state.read_text())["1h"]
-    assert entry["confirmed"] == A and entry["source"] == "ai"
+    assert entry["confirmed"] == A and entry["source"] == rn.SOURCE

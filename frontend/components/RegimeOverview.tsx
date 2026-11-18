@@ -10,7 +10,7 @@ import { STRATEGY_PLAN, VERDICT_META } from "@/lib/strategy";
  * Kartu ringkasan beranda: satu kesimpulan besar, empat angka pendukung, dan
  * satu kalimat penjelasan yang buktinya dapat dibuka.
  *
- * Label besar selalu dari detektor AI. Estimator klasik R/S dan DFA hanya
+ * Label besar selalu dari model identifikasi AI. Estimator klasik R/S dan DFA hanya
  * pembanding dan dibaca terhadap pita acak (persentil 2,5–97,5% pada deret
  * tanpa memori), bukan terhadap 0,5: pada jendela 500 bar R/S bias ke atas,
  * sehingga 0,59 pun masih sepenuhnya acak.
@@ -226,7 +226,7 @@ export default function RegimeOverview({
     return (
       <MetricCard
         key={tf}
-        title={`DETEKTOR AI ${tf}`}
+        title={`IDENTIFIKASI AI ${tf}`}
         value={c !== null ? pctConf(c, tau) : "–"}
         status={r ? `${REGIME_PLAIN[k as Regime].name}${lowConf ? " · ragu" : ""}` : null}
         statusColor={r ? REGIME_META[r].color : "rgb(var(--c-txt-muted))"}
@@ -254,7 +254,7 @@ export default function RegimeOverview({
   );
 
   const sentence = [
-    `Detektor AI menilai pasar ${timeframe.toUpperCase()} ${REGIME_PLAIN[key].name.toLowerCase()}${
+    `Model identifikasi AI menilai pasar ${timeframe.toUpperCase()} ${REGIME_PLAIN[key].name.toLowerCase()}${
       conf !== null ? ` dengan keyakinan ${pctConf(conf, tau)}` : ""
     }${low ? `, di bawah batas ${pct(tau)} sehingga diperlakukan sebagai tidak pasti` : ""}.`,
     otherKey
@@ -387,11 +387,13 @@ export default function RegimeOverview({
               )}
             </div>
             <div>
-              <div className="mb-1.5 text-[12px] font-medium text-txt">Mengapa detektor AI yang menentukan</div>
+              <div className="mb-1.5 text-[12px] font-medium text-txt">Bagaimana model AI menentukan</div>
               <p>
-                Pada deret sintetis mirip kripto dengan H diketahui, detektor mencapai akurasi seimbang{" "}
-                {active.detector.test_ba_synthetic?.S4 !== undefined ? num(active.detector.test_ba_synthetic.S4) : "0,813"}, sedangkan
-                estimator klasik terbaik 0,654 dan konsensus R/S–DFA 0,268.
+                Model identifikasi mempelajari label konsensus Hurst R/S–DFA-1 (Trend-Aware Soft Consensus) dari data latih BTC.
+                Pada partisi uji {active.detector.model_timeframe.toUpperCase()} model mengidentifikasi{" "}
+                {active.detector.test_backtest.correct.toLocaleString("id-ID")} dari {active.detector.test_backtest.n.toLocaleString("id-ID")}{" "}
+                jendela dengan benar ({pct(active.detector.test_backtest.accuracy)}); rata-rata ketiga kelas{" "}
+                {pct(active.detector.test_backtest.balanced_accuracy)}, karena kondisi acak paling sulit dikenali.
               </p>
               <p className="mt-2">
                 Di bawah keyakinan {pct(tau)} label dianggap ragu; pada riwayat {timeframe.toUpperCase()} ini{" "}

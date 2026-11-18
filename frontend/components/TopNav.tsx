@@ -23,9 +23,9 @@ const GROUPS: NavGroup[] = [
   {
     label: "Pasar",
     items: [
-      { href: "/", label: "Ringkasan", hint: "Kondisi pasar 1H & 4H menurut detektor AI + grafik harga" },
+      { href: "/", label: "Ringkasan", hint: "Kondisi pasar 1H & 4H menurut model identifikasi AI + grafik harga" },
       { href: "/walk-forward-evaluation", label: "Walk-Forward (2019–2026)", hint: "Uji identifikasi berjalan 2019→2026 pada 12 aset (BTC, ETH, TAO, Emas, Perak) + grafik TradingView" },
-      { href: "/analisis", label: "Analisis Aset", hint: "Detektor regime untuk pair/ticker apa pun (Binance, Yahoo) · 10 per hari" },
+      { href: "/analisis", label: "Analisis Aset", hint: "Identifikasi regime untuk pair/ticker apa pun (Binance, Yahoo) · 10 per hari" },
       { href: "/analisa-teknikal", label: "Analisa Teknikal", hint: "Tarik garis, fibonacci, dan indikator (TradingView)" },
       { href: "/orderflow-live", label: "Order Flow Live", hint: "Heatmap order book, footprint, delta & CVD (kripto)" },
     ],
@@ -51,16 +51,13 @@ const GROUPS: NavGroup[] = [
   {
     label: "Arsip Fase 0",
     items: [
-      { href: "/model-comparison", label: "Perbandingan Model", hint: "Arsip: model lama berlabel Hurst-DFA" },
-      { href: "/attention", label: "Fokus Model", hint: "Arsip: bobot attention model SWT lama" },
-      { href: "/backtest", label: "Uji Strategi (lama)", hint: "Arsip: backtest eksploratif sebelum Fase 2" },
       { href: "/order-flow", label: "Order Flow (riset)", hint: "Arsip: ablation OFI & CVD (Model A–D)" },
     ],
   },
   {
     label: "Tentang",
     items: [
-      { href: "/methodology", label: "Metodologi", hint: "Alur detektor, rumus & definisi" },
+      { href: "/methodology", label: "Metodologi", hint: "Alur identifikasi, rumus & definisi" },
       { href: "/about", label: "Tentang", hint: "Latar belakang, batasan & temuan utama" },
     ],
   },

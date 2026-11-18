@@ -69,7 +69,7 @@ export default function RegimeHistoryTable({
             <thead className="sticky top-0 bg-surface/80 backdrop-blur">
               <tr className="text-left text-[11.5px] text-txtDim">
                 <th className="py-2 pl-4 font-medium" title="Tanggal titik deteksi pertama periode ini">Mulai</th>
-                <th className="py-2 font-medium" title="Kondisi menurut detektor AI, sama dengan pita grafik; 'ragu' bila keyakinan rata-rata di bawah ambang">Kondisi</th>
+                <th className="py-2 font-medium" title="Kondisi menurut model identifikasi AI, sama dengan pita grafik; 'ragu' bila keyakinan rata-rata di bawah ambang">Kondisi</th>
                 <th className="py-2 font-medium" title="Lama periode berlangsung">Lama</th>
                 <th className="py-2 pr-4 text-right font-medium" title="Rata-rata keyakinan detektor selama periode">Keyakinan</th>
               </tr>
