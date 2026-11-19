@@ -171,3 +171,37 @@ sumber asli sebelum dikutip).
 - Sauro, J. (2011). *A Practical Guide to the System Usability Scale*. Measuring Usability LLC.
 - Sauro, J., & Dumas, J. S. (2009). Comparison of three one-question, post-task usability questionnaires. *Proceedings of CHI 2009*, 1599–1608.
 - Sharfina, Z., & Santoso, H. B. (2016). An Indonesian adaptation of the System Usability Scale (SUS). *ICACSIS 2016*.
+
+---
+
+## Modul UAT di dalam aplikasi (pengganti Google Form)
+
+Sejak 19 Nov 2026 UAT dijalankan langsung di aplikasi, sehingga data mentah tersimpan otomatis.
+
+**Alur responden** (`/uat`, wajib login):
+1. Persetujuan + profil singkat (peran, pengalaman, timeframe, pengenalan Hurst/DFA).
+2. Lima tugas terpandu (T1–T5) di halaman asli. Jawaban dicek otomatis terhadap isi sistem saat tugas
+   dimulai dan saat dijawab, waktu pengerjaan dicatat server, dan tiap tugas dinilai kemudahannya (SEQ 1–7).
+3. Kuesioner: 8 butir kelayakan Likert (Tabel 3.12) + System Usability Scale 10 butir + saran.
+4. Jawaban dikunci (satu akun satu kali), responden mendapat kode R01, R02, …
+
+**Menyalakan di server** (`frontend/.env.local`, lalu rebuild/restart frontend):
+```
+UAT_INVITE_CODE=<kode-acak>
+ADMIN_EMAILS=<email-admin>
+```
+Bagikan `https://rfraktal.my.id/uat?kode=<kode-acak>`. Tanpa `UAT_INVITE_CODE`, UAT tertutup untuk akun biasa.
+
+**Rekap dan lampiran** (`/admin/uat`, hanya email di `ADMIN_EMAILS`): skor per butir dan P_UAT (rumus Tabel 3.11),
+skor SUS (rata-rata, SD, median), keberhasilan dan median waktu tiap tugas, profil responden, dan tombol
+**Ekspor CSV** (satu baris per responden, tanpa email) untuk lampiran naskah.
+
+**Penyimpanan**: Firestore `uat_responses/{uid}` dan `uat_meta/counter`, hanya lewat server (aturan Firestore menolak
+akses langsung dari browser). Sesi demo lokal (`localhost`) menyimpan di memori dengan kode D01, D02, … dan **tidak**
+boleh dipakai sebagai data penelitian.
+
+**Perubahan butir dibanding Tabel 3.12 naskah (perbarui naskah agar sama):**
+- UAT-02: "pengaturan parameter jendela pengamatan" dihapus (fitur itu tidak ada); kini "pemilihan kerangka waktu (1H dan 4H)
+  dan perpindahan antarhalaman".
+- UAT-05: tidak lagi menyamakan warna regime dengan tren naik/turun (regime menggambarkan sifat gerakan, bukan arah).
+- UAT-08: merujuk halaman Hasil Uji Identifikasi dan Uji Ketahanan Metode.

@@ -41,6 +41,7 @@ const GROUPS: NavGroup[] = [
   {
     label: "Riset",
     items: [
+      { href: "/uji-ketahanan", label: "Uji Ketahanan Metode", hint: "Walk-forward, sensitivitas parameter, dan Monte Carlo (bootstrap & permutasi)" },
       { href: "/evaluasi-identifikasi", label: "Hasil Uji Identifikasi", hint: "Bab 4: benar per kelas (backtest) dan per fold walk-forward, BTC/USDT 1H & 4H" },
       { href: "/walk-forward-evaluation", label: "Walk-Forward Multi-Aset", hint: "Bukti identifikasi regime berjalan 2019→2026 (12 aset, h=0)" },
       { href: "/regime-explorer", label: "Hurst-DFA Klasik", hint: "Pembanding: label konsensus R/S–DFA, perpindahan & durasi" },

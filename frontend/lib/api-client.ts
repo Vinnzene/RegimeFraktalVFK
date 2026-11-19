@@ -326,6 +326,8 @@ export const api = {
   attention: (tf: string, atTime?: number) => get<AttentionResponse>("/api/v1/analysis/attention", { tf, at_time: atTime }),
   /** Hasil uji identifikasi Bab 4 (updated_eval_summary.json): backtest + walk-forward per kelas/fold. */
   evaluation: () => get<any>("/api/v1/model/evaluation"),
+  /** Uji ketahanan metode: walk-forward, sensitivitas, Monte Carlo (robustness_tests.json). */
+  robustness: () => get<any>("/api/v1/model/robustness"),
   /** Bentuk dan nilai fitur masukan model identifikasi untuk satu jendela. */
   features: (tf: string, atTime?: number) => get<FeaturesResponse>("/api/v1/analysis/features", { tf, at_time: atTime }),
   transitionMatrix: (tf: string) => get<any>("/api/v1/analysis/transition-matrix", { tf }),

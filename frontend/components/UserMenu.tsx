@@ -62,6 +62,24 @@ export default function UserMenu() {
               {tg ? (tg.enabled ? "aktif" : "jeda") : "belum"}
             </span>
           </Link>
+          <Link
+            href="/uat"
+            onClick={() => setOpen(false)}
+            className="flex items-center justify-between rounded px-3 py-2 text-[12.5px] text-txtDim transition-colors hover:bg-surface hover:text-txt"
+          >
+            Ikut uji pengguna (UAT)
+            <span className="text-2xs text-txtMuted">±15 menit</span>
+          </Link>
+          {(me.admin || me.user.demo) && (
+            <Link
+              href="/admin/uat"
+              onClick={() => setOpen(false)}
+              className="flex items-center justify-between rounded px-3 py-2 text-[12.5px] text-txtDim transition-colors hover:bg-surface hover:text-txt"
+            >
+              Rekap UAT
+              <span className="text-2xs text-accent">admin</span>
+            </Link>
+          )}
           {me.admin && (
             <Link
               href="/admin/akses"

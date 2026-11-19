@@ -688,6 +688,19 @@ def evaluation_summary() -> dict:
     return {"source": "ml/artifacts/updated_eval_summary.json", "horizon_bars": 0, "timeframes": out}
 
 
+@router.get("/robustness")
+def robustness_tests() -> dict:
+    """Uji ketahanan metode identifikasi (h = 0): walk-forward, sensitivitas, Monte Carlo.
+
+    Dibaca dari `ml/artifacts/robustness_tests.json` (dibuat `ml/src/review_robustness.py`).
+    Perhitungannya butuh puluhan menit (melatih ulang model), jadi tidak dijalankan di server.
+    """
+    path = ARTIFACTS_DIR / "robustness_tests.json"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="robustness_tests.json belum dibuat (jalankan ml/src/review_robustness.py).")
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 @router.get("/walk-forward-multi-asset")
 def walk_forward_multi_asset() -> dict:
     """Ringkasan hasil uji Walk-Forward Identifikasi Multi-Aset (2019 -> 2026)."""

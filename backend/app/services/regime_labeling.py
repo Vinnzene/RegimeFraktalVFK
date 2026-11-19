@@ -135,6 +135,7 @@ def label_from_exponents(
     efficiency_ratio: Optional[float] = None,
     soft_consensus: bool = True,
     er_threshold: Sequence[float] = (0.35, 0.60),
+    strong_er: float = 0.85,
 ) -> str:
     """Label ground truth dari sepasang (H, alpha) dengan Trend-Aware Soft Consensus.
 
@@ -147,6 +148,9 @@ def label_from_exponents(
     - Jika salah satu anti_persistent dan pasangannya random_like dengan ER <= q_0.35,
       tetapkan sebagai anti_persistent.
     - Konflik diametral (persistent vs anti_persistent) tetap uncertain_rule.
+
+    `er_threshold` (bawah, atas) dan `strong_er` dapat diubah untuk uji sensitivitas;
+    nilai bawaan adalah yang dipakai di Bab 4.
     """
     h_class = _bucket(hurst, hurst_threshold[0], hurst_threshold[1])
     a_class = _bucket(alpha, dfa_threshold[0], dfa_threshold[1])
@@ -158,7 +162,7 @@ def label_from_exponents(
             and h_class == RANDOM_LIKE
             and efficiency_ratio is not None
             and np.isfinite(efficiency_ratio)
-            and efficiency_ratio >= 0.85
+            and efficiency_ratio >= strong_er
         ):
             return PERSISTENT
         return h_class
