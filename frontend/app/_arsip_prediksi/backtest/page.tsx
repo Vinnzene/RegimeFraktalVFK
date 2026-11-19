@@ -1,3 +1,4 @@
+// @ts-nocheck -- arsip halaman model prediksi lama (h = 500); tidak dirutekan, tidak dipelihara.
 "use client";
 
 import { useState } from "react";

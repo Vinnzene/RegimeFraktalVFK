@@ -64,10 +64,9 @@ function TimeframeColumn({ tf }: { tf: string }) {
   const error = regime.error ?? duration.error ?? transition.error;
 
   const series = regime.data?.series ?? [];
-  const switches = series.reduce(
-    (acc: number, p: any, i: number) => (i > 0 && series[i - 1].regime !== p.regime ? acc + 1 : acc),
-    0
-  );
+  // Jumlah jendela dan perpindahan dari deret PENUH; `series` dijarangkan untuk gambar.
+  const nWindows = regime.data?.original_count ?? series.length;
+  const switches = regime.data?.n_switches ?? 0;
   const summary = duration.data?.summary ?? {};
   const meanAll =
     Object.values(summary).reduce((a: number, v: any) => a + (v.mean ?? 0), 0) /
@@ -78,7 +77,7 @@ function TimeframeColumn({ tf }: { tf: string }) {
       <Panel
         title={`Timeframe ${tf.toUpperCase()}`}
         subtitle={`Regime aktif: ${regimeLabel(regime.data?.current_regime ?? "-")}`}
-        params={{ window: series.length, perpindahan: switches }}
+        params={{ window: nWindows, stride: regime.data?.stride_bars ?? "-", perpindahan: switches }}
       >
         <ApiState loading={loading} error={error} />
         {!loading && !error && (
@@ -93,7 +92,7 @@ function TimeframeColumn({ tf }: { tf: string }) {
               <div className="rounded border border-edge bg-panelAlt p-2">
                 <div className="metric-label">Frekuensi pindah</div>
                 <div className="font-mono text-lg text-txt">
-                  {series.length ? ((switches / series.length) * 100).toFixed(1) : "0"}%
+                  {nWindows ? ((switches / nWindows) * 100).toFixed(1) : "0"}%
                 </div>
                 <div className="text-2xs text-txtMuted">per window</div>
               </div>

@@ -12,7 +12,7 @@ import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
  * Binance atau Yahoo Finance, dibatasi 10 analisis per hari per akun.
  */
 
-const BARS = [1000, 2000, 3000, 5000];
+const BARS = [500, 1000, 2000, 3000, 5000];
 
 function StatusBadge({ r }: { r: AnalysisRecord }) {
   if (r.status === "done" && r.current_regime) {
@@ -125,17 +125,24 @@ export default function AnalisisPage() {
           </label>
           <label className="block">
             <span className="mb-1 block text-[12px] font-medium text-txtDim">Jumlah bar</span>
-            <select
-              value={bars}
+            {/* Angka bebas; batas 500–5.000 divalidasi backend (HTTP 422) agar pesannya satu sumber. */}
+            <input
+              type="number"
+              inputMode="numeric"
+              list="bars-options"
+              value={Number.isFinite(bars) ? bars : ""}
               onChange={(e) => setBars(Number(e.target.value))}
-              className="rounded-lg border border-edge bg-panel px-3 py-2 text-[14px] text-txt outline-none focus:border-accent"
-            >
+              aria-describedby="bars-hint"
+              className="w-28 rounded-lg border border-edge bg-panel px-3 py-2 text-[14px] text-txt outline-none focus:border-accent"
+            />
+            <datalist id="bars-options">
               {BARS.map((b) => (
-                <option key={b} value={b}>
-                  {b.toLocaleString("id-ID")}
-                </option>
+                <option key={b} value={b} />
               ))}
-            </select>
+            </datalist>
+            <span id="bars-hint" className="mt-1 block text-2xs text-txtMuted">
+              500–5.000 bar (1 jendela = 500 bar)
+            </span>
           </label>
           <button
             type="submit"

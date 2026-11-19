@@ -101,6 +101,9 @@ def warm_cache() -> List[Dict[str, object]]:
             from app.services import ai_detector
 
             ai = ai_detector.update_cache(cfg.data.symbol, tf)
+            # Muat 3 model ke memori sekarang, agar identifikasi jendela baru pertama
+            # setelah restart tidak menunggu TensorFlow memuat model (±6 detik).
+            ai_detector.preload(tf)
             results.append(
                 {"timeframe": tf, "ok": True, "warmed": "ai_detector", "windows": len(ai), "seconds": round(time.time() - started, 1)}
             )

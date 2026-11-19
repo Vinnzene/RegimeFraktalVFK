@@ -53,6 +53,8 @@ export interface RegimePoint {
   /** Hanya pada label konsensus Hurst–DFA (`/analysis/regime`). */
   hurst?: number | null;
   dfa_alpha?: number | null;
+  /** Skor kuantil Efficiency Ratio multiskala (ER_q) yang dipakai soft consensus. */
+  efficiency_ratio?: number | null;
   segment?: string;
 }
 
@@ -93,6 +95,37 @@ export interface DetectorInfo {
   walk_forward_pooled: IdentificationScore | null;
   abstain_tau: number;
   abstain_validation: { tau: number; coverage: number; accuracy_covered: number; note: string } | null;
+}
+
+export interface AttentionResponse {
+  timeframe: string;
+  model: string;
+  horizon_bars: number;
+  window_time: number;
+  window_index: number;
+  n_windows: number;
+  regime: AiRegimeClass;
+  confidence: number;
+  probabilities: Record<AiRegimeClass, number>;
+  seq_len: number;
+  sub_window_bars: number;
+  step_bars: number;
+  entropy_normalized: number;
+  per_seed: Record<string, number[]>;
+  attention_weights: { step: number; end_offset_bars: number; time: number; weight: number }[];
+  candles: { time: number; open: number; high: number; low: number; close: number }[];
+}
+
+export interface FeaturesResponse {
+  timeframe: string;
+  window_time: number;
+  regime: AiRegimeClass;
+  ps_shape: [number, number];
+  ps_channels: string[];
+  summary_length: number;
+  summary_names: string[];
+  summary_values: number[];
+  ps_last_step: number[];
 }
 
 export interface SplitTimes {
@@ -272,6 +305,14 @@ export const api = {
       distribution: Record<string, { count: number; share: number }>;
       current_regime: string;
       config_hash: string;
+      /** Jumlah jendela pada deret PENUH (series bisa dijarangkan untuk grafik). */
+      original_count: number;
+      stride_bars: number;
+      /** Jumlah pergantian label pada deret penuh. */
+      n_switches: number;
+      thresholds: { hurst: [number, number]; dfa: [number, number]; source: string } | null;
+      latest_windows: RegimePoint[];
+      uncertain_example: RegimePoint | null;
     }>("/api/v1/analysis/regime", { tf }),
   /** Regime hasil identifikasi model resmi (Hybrid PS Attention-BiLSTM, h = 0). */
   aiRegime: (tf: string) => get<AiRegimeResponse>("/api/v1/analysis/ai-regime", { tf }),
@@ -281,8 +322,12 @@ export const api = {
     get<any>("/api/v1/analysis/multifractal", { tf, limit }),
   swt: (tf: string, levels?: number, endIndex?: number) =>
     get<any>("/api/v1/analysis/swt", { tf, levels, end_index: endIndex }),
-  attention: (tf: string, windowId?: number, seqLen?: number) =>
-    get<any>("/api/v1/analysis/attention", { tf, window_id: windowId, seq_len: seqLen }),
+  /** Bobot attention 32 langkah model identifikasi (h = 0), rata-rata 3 seed. */
+  attention: (tf: string, atTime?: number) => get<AttentionResponse>("/api/v1/analysis/attention", { tf, at_time: atTime }),
+  /** Hasil uji identifikasi Bab 4 (updated_eval_summary.json): backtest + walk-forward per kelas/fold. */
+  evaluation: () => get<any>("/api/v1/model/evaluation"),
+  /** Bentuk dan nilai fitur masukan model identifikasi untuk satu jendela. */
+  features: (tf: string, atTime?: number) => get<FeaturesResponse>("/api/v1/analysis/features", { tf, at_time: atTime }),
   transitionMatrix: (tf: string) => get<any>("/api/v1/analysis/transition-matrix", { tf }),
   regimeDuration: (tf: string) => get<any>("/api/v1/analysis/regime-duration", { tf }),
   splitBoundaries: (tf: string) => get<any>("/api/v1/data/split-boundaries", { tf }),

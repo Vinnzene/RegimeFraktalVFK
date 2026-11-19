@@ -41,11 +41,13 @@ const GROUPS: NavGroup[] = [
   {
     label: "Riset",
     items: [
+      { href: "/evaluasi-identifikasi", label: "Hasil Uji Identifikasi", hint: "Bab 4: benar per kelas (backtest) dan per fold walk-forward, BTC/USDT 1H & 4H" },
       { href: "/walk-forward-evaluation", label: "Walk-Forward Multi-Aset", hint: "Bukti identifikasi regime berjalan 2019→2026 (12 aset, h=0)" },
       { href: "/regime-explorer", label: "Hurst-DFA Klasik", hint: "Pembanding: label konsensus R/S–DFA, perpindahan & durasi" },
       { href: "/timeframe-comparison", label: "Hurst-DFA 1H vs 4H", hint: "Pembanding klasik pada dua skala waktu" },
       { href: "/multifractal", label: "Multifraktal", hint: "Spektrum H(q) momen q=1,2,4 dan lebar ΔH" },
       { href: "/swt", label: "Wavelet", hint: "Dekomposisi multiskala SWT" },
+      { href: "/attention", label: "Fokus Model", hint: "Bobot attention 32 langkah model identifikasi (h = 0)" },
     ],
   },
   {

@@ -19,7 +19,7 @@ import RegimeLegend from "@/components/RegimeLegend";
 import TransitionMatrix from "@/components/TransitionMatrix";
 import { useAppConfig } from "@/components/ConfigContext";
 import { ApiState, useApi } from "@/components/useApi";
-import { api } from "@/lib/api-client";
+import { api, type RegimePoint } from "@/lib/api-client";
 import { REGIME_META, regimeLabel, type Regime } from "@/lib/regime";
 
 export default function RegimeExplorerPage() {
@@ -63,19 +63,41 @@ export default function RegimeExplorerPage() {
             params={{
               input: config?.analysis.input ?? "-",
               L: config?.analysis.L ?? "-",
-              n: regime.data?.series.length ?? 0,
+              stride: regime.data?.stride_bars ?? "-",
+              jendela: regime.data?.original_count ?? 0,
             }}
           >
             <HurstDfaPanel
               series={regime.data?.series ?? []}
-              hurstThreshold={(config?.analysis.hurst_threshold ?? [0.45, 0.55]) as [number, number]}
-              dfaThreshold={(config?.analysis.dfa_threshold ?? [0.45, 0.55]) as [number, number]}
+              hurstThreshold={(regime.data?.thresholds?.hurst ?? config?.analysis.hurst_threshold ?? [0.45, 0.55]) as [number, number]}
+              dfaThreshold={(regime.data?.thresholds?.dfa ?? config?.analysis.dfa_threshold ?? [0.45, 0.55]) as [number, number]}
+              showEr
             />
+            {regime.data?.thresholds && (
+              <p className="mt-2 text-2xs leading-relaxed text-txtMuted">
+                Ambang kuantil 1/3–2/3 dari {regime.data.thresholds.source === "train_only" ? "partisi latih" : "seluruh riwayat"}:
+                Hurst R/S {regime.data.thresholds.hurst.map((v) => v.toLocaleString("id-ID")).join("–")} (garis putus biru/oranye),
+                DFA α {regime.data.thresholds.dfa.map((v) => v.toLocaleString("id-ID")).join("–")} (titik-titik kuning). Garis hijau =
+                ER_q, skor kuantil Efficiency Ratio multiskala yang dipakai Trend-Aware Soft Consensus. Grafik dijarangkan menjadi{" "}
+                {regime.data.series.length.toLocaleString("id-ID")} titik; statistik dihitung dari{" "}
+                {regime.data.original_count.toLocaleString("id-ID")} jendela.
+              </p>
+            )}
             <p className="mt-2 text-2xs leading-relaxed text-txtMuted">
               Perhatikan titik di mana garis biru (Hurst) dan oranye (DFA α) berada di sisi
               berlawanan terhadap pita ambang — window seperti itulah yang dilabeli Uncertain
               (rule).
             </p>
+          </Panel>
+
+          <Panel
+            title="Label per jendela"
+            subtitle="Jendela terbaru, tanpa penjarangan. H, α, dan ER_q menentukan label lewat Trend-Aware Soft Consensus."
+          >
+            <WindowTable
+              rows={[...(regime.data?.latest_windows ?? [])].reverse().slice(0, 12)}
+              example={regime.data?.uncertain_example ?? null}
+            />
           </Panel>
 
           <div className="grid gap-3 lg:grid-cols-2">
@@ -179,6 +201,44 @@ export default function RegimeExplorerPage() {
           </Panel>
         </>
       )}
+    </div>
+  );
+}
+
+function WindowTable({ rows, example }: { rows: RegimePoint[]; example: RegimePoint | null }) {
+  const fmt = (v: number | null | undefined, d = 4) => (v == null ? "–" : v.toLocaleString("id-ID", { minimumFractionDigits: d, maximumFractionDigits: d }));
+  const iso = (t: number) => new Date(t * 1000).toISOString().slice(0, 16).replace("T", " ");
+  const all: (RegimePoint & { _example?: boolean })[] = [...rows];
+  if (example && !rows.some((r) => r.time === example.time)) all.push({ ...example, _example: true });
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-[11.5px]">
+        <thead className="text-txtMuted">
+          <tr className="border-b border-edge">
+            <th className="py-1 text-left">Bar terakhir (UTC)</th>
+            <th className="py-1 text-right">Hurst R/S</th>
+            <th className="py-1 text-right">DFA α</th>
+            <th className="py-1 text-right">ER_q</th>
+            <th className="py-1 pl-4 text-left">Label</th>
+          </tr>
+        </thead>
+        <tbody className="font-mono text-txtDim">
+          {all.map((r) => (
+            <tr key={r.time} className={`border-b border-edge/50 ${r._example ? "bg-surface/70" : ""}`}>
+              <td className="py-1">
+                {iso(r.time)}
+                {r._example && <span className="ml-2 font-sans text-2xs text-txtMuted">contoh uncertain terbaru</span>}
+              </td>
+              <td className="py-1 text-right">{fmt(r.hurst)}</td>
+              <td className="py-1 text-right">{fmt(r.dfa_alpha)}</td>
+              <td className="py-1 text-right">{fmt(r.efficiency_ratio, 3)}</td>
+              <td className="py-1 pl-4 font-sans" style={{ color: REGIME_META[r.regime as Regime]?.color }}>
+                {regimeLabel(r.regime)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

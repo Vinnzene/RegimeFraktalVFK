@@ -86,6 +86,8 @@ class AnalysisConfig(BaseModel):
     L: int = 500
     J: int = 4
     stride_bars: int = 4
+    # Pengecualian per timeframe, mis. {"4h": 2} agar grid label 4H sama dengan evaluasi Bab 4.
+    stride_bars_by_timeframe: Dict[str, int] = Field(default_factory=dict)
     threshold_mode: str = "quantile"
     threshold_quantiles: List[float] = Field(default_factory=lambda: [1 / 3, 2 / 3])
     hurst_threshold: List[float] = Field(default_factory=lambda: [0.45, 0.55])
@@ -120,6 +122,18 @@ class AnalysisConfig(BaseModel):
         if not (1 <= v <= 500):
             raise ValueError("analysis.stride_bars harus di rentang 1 - 500")
         return v
+
+    @field_validator("stride_bars_by_timeframe")
+    @classmethod
+    def _stride_map_range(cls, v: Dict[str, int]) -> Dict[str, int]:
+        for tf, s in v.items():
+            if not (1 <= int(s) <= 500):
+                raise ValueError(f"analysis.stride_bars_by_timeframe.{tf} harus di rentang 1 - 500")
+        return {str(k).lower(): int(s) for k, s in v.items()}
+
+    def stride_for(self, timeframe: str) -> int:
+        """Stride (bar) untuk timeframe; bawaan `stride_bars`."""
+        return int(self.stride_bars_by_timeframe.get(str(timeframe).lower(), self.stride_bars))
 
     @field_validator("input")
     @classmethod

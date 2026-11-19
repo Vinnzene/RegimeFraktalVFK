@@ -68,3 +68,19 @@ def test_alur_antrean_tanpa_jaringan(monkeypatch, tmp_path):
     assert res["series"][-1]["time"] == int(df["time"].iloc[-1])
     assert abs(sum(res["current_probabilities"].values()) - 1) < 0.01
     assert (tmp_path / f"{job['id']}.json").exists()
+
+
+def test_bar_kurang_dari_jendela_ditolak_422(monkeypatch):
+    """300 bar < panjang jendela 500: ditolak sebelum data diambil, HTTP 422 dengan pesan jelas."""
+    called = []
+    monkeypatch.setattr(aa, "fetch", lambda *a: called.append(a))
+    with pytest.raises(aa.AnalysisError, match="kurang dari panjang jendela"):
+        aa.validate("binance", "ETHUSDT", "1h", 300)
+    r = TestClient(app).post("/internal/analyses", json={"source": "binance", "symbol": "ETHUSDT", "timeframe": "1h", "bars": 300})
+    assert r.status_code == 422
+    assert "500" in r.json()["detail"]
+    assert called == []
+
+
+def test_bar_500_diterima():
+    assert aa.validate("binance", "ETHUSDT", "1h", 500)[3] == 500

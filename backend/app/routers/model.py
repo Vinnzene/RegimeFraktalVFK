@@ -631,6 +631,63 @@ def _normalize_multi_asset_payload(raw: dict) -> dict:
     }
 
 
+@router.get("/evaluation")
+def evaluation_summary() -> dict:
+    """Hasil uji identifikasi Bab 4 (h = 0) apa adanya dari `updated_eval_summary.json`.
+
+    Historical backtest (5 model, ensemble 3 seed) dan 5-fold expanding purged
+    walk-forward, termasuk jumlah benar per kelas dan per fold. Tidak dihitung
+    ulang di sini: angka harus sama persis dengan naskah.
+    """
+    path = ARTIFACTS_DIR / "updated_eval_summary.json"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="updated_eval_summary.json tidak ditemukan.")
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    out: Dict[str, dict] = {}
+    for tf, d in raw.items():
+        hb, wf = d["historical_backtest"], d["walk_forward_5fold"]
+        out[tf] = {
+            "window": d["window"],
+            "stride_bars": d["stride"],
+            "purge_rows": d["purge_rows"],
+            "thresholds": d["thresholds"],
+            "partitions": {k: {"total": v["total_windows"], "definitive": v["definitive_windows"]} for k, v in hb["partitions"].items()},
+            "backtest": {
+                k: {
+                    "label": v["label"],
+                    "total": v["ensemble"]["total"],
+                    "correct": v["ensemble"]["correct"],
+                    "pct": v["ensemble"]["pct"],
+                    "balanced_pct": v["ensemble"]["balanced_pct"],
+                    "per_class": v["ensemble"]["per_class"],
+                }
+                for k, v in hb["models"].items()
+            },
+            "walk_forward": {
+                "summary": wf["summary"],
+                "folds": [
+                    {
+                        "fold": f["fold"],
+                        "n_train": f["n_train"],
+                        "n_test": f["n_test"],
+                        "models": {
+                            k: {
+                                "correct": m["ensemble"]["correct"],
+                                "total": m["ensemble"]["total"],
+                                "pct": m["ensemble"]["pct"],
+                                "balanced_pct": m["ensemble"]["balanced_pct"],
+                                "per_class": m["ensemble"]["per_class"],
+                            }
+                            for k, m in f["models"].items()
+                        },
+                    }
+                    for f in wf["folds"]
+                ],
+            },
+        }
+    return {"source": "ml/artifacts/updated_eval_summary.json", "horizon_bars": 0, "timeframes": out}
+
+
 @router.get("/walk-forward-multi-asset")
 def walk_forward_multi_asset() -> dict:
     """Ringkasan hasil uji Walk-Forward Identifikasi Multi-Aset (2019 -> 2026)."""

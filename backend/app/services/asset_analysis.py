@@ -36,7 +36,9 @@ SOURCES = {
     "yahoo": {"timeframes": ("1h", "1d"), "pattern": re.compile(r"^[A-Za-z0-9.^=\-]{1,20}$")},
 }
 TF_SECONDS = {"15m": 900, "1h": 3600, "4h": 14400, "1d": 86400}
-MIN_BARS, MAX_BARS, DEFAULT_BARS = 1000, 5000, 2000
+# Satu jendela model = 500 log-return; `bars` = jumlah log-return yang dianalisis, jadi
+# data yang diambil = bars + 1 candle tertutup.
+MIN_BARS, MAX_BARS, DEFAULT_BARS = 500, 5000, 2000
 YAHOO_URL = "https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
 
 _executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="asset-analysis")
@@ -62,9 +64,17 @@ def validate(source: str, symbol: str, timeframe: str, bars: int) -> tuple[str, 
         raise AnalysisError(f"Simbol '{symbol}' tidak valid untuk {source}.")
     if timeframe not in SOURCES[source]["timeframes"]:
         raise AnalysisError(f"Timeframe {timeframe} tidak tersedia untuk {source} ({', '.join(SOURCES[source]['timeframes'])}).")
-    bars = int(bars or DEFAULT_BARS)
-    if not MIN_BARS <= bars <= MAX_BARS:
-        raise AnalysisError(f"Jumlah bar harus {MIN_BARS}–{MAX_BARS}.")
+    try:
+        bars = int(bars if bars is not None else DEFAULT_BARS)
+    except (TypeError, ValueError) as exc:
+        raise AnalysisError("Jumlah bar harus berupa bilangan bulat.") from exc
+    if bars < MIN_BARS:
+        raise AnalysisError(
+            f"Jumlah bar {bars} kurang dari panjang jendela model ({MIN_BARS} bar). "
+            f"Minimal {MIN_BARS} bar agar satu jendela identifikasi dapat dibentuk."
+        )
+    if bars > MAX_BARS:
+        raise AnalysisError(f"Jumlah bar {bars} melebihi batas {MAX_BARS} bar.")
     return source, symbol, timeframe, bars
 
 
@@ -75,7 +85,8 @@ def _fetch_binance(symbol: str, timeframe: str, bars: int) -> pd.DataFrame:
         try:
             rows: List[list] = []
             end: Optional[int] = None
-            while len(rows) < bars + 1:
+            # bars + 1 candle tertutup (= bars log-return), +1 cadangan untuk candle berjalan yang dibuang.
+            while len(rows) < bars + 2:
                 params: Dict[str, Any] = {"symbol": symbol, "interval": timeframe, "limit": 1000}
                 if end is not None:
                     params["endTime"] = end
@@ -92,7 +103,7 @@ def _fetch_binance(symbol: str, timeframe: str, bars: int) -> pd.DataFrame:
                 if len(batch) < 1000:
                     break
             df, _ = _rows_to_frame(rows, drop_open_bar=True, now_ms=int(time.time() * 1000))
-            return df.drop_duplicates("time").sort_values("time").tail(bars).reset_index(drop=True)
+            return df.drop_duplicates("time").sort_values("time").tail(bars + 1).reset_index(drop=True)
         except (IngestionError, requests.RequestException, ValueError) as exc:
             if isinstance(exc, AnalysisError):
                 raise
@@ -127,15 +138,16 @@ def _fetch_yahoo(ticker: str, timeframe: str, bars: int) -> pd.DataFrame:
     # Bar terakhir bisa belum tutup (sesi berjalan); dibuang seperti pada BTC.
     df = df.iloc[:-1] if len(df) > 1 else df
     df["volume"] = df["volume"].fillna(0.0)
-    return df.drop_duplicates("time").sort_values("time").tail(bars).reset_index(drop=True)
+    return df.drop_duplicates("time").sort_values("time").tail(bars + 1).reset_index(drop=True)
 
 
 def fetch(source: str, symbol: str, timeframe: str, bars: int) -> pd.DataFrame:
     df = _fetch_binance(symbol, timeframe, bars) if source == "binance" else _fetch_yahoo(symbol, timeframe, bars)
     window = ai_detector.meta(timeframe)["window"]
-    if len(df) < window + 100:
+    if len(df) - 1 < window:
         raise AnalysisError(
-            f"Data {symbol} {timeframe} hanya {len(df)} bar; detektor memerlukan minimal {window + 100} bar."
+            f"Data {symbol} {timeframe} hanya {max(0, len(df) - 1)} bar tertutup (log-return); "
+            f"model memerlukan minimal {window} bar."
         )
     return df
 
@@ -212,6 +224,7 @@ def _run(job_id: str, request: Dict[str, Any], df: pd.DataFrame) -> None:
             "created_at": _jobs[job_id]["created_at"],
             "processing_seconds": round(time.time() - t0, 1),
             "n_bars": int(len(df)),
+            "n_returns": int(len(df) - 1),
             "first_time": int(df["time"].iloc[0]),
             "last_time": int(df["time"].iloc[-1]),
             "detector": {**info, "validated_on": "BTC/USDT 1H dan 4H"},
@@ -240,7 +253,7 @@ def submit(source: str, symbol: str, timeframe: str, bars: int) -> Dict[str, Any
     with _jobs_lock:
         _jobs[job_id] = {"id": job_id, "status": "queued", "progress": 0.0, "created_at": int(time.time()), **request}
     _executor.submit(_run, job_id, request, df)
-    return {"id": job_id, "status": "queued", **request, "n_bars": int(len(df))}
+    return {"id": job_id, "status": "queued", **request, "n_bars": int(len(df)), "n_returns": int(len(df) - 1)}
 
 
 def status(job_id: str) -> Optional[Dict[str, Any]]:

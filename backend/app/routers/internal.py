@@ -40,7 +40,8 @@ def create(req: AnalysisRequest, x_internal_token: Optional[str] = Header(None))
     try:
         return asset_analysis.submit(req.source, req.symbol, req.timeframe, req.bars)
     except asset_analysis.AnalysisError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+        # 422: permintaan terbaca tetapi tidak dapat diproses (mis. jumlah bar < panjang jendela).
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
     except DetectorUnavailable as exc:
         raise HTTPException(status_code=503, detail=f"Detektor belum tersedia: {exc}") from exc
 

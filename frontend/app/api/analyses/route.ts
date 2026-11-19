@@ -35,7 +35,8 @@ export async function POST(req: Request) {
   const data = res ? await res.json().catch(() => null) : null;
   if (!res || !res.ok || !data?.id) {
     await refundQuota(user);
-    const status = res && res.status >= 400 && res.status < 500 ? 400 : 502;
+    // Galat validasi backend (mis. 422 jumlah bar < panjang jendela) diteruskan apa adanya.
+    const status = res && res.status >= 400 && res.status < 500 ? res.status : 502;
     return NextResponse.json({ error: data?.detail ?? "Server analisis tidak dapat dihubungi." }, { status });
   }
 

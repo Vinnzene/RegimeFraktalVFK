@@ -11,16 +11,8 @@ from fastapi import APIRouter, HTTPException, Query
 
 from app.core.config import ARTIFACTS_DIR, get_config
 from app.db.repository import get_repository
-from app.mock.generator import generate_attention_weights
 from app.services.downsample import apply_downsample
 from app.services.hurst_dfa import to_log_return
-from app.services.inference import (
-    ModelUnavailable,
-    placeholder_allowed,
-    scaled_features_for,
-    sequence_length,
-)
-from app.services.model_registry import attention_weights
 from app.services.multifractal import DEFAULT_Q, rolling_hq
 from app.services.regime_labeling import (
     regime_distribution,
@@ -143,10 +135,22 @@ def read_regime(
     df = assign_segment(df, cfg.split.ratios, purge_rows)
     labels = df["regime"].tolist()
 
+    cols = ["time", "close", "hurst", "dfa_alpha", "efficiency_ratio", "regime", "segment"]
     rows = (
-        df[["time", "close", "hurst", "dfa_alpha", "regime", "segment"]]
+        df[[c for c in cols if c in df.columns]]
         .replace({np.nan: None})
         .to_dict(orient="records")
+    )
+    # Dihitung dari deret PENUH; deret yang dikirim untuk grafik dijarangkan.
+    n_switches = int(sum(1 for a, b in zip(labels[:-1], labels[1:]) if a != b))
+    thresholds = (
+        {
+            "hurst": [float(df["hurst_lower"].iloc[0]), float(df["hurst_upper"].iloc[0])],
+            "dfa": [float(df["dfa_lower"].iloc[0]), float(df["dfa_upper"].iloc[0])],
+            "source": cfg.analysis.threshold_source,
+        }
+        if len(df)
+        else None
     )
     # Penjarangan seragam agar urutan regime tidak terpotong tidak beraturan;
     # LTTB dapat melompati blok regime pendek.
@@ -161,9 +165,15 @@ def read_regime(
         "original_count": len(labels),
         "downsampled": sampled["downsampled"],
         "stride_bars": stride,
+        "n_switches": n_switches,
+        "thresholds": thresholds,
         "purge_gap_bars": cfg.model.purge_gap,
         "purge_gap_rows": purge_rows,
         "series": sampled["rows"],
+        # Contoh jendela terbaru (tidak dijarangkan) untuk tabel per jendela.
+        "latest_windows": rows[-24:],
+        # Contoh terbaru jendela uncertain_rule: R/S dan DFA tidak sepakat.
+        "uncertain_example": next((r for r in reversed(rows) if r.get("regime") == "uncertain_rule"), None),
     }
 
 
@@ -406,59 +416,72 @@ def read_multifractal(
 def read_attention(
     tf: str = Query("1h"),
     symbol: str = Query("BTCUSDT"),
-    window_id: Optional[int] = Query(None, ge=0),
+    at_time: Optional[int] = Query(None, description="Unix detik; bawaan jendela terbaru."),
 ) -> dict:
-    """Bobot alpha_t dari model attention terlatih.
+    """Bobot attention alpha (32 langkah) model identifikasi resmi (h = 0).
 
-    Panjang sekuens mengikuti `seq_len` yang dipakai saat training (dibaca dari
-    metadata artefak), bukan angka bebas: bobot attention hanya bermakna pada
-    bentuk masukan yang sama dengan saat model dilatih.
+    Bobot diambil dari lapisan `attention_pool` ketiga seed Hybrid PS lalu
+    dirata-rata. Tiap langkah adalah sub-jendela 128 bar di dalam jendela 500 bar;
+    langkah terakhir berakhir di bar terakhir jendela.
     """
+    from app.services import ai_detector  # noqa: PLC0415
+
     cfg = get_config()
-    repo = get_repository()
-    df = repo.get_regime(symbol, tf)
-    ohlcv = repo.get_ohlcv(symbol, tf)
-
-    seq_len = sequence_length("swt_attention_bilstm", tf)
-    n_windows = len(df)
-    if n_windows == 0:
-        return {"timeframe": tf, "config_hash": cfg.config_hash, "attention_weights": []}
-
-    pos = int(np.clip(window_id if window_id is not None else n_windows - 1, 0, n_windows - 1))
-    features = scaled_features_for(symbol, tf, df)
-    weights = attention_weights(tf, features[pos]) if len(features) > pos else None
-
-    source = "trained_artifact"
-    if weights is None:
-        if not placeholder_allowed():
-            raise ModelUnavailable("swt_attention_bilstm", tf)
-        weights = generate_attention_weights(seq_len, seed=cfg.model.seed + pos)
-        source = "placeholder"
-
-    # Petakan tiap langkah sekuens ke bar OHLCV yang bersesuaian.
-    stride = stride_bars_of(df)
-    end_bar = int(df["index"].iloc[pos]) + 1
-    bar_indices = [
-        max(0, end_bar - (seq_len - 1 - k) * stride) for k in range(seq_len)
-    ]
+    try:
+        d = ai_detector.window_detail(symbol, tf, at_time)
+    except ai_detector.DetectorUnavailable as exc:
+        raise HTTPException(status_code=503, detail=f"Model identifikasi belum tersedia: {exc}") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    ohlcv = get_repository().get_ohlcv(symbol, tf)
+    end_bar = d["position"] + 1
+    first_bar = max(0, end_bar - int(ai_detector.meta(tf)["window"]))
+    candles = ohlcv.iloc[first_bar : end_bar + 1][["time", "open", "high", "low", "close"]]
     times = ohlcv["time"].to_numpy()
-    candle_slice = ohlcv.iloc[max(0, bar_indices[0]) : end_bar + 1]
-
+    att = d["attention"]
     return {
         "timeframe": tf,
+        "symbol": symbol,
         "config_hash": cfg.config_hash,
-        "window_id": pos,
-        "seq_len": seq_len,
-        "prediction_source": source,
-        "model": "swt_attention_bilstm",
-        "stride_bars": stride,
-        "candles": candle_slice.to_dict(orient="records"),
+        "model": "hybrid_ps_updated (identifikasi, h = 0)",
+        "horizon_bars": 0,
+        "window_time": d["time"],
+        "window_index": d["window_index"],
+        "n_windows": d["n_windows"],
+        "regime": d["regime"],
+        "confidence": d["confidence"],
+        "probabilities": d["probabilities"],
+        "seq_len": att["seq_len"],
+        "sub_window_bars": att["sub_window_bars"],
+        "step_bars": att["step_bars"],
+        "entropy_normalized": att["entropy_normalized"],
+        "per_seed": att["per_seed"],
         "attention_weights": [
             {
-                "step": k - seq_len + 1,
-                "time": int(times[min(idx, len(times) - 1)]),
+                "step": k + 1,
+                "end_offset_bars": off,
+                "time": int(times[min(end_bar + off, len(times) - 1)]),
                 "weight": float(w),
             }
-            for k, (idx, w) in enumerate(zip(bar_indices, weights))
+            for k, (off, w) in enumerate(zip(att["step_end_offsets_bars"], att["mean"]))
         ],
+        "candles": candles.to_dict(orient="records"),
     }
+
+
+@router.get("/features")
+def read_features(
+    tf: str = Query("1h"),
+    symbol: str = Query("BTCUSDT"),
+    at_time: Optional[int] = Query(None),
+) -> dict:
+    """Bentuk dan nilai fitur masukan model identifikasi untuk satu jendela."""
+    from app.services import ai_detector  # noqa: PLC0415
+
+    try:
+        d = ai_detector.window_detail(symbol, tf, at_time)
+    except ai_detector.DetectorUnavailable as exc:
+        raise HTTPException(status_code=503, detail=f"Model identifikasi belum tersedia: {exc}") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return {"timeframe": tf, "symbol": symbol, "window_time": d["time"], "regime": d["regime"], **d["features"]}

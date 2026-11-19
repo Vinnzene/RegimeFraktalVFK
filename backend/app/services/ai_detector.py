@@ -45,6 +45,9 @@ MODEL_TF = {"15m": "1h", "30m": "1h", "1h": "1h", "4h": "4h", "1d": "4h"}
 # Di atas jumlah ini, permintaan API tidak menunggu; pembangunan dijalankan di
 # latar belakang dan endpoint memberi tahu bahwa cache sedang dibangun.
 MAX_SYNC_WINDOWS = 1500
+# Sampai jumlah jendela ini, sekuens PS dihitung per potongan jendela (cepat untuk
+# pembaruan bertahap); di atasnya dihitung sekali atas seluruh deret.
+INCREMENTAL_MAX = 64
 # Penanda keyakinan rendah. Label identifikasi tetap argmax (sesuai evaluasi Bab 4);
 # τ hanya menandai jendela ragu dan memutus konfirmasi notifikasi. Pada set
 # validasi backtest, keyakinan ≥ 0,75 mencakup 25% (1H) / 49% (4H) jendela dengan
@@ -144,7 +147,17 @@ def _featurize(r: np.ndarray, pos: np.ndarray, m: Dict[str, Any], jobs: int) -> 
         size = max(64, len(pos_l) // 32 + 1)
         chunks = [pos_l[i: i + size] for i in range(0, len(pos_l), size)]
         feat = np.vstack(Parallel(n_jobs=jobs)(delayed(_struct_chunk)(r, ch, L, level) for ch in chunks))
-    ps = build_persistence_sequences(r, pos_l, L, int(m["sub_window"]), int(m["seq_len"])).astype(np.float32)
+    sub, seq = int(m["sub_window"]), int(m["seq_len"])
+    if len(pos_l) <= INCREMENTAL_MAX:
+        # Pembaruan bertahap (beberapa jendela baru): sekuens PS hanya bergantung pada
+        # 500 return di dalam jendela, jadi dihitung dari potongan itu saja (±0,05 s per
+        # jendela, bukan ±5 s untuk seluruh riwayat). Selisih terhadap perhitungan atas
+        # deret penuh hanya pembulatan floating point (< 1e-11).
+        ps = np.stack([
+            build_persistence_sequences(r[t - L + 1: t + 1], [L - 1], L, sub, seq)[0] for t in pos_l
+        ]).astype(np.float32)
+    else:
+        ps = build_persistence_sequences(r, pos_l, L, sub, seq).astype(np.float32)
     return {"feat": feat, "ps": ps}
 
 
@@ -159,6 +172,104 @@ def predict_proba(feat: np.ndarray, ps: np.ndarray, m: Dict[str, Any]) -> np.nda
     S = apply_scaler(np.asarray(ps, dtype=f32), m["ps_scaler"])
     probs = [mdl.predict([S, F], batch_size=1024, verbose=0) for mdl in _load_models(m)]
     return np.mean(probs, axis=0)
+
+
+def _scaled_inputs(feat: np.ndarray, ps: np.ndarray, m: Dict[str, Any]):
+    from app.services.feature_builder import apply_scaler  # noqa: PLC0415
+
+    f32 = np.float32
+    F = (np.asarray(feat, dtype=f32) - np.asarray(m["feature_mean"], dtype=f32)) / np.asarray(m["feature_std"], dtype=f32)
+    S = apply_scaler(np.asarray(ps, dtype=f32), m["ps_scaler"])
+    return S, F
+
+
+_extractors: Dict[str, List[Any]] = {}
+
+
+def attention_weights(feat: np.ndarray, ps: np.ndarray, m: Dict[str, Any]) -> np.ndarray:
+    """Bobot alpha lapisan `attention_pool` tiap seed: array (n_seed, n, seq_len).
+
+    Bobot dihitung dari keluaran BiLSTM (masukan lapisan attention) dengan
+    `AttentionPooling.compute_attention`, sama persis dengan yang dipakai model
+    saat menghasilkan probabilitas.
+    """
+    import tensorflow as tf  # noqa: PLC0415
+
+    tfm = m["model_timeframe"]
+    if tfm not in _extractors:
+        out = []
+        for mdl in _load_models(m):
+            layer = mdl.get_layer("attention_pool")
+            out.append((tf.keras.Model(mdl.inputs, layer.input), layer))
+        _extractors[tfm] = out
+    S, F = _scaled_inputs(feat, ps, m)
+    weights = []
+    for sub, layer in _extractors[tfm]:
+        h = sub.predict([S, F], batch_size=1024, verbose=0)
+        weights.append(np.asarray(layer.compute_attention(tf.convert_to_tensor(h))))
+    return np.stack(weights)
+
+
+def _ohlcv_arrays(symbol: str, tf: str):
+    from app.db.repository import get_repository  # noqa: PLC0415
+
+    ohlcv = get_repository().get_ohlcv(symbol, tf)
+    ohlcv = ohlcv[ohlcv["close"] > 0].reset_index(drop=True)
+    close = ohlcv["close"].to_numpy(dtype=float)
+    return np.diff(np.log(close)), ohlcv["time"].to_numpy(), close
+
+
+def window_detail(symbol: str, tf: str, at_time: Optional[int] = None) -> Dict[str, Any]:
+    """Fitur, probabilitas, dan bobot attention untuk satu jendela.
+
+    Jendela = titik grid identifikasi terakhir dengan waktu bar terakhir <= `at_time`
+    (bawaan: jendela terbaru).
+    """
+    m = meta(tf)
+    L, stride = int(m["window"]), stride_for(tf)
+    r, times, close = _ohlcv_arrays(symbol, tf)
+    grid = np.arange(L - 1, len(r), stride)
+    if len(grid) == 0:
+        raise ValueError("riwayat kurang dari satu jendela")
+    bar_time = times[grid + 1]
+    i = len(grid) - 1 if at_time is None else int(np.searchsorted(bar_time, int(at_time), side="right") - 1)
+    i = max(0, i)
+    t = int(grid[i])
+    f = _featurize(r, np.array([t]), m, jobs=1)
+    with _lock:
+        proba = predict_proba(f["feat"], f["ps"], m)[0]
+        alpha = attention_weights(f["feat"], f["ps"], m)[:, 0, :]
+    sub, seq = int(m["sub_window"]), int(m["seq_len"])
+    step = (L - sub) // (seq - 1)
+    classes = list(m["classes"])
+    return {
+        "position": t,
+        "window_index": i,
+        "n_windows": int(len(grid)),
+        "time": int(times[t + 1]),
+        "close": float(close[t + 1]),
+        "regime": classes[int(proba.argmax())],
+        "confidence": float(proba.max()),
+        "probabilities": {c: float(p) for c, p in zip(classes, proba)},
+        "attention": {
+            "mean": alpha.mean(0).tolist(),
+            "per_seed": {str(s): a.tolist() for s, a in zip(m["seeds"], alpha)},
+            "seq_len": seq,
+            "sub_window_bars": sub,
+            "step_bars": step,
+            # Langkah k mencakup bar [t − (seq−1−k)·step − sub + 1, t − (seq−1−k)·step].
+            "step_end_offsets_bars": [-(seq - 1 - k) * step for k in range(seq)],
+            "entropy_normalized": float(-(alpha.mean(0) * np.log(alpha.mean(0) + 1e-12)).sum() / np.log(seq)),
+        },
+        "features": {
+            "ps_shape": list(f["ps"].shape[1:]),
+            "ps_channels": list(m["ps_channels"]),
+            "summary_length": int(f["feat"].shape[1]),
+            "summary_names": list(m["feature_names"]),
+            "summary_values": [float(v) for v in f["feat"][0]],
+            "ps_last_step": [float(v) for v in f["ps"][0, -1]],
+        },
+    }
 
 
 def _cache_path(symbol: str, tf: str):
@@ -232,6 +343,11 @@ def update_cache(symbol: str, tf: str, jobs: int = -1, max_new: Optional[int] = 
     for i, c in enumerate(classes):
         df[f"p_{c}"] = cached_proba[:, i]
     return df
+
+
+def preload(tf: str) -> None:
+    """Muat model timeframe `tf` ke memori (dipanggil saat pemanasan startup)."""
+    _load_models(meta(tf))
 
 
 def with_abstain(df: pd.DataFrame, tau: float = ABSTAIN_TAU) -> pd.DataFrame:

@@ -26,6 +26,8 @@ analysis:
   J: 4                 # level dekomposisi SWT
   stride_bars: 4       # jarak antar window analisis (bar). Makin kecil = makin
                        # banyak window, tapi komputasi makin lama.
+  stride_bars_by_timeframe:
+    4h: 2              # 4H memakai stride 2 bar, sama dengan evaluasi Bab 4 (8.301 jendela)
   # threshold_mode:
   #   fixed    — ambang tetap di bawah, sesuai rancangan awal Bab 3
   #   quantile — ambang dihitung dari kuantil distribusi tiap estimator.

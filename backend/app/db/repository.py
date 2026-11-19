@@ -43,6 +43,8 @@ REGIME_COLUMNS = [
     "close",
     "hurst",
     "dfa_alpha",
+    # Skor kuantil Efficiency Ratio multiskala (ER_q) yang dipakai Trend-Aware Soft Consensus.
+    "efficiency_ratio",
     "regime",
     "effective_window",
     "stride_bars",
@@ -408,7 +410,7 @@ class ParquetRepository(Repository):
         log_ret = to_log_return(ohlcv["close"].to_numpy())
 
         window = min(cfg.analysis.L, max(64, len(log_ret) // 4))
-        step = max(1, cfg.analysis.stride_bars)
+        step = max(1, cfg.analysis.stride_for(timeframe))
 
         reused = self._reusable_metrics(previous, ohlcv, window, step)
         if reused is not None:
@@ -464,6 +466,8 @@ class ParquetRepository(Repository):
             threshold_source=cfg.analysis.threshold_source,
             train_mask=train_mask,
         )
+        if "efficiency_ratio" not in labeled.columns:
+            labeled["efficiency_ratio"] = np.nan
         # +1 karena log-return memangkas satu bar di awal.
         bar_idx = (labeled["index"].to_numpy() + 1).astype(int)
         labeled["time"] = ohlcv["time"].to_numpy()[bar_idx]
