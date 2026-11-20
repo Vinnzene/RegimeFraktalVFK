@@ -8,6 +8,7 @@ Perintah:
     /start <kode>  tautkan chat ini ke akun (kode dibuat di dashboard)
     /status        kondisi regime terbaru
     /stop          berhenti menerima notifikasi
+    /harian on|off ringkasan status harian (bawaan aktif, pukul DAILY_STATUS_HOUR WIB)
 """
 
 from __future__ import annotations
@@ -67,9 +68,9 @@ def send_message(chat_id: int, text: str) -> None:
 
 
 HELP = (
-    "Bot ini mengirim notifikasi saat regime BTC/USDT berganti.\n\n"
+    "Bot ini mengirim notifikasi saat regime BTC/USDT berganti dan ringkasan kondisi pasar setiap pagi.\n\n"
     "Untuk berlangganan, buka dashboard → <b>Notifikasi Telegram</b> → <b>Hubungkan Telegram</b>.\n\n"
-    "/status — kondisi regime terbaru\n/stop — berhenti menerima notifikasi"
+    "/status — kondisi regime terbaru\n/harian on | off — ringkasan harian\n/stop — berhenti menerima notifikasi"
 )
 
 
@@ -107,7 +108,8 @@ def handle_update(
         reply(
             chat_id,
             f"Terhubung ke <b>{who}</b>.\n\nAnda akan menerima notifikasi saat regime BTC/USDT berganti "
-            "(timeframe dapat diatur di dashboard).\n\n/status — kondisi terbaru\n/stop — berhenti",
+            "(timeframe dapat diatur di dashboard) dan ringkasan kondisi pasar setiap pagi.\n\n"
+            "/status — kondisi terbaru\n/harian off — matikan ringkasan harian\n/stop — berhenti",
         )
         return "linked"
     if command == "/start":
@@ -116,6 +118,22 @@ def handle_update(
     if command == "/status":
         reply(chat_id, status_text())
         return "status"
+    if command == "/harian":
+        want = arg.lower()
+        if want not in ("on", "off"):
+            reply(chat_id, "Gunakan <b>/harian on</b> untuk menerima ringkasan kondisi pasar setiap pagi, atau <b>/harian off</b> untuk berhenti.")
+            return "daily_help"
+        ok = store.set_daily(int(chat_id), want == "on") if store else False
+        if not ok:
+            reply(chat_id, "Chat ini belum berlangganan. Hubungkan dulu dari dashboard → Notifikasi Telegram.")
+            return "not_subscribed"
+        reply(
+            chat_id,
+            "Ringkasan harian diaktifkan. Dikirim setiap pagi bersama kondisi 1H dan 4H."
+            if want == "on"
+            else "Ringkasan harian dimatikan. Notifikasi pergantian regime tetap dikirim. Aktifkan lagi dengan /harian on.",
+        )
+        return "daily_on" if want == "on" else "daily_off"
     if command == "/stop":
         stopped = store.disable_chat(int(chat_id)) if store else False
         reply(

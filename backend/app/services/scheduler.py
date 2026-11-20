@@ -156,8 +156,14 @@ def notify_once() -> List[Dict[str, object]]:
     try:
         # Label dari detektor AI resmi, sama dengan yang tampil di dashboard.
         # Label berkeyakinan rendah (< τ) memutus konfirmasi agar salah alarm berkurang.
-        regimes = {tf: ai_detector.with_abstain(ai_detector.update_cache(cfg.data.symbol, tf)) for tf in cfg.data.timeframes}
-        events = regime_notifier.check(regimes, get_store(), telegram_bot.send_message, bot.dashboard_url)
+        raw = {tf: ai_detector.update_cache(cfg.data.symbol, tf) for tf in cfg.data.timeframes}
+        regimes = {tf: ai_detector.with_abstain(df) for tf, df in raw.items()}
+        store = get_store()
+        events = regime_notifier.check(regimes, store, telegram_bot.send_message, bot.dashboard_url)
+        # Ringkasan harian (sekali per tanggal WIB, mulai DAILY_STATUS_HOUR); memakai label apa adanya + keyakinan.
+        daily = regime_notifier.daily_once(raw, store, telegram_bot.send_message, bot.dashboard_url, ai_detector.ABSTAIN_TAU)
+        if daily:
+            _record({"at": int(time.time()), "daily_status": {k: daily[k] for k in ("date", "recipients", "sent", "failed")}})
     except Exception as exc:  # noqa: BLE001
         _record({"at": int(time.time()), "notify_error": f"{type(exc).__name__}: {exc}"[:200]})
         return []

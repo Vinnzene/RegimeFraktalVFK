@@ -4,7 +4,9 @@ Struktur Firestore (ditulis dashboard Next.js dan backend ini):
 
     users/{uid}
         email, name, photo, created_at, last_login
-        telegram: {chat_id, username, first_name, linked_at, enabled, timeframes}
+        telegram: {chat_id, username, first_name, linked_at, enabled, timeframes, daily}
+
+`daily` (bawaan True bila tidak ada) = ikut ringkasan status harian.
     link_tokens/{token}
         uid, email, created_at, expires_at
 
@@ -43,6 +45,16 @@ class SubscriptionStore(Protocol):
 
     def recipients(self, timeframe: str) -> List[int]: ...
 
+    def set_daily(self, chat_id: int, on: bool) -> bool:
+        """Atur ringkasan harian untuk chat ini; False bila chat belum berlangganan."""
+
+    def daily_recipients(self) -> List[int]:
+        """Chat aktif yang ikut ringkasan harian."""
+
+
+def wants_daily(tg: Dict[str, Any]) -> bool:
+    return bool(tg.get("enabled")) and bool(tg.get("chat_id")) and tg.get("daily", True) is not False
+
 
 class MemoryStore:
     """Implementasi di memori untuk test."""
@@ -67,6 +79,7 @@ class MemoryStore:
             "linked_at": now,
             "enabled": True,
             "timeframes": prev.get("timeframes") or list(DEFAULT_TIMEFRAMES),
+            "daily": prev.get("daily", True),
         }
 
     def disable_chat(self, chat_id: int) -> bool:
@@ -85,6 +98,18 @@ class MemoryStore:
             if tg.get("enabled") and timeframe in (tg.get("timeframes") or []) and tg.get("chat_id"):
                 out.append(int(tg["chat_id"]))
         return sorted(set(out))
+
+    def set_daily(self, chat_id: int, on: bool) -> bool:
+        hit = False
+        for user in self.users.values():
+            tg = user.get("telegram")
+            if tg and tg.get("chat_id") == chat_id:
+                tg["daily"] = bool(on)
+                hit = True
+        return hit
+
+    def daily_recipients(self) -> List[int]:
+        return sorted({int(u["telegram"]["chat_id"]) for u in self.users.values() if wants_daily(u.get("telegram") or {})})
 
 
 class FirestoreStore:
@@ -123,6 +148,7 @@ class FirestoreStore:
                     "linked_at": now,
                     "enabled": True,
                     "timeframes": prev.get("timeframes") or list(DEFAULT_TIMEFRAMES),
+                    "daily": prev.get("daily", True),
                 }
             },
             merge=True,
@@ -142,6 +168,21 @@ class FirestoreStore:
         for snap in self.db.collection("users").where("telegram.timeframes", "array_contains", timeframe).stream():
             tg = (snap.to_dict() or {}).get("telegram") or {}
             if tg.get("enabled") and tg.get("chat_id"):
+                out.append(int(tg["chat_id"]))
+        return sorted(set(out))
+
+    def set_daily(self, chat_id: int, on: bool) -> bool:
+        hit = False
+        for snap in self.db.collection("users").where("telegram.chat_id", "==", chat_id).stream():
+            snap.reference.update({"telegram.daily": bool(on)})
+            hit = True
+        return hit
+
+    def daily_recipients(self) -> List[int]:
+        out = []
+        for snap in self.db.collection("users").where("telegram.enabled", "==", True).stream():
+            tg = (snap.to_dict() or {}).get("telegram") or {}
+            if wants_daily(tg):
                 out.append(int(tg["chat_id"]))
         return sorted(set(out))
 

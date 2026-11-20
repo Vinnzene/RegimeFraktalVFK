@@ -7,7 +7,7 @@ function db503() {
   return NextResponse.json({ error: "Firestore belum dikonfigurasi di server." }, { status: 503 });
 }
 
-/** Ubah pengaturan langganan: aktif/nonaktif dan timeframe. */
+/** Ubah pengaturan langganan: aktif/nonaktif, timeframe, dan ringkasan harian. */
 export async function PATCH(req: NextRequest) {
   const user = await requireUser();
   if (user instanceof NextResponse) return user;
@@ -17,6 +17,7 @@ export async function PATCH(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
   const update: Record<string, unknown> = {};
   if (typeof body.enabled === "boolean") update["telegram.enabled"] = body.enabled;
+  if (typeof body.daily === "boolean") update["telegram.daily"] = body.daily;
   if (Array.isArray(body.timeframes)) {
     const tfs = TIMEFRAMES.filter((t) => body.timeframes.includes(t));
     if (!tfs.length) return NextResponse.json({ error: "Pilih minimal satu timeframe." }, { status: 400 });

@@ -146,3 +146,79 @@ def test_state_from_old_label_source_is_reset_without_broadcast(tmp_path):
     assert send.sent == []
     entry = json.loads(state.read_text())["1h"]
     assert entry["confirmed"] == A and entry["source"] == rn.SOURCE
+
+
+# ---------------------------------------------------------------- ringkasan harian
+
+from datetime import datetime, timezone  # noqa: E402
+
+
+def conf_frame(labels: List[str], conf: float) -> pd.DataFrame:
+    df = frame(labels)
+    df["confidence"] = conf
+    return df
+
+
+def at_wib(day: int, hour: int) -> datetime:
+    # 20 Nov 2026 hh:00 WIB = (hh − 7):00 UTC
+    return datetime(2026, 11, day, hour, 0, tzinfo=timezone.utc) - timedelta(hours=7)
+
+
+def test_daily_sent_once_per_day_after_hour(tmp_path):
+    store = subscribed_store(("u1", 11, ["1h"]), ("u2", 22, ["4h"]))
+    send = Sender()
+    regimes = {"1h": conf_frame([A, A, A], 0.9), "4h": conf_frame([P, P, P], 0.6)}
+    kw = dict(state_path=tmp_path / "daily.json", log_path=tmp_path / "log.jsonl", hour=7)
+    assert rn.daily_once(regimes, store, send, "http://x", 0.75, now=at_wib(20, 6), **kw) is None  # sebelum 07.00
+    ev = rn.daily_once(regimes, store, send, "http://x", 0.75, now=at_wib(20, 7), **kw)
+    assert ev and ev["sent"] == 2 and ev["date"] == "2026-11-20"
+    assert {c for c, _ in send.sent} == {11, 22}  # semua pelanggan aktif, apa pun timeframenya
+    assert rn.daily_once(regimes, store, send, "http://x", 0.75, now=at_wib(20, 18), **kw) is None  # hari yang sama
+    assert rn.daily_once(regimes, store, send, "http://x", 0.75, now=at_wib(21, 7), **kw)["sent"] == 2  # hari berikutnya
+    assert len(send.sent) == 4
+    logged = [json.loads(x) for x in (tmp_path / "log.jsonl").read_text().splitlines()]
+    assert [x["type"] for x in logged] == ["daily_status", "daily_status"]
+
+
+def test_daily_respects_opt_out_and_pause(tmp_path):
+    store = subscribed_store(("u1", 11, ["1h"]), ("u2", 22, ["1h"]), ("u3", 33, ["1h"]))
+    assert store.set_daily(22, False)
+    store.disable_chat(33)
+    assert store.daily_recipients() == [11]
+    # Menautkan ulang tidak mengaktifkan kembali ringkasan yang sudah dimatikan.
+    store.link_chat("u2", 22, None, None, utcnow())
+    assert store.daily_recipients() == [11]
+    send = Sender()
+    rn.daily_once({"1h": conf_frame([A, A], 0.9)}, store, send, "http://x", 0.75, now=at_wib(20, 8),
+                  state_path=tmp_path / "d.json", log_path=tmp_path / "l.jsonl", hour=7)
+    assert [c for c, _ in send.sent] == [11]
+
+
+def test_daily_disabled_without_hour_or_store(tmp_path):
+    send = Sender()
+    regimes = {"1h": conf_frame([A], 0.9)}
+    kw = dict(state_path=tmp_path / "d.json", log_path=tmp_path / "l.jsonl")
+    assert rn.daily_once(regimes, subscribed_store(("u1", 11, ["1h"])), send, "x", 0.75, now=at_wib(20, 9), hour=None, **kw) is None
+    assert rn.daily_once(regimes, None, send, "x", 0.75, now=at_wib(20, 9), hour=7, **kw) is None
+    assert send.sent == []
+
+
+def test_daily_message_content():
+    regimes = {"1h": conf_frame([P, A, A, A], 0.87), "4h": conf_frame([P, P], 0.6)}
+    text = rn.format_daily(regimes, "https://rfraktal.my.id", 0.75, at_wib(20, 7))
+    assert "Ringkasan harian BTC/USDT" in text and "20 Nov 2026" in text
+    assert "1H: <b>Cenderung Berbalik</b> · keyakinan 87%" in text
+    assert "4H: <b>Tren Berlanjut</b> · keyakinan 60% (ragu)" in text
+    assert "1H dan 4H berbeda" in text
+    assert "/harian off" in text and "Bukan saran investasi" in text
+
+
+def test_harian_command():
+    store = subscribed_store(("u1", 11, ["1h"]))
+    send = Sender()
+    assert handle_update(update("/harian off", chat_id=11), store, send, lambda: "") == "daily_off"
+    assert store.daily_recipients() == []
+    assert handle_update(update("/harian on", chat_id=11), store, send, lambda: "") == "daily_on"
+    assert store.daily_recipients() == [11]
+    assert handle_update(update("/harian", chat_id=11), store, send, lambda: "") == "daily_help"
+    assert handle_update(update("/harian off", chat_id=99), store, send, lambda: "") == "not_subscribed"

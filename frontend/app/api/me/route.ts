@@ -9,6 +9,8 @@ export type TelegramStatus = {
   first_name: string | null;
   enabled: boolean;
   timeframes: string[];
+  /** Ringkasan status harian; bawaan aktif bila belum pernah diatur. */
+  daily: boolean;
   linked_at: string | null;
 };
 
@@ -39,6 +41,7 @@ export async function GET() {
           first_name: tg.first_name ?? null,
           enabled: Boolean(tg.enabled),
           timeframes: tg.timeframes ?? ["1h"],
+          daily: tg.daily !== false,
           linked_at: tg.linked_at?.toDate?.().toISOString?.() ?? null,
         };
       }

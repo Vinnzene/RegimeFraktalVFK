@@ -26,7 +26,7 @@ import json
 import logging
 import os
 import threading
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Sequence
 
@@ -232,3 +232,136 @@ def status_text() -> str:
         )
     lines.append("\nBukan saran investasi.")
     return "\n".join(lines)
+
+
+# ---------------------------------------------------------------- ringkasan harian
+
+DAILY_STATE_PATH = SIGNAL_DIR / "daily_status_state.json"
+WIB = timezone(timedelta(hours=7))
+_MONTHS = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"]
+
+
+def daily_hour() -> Optional[int]:
+    """Jam kirim ringkasan harian (WIB) dari env `DAILY_STATUS_HOUR`; bawaan 7. "off" mematikan."""
+    raw = os.environ.get("DAILY_STATUS_HOUR", "7").strip().lower()
+    if raw in ("", "off", "none", "-1"):
+        return None
+    try:
+        h = int(raw)
+    except ValueError:
+        return 7
+    return h if 0 <= h <= 23 else 7
+
+
+def _fmt_date_wib(ts: float) -> str:
+    d = datetime.fromtimestamp(ts, tz=WIB)
+    return f"{d.day} {_MONTHS[d.month - 1]} {d.year}"
+
+
+def _since(df: pd.DataFrame) -> Optional[float]:
+    """Waktu awal rentetan label terakhir (label sama berturut-turut)."""
+    labels = df["regime"].astype(str).tolist()
+    if not labels:
+        return None
+    i = len(labels) - 1
+    while i > 0 and labels[i - 1] == labels[-1]:
+        i -= 1
+    return float(df["time"].iloc[i])
+
+
+def format_daily(regimes: Dict[str, pd.DataFrame], dashboard_url: str, tau: float, now: datetime) -> str:
+    """Ringkasan kondisi pasar semua timeframe. `regimes` = deret identifikasi apa adanya (tanpa abstain)."""
+    lines = [f"<b>Ringkasan harian BTC/USDT</b> · {_fmt_date_wib(now.timestamp())}"]
+    ref = regimes.get("1h")
+    if ref is None or ref.empty:
+        ref = next((d for d in regimes.values() if d is not None and not d.empty), None)
+    if ref is not None and not ref.empty:
+        last = ref.iloc[-1]
+        prev = ref[ref["time"] <= float(last["time"]) - 86400]
+        chg = (float(last["close"]) / float(prev["close"].iloc[-1]) - 1) * 100 if len(prev) else None
+        chg_txt = "" if chg is None else f" ({'+' if chg >= 0 else ''}{_fmt_num(chg, 2)}% dalam 24 jam)"
+        lines.append(f"Harga: {_fmt_num(last['close'], 2)} USDT{chg_txt}")
+    lines.append("")
+    current: Dict[str, str] = {}
+    newest = 0.0
+    for tf in sorted(regimes):
+        df = regimes[tf]
+        if df is None or df.empty:
+            lines.append(f"{tf.upper()}: belum tersedia")
+            continue
+        last = df.iloc[-1]
+        reg = str(last["regime"])
+        conf = float(last.get("confidence", float("nan")))
+        low = conf < tau
+        current[tf] = reg
+        newest = max(newest, float(last["time"]))
+        since = _since(df)
+        lines.append(
+            f"{tf.upper()}: <b>{html.escape(PLAIN.get(reg, reg))}</b> · keyakinan {_fmt_num(conf * 100, 0)}%"
+            + (" (ragu)" if low else "")
+            + (f" · sejak {_fmt_date_wib(since)}" if since else "")
+        )
+    if len(current) >= 2:
+        same = len(set(current.values())) == 1
+        lines += ["", "1H dan 4H sejalan." if same else "1H dan 4H berbeda: skala jam dan skala harian sedang berlainan sifat."]
+    lines += [
+        "",
+        f"Label dengan keyakinan di bawah {_fmt_num(tau * 100, 0)}% ditandai (ragu); perlakukan seperti kondisi acak.",
+    ]
+    if newest and now.timestamp() - newest > 6 * 3600:
+        stamp = datetime.fromtimestamp(newest, tz=WIB).strftime("%H.%M")
+        lines.append(f"Catatan: data terakhir {_fmt_date_wib(newest)} pukul {stamp} WIB; pembaruan data sedang tertunda.")
+    lines += [
+        "",
+        f"Bukan saran investasi. Dashboard: {html.escape(dashboard_url.rstrip('/'))}",
+        "Berhenti menerima ringkasan harian: /harian off",
+    ]
+    return "\n".join(lines)
+
+
+def daily_once(
+    regimes: Dict[str, pd.DataFrame],
+    store: Optional[SubscriptionStore],
+    send: Callable[[int, str], None],
+    dashboard_url: str,
+    tau: float,
+    now: Optional[datetime] = None,
+    state_path: Path = DAILY_STATE_PATH,
+    log_path: Path = LOG_PATH,
+    hour: Optional[int] = -1,
+) -> Optional[Dict[str, Any]]:
+    """Kirim ringkasan harian sekali per tanggal WIB, mulai pukul `hour` WIB.
+
+    Dipanggil setiap siklus penjadwal (±15 menit). Tanggal terakhir disimpan di berkas
+    state agar restart server tidak mengirim ulang pada hari yang sama.
+    """
+    hour = daily_hour() if hour == -1 else hour
+    if hour is None or store is None:
+        return None
+    now = now or datetime.now(timezone.utc)
+    local = now.astimezone(WIB)
+    if local.hour < hour:
+        return None
+    date = local.date().isoformat()
+    with _lock:
+        state = _load_state(state_path)
+        if state.get("last_date") == date:
+            return None
+        chats = store.daily_recipients()
+        text = format_daily(regimes, dashboard_url, tau, now)
+        sent, failed = 0, 0
+        for chat_id in chats:
+            try:
+                send(chat_id, text)
+                sent += 1
+            except Exception as exc:  # noqa: BLE001 — satu penerima gagal tidak menghentikan yang lain
+                failed += 1
+                log.warning("ringkasan harian ke %s gagal: %s", chat_id, exc)
+        event = {"type": "daily_status", "date": date, "sent_at": now.isoformat(timespec="seconds"),
+                 "recipients": len(chats), "sent": sent, "failed": failed,
+                 "regimes": {tf: str(df.iloc[-1]["regime"]) for tf, df in regimes.items() if df is not None and not df.empty}}
+        _save_state(state_path, {"last_date": date, "sent": sent, "failed": failed})
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+        with log_path.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(event) + "\n")
+        return event

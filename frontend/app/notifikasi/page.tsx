@@ -12,7 +12,7 @@ import { useUser } from "@/components/UserContext";
  * menautkan chat itu ke akun ini, dan halaman ini mendeteksinya otomatis.
  */
 
-const TF_LABEL: Record<string, string> = { "1h": "1H (lebih sering, ±4 jam per window)", "4h": "4H (lebih jarang, ±16 jam per window)" };
+const TF_LABEL: Record<string, string> = { "1h": "1H (lebih sering, ±4 jam per window)", "4h": "4H (lebih jarang, ±8 jam per window)" };
 
 async function call(method: string, url: string, body?: unknown) {
   const res = await fetch(url, {
@@ -241,6 +241,22 @@ export default function NotifikasiPage() {
                     </label>
                   ))}
                 </fieldset>
+
+                <div className="flex items-center justify-between gap-4 rounded-md border border-edge bg-surface/50 px-3 py-2.5">
+                  <label htmlFor="tg-daily" className="text-[12.5px] text-txt">
+                    Ringkasan harian
+                    <span className="block text-2xs text-txtMuted">
+                      Kondisi 1H dan 4H, keyakinan, dan harga setiap pagi pukul 07.00 WIB. Juga bisa diatur dengan /harian on atau /harian off.
+                    </span>
+                  </label>
+                  <Toggle
+                    id="tg-daily"
+                    label="Ringkasan harian"
+                    checked={tg.daily !== false}
+                    disabled={busy !== null || !tg.enabled}
+                    onChange={(v) => void act("daily", () => call("PATCH", "/api/telegram", { daily: v }))}
+                  />
+                </div>
 
                 <div className="flex flex-wrap gap-2 border-t border-edge pt-3">
                   <button
