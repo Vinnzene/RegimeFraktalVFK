@@ -202,6 +202,10 @@ def assemble() -> None:
         e = v[part]["test"]["ensemble"]
         return {"acc_pct": round(100 * e["accuracy"], 2), "ba_pct": round(100 * e["balanced_accuracy"], 2)}
 
+    vs_path = REVIEW / "vs_indicators.json"
+    vs = json.loads(vs_path.read_text(encoding="utf-8")) if vs_path.exists() else None
+    if vs:
+        out["vs_indicators_rules"] = {k: vs[k] for k in ("adx_rule", "chop_rule", "lookback_bars", "horizons_bars")}
     for tf in ("1h", "4h"):
         wf = summ[tf]["walk_forward_5fold"]
         sens_path = REVIEW / f"robustness_sensitivity_{tf}.json"
@@ -229,6 +233,16 @@ def assemble() -> None:
                 "horizon": [{"h_bars": int(h), "h_effective": r["h_bars_effective"], "acc_pct": r["ensemble"]["accuracy_pct"],
                              "ba_pct": r["ensemble"]["balanced_pct"], "baseline_acc_pct": r["persistence_baseline"]["accuracy_pct"]}
                             for h, r in hz["horizons"].items()] if hz else None,
+            },
+            "vs_indicators": None if not vs else {
+                "association": vs["timeframes"][tf]["association"]["cramers_v"],
+                "crosstab_model_vs_ADX14": vs["timeframes"][tf]["association"]["crosstab_model_vs_ADX14"],
+                "momentum_short": {
+                    h: {"base_hit_pct": m["base_hit_pct"],
+                        **{k.split(" ")[0]: v for k, v in m.items() if isinstance(v, dict) and "spread_pp" in v}}
+                    for h, m in vs["timeframes"][tf]["momentum"].items()
+                },
+                "momentum_scale_matched": vs.get("scale_matched", {}).get(tf),
             },
             "monte_carlo": {
                 **mc[tf],

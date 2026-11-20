@@ -47,13 +47,14 @@ export default function RobustnessPage() {
     <div className="space-y-4">
       <PageHeader
         title="Uji Ketahanan Metode"
-        description="Tiga cara menilai apakah metode identifikasi regime benar-benar bagus, bukan kebetulan: walk-forward (hasil bertahan di periode berbeda), sensitivitas (hasil tidak bergantung pada satu pilihan parameter), dan Monte Carlo (seberapa besar hasil bisa berubah karena keacakan sampel). Semua untuk model identifikasi Hybrid PS Attention-BiLSTM (h = 0), ensemble 3 seed. Ini bukan uji profit strategi."
+        description="Empat cara menilai apakah metode identifikasi regime benar-benar bagus dan berguna: walk-forward (hasil bertahan di periode berbeda), sensitivitas (hasil tidak bergantung pada satu pilihan parameter), Monte Carlo (seberapa besar hasil bisa berubah karena keacakan sampel), dan pembanding indikator klasik ADX/Choppiness (apa bedanya dengan alat gratis yang sudah ada). Semua untuk model identifikasi Hybrid PS Attention-BiLSTM (h = 0), ensemble 3 seed. Ini bukan uji profit strategi."
       />
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
           ["1. Walk-forward", "Model dilatih ulang di 5 periode berurutan. Apakah hasilnya bertahan di luar satu potongan uji?"],
           ["2. Sensitivitas", "Ambang aturan label, bobot kelas, fitur, dan horizon diubah satu per satu. Apakah kesimpulan berubah?"],
           ["3. Monte Carlo", "Bootstrap blok dan permutasi ribuan kali. Seberapa lebar ketidakpastian hasil, dan apakah bisa terjadi kebetulan?"],
+          ["4. Indikator klasik", "Dibandingkan ADX dan Choppiness Index. Apakah labelnya berbeda, dan apakah lebih berguna untuk aturan trend following?"],
         ].map(([h, b]) => (
           <div key={h} className="rounded-lg border border-edge bg-panel px-4 py-3">
             <div className="text-[13px] font-semibold text-txt">{h}</div>
@@ -66,6 +67,7 @@ export default function RobustnessPage() {
       {t && <WalkForward w={t.walk_forward} tf={timeframe} />}
       {t && <Sensitivity s={t.sensitivity} tf={timeframe} />}
       {t && <MonteCarlo m={t.monte_carlo} tf={timeframe} />}
+      {t?.vs_indicators && <VsIndicators v={t.vs_indicators} rules={rb.data.vs_indicators_rules} tf={timeframe} />}
       {rb.data && (
         <p className="text-2xs text-txtMuted">
           Sumber: ml/artifacts/robustness_tests.json (dibuat {rb.data.generated_at}) · ml/src/review_robustness.py
@@ -394,6 +396,111 @@ function MonteCarlo({ m, tf }: { m: any; tf: string }) {
         Jendela bergeser {tf === "1h" ? "4" : "2"} bar dari 500 bar sehingga sangat bertumpuk; karena itu bootstrap memakai blok 500 bar
         dan permutasi menggeser label minimal 500 bar. Dengan cara ini pun, hasil model jauh di atas sebaran nol (p &lt; 0,001), tetapi
         selang kepercayaannya cukup lebar, terutama untuk 4H.
+      </Note>
+    </Panel>
+  );
+}
+
+const ROWS: [string, string][] = [
+  ["RFraktal_model", "RFraktal (prediksi model): persistent − anti-persistent"],
+  ["ADX14", "ADX(14): trending − ranging"],
+  ["CHOP14", "Choppiness(14): trending − choppy"],
+  ["CHOP500", "Choppiness(500): trending − choppy"],
+];
+
+function Spread({ x }: { x: any }) {
+  if (!x) return <span>–</span>;
+  const sig = x.ci95_pp[0] > 0 || x.ci95_pp[1] < 0;
+  const color = !sig ? "text-txtDim" : x.spread_pp > 0 ? "text-bullish" : "text-bearish";
+  return (
+    <span className={color}>
+      {x.spread_pp > 0 ? "+" : ""}
+      {n(x.spread_pp)} <span className="text-2xs text-txtMuted">[{n(x.ci95_pp[0])}; {n(x.ci95_pp[1])}]</span>
+      {sig ? " *" : ""}
+    </span>
+  );
+}
+
+function VsIndicators({ v, rules, tf }: { v: any; rules: any; tf: string }) {
+  const a = v.association;
+  const sm = v.momentum_scale_matched ?? {};
+  return (
+    <Panel
+      title={`4. Pembanding indikator klasik · ${tf.toUpperCase()}`}
+      subtitle="ADX dan Choppiness Index tersedia gratis di platform trading. Apa bedanya, dan mana yang lebih berguna?"
+    >
+      <div className="text-[13px] font-semibold text-txt">a. Apakah labelnya sama?</div>
+      <div className="mt-1 text-2xs text-txtMuted">
+        Cramér&apos;s V pada jendela uji: 0 = tidak terkait, 1 = identik. ADX: {rules?.adx_rule}. Choppiness: {rules?.chop_rule}.
+      </div>
+      <table className="mt-2 w-full text-[12px]">
+        <thead className="text-txtMuted">
+          <tr className="border-b border-edge">
+            <Th left>Pasangan</Th>
+            <Th>Label acuan</Th>
+            <Th>Prediksi model</Th>
+          </tr>
+        </thead>
+        <tbody className="font-mono text-txtDim">
+          {[
+            ["ADX(14)", "ADX14"],
+            ["Choppiness(14)", "CHOP14"],
+            ["Choppiness(500), skala sama", "CHOP500"],
+          ].map(([label, k]) => (
+            <tr key={k} className="border-b border-edge/50">
+              <td className="py-1.5 font-sans">RFraktal vs {label}</td>
+              <td className="py-1.5 text-right">{n(a[`label_acuan_vs_${k}`], 3)}</td>
+              <td className="py-1.5 text-right">{n(a[`prediksi_model_vs_${k}`], 3)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <div className="mt-5 text-[13px] font-semibold text-txt">b. Apakah lebih berguna untuk trend following?</div>
+      <div className="mt-1 text-2xs text-txtMuted">
+        Aturan: arah harga beberapa bar terakhir dipakai menebak arah h bar berikutnya. Angka = selisih ketepatan (poin persen) antara
+        kelompok &quot;tren&quot; dan kelompok &quot;berbalik/sideways&quot; menurut tiap alat. Positif = alat berhasil memisahkan pasar yang
+        cocok untuk trend following. [SK 95% block bootstrap]; * = signifikan; hijau positif, merah negatif.
+      </div>
+      <div className="mt-2 overflow-x-auto">
+        <table className="w-full text-[12px]">
+          <thead className="text-txtMuted">
+            <tr className="border-b border-edge">
+              <Th left>Alat</Th>
+              {Object.keys(v.momentum_short).map((h) => (
+                <Th key={h}>lookback {rules?.lookback_bars} · h {h}</Th>
+              ))}
+              {Object.keys(sm).map((k) => {
+                const [lb, h] = k.slice(2).split("_h");
+                return <Th key={k}>lookback {lb} · h {h}</Th>;
+              })}
+            </tr>
+          </thead>
+          <tbody className="font-mono">
+            {ROWS.map(([k, label]) => (
+              <tr key={k} className="border-b border-edge/50">
+                <td className="py-1.5 font-sans text-txtDim">{label}</td>
+                {Object.values(v.momentum_short).map((m: any, i) => (
+                  <td key={i} className="py-1.5 text-right">
+                    <Spread x={m[k]} />
+                  </td>
+                ))}
+                {Object.values(sm).map((m: any, i) => (
+                  <td key={`s${i}`} className="py-1.5 text-right">
+                    <Spread x={k === "RFraktal_model" ? m.model : m[k]} />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <Note>
+        Label RFraktal hampir tidak terkait dengan ADX(14) dan Choppiness(14): RFraktal membaca sifat memori pada 500 bar, ADX membaca
+        kekuatan gerak sekitar 14 bar. Pada horizon pendek, label persistent tidak membuat trend following lebih tepat, bahkan lebih buruk.
+        Pada skala panjang di 4H arahnya sesuai teori, tetapi belum signifikan karena periode uji hanya ±1 tahun. Belum ada bukti bahwa
+        RFraktal lebih berguna daripada ADX untuk memilih strategi; nilai praktisnya adalah konteks sifat pasar skala panjang beserta
+        tingkat keyakinan.
       </Note>
     </Panel>
   );
