@@ -1,9 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { AccessRecord } from "@/lib/setup-access";
+import type { AccessFeature, AccessRecord } from "@/lib/setup-access";
 
-/** Admin: setujui, tolak, atau cabut akses Panduan Setup. */
+/** Admin: setujui, tolak, atau cabut akses fitur terkunci (Panduan Setup, Uji Ketahanan Metode). */
+
+const TABS: { key: AccessFeature; label: string }[] = [
+  { key: "setup", label: "Panduan Setup" },
+  { key: "robustness", label: "Uji Ketahanan Metode" },
+];
 
 const STATUS: Record<AccessRecord["status"], { label: string; className: string }> = {
   pending: { label: "Menunggu", className: "border-warn/40 bg-warn/10 text-warn" },
@@ -15,26 +20,41 @@ const when = (t: number | null) =>
   t ? new Date(t * 1000).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "–";
 
 export default function AdminAksesPage() {
+  const [fitur, setFitur] = useState<AccessFeature | null>(null);
   const [items, setItems] = useState<AccessRecord[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
 
+  // Tautan dari Telegram / halaman Uji Ketahanan membuka tab yang sesuai (?fitur=robustness).
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("fitur");
+    setFitur(q === "robustness" ? "robustness" : "setup");
+  }, []);
+
   const load = useCallback(async () => {
-    const res = await fetch("/api/admin/setup-access", { cache: "no-store" });
+    if (!fitur) return;
+    setError(null);
+    const res = await fetch(`/api/admin/setup-access?fitur=${fitur}`, { cache: "no-store" });
     const body = await res.json().catch(() => ({}));
     if (!res.ok) return setError(body.error ?? `HTTP ${res.status}`);
     setItems(body.items);
-  }, []);
+  }, [fitur]);
   useEffect(() => {
+    setItems(null);
     void load();
   }, [load]);
+
+  const pick = (key: AccessFeature) => {
+    setFitur(key);
+    window.history.replaceState(null, "", `?fitur=${key}`);
+  };
 
   const act = async (uid: string, action: "approve" | "reject" | "revoke") => {
     setBusy(uid);
     const res = await fetch("/api/admin/setup-access", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ uid, action }),
+      body: JSON.stringify({ uid, action, fitur }),
     });
     if (!res.ok) setError((await res.json().catch(() => ({}))).error ?? "Gagal menyimpan.");
     setBusy(null);
@@ -46,8 +66,24 @@ export default function AdminAksesPage() {
   return (
     <div className="mx-auto max-w-[1100px] space-y-4 px-1 pb-8 sm:px-4">
       <header className="pt-2">
-        <h1 className="text-[26px] font-bold tracking-tight text-txt">Akses Panduan Setup</h1>
-        <p className="mt-1 text-[13px] text-txtMuted">
+        <h1 className="text-[26px] font-bold tracking-tight text-txt">Akses Fitur Terkunci</h1>
+        <div className="mt-3 flex flex-wrap gap-1.5" role="tablist">
+          {TABS.map((t) => (
+            <button
+              key={t.key}
+              type="button"
+              role="tab"
+              aria-selected={fitur === t.key}
+              onClick={() => pick(t.key)}
+              className={`rounded-md border px-3 py-1.5 text-[12.5px] font-medium transition-colors ${
+                fitur === t.key ? "border-txt bg-txt text-panel" : "border-edge text-txtDim hover:text-txt"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+        <p className="mt-2 text-[13px] text-txtMuted">
           {items ? `${pending} permintaan menunggu · ${items.length} total` : "Memuat…"} · Pengguna diberi tahu lewat Telegram bila akunnya tertaut.
         </p>
       </header>

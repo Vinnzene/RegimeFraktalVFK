@@ -16,7 +16,7 @@ import BrandMark from "@/components/login/BrandMark";
  * tetap tersedia untuk chart karena navigasi ada di header, bukan sidebar.
  */
 
-type NavItem = { href: string; label: string; hint: string };
+type NavItem = { href: string; label: string; hint: string; locked?: boolean };
 type NavGroup = { label: string; items: NavItem[] };
 
 const GROUPS: NavGroup[] = [
@@ -68,8 +68,29 @@ const GROUPS: NavGroup[] = [
 
 const isActive = (pathname: string, href: string) => pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
 
+/** Menu yang terkunci per akun sampai pemilik menyetujui (lihat /api/robustness). */
+const LOCKED_HREF = "/uji-ketahanan";
+const LockBadge = () => (
+  <span className="rounded border border-edge px-1 py-px text-[10px] font-medium text-txtMuted">Terkunci</span>
+);
+
 export default function TopNav() {
   const pathname = usePathname();
+  const [ujiTerbuka, setUjiTerbuka] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/robustness?status=1", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((r) => setUjiTerbuka(Boolean(r?.open)))
+      .catch(() => setUjiTerbuka(false));
+  }, []);
+
+  const groups = GROUPS.map((g) => ({
+    ...g,
+    items: g.items.map((i) =>
+      i.href === LOCKED_HREF && !ujiTerbuka ? { ...i, locked: true, hint: "Terkunci · buka halaman untuk meminta akses ke pemilik" } : i,
+    ),
+  }));
   const [openGroup, setOpenGroup] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
@@ -112,7 +133,7 @@ export default function TopNav() {
 
       {/* Menu berkelompok untuk layar lebar. */}
       <nav className="hidden flex-1 items-center gap-0.5 lg:flex" aria-label="Navigasi utama">
-        {GROUPS.map((group) => {
+        {groups.map((group) => {
           const groupActive = group.items.some((i) => isActive(pathname, i.href));
           const open = openGroup === group.label;
           return (
@@ -144,6 +165,7 @@ export default function TopNav() {
                       >
                         <div className={`flex items-center gap-2 text-[12.5px] font-medium ${active ? "text-accent" : "text-txt"}`}>
                           {item.label}
+                          {item.locked && <LockBadge />}
                         </div>
                         <div className="mt-0.5 text-2xs leading-snug text-txtMuted">{item.hint}</div>
                       </Link>
@@ -185,7 +207,7 @@ export default function TopNav() {
       {mobileOpen && (
         <div className="absolute left-0 right-0 top-12 z-50 max-h-[75vh] overflow-y-auto border-b border-edge bg-panel p-3 shadow-pop lg:hidden">
           <div className="grid gap-4 sm:grid-cols-2">
-            {GROUPS.map((group) => (
+            {groups.map((group) => (
               <div key={group.label}>
                 <div className="metric-label mb-1.5 px-2">{group.label}</div>
                 <div className="grid gap-0.5">
@@ -198,7 +220,10 @@ export default function TopNav() {
                         aria-current={active ? "page" : undefined}
                         className={`rounded px-2 py-1.5 transition-colors ${active ? "bg-surface" : "hover:bg-surface/60"}`}
                       >
-                        <div className={`text-[12.5px] font-medium ${active ? "text-accent" : "text-txt"}`}>{item.label}</div>
+                        <div className={`flex items-center gap-2 text-[12.5px] font-medium ${active ? "text-accent" : "text-txt"}`}>
+                          {item.label}
+                          {item.locked && <LockBadge />}
+                        </div>
                         <div className="text-2xs text-txtMuted">{item.hint}</div>
                       </Link>
                     );

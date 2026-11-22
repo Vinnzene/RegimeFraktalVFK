@@ -74,10 +74,10 @@ export const TASKS: UatTask[] = [
   },
   {
     id: "T4",
-    title: "Membaca hasil uji ketahanan",
-    href: "/uji-ketahanan",
-    instruction: "Buka menu Riset → Uji Ketahanan Metode (skala 1H). Lihat bagian 1. Walk-forward.",
-    question: "Berapa persen benar walk-forward gabungan pada 1H?",
+    title: "Membaca hasil uji walk-forward",
+    href: "/evaluasi-identifikasi",
+    instruction: "Buka menu Riset → Hasil Uji Identifikasi (skala 1H). Lihat tabel 5-fold expanding purged walk-forward, baris Gabungan.",
+    question: "Berapa persen benar walk-forward gabungan (Hybrid PS) pada 1H?",
     kind: "number",
     tolerance: 0.5,
     unit: "%",
@@ -110,7 +110,7 @@ export const LIKERT_ITEMS: LikertItem[] = [
   { code: "UAT-05", aspect: "Tampilan identifikasi regime", statement: "Pewarnaan latar regime pada grafik harga mudah dibaca dan membantu saya melihat kapan pasar cenderung berlanjut, berbalik, atau acak." },
   { code: "UAT-06", aspect: "Bobot atensi dan probabilitas", statement: "Probabilitas tiga kelas dan grafik bobot attention membantu saya memahami dasar hasil identifikasi model." },
   { code: "UAT-07", aspect: "Perbandingan 1H dan 4H", statement: "Fitur perbandingan regime 1H dan 4H memberikan wawasan yang berguna dalam membaca konteks pasar lintas skala waktu." },
-  { code: "UAT-08", aspect: "Hasil pengujian identifikasi", statement: "Halaman hasil uji (Hasil Uji Identifikasi dan Uji Ketahanan Metode) menampilkan jumlah dan persentase identifikasi yang benar secara jelas." },
+  { code: "UAT-08", aspect: "Hasil pengujian identifikasi", statement: "Halaman Hasil Uji Identifikasi menampilkan jumlah dan persentase identifikasi yang benar secara jelas." },
 ];
 
 export const LIKERT_SCALE = [
@@ -138,7 +138,7 @@ export const SUS_ITEMS: string[] = [
 export const CONSENT_TEXT = [
   "Pengujian ini adalah bagian dari penelitian skripsi tentang aplikasi identifikasi regime fraktal BTC/USDT (RFraktal).",
   "Anda akan mengerjakan 5 tugas singkat di aplikasi, lalu mengisi kuesioner (±10–15 menit). Tidak ada jawaban benar atau salah tentang pendapat Anda; yang dinilai adalah aplikasinya, bukan Anda.",
-  "Yang disimpan: kode responden (mis. R01), profil singkat, jawaban dan waktu pengerjaan tugas, jawaban kuesioner, dan waktu pengisian. Email akun hanya dipakai untuk memastikan satu akun mengisi satu kali dan tidak ikut diekspor.",
+  "Yang disimpan: kode responden (mis. R01), profil singkat, jawaban dan waktu pengerjaan tugas, jawaban kuesioner, dan waktu pengisian. Nama dan email akun hanya dapat dilihat peneliti untuk memastikan satu akun mengisi satu kali; keduanya tidak ikut diekspor dan tidak ditampilkan di naskah.",
   "Jawaban tidak dapat diubah setelah dikirim. Partisipasi bersifat sukarela dan Anda dapat berhenti kapan saja sebelum mengirim.",
 ];
 
@@ -176,6 +176,9 @@ export type UatResponse = {
 /** Bentuk yang dikirim ke klien/ekspor: tanpa uid dan email. */
 export type PublicResponse = Omit<UatResponse, "uid">;
 
+/** Untuk dashboard admin saja: jawaban beserta akun pengisinya (tidak ikut ekspor CSV). */
+export type AdminResponse = PublicResponse & { account: { email: string | null; name: string | null } };
+
 // ---------------------------------------------------------------- skor
 
 /** Skor SUS satu responden (0–100): (Σ(ganjil − 1) + Σ(5 − genap)) × 2,5. */
@@ -204,6 +207,38 @@ export function uatCategory(pct: number): string {
   if (pct >= 41) return "Cukup Layak";
   if (pct >= 21) return "Kurang Layak";
   return "Tidak Layak";
+}
+
+/** Skor satu responden: kelayakan pribadi (8 butir Likert), SUS, dan tugas benar. */
+export function respondentScore(r: PublicResponse) {
+  const vals = LIKERT_ITEMS.map((it) => r.likert[it.code]).filter((v): v is number => v >= 1 && v <= 5);
+  const max = LIKERT_ITEMS.length * 5;
+  const total = vals.reduce((a, b) => a + b, 0);
+  const complete = vals.length === LIKERT_ITEMS.length;
+  const pct = complete ? (100 * total) / max : null;
+  const tasks = Object.values(r.tasks);
+  return {
+    likert: { total, max, pct, category: pct === null ? null : uatCategory(pct) },
+    sus: susScore(r.sus),
+    tasks: { correct: tasks.filter((t) => t.correct).length, answered: tasks.filter((t) => t.answered_at !== null).length, total: TASKS.length },
+  };
+}
+
+/** Batas kategori kelayakan (Tabel 3.11), untuk skala visual. */
+export const UAT_BANDS = [
+  { from: 0, to: 20, label: "Tidak Layak" },
+  { from: 21, to: 40, label: "Kurang Layak" },
+  { from: 41, to: 60, label: "Cukup Layak" },
+  { from: 61, to: 80, label: "Layak" },
+  { from: 81, to: 100, label: "Sangat Layak" },
+] as const;
+
+/** Label jawaban tugas yang mudah dibaca (pilihan menjadi teks, angka diberi satuan). */
+export function taskAnswerLabel(taskId: string, value: string | null | undefined): string {
+  if (value === null || value === undefined || value === "") return "–";
+  const t = TASKS.find((x) => x.id === taskId);
+  if (t?.kind === "choice") return t.choices?.find((c) => c.value === value)?.label ?? value;
+  return t?.unit ? `${value}${t.unit}` : value;
 }
 
 export type ItemRecap = {

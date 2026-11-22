@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { decide, isAdmin, listAccess, notifyTelegram, type AccessStatus } from "@/lib/setup-access";
+import { decide, FEATURES, isAdmin, isFeature, listAccess, notifyTelegram, type AccessFeature, type AccessStatus } from "@/lib/setup-access";
 import { requireUser } from "@/lib/server-user";
 
 export const dynamic = "force-dynamic";
@@ -11,30 +11,42 @@ async function requireAdmin() {
   return user;
 }
 
-/** Daftar permintaan akses Panduan Setup. */
-export async function GET() {
+/** `fitur` = setup (Panduan Setup, bawaan) atau robustness (Uji Ketahanan Metode). */
+const featureOf = (v: unknown): AccessFeature | null => (v == null || v === "" ? "setup" : isFeature(v) ? v : null);
+
+/** Daftar permintaan akses satu fitur. */
+export async function GET(req: Request) {
   const admin = await requireAdmin();
   if (admin instanceof NextResponse) return admin;
-  return NextResponse.json({ items: await listAccess(admin) });
+  const feature = featureOf(new URL(req.url).searchParams.get("fitur"));
+  if (!feature) return NextResponse.json({ error: "Fitur tidak dikenal." }, { status: 400 });
+  return NextResponse.json({ feature, items: await listAccess(admin, feature) });
 }
 
 const ACTIONS: Record<string, AccessStatus> = { approve: "approved", reject: "rejected", revoke: "rejected" };
 
-/** Setujui, tolak, atau cabut akses satu akun. */
+const MENU: Record<AccessFeature, string> = {
+  setup: "Strategi → Panduan Setup",
+  robustness: "Riset → Uji Ketahanan Metode",
+};
+
+/** Setujui, tolak, atau cabut akses satu akun pada satu fitur. */
 export async function POST(req: Request) {
   const admin = await requireAdmin();
   if (admin instanceof NextResponse) return admin;
   const body = await req.json().catch(() => null);
   const status = ACTIONS[body?.action];
-  if (!body?.uid || !status) return NextResponse.json({ error: "Permintaan tidak valid." }, { status: 400 });
+  const feature = featureOf(body?.fitur);
+  if (!body?.uid || !status || !feature) return NextResponse.json({ error: "Permintaan tidak valid." }, { status: 400 });
 
-  const rec = await decide(admin, String(body.uid), status);
+  const rec = await decide(admin, String(body.uid), status, feature);
   if (!rec) return NextResponse.json({ error: "Permintaan tidak ditemukan." }, { status: 404 });
+  const label = FEATURES[feature].label;
   await notifyTelegram(
     { uids: [rec.uid] },
     status === "approved"
-      ? "<b>Akses Panduan Setup disetujui.</b>\nBuka menu Strategi → Panduan Setup di dashboard."
-      : "<b>Akses Panduan Setup tidak diberikan.</b>\nHubungi admin bila ada pertanyaan.",
+      ? `<b>Akses ${label} disetujui.</b>\nBuka menu ${MENU[feature]} di dashboard.`
+      : `<b>Akses ${label} tidak diberikan.</b>\nHubungi admin bila ada pertanyaan.`,
   );
   return NextResponse.json({ item: rec });
 }

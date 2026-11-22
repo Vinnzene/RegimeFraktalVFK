@@ -7,6 +7,7 @@ import {
   TASKS,
   UAT_VERSION,
   isCorrect,
+  type AdminResponse,
   type PublicResponse,
   type UatResponse,
 } from "@/lib/uat";
@@ -25,8 +26,10 @@ import {
 const BACKEND = process.env.BACKEND_INTERNAL_URL ?? "http://localhost:8000";
 const now = () => Math.floor(Date.now() / 1000);
 
-type Memory = { responses: Map<string, UatResponse>; counter: number };
+type Account = { email: string | null; name: string | null };
+type Memory = { responses: Map<string, UatResponse>; counter: number; accounts?: Map<string, Account> };
 const memory: Memory = ((globalThis as any).__uatMemory ??= { responses: new Map(), counter: 0 });
+const accounts = (memory.accounts ??= new Map<string, Account>());
 
 function db(user: SessionUser) {
   return user.demo ? null : adminDb();
@@ -53,7 +56,7 @@ export function checkInvite(user: SessionUser, code: string): boolean {
 
 /** Untuk rekap/ekspor admin: tanpa uid dan email. */
 export function toPublic(r: UatResponse): PublicResponse {
-  const { uid: _uid, email: _email, ...rest } = r as UatResponse & { email?: string | null }; // eslint-disable-line @typescript-eslint/no-unused-vars
+  const { uid: _uid, email: _email, name: _name, ...rest } = r as UatResponse & Partial<Account>; // eslint-disable-line @typescript-eslint/no-unused-vars
   return rest;
 }
 
@@ -77,9 +80,10 @@ async function save(user: SessionUser, r: UatResponse): Promise<void> {
   const d = db(user);
   if (!d) {
     memory.responses.set(user.uid, r);
+    accounts.set(user.uid, { email: user.email ?? null, name: user.name ?? null });
     return;
   }
-  await d.collection("uat_responses").doc(user.uid).set({ ...r, email: user.email ?? null });
+  await d.collection("uat_responses").doc(user.uid).set({ ...r, email: user.email ?? null, name: user.name ?? null });
 }
 
 async function nextCode(user: SessionUser): Promise<string> {
@@ -129,8 +133,9 @@ export async function expectedAnswer(taskId: string): Promise<string | null> {
         return r.latest_windows?.length ? r.latest_windows[r.latest_windows.length - 1].regime : null;
       }
       case "T4": {
-        const r = await getJson("/api/v1/model/robustness");
-        const v = r.timeframes?.["1h"]?.walk_forward?.pooled?.pooled_pct_ensemble;
+        // Halaman Hasil Uji Identifikasi (Bab 4), bukan Uji Ketahanan yang terkunci.
+        const r = await getJson("/api/v1/model/evaluation");
+        const v = r.timeframes?.["1h"]?.walk_forward?.summary?.hybrid_ps?.pooled_pct_ensemble;
         return typeof v === "number" ? String(v) : null;
       }
       case "T5": {
@@ -259,11 +264,71 @@ export async function resetDemo(user: SessionUser): Promise<void> {
   memory.responses.delete(user.uid);
 }
 
-/** Semua jawaban untuk rekap admin. Admin sungguhan membaca Firestore; sesi demo membaca memori. */
-export async function listResponses(admin: SessionUser): Promise<PublicResponse[]> {
+async function rawResponses(admin: SessionUser): Promise<(UatResponse & Partial<Account>)[]> {
   const d = db(admin);
-  const raw: UatResponse[] = d
-    ? (await d.collection("uat_responses").get()).docs.map((x) => x.data() as UatResponse)
-    : Array.from(memory.responses.values());
-  return raw.map(toPublic).sort((a, b) => a.code.localeCompare(b.code));
+  return d
+    ? (await d.collection("uat_responses").get()).docs.map((x) => x.data() as UatResponse & Partial<Account>)
+    : Array.from(memory.responses.values()).map((r) => ({ ...r, ...accounts.get(r.uid) }));
+}
+
+/** Semua jawaban untuk rekap/ekspor: tanpa akun. Admin sungguhan membaca Firestore; sesi demo membaca memori. */
+export async function listResponses(admin: SessionUser): Promise<PublicResponse[]> {
+  return (await rawResponses(admin)).map(toPublic).sort((a, b) => a.code.localeCompare(b.code));
+}
+
+/** Untuk dashboard admin: jawaban beserta nama dan email akun pengisi. */
+export async function listResponsesForAdmin(admin: SessionUser): Promise<AdminResponse[]> {
+  return (await rawResponses(admin))
+    .map((r) => ({ ...toPublic(r), account: { email: r.email ?? null, name: r.name ?? null } }))
+    .sort((a, b) => a.code.localeCompare(b.code));
+}
+
+/**
+ * Sesi demo saja: isi memori dengan jawaban contoh supaya tampilan dashboard admin
+ * dapat dicoba di laptop. Tidak pernah menulis ke Firestore; kode diawali "C".
+ */
+export function seedDemo(admin: SessionUser, count = 6): void {
+  if (!admin.demo) throw new UatError("Data contoh hanya untuk sesi demo lokal.", 403);
+  let seed = 7;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const pick = <T,>(xs: readonly T[]) => xs[Math.floor(rnd() * xs.length)];
+  const t0 = now() - 3 * 86400;
+  for (let i = 1; i <= count; i++) {
+    const uid = `contoh-${i}`;
+    const begin = t0 + i * 3600;
+    const tasks = Object.fromEntries(
+      TASKS.map((t, k) => {
+        const expected = t.kind === "choice" ? t.choices![0].value : t.id === "T4" ? "64.82" : "31";
+        const wrong = t.kind === "choice" ? t.choices![t.choices!.length - 1].value : String(Number(expected) + 3);
+        const answer = rnd() > 0.2 ? expected : wrong;
+        const s = begin + 60 + k * 90;
+        const secs = 20 + Math.floor(rnd() * 70);
+        return [t.id, { started_at: s, answered_at: s + secs, seconds: secs, answer, expected: [expected], correct: answer === expected, seq: 4 + Math.floor(rnd() * 4) }];
+      }),
+    );
+    memory.responses.set(uid, {
+      version: UAT_VERSION,
+      uid,
+      code: `C${String(i).padStart(2, "0")}`,
+      status: "done",
+      consent_at: begin,
+      profile: Object.fromEntries(PROFILE_FIELDS.map((f) => [f.key, pick(f.options)])),
+      tasks,
+      likert: Object.fromEntries(LIKERT_ITEMS.map((it) => [it.code, 3 + Math.floor(rnd() * 3)])),
+      sus: Array.from({ length: 10 }, (_, k) => (k % 2 === 0 ? 3 + Math.floor(rnd() * 3) : 1 + Math.floor(rnd() * 3))),
+      feedback: pick(["", "Tampilan jelas, tapi istilah Hurst perlu penjelasan singkat.", "Grafik SWT agak sulit dibaca di layar kecil.", "Membantu melihat konteks 1H vs 4H."]),
+      submitted_at: begin + 900,
+      app: { config_hash: null },
+      demo: true,
+    });
+    accounts.set(uid, { email: `responden${i}@contoh.local`, name: `Responden Contoh ${i}` });
+  }
+}
+
+/** Sesi demo saja: hapus semua jawaban di memori. */
+export function clearDemo(admin: SessionUser): void {
+  if (!admin.demo) throw new UatError("Hanya sesi demo lokal.", 403);
+  memory.responses.clear();
+  accounts.clear();
+  memory.counter = 0;
 }

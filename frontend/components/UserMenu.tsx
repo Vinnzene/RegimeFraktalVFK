@@ -76,7 +76,7 @@ export default function UserMenu() {
               onClick={() => setOpen(false)}
               className="flex items-center justify-between rounded px-3 py-2 text-[12.5px] text-txtDim transition-colors hover:bg-surface hover:text-txt"
             >
-              Rekap UAT
+              Dashboard UAT
               <span className="text-2xs text-accent">admin</span>
             </Link>
           )}
@@ -86,7 +86,7 @@ export default function UserMenu() {
               onClick={() => setOpen(false)}
               className="flex items-center justify-between rounded px-3 py-2 text-[12.5px] text-txtDim transition-colors hover:bg-surface hover:text-txt"
             >
-              Kelola akses Panduan Setup
+              Kelola akses (Setup, Uji Ketahanan)
               <span className="text-2xs text-accent">admin</span>
             </Link>
           )}

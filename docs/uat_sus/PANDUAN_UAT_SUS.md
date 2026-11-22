@@ -204,4 +204,4 @@ boleh dipakai sebagai data penelitian.
 - UAT-02: "pengaturan parameter jendela pengamatan" dihapus (fitur itu tidak ada); kini "pemilihan kerangka waktu (1H dan 4H)
   dan perpindahan antarhalaman".
 - UAT-05: tidak lagi menyamakan warna regime dengan tren naik/turun (regime menggambarkan sifat gerakan, bukan arah).
-- UAT-08: merujuk halaman Hasil Uji Identifikasi dan Uji Ketahanan Metode.
+- UAT-08: merujuk halaman Hasil Uji Identifikasi.

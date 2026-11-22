@@ -1,4 +1,4 @@
-"""Endpoint internal untuk server Next.js: analisis aset.
+"""Endpoint internal untuk server Next.js: analisis aset dan data Uji Ketahanan.
 
 Tidak berada di bawah /api/v1, sehingga Caddy tidak meneruskannya ke publik;
 hanya rute Next.js (yang memeriksa login dan kuota harian) yang memanggilnya
@@ -53,3 +53,19 @@ def read(job_id: str, x_internal_token: Optional[str] = Header(None)) -> dict:
     if job is None:
         raise HTTPException(status_code=404, detail="Analisis tidak ditemukan.")
     return job
+
+
+robustness_router = APIRouter(prefix="/internal/robustness", tags=["internal"])
+
+
+@robustness_router.get("")
+def robustness(x_internal_token: Optional[str] = Header(None)) -> dict:
+    """Data Uji Ketahanan Metode untuk rute Next.js `/api/robustness`.
+
+    Rute itu yang memeriksa login dan persetujuan admin; endpoint ini tidak
+    diteruskan Caddy ke publik, sama seperti `/internal/analyses`.
+    """
+    _check_token(x_internal_token)
+    from app.routers.model import load_robustness
+
+    return load_robustness()

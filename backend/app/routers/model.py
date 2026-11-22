@@ -3,13 +3,16 @@
 from __future__ import annotations
 
 import json
+import os
 from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel, Field
 
-from app.core.config import ARTIFACTS_DIR, PROCESSED_DIR, REGIME_CLASSES, get_config
+from dotenv import dotenv_values
+
+from app.core.config import ARTIFACTS_DIR, PROCESSED_DIR, PROJECT_ROOT, REGIME_CLASSES, get_config
 from app.services import disk_cache
 from app.db.repository import get_repository, register_invalidation_hook
 from app.mock.generator import generate_training_curves
@@ -688,13 +691,51 @@ def evaluation_summary() -> dict:
     return {"source": "ml/artifacts/updated_eval_summary.json", "horizon_bars": 0, "timeframes": out}
 
 
+_UJI_KETAHANAN_ENV = "UJI_KETAHANAN_TERBUKA"
+_UJI_KETAHANAN_TERKUNCI = (
+    "Halaman Uji Ketahanan Metode dikunci dan hanya dibuka atas persetujuan pemilik "
+    "(isi UJI_KETAHANAN_TERBUKA=1 di backend/.env)."
+)
+
+
+def _uji_ketahanan_terbuka() -> bool:
+    """Halaman Uji Ketahanan terkunci kecuali pemilik membukanya secara eksplisit.
+
+    Dibuka dengan `UJI_KETAHANAN_TERBUKA=1` di `backend/.env` (dibaca ulang setiap
+    permintaan, jadi tidak perlu restart) atau di environment proses backend.
+    Nilai di `backend/.env` didahulukan. Tanpa nilai apa pun, halaman terkunci.
+    """
+    nilai = os.environ.get(_UJI_KETAHANAN_ENV)
+    env_file = PROJECT_ROOT / "backend" / ".env"
+    if env_file.exists():
+        nilai = dotenv_values(env_file).get(_UJI_KETAHANAN_ENV, nilai)
+    return str(nilai or "").strip().lower() in {"1", "true", "ya", "yes", "on"}
+
+
+@router.get("/robustness/status")
+def robustness_status() -> dict:
+    """Status kunci halaman Uji Ketahanan Metode (dipakai menu dan halaman)."""
+    terbuka = _uji_ketahanan_terbuka()
+    return {"terbuka": terbuka, "pesan": None if terbuka else _UJI_KETAHANAN_TERKUNCI}
+
+
 @router.get("/robustness")
 def robustness_tests() -> dict:
     """Uji ketahanan metode identifikasi (h = 0): walk-forward, sensitivitas, Monte Carlo.
 
     Dibaca dari `ml/artifacts/robustness_tests.json` (dibuat `ml/src/review_robustness.py`).
     Perhitungannya butuh puluhan menit (melatih ulang model), jadi tidak dijalankan di server.
+    Terkunci (HTTP 403) kecuali `_uji_ketahanan_terbuka()` bernilai benar. Akun yang
+    disetujui admin membaca data lewat `/internal/robustness` (rute Next.js
+    `/api/robustness` yang memeriksa persetujuan), bukan lewat endpoint publik ini.
     """
+    if not _uji_ketahanan_terbuka():
+        raise HTTPException(status_code=403, detail=_UJI_KETAHANAN_TERKUNCI)
+    return load_robustness()
+
+
+def load_robustness() -> dict:
+    """Isi robustness_tests.json tanpa pemeriksaan kunci (pemanggil wajib memeriksa)."""
     path = ARTIFACTS_DIR / "robustness_tests.json"
     if not path.exists():
         raise HTTPException(status_code=404, detail="robustness_tests.json belum dibuat (jalankan ml/src/review_robustness.py).")

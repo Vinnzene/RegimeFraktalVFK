@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -15,8 +17,7 @@ import PageHeader from "@/components/PageHeader";
 import Panel from "@/components/Panel";
 import ParameterBar from "@/components/ParameterBar";
 import { useAppConfig } from "@/components/ConfigContext";
-import { ApiState, useApi } from "@/components/useApi";
-import { api } from "@/lib/api-client";
+import { ApiState } from "@/components/useApi";
 import { AXIS_TICK, GRID_STROKE, LEGEND_STYLE, TOOLTIP_LABEL_STYLE, TOOLTIP_STYLE } from "@/lib/chart-theme";
 
 const n = (v: number | null | undefined, d = 2) =>
@@ -38,9 +39,120 @@ function Note({ children }: { children: React.ReactNode }) {
  * periode diubah (walk-forward), bila parameter diubah (sensitivitas), dan
  * bila keacakan sampel diperhitungkan (Monte Carlo). Bukan uji strategi/profit.
  */
+/**
+ * Halaman ini terkunci per akun: pengguna meminta akses, admin menyetujui di
+ * /admin/akses. Data hanya dikirim rute /api/robustness untuk admin, akun yang
+ * disetujui, atau bila pemilik membuka untuk semua (UJI_KETAHANAN_TERBUKA=1).
+ */
+type AccessResponse = {
+  access: "pending" | "approved" | "rejected" | null;
+  requested_at: number | null;
+  admin: boolean;
+  open: boolean;
+  data: any | null;
+};
+
 export default function RobustnessPage() {
+  const [res, setRes] = useState<AccessResponse | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    try {
+      const r = await fetch("/api/robustness", { cache: "no-store" });
+      const body = await r.json();
+      if (!r.ok) throw new Error(body.error ?? `HTTP ${r.status}`);
+      setRes(body);
+    } catch (e: any) {
+      setError(e.message);
+    }
+  }, []);
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  const request = async (note: string) => {
+    const r = await fetch("/api/robustness", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ note }) });
+    if (!r.ok) setError("Permintaan gagal dikirim.");
+    await load();
+  };
+
+  if (error) return <ApiState loading={false} error={error} />;
+  if (!res) return <ApiState loading error={null} />;
+  if (!res.open || !res.data) return <Locked res={res} onRequest={request} />;
+  return <RobustnessContent data={res.data} admin={res.admin} />;
+}
+
+function LockIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <rect x="4" y="10" width="16" height="11" rx="2" />
+      <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+    </svg>
+  );
+}
+
+function Locked({ res, onRequest }: { res: AccessResponse; onRequest: (note: string) => Promise<void> }) {
+  const [note, setNote] = useState("");
+  const [busy, setBusy] = useState(false);
+  const submit = async () => {
+    setBusy(true);
+    await onRequest(note);
+    setBusy(false);
+  };
+  return (
+    <section className="mx-auto mt-6 max-w-[640px] rounded-xl border border-edge bg-panel p-6 text-center shadow-panel">
+      <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface text-txtDim">
+        <LockIcon />
+      </div>
+      <h1 className="mt-3 text-[18px] font-semibold text-txt">Uji Ketahanan Metode terkunci</h1>
+      <p className="mt-1.5 text-[13px] leading-relaxed text-txtDim">
+        Halaman ini hanya dibuka untuk akun yang disetujui pemilik aplikasi.
+      </p>
+
+      {res.access === "pending" ? (
+        <p className="mt-4 rounded-lg border border-warn/40 bg-warn/10 px-4 py-3 text-[13px] text-txt">
+          Permintaan terkirim
+          {res.requested_at
+            ? ` pada ${new Date(res.requested_at * 1000).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}`
+            : ""}
+          . Menunggu persetujuan pemilik.
+        </p>
+      ) : (
+        <div className="mt-4 text-left">
+          {res.access === "rejected" && (
+            <p className="mb-3 rounded-lg border border-bearish/30 bg-bearish/5 px-3 py-2 text-[12.5px] text-bearish">
+              Permintaan sebelumnya tidak disetujui. Anda dapat mengajukan lagi.
+            </p>
+          )}
+          <label className="block text-[12px] font-medium text-txtDim" htmlFor="alasan">
+            Alasan (opsional)
+          </label>
+          <textarea
+            id="alasan"
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            maxLength={300}
+            rows={3}
+            placeholder="Mis. dosen pembimbing atau penguji."
+            className="mt-1 w-full rounded-lg border border-edge bg-panel px-3 py-2 text-[13px] text-txt outline-none focus:border-accent"
+          />
+          <button
+            type="button"
+            onClick={submit}
+            disabled={busy}
+            className="mt-3 w-full rounded-lg bg-txt px-5 py-2.5 text-[14px] font-semibold text-panel transition hover:opacity-90 disabled:opacity-40"
+          >
+            {busy ? "Mengirim…" : "Minta akses"}
+          </button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function RobustnessContent({ data, admin }: { data: any; admin: boolean }) {
   const { timeframe } = useAppConfig();
-  const rb = useApi(() => api.robustness(), []);
+  const rb = { data };
   const t = rb.data?.timeframes?.[timeframe];
 
   return (
@@ -62,8 +174,15 @@ export default function RobustnessPage() {
           </div>
         ))}
       </div>
+      {admin && (
+        <p className="text-[12px] text-txtMuted">
+          Halaman ini terkunci untuk akun lain.{" "}
+          <Link href="/admin/akses?fitur=robustness" className="font-medium text-txtDim underline hover:text-txt">
+            Kelola akses →
+          </Link>
+        </p>
+      )}
       <ParameterBar />
-      <ApiState loading={rb.loading} error={rb.error} />
       {t && <WalkForward w={t.walk_forward} tf={timeframe} />}
       {t && <Sensitivity s={t.sensitivity} tf={timeframe} />}
       {t && <MonteCarlo m={t.monte_carlo} tf={timeframe} />}

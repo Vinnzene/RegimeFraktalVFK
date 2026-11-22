@@ -3,9 +3,10 @@ import { adminDb } from "@/lib/firebase-admin";
 import type { SessionUser } from "@/lib/session";
 
 /**
- * Akses Panduan Setup: pengguna meminta, admin menyetujui.
+ * Akses fitur terkunci (Panduan Setup, Uji Ketahanan Metode): pengguna meminta,
+ * admin menyetujui.
  *
- * Status disimpan di Firestore `setup_access/{uid}`. Admin ditentukan oleh
+ * Status disimpan di Firestore `setup_access/{uid}` atau `robustness_access/{uid}`. Admin ditentukan oleh
  * variabel lingkungan ADMIN_EMAILS (dipisah koma). Sesi demo lokal memakai
  * memori proses agar pengujian di laptop tidak menulis ke Firestore produksi.
  */
@@ -23,7 +24,20 @@ export type AccessRecord = {
   decided_by: string | null;
 };
 
-const memory: Map<string, AccessRecord> = ((globalThis as any).__setupAccess ??= new Map());
+/** Fitur yang aksesnya diatur admin; masing-masing punya koleksi Firestore sendiri. */
+export type AccessFeature = "setup" | "robustness";
+
+export const FEATURES: Record<AccessFeature, { label: string; collection: string; path: string }> = {
+  setup: { label: "Panduan Setup", collection: "setup_access", path: "/setup" },
+  robustness: { label: "Uji Ketahanan Metode", collection: "robustness_access", path: "/uji-ketahanan" },
+};
+
+export const isFeature = (v: unknown): v is AccessFeature => typeof v === "string" && v in FEATURES;
+
+const memories: Record<AccessFeature, Map<string, AccessRecord>> = ((globalThis as any).__accessStores ??= {
+  setup: new Map(),
+  robustness: new Map(),
+});
 
 export function adminEmails(): string[] {
   return (process.env.ADMIN_EMAILS ?? "")
@@ -40,20 +54,20 @@ function db(user?: SessionUser) {
   return user?.demo ? null : adminDb();
 }
 
-export async function getAccess(user: SessionUser): Promise<AccessRecord | null> {
+export async function getAccess(user: SessionUser, feature: AccessFeature = "setup"): Promise<AccessRecord | null> {
   const d = db(user);
-  if (!d) return memory.get(user.uid) ?? null;
-  const snap = await d.collection("setup_access").doc(user.uid).get();
+  if (!d) return memories[feature].get(user.uid) ?? null;
+  const snap = await d.collection(FEATURES[feature].collection).doc(user.uid).get();
   return snap.exists ? (snap.data() as AccessRecord) : null;
 }
 
 /** Admin selalu punya akses; pengguna lain hanya bila disetujui. */
-export async function hasAccess(user: SessionUser): Promise<boolean> {
+export async function hasAccess(user: SessionUser, feature: AccessFeature = "setup"): Promise<boolean> {
   if (isAdmin(user)) return true;
-  return (await getAccess(user))?.status === "approved";
+  return (await getAccess(user, feature))?.status === "approved";
 }
 
-export async function requestAccess(user: SessionUser, note: string | null): Promise<AccessRecord> {
+export async function requestAccess(user: SessionUser, note: string | null, feature: AccessFeature = "setup"): Promise<AccessRecord> {
   const rec: AccessRecord = {
     uid: user.uid,
     email: user.email,
@@ -65,28 +79,33 @@ export async function requestAccess(user: SessionUser, note: string | null): Pro
     decided_by: null,
   };
   const d = db(user);
-  if (!d) memory.set(user.uid, rec);
-  else await d.collection("setup_access").doc(user.uid).set({ ...rec, updated_at: FieldValue.serverTimestamp() });
+  if (!d) memories[feature].set(user.uid, rec);
+  else await d.collection(FEATURES[feature].collection).doc(user.uid).set({ ...rec, updated_at: FieldValue.serverTimestamp() });
   return rec;
 }
 
-export async function listAccess(admin: SessionUser): Promise<AccessRecord[]> {
+export async function listAccess(admin: SessionUser, feature: AccessFeature = "setup"): Promise<AccessRecord[]> {
   const d = db(admin);
-  if (!d) return [...memory.values()].sort((a, b) => b.requested_at - a.requested_at);
-  const snap = await d.collection("setup_access").orderBy("requested_at", "desc").limit(200).get();
+  if (!d) return [...memories[feature].values()].sort((a, b) => b.requested_at - a.requested_at);
+  const snap = await d.collection(FEATURES[feature].collection).orderBy("requested_at", "desc").limit(200).get();
   return snap.docs.map((doc) => doc.data() as AccessRecord);
 }
 
-export async function decide(admin: SessionUser, uid: string, status: AccessStatus): Promise<AccessRecord | null> {
+export async function decide(
+  admin: SessionUser,
+  uid: string,
+  status: AccessStatus,
+  feature: AccessFeature = "setup",
+): Promise<AccessRecord | null> {
   const patch = { status, decided_at: Math.floor(Date.now() / 1000), decided_by: admin.email };
   const d = db(admin);
   if (!d) {
-    const rec = memory.get(uid);
+    const rec = memories[feature].get(uid);
     if (!rec) return null;
     Object.assign(rec, patch);
     return rec;
   }
-  const ref = d.collection("setup_access").doc(uid);
+  const ref = d.collection(FEATURES[feature].collection).doc(uid);
   const snap = await ref.get();
   if (!snap.exists) return null;
   await ref.update({ ...patch, updated_at: FieldValue.serverTimestamp() });
