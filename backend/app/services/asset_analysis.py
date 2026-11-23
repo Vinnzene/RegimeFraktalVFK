@@ -1,6 +1,6 @@
 """Analisis regime untuk aset apa pun (Binance atau Yahoo Finance).
 
-Model identifikasi resmi (Hybrid PS Attention-BiLSTM, h = 0) dilatih pada BTC/USDT
+Model identifikasi resmi (Hybrid Attention-BiLSTM, h = 0) dilatih pada BTC/USDT
 1H dan 4H. Aset dan timeframe lain memakai model timeframe terdekat
 (`ai_detector.MODEL_TF`) apa adanya, tanpa normalisasi ulang, sehingga hasilnya
 ditandai eksperimental: model hanya dievaluasi pada BTC/USDT 1H dan 4H.

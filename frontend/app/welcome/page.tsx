@@ -54,7 +54,7 @@ const STEPS = [
   {
     n: "02",
     title: "Belajar dari konsensus Hurst–DFA",
-    text: "Hybrid PS Attention-BiLSTM dilatih pada 70% riwayat BTC/USDT untuk mengenali label konsensus Hurst R/S–DFA-1 (Trend-Aware Soft Consensus) pada jendela itu sendiri, lalu diuji pada periode yang tidak pernah dilihat.",
+    text: "Hybrid Attention-BiLSTM dilatih pada 70% riwayat BTC/USDT untuk mengenali label konsensus Hurst R/S–DFA-1 (Trend-Aware Soft Consensus) pada jendela itu sendiri, lalu diuji pada periode yang tidak pernah dilihat.",
   },
   { n: "03", title: "Label + keyakinan", text: "Setiap 4 bar (1H) atau 2 bar (4H) sistem memberi label dan probabilitas tiap kelas. Notifikasi dikirim setelah tiga konfirmasi berturut-turut." },
 ];
@@ -62,7 +62,7 @@ const STEPS = [
 const BARS = [
   { label: "SWT + Attention-BiLSTM", value: 0.4858, tone: "bg-txtMuted/50" },
   { label: "Structural MLP", value: 0.7142, tone: "bg-txtMuted" },
-  { label: "Hybrid PS Attention-BiLSTM (sistem ini)", value: 0.81, tone: "bg-accent" },
+  { label: "Hybrid Attention-BiLSTM (sistem ini)", value: 0.81, tone: "bg-accent" },
 ];
 
 const LIMITS = [
@@ -235,7 +235,7 @@ export default function WelcomePage() {
                   </div>
                 ))}
               </div>
-              <p className="mt-5 text-[12.5px] text-txtMuted">Ensemble 3 seed, 2.005 jendela uji. Rata-rata ketiga kelas Hybrid PS 63,76%. Sumber: evaluasi Bab 4.</p>
+              <p className="mt-5 text-[12.5px] text-txtMuted">Ensemble 3 seed, 2.005 jendela uji. Rata-rata ketiga kelas Hybrid Attention-BiLSTM 63,76%. Sumber: evaluasi Bab 4.</p>
             </div>
           </div>
         </section>

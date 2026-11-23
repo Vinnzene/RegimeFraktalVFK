@@ -77,7 +77,7 @@ export const TASKS: UatTask[] = [
     title: "Membaca hasil uji walk-forward",
     href: "/evaluasi-identifikasi",
     instruction: "Buka menu Riset → Hasil Uji Identifikasi (skala 1H). Lihat tabel 5-fold expanding purged walk-forward, baris Gabungan.",
-    question: "Berapa persen benar walk-forward gabungan (Hybrid PS) pada 1H?",
+    question: "Berapa persen benar walk-forward gabungan (Hybrid Attention-BiLSTM) pada 1H?",
     kind: "number",
     tolerance: 0.5,
     unit: "%",

@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { ConfigProvider } from "@/components/ConfigContext";
+import GuidedTour from "@/components/GuidedTour";
 import TopBar from "@/components/TopBar";
 import TopNav from "@/components/TopNav";
 import { UserProvider } from "@/components/UserContext";
@@ -26,6 +27,7 @@ export default function AppChrome({ children }: { children: React.ReactNode }) {
           </div>
           <main className="flex-1 overflow-y-auto p-3">{children}</main>
         </div>
+        <GuidedTour />
       </ConfigProvider>
     </UserProvider>
   );

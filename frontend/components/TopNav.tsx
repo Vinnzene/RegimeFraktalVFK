@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 import UserMenu from "@/components/UserMenu";
+import { startTour } from "@/components/GuidedTour";
 import BrandMark from "@/components/login/BrandMark";
 
 /**
@@ -137,7 +138,7 @@ export default function TopNav() {
           const groupActive = group.items.some((i) => isActive(pathname, i.href));
           const open = openGroup === group.label;
           return (
-            <div key={group.label} className="relative">
+            <div key={group.label} className="relative" data-tour={`nav-${group.label.toLowerCase().replace(/\s+/g, "-")}`}>
               <button
                 type="button"
                 aria-expanded={open}
@@ -195,13 +196,26 @@ export default function TopNav() {
         <button
           type="button"
           aria-expanded={mobileOpen}
+          data-tour="nav-mobile"
           onClick={() => setMobileOpen((v) => !v)}
           className="rounded-md border border-edge px-2.5 py-1 text-[12px] text-txtDim transition-colors hover:border-edgeBright hover:text-txt lg:hidden"
         >
           Menu
         </button>
+        <button
+          type="button"
+          data-tour="help"
+          onClick={startTour}
+          title="Tampilkan panduan penggunaan"
+          className="flex items-center gap-1.5 rounded-md border border-edge px-2 py-1 text-[12px] text-txtDim transition-colors hover:border-edgeBright hover:text-txt"
+        >
+          <span className="flex h-4 w-4 items-center justify-center rounded-full border border-current text-[10px] font-semibold leading-none">?</span>
+          <span className="hidden sm:inline">Panduan</span>
+        </button>
         <ThemeToggle />
-        <UserMenu />
+        <span data-tour="user" className="inline-flex">
+          <UserMenu />
+        </span>
       </div>
 
       {mobileOpen && (

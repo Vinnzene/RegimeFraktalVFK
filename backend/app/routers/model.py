@@ -623,7 +623,7 @@ def _normalize_multi_asset_payload(raw: dict) -> dict:
     return {
         "available": True,
         "experiment": raw.get("experiment", ""),
-        "model_architecture": "Hybrid SWT/PS Attention-BiLSTM + Trend-Aware Hurst-DFA",
+        "model_architecture": "Hybrid Attention-BiLSTM + Trend-Aware Hurst-DFA",
         "overall_summary": {
             "total_asset_timeframe_pairs": len(assets_evaluated),
             "grand_total_test_windows": grand_total,
@@ -632,6 +632,14 @@ def _normalize_multi_asset_payload(raw: dict) -> dict:
         },
         "assets_evaluated": assets_evaluated,
     }
+
+
+# Nama tampilan model usulan disamakan dengan naskah; berkas JSON evaluasi tidak diubah.
+_DISPLAY_LABELS = {"hybrid_ps": "Hybrid Attention-BiLSTM (Usulan)"}
+
+
+def _display_label(key: str, label: str) -> str:
+    return _DISPLAY_LABELS.get(key, label)
 
 
 @router.get("/evaluation")
@@ -657,7 +665,7 @@ def evaluation_summary() -> dict:
             "partitions": {k: {"total": v["total_windows"], "definitive": v["definitive_windows"]} for k, v in hb["partitions"].items()},
             "backtest": {
                 k: {
-                    "label": v["label"],
+                    "label": _display_label(k, v["label"]),
                     "total": v["ensemble"]["total"],
                     "correct": v["ensemble"]["correct"],
                     "pct": v["ensemble"]["pct"],
@@ -667,7 +675,7 @@ def evaluation_summary() -> dict:
                 for k, v in hb["models"].items()
             },
             "walk_forward": {
-                "summary": wf["summary"],
+                "summary": {k: {**v, "label": _display_label(k, v.get("label", k))} if isinstance(v, dict) else v for k, v in wf["summary"].items()},
                 "folds": [
                     {
                         "fold": f["fold"],

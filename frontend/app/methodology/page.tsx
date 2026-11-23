@@ -82,7 +82,7 @@ export default function MethodologyPage() {
                 "Harga penutupan diubah menjadi log-return. Harga level tidak dipakai karena bersifat non-stasioner (unit root) sehingga estimasi Hurst akan selalu mendekati 1. Candle yang belum tutup dibuang.",
                 "Rolling window 500 bar dibentuk setiap 4 bar (1H) atau 2 bar (4H). Window pada titik t hanya memuat data sampai t; tugasnya identifikasi kondisi saat ini (h = 0), bukan prediksi.",
                 "Fitur dihitung tanpa penskalaan ulang: sekuens statistik persistensi 32 × 14 (variance ratio, autokorelasi, volatilitas, efficiency ratio per sub-window) dan 56 fitur (50 struktural termasuk 12 rasio energi SWT db4 4 level causal, + 6 multifraktal), lalu distandarkan dengan statistik partisi latih.",
-                "Ensemble 3 seed Hybrid PS Attention-BiLSTM mengeluarkan probabilitas tiga kelas. Model dilatih pada partisi latih BTC (70%) untuk mengenali label Trend-Aware Soft Consensus Hurst R/S–DFA-1 dengan ambang kuantil train-only.",
+                "Ensemble 3 seed Hybrid Attention-BiLSTM mengeluarkan probabilitas tiga kelas. Model dilatih pada partisi latih BTC (70%) untuk mengenali label Trend-Aware Soft Consensus Hurst R/S–DFA-1 dengan ambang kuantil train-only.",
                 "Bila probabilitas tertinggi di bawah τ = 0,75, kondisi ditandai keyakinan rendah (Uncertain low-conf).",
                 "Hurst R/S dan DFA α dihitung untuk setiap window; konsensusnya adalah label yang dipelajari model dan ditampilkan di halaman Hurst-DFA Klasik.",
                 "Pergantian regime diumumkan (dashboard dan Telegram) bila 3 window berturut-turut berlabel sama.",

@@ -97,7 +97,7 @@ export default function EvaluationPage() {
 
           <Panel
             title={`5-fold expanding purged walk-forward · ${timeframe.toUpperCase()}`}
-            subtitle="Model dilatih ulang tiap fold; ambang label dikalibrasi ulang dari data latih fold itu. Baris tebal = Hybrid PS (model aplikasi)."
+            subtitle="Model dilatih ulang tiap fold; ambang label dikalibrasi ulang dari data latih fold itu. Baris tebal = Hybrid Attention-BiLSTM (model aplikasi)."
           >
             <div className="overflow-x-auto">
               <table className="w-full text-[12px]">
@@ -106,7 +106,7 @@ export default function EvaluationPage() {
                     <th className="py-1.5 text-left font-medium">Fold</th>
                     <th className="py-1.5 text-right font-medium">Latih</th>
                     <th className="py-1.5 text-right font-medium">Uji</th>
-                    <th className="py-1.5 text-right font-medium">Hybrid PS benar</th>
+                    <th className="py-1.5 text-right font-medium">Hybrid Attention-BiLSTM benar</th>
                     <th className="py-1.5 text-right font-medium">% benar</th>
                     <ClassHeads />
                   </tr>

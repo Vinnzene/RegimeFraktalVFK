@@ -283,7 +283,7 @@ export default function WalkForwardEvaluationPage() {
               Identifikasi Regime Murni (h = 0)
             </span>
             <span className="rounded-md bg-surface px-2 py-0.5 text-[12px] font-medium text-txtDim">
-              Hybrid SWT/PS Attention-BiLSTM · {tf.toUpperCase()}
+              Hybrid Attention-BiLSTM · {tf.toUpperCase()}
             </span>
           </div>
           <p className="mt-1 text-[13px] text-txtMuted">

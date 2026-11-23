@@ -99,7 +99,7 @@ export default function DashboardPage() {
             </span>
           </div>
           <p className="mt-1 text-[13px] text-txtMuted">
-            Sifat gerakan harga menurut model identifikasi Hybrid PS Attention-BiLSTM dan apa artinya untuk strategi Anda.
+            Sifat gerakan harga menurut model identifikasi Hybrid Attention-BiLSTM dan apa artinya untuk strategi Anda.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
@@ -110,8 +110,10 @@ export default function DashboardPage() {
             <span className="h-1.5 w-1.5 rounded-full bg-accent" />
             Uji Walk-Forward 2019–2026 (12 Aset) →
           </Link>
-          <span className="text-[12px] text-txtMuted">Skala waktu</span>
-          <TimeframeToggle />
+          <span data-tour="timeframe" className="flex items-center gap-2.5">
+            <span className="text-[12px] text-txtMuted">Skala waktu</span>
+            <TimeframeToggle />
+          </span>
         </div>
       </header>
 
@@ -126,17 +128,19 @@ export default function DashboardPage() {
             </div>
           )}
 
-          <RegimeOverview
-            timeframe={timeframe}
-            ai1h={ai1h.data}
-            ai4h={ai4h.data}
-            classic={classic.data?.series ?? []}
-            band={band}
-            candles={ohlcv.data?.candles ?? []}
-          />
+          <div data-tour="overview">
+            <RegimeOverview
+              timeframe={timeframe}
+              ai1h={ai1h.data}
+              ai4h={ai4h.data}
+              classic={classic.data?.series ?? []}
+              band={band}
+              candles={ohlcv.data?.candles ?? []}
+            />
+          </div>
 
           <section className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_400px]">
-            <div className="rounded-xl border border-edge bg-panel p-4 shadow-panel">
+            <div data-tour="chart" className="rounded-xl border border-edge bg-panel p-4 shadow-panel">
               <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
                 <h2 className="text-[16px] font-semibold text-txt">Harga dengan pita kondisi pasar</h2>
                 <span className="text-[12px] text-txtMuted">Warna latar = kondisi saat itu · 1D–ALL mengubah rentang · gulir untuk zoom</span>

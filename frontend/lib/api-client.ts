@@ -77,7 +77,7 @@ export interface IdentificationScore {
   mcc?: number;
 }
 
-/** Model identifikasi resmi (Hybrid PS Attention-BiLSTM, h = 0). */
+/** Model identifikasi resmi (Hybrid Attention-BiLSTM, h = 0). */
 export interface DetectorInfo {
   name: string;
   task: string;
@@ -314,7 +314,7 @@ export const api = {
       latest_windows: RegimePoint[];
       uncertain_example: RegimePoint | null;
     }>("/api/v1/analysis/regime", { tf }),
-  /** Regime hasil identifikasi model resmi (Hybrid PS Attention-BiLSTM, h = 0). */
+  /** Regime hasil identifikasi model resmi (Hybrid Attention-BiLSTM, h = 0). */
   aiRegime: (tf: string) => get<AiRegimeResponse>("/api/v1/analysis/ai-regime", { tf }),
   hurstDfa: (tf: string, limit?: number) =>
     get<any>("/api/v1/analysis/hurst-dfa", { tf, limit }),

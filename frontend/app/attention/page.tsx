@@ -27,7 +27,7 @@ const num = (v: number, d = 3) => v.toLocaleString("id-ID", { minimumFractionDig
 /**
  * Fokus model: bobot attention alpha 32 langkah dari model identifikasi resmi (h = 0).
  *
- * Bobot berasal dari lapisan `attention_pool` ketiga seed Hybrid PS Attention-BiLSTM
+ * Bobot berasal dari lapisan `attention_pool` ketiga seed Hybrid Attention-BiLSTM
  * dan dirata-rata. Tiap langkah adalah sub-jendela 128 bar di dalam jendela 500 bar.
  */
 export default function AttentionPage() {
@@ -56,7 +56,7 @@ export default function AttentionPage() {
     <div className="space-y-4">
       <PageHeader
         title="Fokus Model (Attention)"
-        description="Bobot attention α tiap langkah sekuens statistik persistensi pada jendela terbaru, dari model identifikasi resmi Hybrid PS Attention-BiLSTM (h = 0), rata-rata 3 seed. Bobot menunjukkan bagian jendela yang paling banyak diberi bobot saat model merangkum sekuens; bukan bukti sebab-akibat."
+        description="Bobot attention α tiap langkah sekuens statistik persistensi pada jendela terbaru, dari model identifikasi resmi Hybrid Attention-BiLSTM (h = 0), rata-rata 3 seed. Bobot menunjukkan bagian jendela yang paling banyak diberi bobot saat model merangkum sekuens; bukan bukti sebab-akibat."
       />
       <div className="rounded-lg border border-edge bg-surface/60 px-4 py-2.5 text-[12px] leading-relaxed text-txtDim">
         <b className="text-txt">Model identifikasi (h = 0).</b> Bobot di halaman ini berasal dari model yang sama dengan label di

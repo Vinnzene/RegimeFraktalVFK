@@ -40,7 +40,7 @@ const ROWS: Row[] = [
     stage: "Solusi informatika",
     kind: "solution",
     content:
-      "Hybrid PS Attention-BiLSTM dengan sekuens statistik persistensi dan fitur multi-skala (termasuk energi SWT), dilatih pada partisi latih BTC untuk mengidentifikasi label konsensus Hurst R/S–DFA-1 (h = 0).",
+      "Hybrid Attention-BiLSTM dengan sekuens statistik persistensi dan fitur multi-skala (termasuk energi SWT), dilatih pada partisi latih BTC untuk mengidentifikasi label konsensus Hurst R/S–DFA-1 (h = 0).",
     evidence: "Uji 1H 81,00% (1.624/2.005), 4H 74,64% (568/761) · walk-forward 1H 64,82% · rata-rata 3 kelas 1H 63,76%",
   },
   {

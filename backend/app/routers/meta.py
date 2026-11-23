@@ -78,7 +78,7 @@ def methodology() -> dict:
                     f"Ambang = kuantil 1/3 dan 2/3 partisi latih 1H (Hurst R/S {h_lo}/{h_hi}, DFA-1 {a_lo}/{a_hi}). "
                     "Ketidaksepakatan bertetangga diselesaikan dengan skor kuantil Efficiency Ratio multiskala: "
                     "persistent bila ER_q >= 0,60, anti-persistent bila ER_q <= 0,35; konflik persistent vs "
-                    "anti-persistent tetap uncertain_rule. Model identifikasi (Hybrid PS Attention-BiLSTM) "
+                    "anti-persistent tetap uncertain_rule. Model identifikasi (Hybrid Attention-BiLSTM) "
                     "dilatih untuk mengenali label ini pada jendela yang sama (h = 0)."
                 ),
             },

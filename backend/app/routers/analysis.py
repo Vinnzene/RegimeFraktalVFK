@@ -183,7 +183,7 @@ def read_ai_regime(
     symbol: str = Query("BTCUSDT"),
     limit: Optional[int] = Query(3000, ge=100, le=50000),
 ) -> dict:
-    """Identifikasi regime oleh model resmi sistem (Hybrid PS Attention-BiLSTM, h = 0).
+    """Identifikasi regime oleh model resmi sistem (Hybrid Attention-BiLSTM, h = 0).
 
     Model yang sama dengan Bab 4: dilatih pada partisi latih BTC (70%) untuk
     mengidentifikasi label Trend-Aware Soft Consensus jendela itu sendiri.
@@ -420,7 +420,7 @@ def read_attention(
 ) -> dict:
     """Bobot attention alpha (32 langkah) model identifikasi resmi (h = 0).
 
-    Bobot diambil dari lapisan `attention_pool` ketiga seed Hybrid PS lalu
+    Bobot diambil dari lapisan `attention_pool` ketiga seed Hybrid Attention-BiLSTM lalu
     dirata-rata. Tiap langkah adalah sub-jendela 128 bar di dalam jendela 500 bar;
     langkah terakhir berakhir di bar terakhir jendela.
     """

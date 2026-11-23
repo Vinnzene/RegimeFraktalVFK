@@ -1,4 +1,4 @@
-"""Identifikasi regime resmi sistem: Hybrid PS Attention-BiLSTM pipeline naskah (h = 0).
+"""Identifikasi regime resmi sistem: Hybrid Attention-BiLSTM pipeline naskah (h = 0).
 
 Model = model yang dilaporkan di Bab 4 (`ml/src/run_updated_evaluation.py`), disimpan
 ulang tanpa perubahan oleh `ml/src/review_eval.py --variant normal --save-models`:
@@ -373,7 +373,7 @@ def describe(tf: str) -> Dict[str, Any]:
     """Ringkasan model untuk respons API dan halaman metodologi."""
     m = meta(tf)
     return {
-        "name": "Hybrid PS Attention-BiLSTM (identifikasi, h = 0)",
+        "name": "Hybrid Attention-BiLSTM (identifikasi, h = 0)",
         "task": "identifikasi",
         "horizon_bars": 0,
         "inputs": f"Sekuens statistik persistensi {m['seq_len']}×{len(m['ps_channels'])} + "

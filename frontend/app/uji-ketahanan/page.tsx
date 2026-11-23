@@ -159,7 +159,7 @@ function RobustnessContent({ data, admin }: { data: any; admin: boolean }) {
     <div className="space-y-4">
       <PageHeader
         title="Uji Ketahanan Metode"
-        description="Empat cara menilai apakah metode identifikasi regime benar-benar bagus dan berguna: walk-forward (hasil bertahan di periode berbeda), sensitivitas (hasil tidak bergantung pada satu pilihan parameter), Monte Carlo (seberapa besar hasil bisa berubah karena keacakan sampel), dan pembanding indikator klasik ADX/Choppiness (apa bedanya dengan alat gratis yang sudah ada). Semua untuk model identifikasi Hybrid PS Attention-BiLSTM (h = 0), ensemble 3 seed. Ini bukan uji profit strategi."
+        description="Empat cara menilai apakah metode identifikasi regime benar-benar bagus dan berguna: walk-forward (hasil bertahan di periode berbeda), sensitivitas (hasil tidak bergantung pada satu pilihan parameter), Monte Carlo (seberapa besar hasil bisa berubah karena keacakan sampel), dan pembanding indikator klasik ADX/Choppiness (apa bedanya dengan alat gratis yang sudah ada). Semua untuk model identifikasi Hybrid Attention-BiLSTM (h = 0), ensemble 3 seed. Ini bukan uji profit strategi."
       />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
@@ -214,7 +214,7 @@ function WalkForward({ w, tf }: { w: any; tf: string }) {
           <Legend wrapperStyle={LEGEND_STYLE} />
           <ReferenceLine y={p.pooled_pct_ensemble} stroke={ACCENT} strokeDasharray="4 3" label={{ value: "gabungan", position: "right", fontSize: 10 }} />
           <ReferenceLine y={33.33} stroke={MUTED} strokeDasharray="2 4" label={{ value: "peluang 33,3%", position: "right", fontSize: 10 }} />
-          <Bar dataKey="hps" name="Hybrid PS (model aplikasi)" fill={ACCENT} isAnimationActive={false} />
+          <Bar dataKey="hps" name="Hybrid Attention-BiLSTM (model aplikasi)" fill={ACCENT} isAnimationActive={false} />
           <Bar dataKey="mlp" name="Structural MLP (pembanding)" fill={MUTED} isAnimationActive={false} />
         </BarChart>
       </ResponsiveContainer>
