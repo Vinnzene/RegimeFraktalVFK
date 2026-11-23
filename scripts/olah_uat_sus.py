@@ -1,4 +1,6 @@
-"""Olah hasil UAT dan SUS menjadi tabel Bab 4.11.3.
+"""USANG (23 Nov 2026): pakai scripts/rekap_sus.py dengan CSV ekspor Rekap SUS di aplikasi.
+
+Olah hasil UAT dan SUS menjadi tabel Bab 4.11.3.
 
 Protokol dan target: docs/uat_sus/PANDUAN_UAT_SUS.md (ditetapkan sebelum pengujian).
 

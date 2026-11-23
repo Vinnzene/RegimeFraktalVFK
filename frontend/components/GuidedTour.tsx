@@ -84,6 +84,16 @@ const STEPS: Step[] = [
     ),
   },
   {
+    target: ["nav-identifikasi"],
+    only: "desktop",
+    title: "Menu Identifikasi",
+    body: (
+      <p>
+        Bukti di balik model: Hasil Uji Identifikasi, Hurst-DFA klasik, perbandingan 1H dan 4H, wavelet (SWT), dan Fokus Model (bobot attention).
+      </p>
+    ),
+  },
+  {
     target: ["nav-strategi"],
     only: "desktop",
     title: "Menu Strategi",
@@ -95,24 +105,13 @@ const STEPS: Step[] = [
     ),
   },
   {
-    target: ["nav-riset"],
-    only: "desktop",
-    title: "Menu Riset",
-    body: (
-      <p>
-        Bukti di balik model: Hasil Uji Identifikasi, Walk-Forward Multi-Aset, Hurst-DFA klasik, multifraktal, wavelet, dan Fokus Model (bobot attention).
-        Menu bertanda <b>Terkunci</b> hanya terbuka setelah disetujui pemilik.
-      </p>
-    ),
-  },
-  {
     target: ["nav-mobile"],
     only: "mobile",
     title: "Semua menu",
     body: (
       <p>
-        Ketuk <b>Menu</b> untuk membuka semua halaman: <b>Pasar</b> (ringkasan, analisis aset lain), <b>Strategi</b> (strategi per kondisi, notifikasi
-        Telegram), <b>Riset</b> (hasil uji dan bukti model), dan <b>Tentang</b> (metodologi).
+        Ketuk <b>Menu</b> untuk membuka semua halaman: <b>Pasar</b> (ringkasan, analisis aset lain), <b>Identifikasi</b> (hasil uji, Hurst-DFA,
+        wavelet, dan fokus model), serta <b>Strategi</b> (strategi per kondisi, notifikasi Telegram).
       </p>
     ),
   },

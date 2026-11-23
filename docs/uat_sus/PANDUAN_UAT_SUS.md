@@ -1,4 +1,10 @@
-# Panduan UAT dan SUS — Sistem Identifikasi Regime BTC/USDT
+# Panduan UAT dan SUS — Sistem Identifikasi Regime BTC/USDT (USANG)
+
+> **USANG (23 November 2026).** Atas permintaan dosen, evaluasi pengguna kini memakai
+> **SUS saja** di dalam aplikasi (`/uat`, Kuesioner SUS). Protokol UAT berbasis tugas, Google
+> Form, lembar observasi, dan `scripts/olah_uat_sus.py` di bawah **tidak dipakai lagi**.
+> Panduan yang berlaku: [`PANDUAN_SUS.md`](PANDUAN_SUS.md). Dokumen ini disimpan sebagai arsip.
+
 
 Dokumen ini adalah protokol pengujian pengguna yang **ditetapkan sebelum
 pengujian dimulai**. Target dan cara analisis di §6 tidak diubah setelah data

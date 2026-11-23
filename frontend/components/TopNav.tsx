@@ -12,13 +12,16 @@ import BrandMark from "@/components/login/BrandMark";
  * Navigasi horizontal di header, dikelompokkan menurut pertanyaan pengguna.
  *
  * Dua belas menu sejajar membuat pengunjung tidak tahu harus mulai dari mana.
+ * Grup bertanda adminOnly (Riset, Arsip Fase 0, Tentang) hanya tampil untuk
+ * admin; middleware juga menolak halamannya bagi akun lain.
  * Kelompok mengikuti alur cerita dashboard: kondisi pasar sekarang, strategi
  * yang cocok, bukti riset di baliknya, lalu metodologi. Seluruh lebar layar
  * tetap tersedia untuk chart karena navigasi ada di header, bukan sidebar.
  */
 
 type NavItem = { href: string; label: string; hint: string; locked?: boolean };
-type NavGroup = { label: string; items: NavItem[] };
+/** adminOnly: grup hanya tampil untuk akun admin (email di ADMIN_EMAILS). */
+type NavGroup = { label: string; items: NavItem[]; adminOnly?: boolean };
 
 const GROUPS: NavGroup[] = [
   {
@@ -32,6 +35,16 @@ const GROUPS: NavGroup[] = [
     ],
   },
   {
+    label: "Identifikasi",
+    items: [
+      { href: "/evaluasi-identifikasi", label: "Hasil Uji Identifikasi", hint: "Persentase identifikasi benar per kelas (backtest) dan per tahap walk-forward, BTC/USDT 1H & 4H" },
+      { href: "/regime-explorer", label: "Hurst-DFA Klasik", hint: "Pembanding: label konsensus R/S–DFA, perpindahan & durasi" },
+      { href: "/timeframe-comparison", label: "Hurst-DFA 1H vs 4H", hint: "Pembanding klasik pada dua skala waktu" },
+      { href: "/swt", label: "Wavelet", hint: "Dekomposisi multiskala SWT" },
+      { href: "/attention", label: "Fokus Model", hint: "Bobot attention 32 langkah model identifikasi (h = 0)" },
+    ],
+  },
+  {
     label: "Strategi",
     items: [
       { href: "/strategi", label: "Regime → Strategi", hint: "Strategi per kondisi beserta hasil uji Fase 2" },
@@ -41,25 +54,23 @@ const GROUPS: NavGroup[] = [
   },
   {
     label: "Riset",
+    adminOnly: true,
     items: [
       { href: "/uji-ketahanan", label: "Uji Ketahanan Metode", hint: "Walk-forward, sensitivitas parameter, dan Monte Carlo (bootstrap & permutasi)" },
-      { href: "/evaluasi-identifikasi", label: "Hasil Uji Identifikasi", hint: "Bab 4: benar per kelas (backtest) dan per fold walk-forward, BTC/USDT 1H & 4H" },
       { href: "/walk-forward-evaluation", label: "Walk-Forward Multi-Aset", hint: "Bukti identifikasi regime berjalan 2019→2026 (12 aset, h=0)" },
-      { href: "/regime-explorer", label: "Hurst-DFA Klasik", hint: "Pembanding: label konsensus R/S–DFA, perpindahan & durasi" },
-      { href: "/timeframe-comparison", label: "Hurst-DFA 1H vs 4H", hint: "Pembanding klasik pada dua skala waktu" },
       { href: "/multifractal", label: "Multifraktal", hint: "Spektrum H(q) momen q=1,2,4 dan lebar ΔH" },
-      { href: "/swt", label: "Wavelet", hint: "Dekomposisi multiskala SWT" },
-      { href: "/attention", label: "Fokus Model", hint: "Bobot attention 32 langkah model identifikasi (h = 0)" },
     ],
   },
   {
     label: "Arsip Fase 0",
+    adminOnly: true,
     items: [
       { href: "/order-flow", label: "Order Flow (riset)", hint: "Arsip: ablation OFI & CVD (Model A–D)" },
     ],
   },
   {
     label: "Tentang",
+    adminOnly: true,
     items: [
       { href: "/methodology", label: "Metodologi", hint: "Alur identifikasi, rumus & definisi" },
       { href: "/about", label: "Tentang", hint: "Latar belakang, batasan & temuan utama" },
@@ -78,15 +89,21 @@ const LockBadge = () => (
 export default function TopNav() {
   const pathname = usePathname();
   const [ujiTerbuka, setUjiTerbuka] = useState(false);
+  const [admin, setAdmin] = useState(false);
 
   useEffect(() => {
     fetch("/api/robustness?status=1", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((r) => setUjiTerbuka(Boolean(r?.open)))
       .catch(() => setUjiTerbuka(false));
+    // Grup Riset, Arsip Fase 0, dan Tentang hanya untuk akun admin.
+    fetch("/api/me", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((r) => setAdmin(Boolean(r?.admin)))
+      .catch(() => setAdmin(false));
   }, []);
 
-  const groups = GROUPS.map((g) => ({
+  const groups = GROUPS.filter((g) => !g.adminOnly || admin).map((g) => ({
     ...g,
     items: g.items.map((i) =>
       i.href === LOCKED_HREF && !ujiTerbuka ? { ...i, locked: true, hint: "Terkunci · buka halaman untuk meminta akses ke pemilik" } : i,

@@ -79,7 +79,7 @@ function Locked({ data, onRequest }: { data: GuideResponse; onRequest: (note: st
             onChange={(e) => setNote(e.target.value)}
             maxLength={300}
             rows={3}
-            placeholder="Mis. responden UAT, dosen penguji, trader yang ingin mencoba."
+            placeholder="Mis. responden kuesioner SUS, dosen penguji, trader yang ingin mencoba."
             className="mt-1 w-full rounded-lg border border-edge bg-panel px-3 py-2 text-[13px] text-txt outline-none focus:border-accent"
           />
           <button

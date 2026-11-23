@@ -67,7 +67,7 @@ export default function UserMenu() {
             onClick={() => setOpen(false)}
             className="flex items-center justify-between rounded px-3 py-2 text-[12.5px] text-txtDim transition-colors hover:bg-surface hover:text-txt"
           >
-            Ikut uji pengguna (UAT)
+            Isi Kuesioner SUS
             <span className="text-2xs text-txtMuted">±15 menit</span>
           </Link>
           {(me.admin || me.user.demo) && (
@@ -76,7 +76,7 @@ export default function UserMenu() {
               onClick={() => setOpen(false)}
               className="flex items-center justify-between rounded px-3 py-2 text-[12.5px] text-txtDim transition-colors hover:bg-surface hover:text-txt"
             >
-              Dashboard UAT
+              Rekap SUS
               <span className="text-2xs text-accent">admin</span>
             </Link>
           )}

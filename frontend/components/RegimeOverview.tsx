@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useUser } from "@/components/UserContext";
 import type { AiRegimeClass, AiRegimeResponse, Candle } from "@/lib/api-client";
 import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
 import { STRATEGY_PLAN, VERDICT_META } from "@/lib/strategy";
@@ -173,6 +174,8 @@ export default function RegimeOverview({
   candles: Candle[];
 }) {
   const [showEvidence, setShowEvidence] = useState(false);
+  // Metodologi hanya untuk admin (middleware ADMIN_ONLY); pengguna lain diarahkan ke Hasil Uji Identifikasi.
+  const isAdmin = Boolean(useUser().me?.admin);
   const active = timeframe === "4h" ? ai4h : ai1h;
   const other = timeframe === "4h" ? ai1h : ai4h;
   const otherTf = timeframe === "4h" ? "1H" : "4H";
@@ -398,9 +401,15 @@ export default function RegimeOverview({
               <p className="mt-2">
                 Di bawah keyakinan {pct(tau)} label dianggap ragu; pada riwayat {timeframe.toUpperCase()} ini{" "}
                 {pct(active.low_confidence_share ?? 0)} titik berkeyakinan rendah.{" "}
-                <Link href="/methodology" className="font-medium text-accent hover:underline">
-                  Metodologi →
-                </Link>
+                {isAdmin ? (
+                  <Link href="/methodology" className="font-medium text-accent hover:underline">
+                    Metodologi →
+                  </Link>
+                ) : (
+                  <Link href="/evaluasi-identifikasi" className="font-medium text-accent hover:underline">
+                    Hasil Uji Identifikasi →
+                  </Link>
+                )}
               </p>
             </div>
           </div>

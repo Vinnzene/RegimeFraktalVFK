@@ -1,4 +1,7 @@
 /**
+ * USANG (23 Nov 2026): evaluasi kini memakai Kuesioner SUS di aplikasi (/uat).
+ * Lihat docs/uat_sus/PANDUAN_SUS.md. Berkas ini disimpan sebagai arsip.
+ *
  * Membuat Google Form kuesioner UAT + SUS secara otomatis.
  *
  * Cara pakai:

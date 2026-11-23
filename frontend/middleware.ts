@@ -4,10 +4,33 @@ import { readSession } from "@/lib/session";
 /**
  * Semua halaman dan API wajib login, kecuali landing page (/welcome), halaman
  * login, endpoint pembuat sesi, dan berkas statis. Halaman diarahkan ke /login; API menjawab 401.
+ * Halaman pada ADMIN_ONLY hanya dapat dibuka akun yang emailnya ada di ADMIN_EMAILS.
  */
+/** Halaman di grup Riset, Arsip Fase 0, dan Tentang: hanya untuk admin. */
+const ADMIN_ONLY = ["/uji-ketahanan", "/multifractal", "/order-flow", "/methodology", "/about"];
+
+function isAdminEmail(email: string | null): boolean {
+  const list = (process.env.ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  return Boolean(email) && list.includes(email!.toLowerCase());
+}
+
 export async function middleware(req: NextRequest) {
   const user = await readSession(req.cookies, req.headers.get("host"));
-  if (user) return NextResponse.next();
+  if (user) {
+    const path = req.nextUrl.pathname;
+    const adminOnly = ADMIN_ONLY.some((p) => path === p || path.startsWith(`${p}/`));
+    if (adminOnly && !isAdminEmail(user.email)) {
+      // Pengguna biasa diarahkan ke Ringkasan; menu ini memang tidak ditampilkan untuknya.
+      const home = req.nextUrl.clone();
+      home.pathname = "/";
+      home.search = "";
+      return NextResponse.redirect(home);
+    }
+    return NextResponse.next();
+  }
 
   if (req.nextUrl.pathname.startsWith("/api/")) {
     return NextResponse.json({ error: "Belum login" }, { status: 401 });
