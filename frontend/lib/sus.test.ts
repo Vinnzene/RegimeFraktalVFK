@@ -4,7 +4,22 @@
  */
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { SusInputError, acceptability, bangorAdjective, summarize, susScore, toCsv, type PublicSus } from "./sus.ts";
+import { SUS_ITEMS, SusInputError, acceptability, bangorAdjective, summarize, susScore, toCsv, type PublicSus } from "./sus.ts";
+
+test("teks 10 butir SUS sama persis dengan instrumen yang ditetapkan peneliti", () => {
+  assert.deepEqual(SUS_ITEMS, [
+    "Saya pikir saya akan sering menggunakan sistem/produk ini.",
+    "Saya merasa sistem/produk ini terlalu rumit.",
+    "Saya merasa sistem/produk ini mudah digunakan.",
+    "Saya pikir saya membutuhkan bantuan dari orang teknis untuk dapat menggunakan sistem/produk ini.",
+    "Saya menemukan berbagai fungsi dalam sistem/produk ini terintegrasi dengan baik.",
+    "Saya merasa terlalu banyak hal yang tidak konsisten dalam sistem/produk ini.",
+    "Saya membayangkan bahwa kebanyakan orang akan belajar menggunakan sistem/produk ini dengan sangat cepat.",
+    "Saya merasa sistem/produk ini sangat merepotkan/rumit untuk digunakan.",
+    "Saya merasa sangat percaya diri menggunakan sistem/produk ini.",
+    "Saya perlu mempelajari banyak hal terlebih dahulu sebelum saya bisa mulai menggunakan sistem/produk ini.",
+  ]);
+});
 
 const odd5even1 = [5, 1, 5, 1, 5, 1, 5, 1, 5, 1];
 const odd1even5 = [1, 5, 1, 5, 1, 5, 1, 5, 1, 5];

@@ -23,6 +23,34 @@ def row(kode: str, answers, skor) -> str:
            f"ringkasan|evaluasi|fokus," + ",".join(map(str, answers)) + f",{skor},"
 
 
+EXPECTED_ITEMS = [
+    "Saya pikir saya akan sering menggunakan sistem/produk ini.",
+    "Saya merasa sistem/produk ini terlalu rumit.",
+    "Saya merasa sistem/produk ini mudah digunakan.",
+    "Saya pikir saya membutuhkan bantuan dari orang teknis untuk dapat menggunakan sistem/produk ini.",
+    "Saya menemukan berbagai fungsi dalam sistem/produk ini terintegrasi dengan baik.",
+    "Saya merasa terlalu banyak hal yang tidak konsisten dalam sistem/produk ini.",
+    "Saya membayangkan bahwa kebanyakan orang akan belajar menggunakan sistem/produk ini dengan sangat cepat.",
+    "Saya merasa sistem/produk ini sangat merepotkan/rumit untuk digunakan.",
+    "Saya merasa sangat percaya diri menggunakan sistem/produk ini.",
+    "Saya perlu mempelajari banyak hal terlebih dahulu sebelum saya bisa mulai menggunakan sistem/produk ini.",
+]
+
+
+def test_teks_butir_sus_sesuai_instrumen() -> None:
+    assert rekap.SUS_ITEMS == EXPECTED_ITEMS
+
+
+def test_teks_butir_sus_sama_dengan_aplikasi() -> None:
+    """SUS_ITEMS di skrip naskah harus sama persis dengan frontend/lib/sus.ts."""
+    import re
+
+    ts = (Path(__file__).resolve().parents[2] / "frontend" / "lib" / "sus.ts").read_text(encoding="utf-8")
+    block = re.search(r"export const SUS_ITEMS: string\[\] = \[(.*?)\];", ts, flags=re.S)
+    assert block, "SUS_ITEMS tidak ditemukan di sus.ts"
+    assert re.findall(r'"([^"]+)"', block.group(1)) == rekap.SUS_ITEMS
+
+
 def test_semua_tiga_bernilai_50() -> None:
     assert rekap.sus_score([3] * 10) == 50
 
