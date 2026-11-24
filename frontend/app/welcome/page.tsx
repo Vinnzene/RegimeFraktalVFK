@@ -59,10 +59,10 @@ const STEPS = [
   { n: "03", title: "Label + keyakinan", text: "Setiap 4 bar (1H) atau 2 bar (4H) sistem memberi label dan probabilitas tiap kelas. Notifikasi dikirim setelah tiga konfirmasi berturut-turut." },
 ];
 
+// Hanya model aplikasi (tanpa perbandingan algoritma). Angka: updated_eval_summary.json, partisi uji.
 const BARS = [
-  { label: "SWT + Attention-BiLSTM", value: 0.4858, tone: "bg-txtMuted/50" },
-  { label: "Structural MLP", value: 0.7142, tone: "bg-txtMuted" },
-  { label: "Hybrid Attention-BiLSTM (sistem ini)", value: 0.81, tone: "bg-accent" },
+  { label: "BTC/USDT 1H · 1.624 dari 2.005 jendela uji", value: 0.81, tone: "bg-accent" },
+  { label: "BTC/USDT 4H · 568 dari 761 jendela uji", value: 0.7464, tone: "bg-accent/70" },
 ];
 
 const LIMITS = [
@@ -221,7 +221,7 @@ export default function WelcomePage() {
               </p>
             </div>
             <div className="rounded-2xl border border-edge bg-panel p-6 shadow-panel">
-              <div className="text-[13px] font-medium text-txtDim">Persentase identifikasi benar, partisi uji BTC/USDT 1H (jendela 500 bar)</div>
+              <div className="text-[13px] font-medium text-txtDim">Persentase identifikasi benar Hybrid Attention-BiLSTM, partisi uji (jendela 500 bar)</div>
               <div className="mt-5 space-y-5">
                 {BARS.map((b) => (
                   <div key={b.label}>
@@ -235,7 +235,7 @@ export default function WelcomePage() {
                   </div>
                 ))}
               </div>
-              <p className="mt-5 text-[12.5px] text-txtMuted">Ensemble 3 seed, 2.005 jendela uji. Rata-rata ketiga kelas Hybrid Attention-BiLSTM 63,76%. Sumber: evaluasi Bab 4.</p>
+              <p className="mt-5 text-[12.5px] text-txtMuted">Ensemble 3 seed. Rata-rata ketiga kelas 63,76% (1H) dan 59,40% (4H). Sumber: evaluasi Bab 4.</p>
             </div>
           </div>
         </section>

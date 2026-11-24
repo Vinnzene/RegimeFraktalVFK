@@ -141,9 +141,8 @@ export default function RegimeExplorerPage() {
                 counts={transition.data?.counts}
               />
               <p className="mt-2 text-2xs leading-relaxed text-txtMuted">
-                Diagonal yang dominan menandakan regime cenderung bertahan — sekaligus alasan
-                Baseline Persistence pada halaman Model Comparison harus dibaca lebih dulu
-                sebelum menilai angka model.
+                Diagonal yang dominan menandakan regime cenderung bertahan dari satu jendela ke
+                jendela berikutnya.
               </p>
             </Panel>
           </div>

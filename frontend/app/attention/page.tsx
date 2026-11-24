@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -33,6 +33,14 @@ const num = (v: number, d = 3) => v.toLocaleString("id-ID", { minimumFractionDig
 export default function AttentionPage() {
   const { timeframe } = useAppConfig();
   const att = useApi(() => api.attention(timeframe), [timeframe]);
+  // Hasil ablasi (perbandingan varian model) hanya ditampilkan untuk admin, seperti TopNav.
+  const [admin, setAdmin] = useState(false);
+  useEffect(() => {
+    fetch("/api/me", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((r) => setAdmin(Boolean(r?.admin)))
+      .catch(() => setAdmin(false));
+  }, []);
   const d = att.data;
 
   const data = useMemo(
@@ -137,8 +145,10 @@ export default function AttentionPage() {
             </ResponsiveContainer>
             <p className="mt-2 text-2xs leading-relaxed text-txtMuted">
               Pada seluruh jendela uji backtest, entropi rata-rata 0,919 (1H) dan 0,878 (4H): bobot cukup menyebar dengan
-              kecenderungan lebih besar pada langkah awal jendela. Ablasi menunjukkan mengganti attention dengan rata-rata biasa
-              memberi akurasi setara, jadi bobot ini lebih tepat dibaca sebagai penjelasan visual daripada sumber akurasi.
+              kecenderungan lebih besar pada langkah awal jendela.{" "}
+              {admin
+                ? "Ablasi menunjukkan mengganti attention dengan rata-rata biasa memberi akurasi setara, jadi bobot ini lebih tepat dibaca sebagai penjelasan visual daripada sumber akurasi."
+                : "Bobot ini dibaca sebagai penjelasan visual tentang bagian riwayat yang paling diperhatikan model, bukan ukuran pentingnya setiap fitur."}
             </p>
           </Panel>
 
