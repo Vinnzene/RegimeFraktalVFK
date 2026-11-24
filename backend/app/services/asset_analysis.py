@@ -19,7 +19,7 @@ import threading
 import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TypedDict
 
 import numpy as np
 import pandas as pd
@@ -31,7 +31,14 @@ from app.services.data_ingestion import FALLBACK_BASES, PRIMARY_BASE, IngestionE
 from app.services.hurst_dfa import dfa_alpha, hurst_rs
 
 RESULT_DIR = PROCESSED_DIR / "analyses"
-SOURCES = {
+
+
+class _Source(TypedDict):
+    timeframes: tuple[str, ...]
+    pattern: re.Pattern[str]
+
+
+SOURCES: Dict[str, _Source] = {
     "binance": {"timeframes": ("15m", "1h", "4h", "1d"), "pattern": re.compile(r"^[A-Z0-9]{5,20}$")},
     "yahoo": {"timeframes": ("1h", "1d"), "pattern": re.compile(r"^[A-Za-z0-9.^=\-]{1,20}$")},
 }

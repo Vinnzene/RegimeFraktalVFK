@@ -110,30 +110,6 @@ def warm_cache() -> List[Dict[str, object]]:
         except Exception as exc:  # noqa: BLE001
             results.append({"timeframe": tf, "ok": False, "warmed": "ai_detector", "error": str(exc)[:200]})
 
-    # Panaskan pula endpoint model. Diimpor di dalam fungsi agar modul
-    # scheduler tidak menarik TensorFlow saat startup.
-    for tf in cfg.data.timeframes:
-        started = time.time()
-        try:
-            from app.routers.model import compare as compare_endpoint
-            from app.services.identification import consistency_report
-
-            compare_endpoint(tf=tf, symbol=cfg.data.symbol)
-            for mode in ("multiclass", "binary"):
-                consistency_report(cfg.data.symbol, tf, mode)
-            results.append(
-                {
-                    "timeframe": tf,
-                    "ok": True,
-                    "warmed": "compare+consistency",
-                    "seconds": round(time.time() - started, 1),
-                }
-            )
-        except Exception as exc:  # noqa: BLE001
-            results.append(
-                {"timeframe": tf, "ok": False, "warmed": "model", "error": str(exc)[:200]}
-            )
-
     _record({"at": int(time.time()), "warm_cache": results})
     # Catat keadaan regime awal untuk notifier (tanpa siaran) setelah regime siap.
     notify_once()
