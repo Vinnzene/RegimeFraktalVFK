@@ -42,7 +42,7 @@ export default function DeltaCvdCanvas({ engine, version }: { engine: OrderFlowE
 
     ctx.font = FONT;
     ctx.textAlign = "center";
-    candles.forEach((c, i) => {
+    candles.forEach((_, i) => {
       const d = deltas[i];
       const bh = (Math.abs(d) / maxD) * (h / 2 - 12);
       const x = x0 + i * FOOT_COL_W + 14;

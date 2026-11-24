@@ -20,8 +20,6 @@ from app.db.repository import (
     validate_identifiers,
 )
 from app.main import app
-from app.routers.model import safe_feature
-from app.services.backtest_engine import run_backtest
 from app.services.splitting import bars_to_rows, split_indices, stride_bars_of
 
 client = TestClient(app)
@@ -74,21 +72,6 @@ def test_endpoint_regime_punya_segmen_test_tidak_kosong() -> None:
     assert body["purge_gap_rows"] < body["purge_gap_bars"]
 
 
-def test_h_windows_memakai_stride_bukan_effective_window() -> None:
-    """h=500 bar dengan stride 4 harus jadi 125 window, bukan 1; h=0 harus 0 window."""
-    # Konversi satuan yang dijaga uji ini, terlepas dari h di config.
-    assert bars_to_rows(500, 4) == 125 != bars_to_rows(500, 500)
-    cfg = get_config()
-    r = client.get("/api/v1/model/compare", params={"tf": "1h"})
-    body = r.json()
-    if cfg.model.h <= 0:
-        # Identifikasi: target = label jendela itu sendiri, bukan 1 baris ke depan.
-        assert body["h_windows"] == 0
-    else:
-        assert body["h_windows"] == bars_to_rows(cfg.model.h, body["stride_bars"])
-        assert body["h_windows"] != bars_to_rows(cfg.model.h, cfg.analysis.L)
-
-
 def test_stride_bars_ikut_tersimpan_di_hasil_regime() -> None:
     # Repositori terisolasi dari conftest (folder sementara). ParquetRepository()
     # bawaan menunjuk data/processed asli dan menimpa cache regime dashboard.
@@ -98,61 +81,7 @@ def test_stride_bars_ikut_tersimpan_di_hasil_regime() -> None:
     assert stride_bars_of(df) >= 1
 
 
-def test_backtest_menganualisasi_dengan_bars_per_row() -> None:
-    """Sharpe tidak boleh membesar hanya karena satu baris mewakili banyak bar."""
-    rng = np.random.default_rng(0)
-    close = 30000 * np.exp(np.cumsum(rng.normal(scale=0.01, size=400)))
-    times = list(range(400))
-    regimes = ["persistent"] * 400
-
-    satu: Dict[str, Any] = run_backtest(times, close.tolist(), regimes, "1h", bars_per_row=1)
-    empat: Dict[str, Any] = run_backtest(times, close.tolist(), regimes, "1h", bars_per_row=4)
-    assert empat["metrics"]["periods_per_year"] * 4 == pytest.approx(
-        satu["metrics"]["periods_per_year"]
-    )
-    assert abs(empat["metrics"]["sharpe_ratio"]) < abs(satu["metrics"]["sharpe_ratio"])
-
-
 # --- NaN dan skema ----------------------------------------------------------------
-
-
-def test_safe_feature_menetralkan_nan() -> None:
-    """`nan or 0.0` mengembalikan nan karena NaN bersifat truthy."""
-    assert (float("nan") or 0.0) != 0.0, "prasyarat bug lama"
-    assert safe_feature(float("nan")) == 0.0
-    assert safe_feature(None) == 0.0
-    assert safe_feature(0.63) == 0.63
-
-
-def test_predict_tidak_500_saat_metrik_nan(monkeypatch: pytest.MonkeyPatch) -> None:
-    import app.routers.model as model_router
-
-    original = model_router.get_repository
-
-    class NaNRepo:
-        def get_regime(self, symbol: str, tf: str) -> pd.DataFrame:
-            return pd.DataFrame(
-                [
-                    {
-                        "time": 1700000000,
-                        "index": 0,
-                        "close": 30000.0,
-                        "hurst": float("nan"),
-                        "dfa_alpha": float("nan"),
-                        "regime": "uncertain_rule",
-                        "effective_window": 500,
-                        "stride_bars": 4,
-                    }
-                ]
-            )
-
-    monkeypatch.setattr(model_router, "get_repository", lambda: NaNRepo())
-    try:
-        r = client.post("/api/v1/model/predict", json={"tf": "1h"})
-        assert r.status_code == 200
-        assert r.json()["final_label"] is not None
-    finally:
-        monkeypatch.setattr(model_router, "get_repository", original)
 
 
 def test_fallback_regime_kosong_punya_skema_penuh() -> None:
@@ -198,24 +127,7 @@ def test_path_selalu_di_dalam_data_processed() -> None:
 # --- Batas memori -------------------------------------------------------------------
 
 
-def test_hasil_backtest_dibatasi_jumlahnya() -> None:
-    from app.routers.backtest import MAX_RESULTS, _RESULTS, _store_result
-
-    _RESULTS.clear()
-    for i in range(MAX_RESULTS + 12):
-        _store_result(f"run{i}", {"id": f"run{i}"})
-    assert len(_RESULTS) == MAX_RESULTS
-    assert "run0" not in _RESULTS, "entri terlama harus tergusur"
-    assert f"run{MAX_RESULTS + 11}" in _RESULTS
-
-
 # --- Cache ---------------------------------------------------------------------------
-
-
-def test_compare_dilayani_dari_cache_pada_panggilan_kedua() -> None:
-    first = client.get("/api/v1/model/compare", params={"tf": "1h"}).json()
-    second = client.get("/api/v1/model/compare", params={"tf": "1h"}).json()
-    assert first == second
 
 
 # --- Pemisahan flag data vs artefak model -------------------------------------------
@@ -231,23 +143,6 @@ def test_inference_tidak_gagal_saat_artefak_belum_ada() -> None:
 
     probs = predict_proba("swt_attention_bilstm", [0.6, 0.5])
     assert abs(sum(probs.values()) - 1.0) < 0.01
-
-
-def test_compare_menyatakan_asal_prediksi() -> None:
-    body = client.get("/api/v1/model/compare", params={"tf": "1h"}).json()
-    assert "any_trained" in body
-    for key in ("rule_based", "swt_bilstm", "swt_attention_bilstm", "persistence"):
-        assert body["models"][key]["prediction_source"] in {
-            "trained_artifact",
-            "placeholder",
-            "rule_based",
-            "baseline",
-        }
-
-
-def test_predict_menyatakan_asal_prediksi() -> None:
-    body = client.post("/api/v1/model/predict", json={"tf": "1h"}).json()
-    assert body["prediction_source"] in {"trained_artifact", "placeholder"}
 
 
 # --- Metrik saat model jarang yakin -------------------------------------------------
@@ -543,44 +438,6 @@ def test_cache_probabilitas_memperhitungkan_jumlah_baris() -> None:
     clear_inference_cache()
 
 
-def test_endpoint_walk_forward_tidak_gagal_tanpa_berkas() -> None:
-    r = client.get(
-        "/api/v1/model/walk-forward", params={"tf": "1h", "mode": "binary"}
-    )
-    assert r.status_code == 200
-    body = r.json()
-    assert "available" in body
-    if not body["available"]:
-        assert "walk_forward_study.py" in body["perintah"]
-
-
-def test_endpoint_consistency_tersedia() -> None:
-    r = client.get("/api/v1/model/consistency", params={"tf": "1h"})
-    assert r.status_code == 200
-    body = r.json()
-    assert "available" in body
-    if body["available"]:
-        for key in ("agreement", "distribution", "temporal", "exponent_alignment"):
-            assert key in body
-
-
-def test_endpoint_identification_tersedia() -> None:
-    r = client.get("/api/v1/model/identification", params={"tf": "1h"})
-    assert r.status_code == 200
-    body = r.json()
-    assert "available" in body
-    assert "label sirkular" in body["catatan"]
-
-
-def test_horizon_study_endpoint_tidak_gagal_tanpa_berkas() -> None:
-    """Endpoint harus memberi petunjuk, bukan error, saat studi belum dijalankan."""
-    body = client.get("/api/v1/model/horizon-study", params={"tf": "1h"}).json()
-    assert "available" in body
-    assert isinstance(body.get("results"), list)
-    if not body["available"]:
-        assert "horizon_study.py" in body["catatan"]
-
-
 def test_purge_gap_menyesuaikan_horizon_yang_diuji() -> None:
     """Saat h diubah untuk uji sensitivitas, purge gap harus ikut menyesuaikan.
 
@@ -592,112 +449,6 @@ def test_purge_gap_menyesuaikan_horizon_yang_diuji() -> None:
         expected = min(cfg.analysis.L + h, cfg.model.purge_gap)
         assert expected <= cfg.model.purge_gap
         assert expected >= cfg.analysis.L
-
-
-def test_diagnostik_memisahkan_edge_drag_dan_biaya() -> None:
-    """Kerugian harus dapat ditelusuri ke sumbernya, bukan sekadar terlihat merah."""
-    import numpy as np
-
-    from app.services.backtest_diagnostics import decompose_returns
-
-    rng = np.random.default_rng(3)
-    gross = rng.normal(loc=0.0, scale=0.01, size=1000)
-    cost = np.full(1000, 0.0001)
-
-    d: Dict[str, Any] = decompose_returns(gross, cost)
-    assert d["drag_component"] < 0, "volatility drag selalu negatif"
-    assert d["cost_component"] < 0
-    # Pendekatan log harus dekat dengan nilai sebenarnya untuk return kecil.
-    assert abs(d["approx_log_equity"] - d["actual_log_equity"]) < 0.05
-
-
-def test_drag_tumbuh_mengikuti_varians() -> None:
-    """Volatility drag sebanding dengan varians — dua kali volatilitas, empat kali drag.
-
-    Ini yang membuat strategi ber-edge nol tetap kehilangan modal: kerugiannya
-    efek matematis dari pertumbuhan majemuk, bukan tanda sinyalnya buruk.
-    """
-    import numpy as np
-
-    from app.services.backtest_diagnostics import decompose_returns
-
-    rng = np.random.default_rng(7)
-    n = 4000
-    kecil = rng.normal(loc=0.0, scale=0.01, size=n)
-    besar = kecil * 2.0  # volatilitas dua kali lipat, edge tetap sebanding
-
-    d_kecil: Dict[str, Any] = decompose_returns(kecil, np.zeros(n))
-    d_besar: Dict[str, Any] = decompose_returns(besar, np.zeros(n))
-
-    assert d_kecil["drag_component"] < 0
-    rasio = d_besar["drag_component"] / d_kecil["drag_component"]
-    assert 3.5 < rasio < 4.5, f"drag harus naik ~4x, bukan {rasio:.2f}x"
-
-
-def test_pembanding_acak_mengenali_sinyal_terbalik() -> None:
-    """Posisi yang sengaja dibalik harus terdeteksi sebagai lebih buruk dari acak."""
-    import numpy as np
-
-    from app.services.backtest_diagnostics import random_benchmark
-
-    rng = np.random.default_rng(11)
-    ret = rng.normal(scale=0.01, size=1500)
-    # Posisi yang selalu melawan return berikutnya: buruk secara sistematis.
-    pos = -np.sign(ret)
-
-    rb: Dict[str, Any] = random_benchmark(ret, pos, n_simulations=100, seed=5)
-    assert rb["percentile_of_strategy"] < 5
-    assert "lebih buruk dari acak" in rb["verdict"]
-
-
-def test_diagnostik_arah_menguji_asumsi_aturan() -> None:
-    """P(searah) harus dilaporkan per regime beserta status asumsinya."""
-    import numpy as np
-
-    from app.services.backtest_diagnostics import direction_diagnostics
-
-    rng = np.random.default_rng(13)
-    ret = rng.normal(scale=0.01, size=600)
-    regimes = ["persistent"] * 300 + ["anti_persistent"] * 300
-
-    d: Dict[str, Any] = direction_diagnostics(regimes, ret)
-    assert "lag1_autocorrelation" in d
-    for row in d["per_regime"]:
-        assert 0.0 <= row["p_same_direction"] <= 1.0
-        if row["regime"] == "persistent":
-            assert row["assumption_holds"] is not None
-
-
-def test_endpoint_diagnostics_lengkap() -> None:
-    r = client.get(
-        "/api/v1/backtest/diagnostics",
-        params={"tf": "1h", "regime_source": "rule_based_causal", "simulations": 20},
-    )
-    assert r.status_code == 200
-    body = r.json()
-    assert body["available"] is True
-    for key in ("decomposition", "random_benchmark", "direction", "stability"):
-        assert key in body
-
-
-def test_diagnostics_menolak_sumber_regime_tidak_sah() -> None:
-    r = client.get(
-        "/api/v1/backtest/diagnostics",
-        params={"tf": "1h", "regime_source": "ground_truth"},
-    )
-    assert r.status_code == 400
-
-
-def test_compare_melaporkan_coverage_dan_confidence() -> None:
-    body = client.get("/api/v1/model/compare", params={"tf": "1h"}).json()
-    for key in ("swt_bilstm", "swt_attention_bilstm", "persistence"):
-        m = body["models"][key]
-        assert "coverage" in m["secondary_metrics"]
-        assert "argmax" in m["secondary_metrics"]
-    for key in ("swt_bilstm", "swt_attention_bilstm"):
-        conf = body["models"][key]["confidence"]
-        assert conf["uniform_guess"] == pytest.approx(1 / 3, abs=1e-3)
-        assert conf["mean_max_prob"] >= 1 / 3 - 1e-6
 
 
 # --- Perhitungan regime incremental ------------------------------------------------

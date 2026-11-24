@@ -13,7 +13,6 @@ Semua fungsi deterministik terhadap seed dari config.
 
 from __future__ import annotations
 
-from typing import Dict, List
 
 import numpy as np
 import pandas as pd
@@ -82,44 +81,3 @@ def generate_ohlcv(timeframe: str, seed: int = 42, bars: int | None = None) -> p
     )
 
 
-def generate_attention_weights(seq_len: int, seed: int = 42) -> List[float]:
-    """Bobot attention mock: menaik ke arah timestep terbaru + beberapa puncak lokal."""
-    rng = np.random.default_rng(seed)
-    base = np.linspace(0.2, 1.0, seq_len) ** 2
-    for _ in range(3):
-        c = int(rng.integers(0, seq_len))
-        base += 0.8 * np.exp(-0.5 * ((np.arange(seq_len) - c) / (seq_len * 0.05)) ** 2)
-    base += rng.uniform(0, 0.05, size=seq_len)
-    weights = base / base.sum()
-    return [float(w) for w in weights]
-
-
-def generate_training_curves(seed: int = 42) -> Dict[str, Dict[str, List[float]]]:
-    """Kurva loss mock untuk 3 model pembanding.
-
-    Rule-based tidak punya kurva loss (bukan model gradien) — dinyatakan
-    eksplisit sebagai None, bukan diisi angka palsu.
-    """
-    rng = np.random.default_rng(seed)
-    epochs = 40
-
-    def curve(start: float, floor: float, noise: float, overfit_at: int | None) -> List[float]:
-        vals = []
-        for e in range(epochs):
-            v = floor + (start - floor) * np.exp(-e / 9.0)
-            if overfit_at is not None and e > overfit_at:
-                v += 0.006 * (e - overfit_at)
-            vals.append(round(float(v + rng.normal(scale=noise)), 4))
-        return vals
-
-    return {
-        "rule_based": {"train_loss": [], "val_loss": []},
-        "swt_bilstm": {
-            "train_loss": curve(1.10, 0.62, 0.010, None),
-            "val_loss": curve(1.12, 0.74, 0.014, 24),
-        },
-        "swt_attention_bilstm": {
-            "train_loss": curve(1.09, 0.55, 0.010, None),
-            "val_loss": curve(1.11, 0.66, 0.013, 31),
-        },
-    }

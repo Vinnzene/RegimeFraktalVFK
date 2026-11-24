@@ -116,18 +116,6 @@ export interface AttentionResponse {
   candles: { time: number; open: number; high: number; low: number; close: number }[];
 }
 
-export interface FeaturesResponse {
-  timeframe: string;
-  window_time: number;
-  regime: AiRegimeClass;
-  ps_shape: [number, number];
-  ps_channels: string[];
-  summary_length: number;
-  summary_names: string[];
-  summary_values: number[];
-  ps_last_step: number[];
-}
-
 export interface SplitTimes {
   train_end_time: number;
   validation_start_time: number;
@@ -289,16 +277,12 @@ export const api = {
   config: () => get<any>("/api/v1/meta/config"),
   methodology: () => get<any>("/api/v1/meta/methodology"),
   dataStatus: (symbol = "BTCUSDT") => get<any>("/api/v1/data/status", { symbol }),
-  connectivity: () => get<any>("/api/v1/data/connectivity"),
   refreshData: (full = false, tf?: string) =>
     post<any>("/api/v1/data/refresh", { full, tf }),
   ohlcv: (tf: string, limit?: number, symbol = "BTCUSDT") =>
     get<OhlcvResponse>("/api/v1/ohlcv", { symbol, tf, limit }),
   /** Seluruh riwayat candle dalam format kolom, di-cache per aset & timeframe. */
   ohlcvHistory,
-  /** Buang cache riwayat, dipakai setelah refresh data. */
-  clearOhlcvHistory: (tf?: string) =>
-    tf ? historyCache.delete(`BTCUSDT_${tf.toLowerCase()}`) : historyCache.clear(),
   regime: (tf: string) =>
     get<{
       series: RegimePoint[];
@@ -328,18 +312,8 @@ export const api = {
   evaluation: () => get<any>("/api/v1/model/evaluation"),
   // Uji Ketahanan Metode tidak dibaca dari sini: datanya terkunci per akun dan
   // hanya dikirim rute Next.js /api/robustness (lihat app/uji-ketahanan/page.tsx).
-  /** Bentuk dan nilai fitur masukan model identifikasi untuk satu jendela. */
-  features: (tf: string, atTime?: number) => get<FeaturesResponse>("/api/v1/analysis/features", { tf, at_time: atTime }),
   transitionMatrix: (tf: string) => get<any>("/api/v1/analysis/transition-matrix", { tf }),
   regimeDuration: (tf: string) => get<any>("/api/v1/analysis/regime-duration", { tf }),
-  splitBoundaries: (tf: string) => get<any>("/api/v1/data/split-boundaries", { tf }),
-  compare: (tf: string) => get<any>("/api/v1/model/compare", { tf }),
-  horizonStudy: (tf: string) => get<any>("/api/v1/model/horizon-study", { tf }),
-  identification: (tf: string) => get<any>("/api/v1/model/identification", { tf }),
-  consistency: (tf: string, mode = "multiclass") =>
-    get<any>("/api/v1/model/consistency", { tf, mode }),
-  walkForward: (tf: string, mode = "binary", labeling = "threshold") =>
-    get<any>("/api/v1/model/walk-forward", { tf, mode, labeling }),
   walkForwardMultiAsset: () =>
     get<WalkForwardMultiAssetResponse>("/api/v1/model/walk-forward-multi-asset"),
   walkForwardTimeline: (symbol: string, tf: string, year?: number) =>
@@ -351,20 +325,4 @@ export const api = {
   orderflowAblation: (tf: string) => get<any>("/api/v1/model/orderflow-ablation", { tf }),
   orderflowTimeline: (tf: string, limit = 600) =>
     get<any>("/api/v1/model/orderflow-timeline", { tf, limit }),
-  rawProbabilities: (tf: string, modelKey: string) =>
-    get<any>("/api/v1/model/raw-probabilities", { tf, model_key: modelKey }),
-  predict: (body: Record<string, unknown>) => post<any>("/api/v1/model/predict", body),
-  runBacktest: (body: Record<string, unknown>) => post<any>("/api/v1/backtest/run", body),
-  backtestDiagnostics: (
-    tf: string,
-    regimeSource: string,
-    modelKey: string,
-    feeBps: number
-  ) =>
-    get<any>("/api/v1/backtest/diagnostics", {
-      tf,
-      regime_source: regimeSource,
-      model_key: modelKey,
-      fee_bps: feeBps,
-    }),
 };

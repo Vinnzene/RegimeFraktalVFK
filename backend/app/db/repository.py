@@ -114,8 +114,6 @@ class Repository(ABC):
     @abstractmethod
     def save_regime(self, symbol: str, timeframe: str, df: pd.DataFrame) -> None: ...
 
-    @abstractmethod
-    def has_ohlcv(self, symbol: str, timeframe: str) -> bool: ...
 
     @abstractmethod
     def refresh_ohlcv(self, symbol: str, timeframe: str, full: bool = False) -> Dict[str, object]: ...
@@ -146,8 +144,6 @@ class ParquetRepository(Repository):
             raise InvalidIdentifier("path hasil resolusi keluar dari data/processed.")
         return path
 
-    def has_ohlcv(self, symbol: str, timeframe: str) -> bool:
-        return self._path("ohlcv", symbol, timeframe).exists()
 
     def _meta_path(self, symbol: str, timeframe: str) -> Path:
         return self._path("ohlcv", symbol, timeframe).with_suffix(".meta.json")
@@ -193,15 +189,6 @@ class ParquetRepository(Repository):
                 out[col] = 0.0
         out[OHLCV_COLUMNS].to_parquet(self._path("ohlcv", symbol, timeframe), index=False)
 
-    def has_orderflow(self, symbol: str, timeframe: str) -> bool:
-        """Apakah data tersimpan sudah memuat kolom order flow yang terisi."""
-        try:
-            df = self.get_ohlcv(symbol, timeframe)
-        except Exception:  # noqa: BLE001
-            return False
-        if "taker_buy_volume" not in df.columns:
-            return False
-        return bool((df["taker_buy_volume"] > 0).any())
 
     def refresh_ohlcv(
         self, symbol: str, timeframe: str, full: bool = False

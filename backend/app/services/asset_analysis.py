@@ -35,7 +35,6 @@ SOURCES = {
     "binance": {"timeframes": ("15m", "1h", "4h", "1d"), "pattern": re.compile(r"^[A-Z0-9]{5,20}$")},
     "yahoo": {"timeframes": ("1h", "1d"), "pattern": re.compile(r"^[A-Za-z0-9.^=\-]{1,20}$")},
 }
-TF_SECONDS = {"15m": 900, "1h": 3600, "4h": 14400, "1d": 86400}
 # Satu jendela model = 500 log-return; `bars` = jumlah log-return yang dianalisis, jadi
 # data yang diambil = bars + 1 candle tertutup.
 MIN_BARS, MAX_BARS, DEFAULT_BARS = 500, 5000, 2000

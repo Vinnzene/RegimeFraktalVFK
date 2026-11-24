@@ -245,6 +245,3 @@ def get_config() -> AppConfig:
     return _cached_config()
 
 
-def reload_config() -> AppConfig:
-    _cached_config.cache_clear()
-    return get_config()

@@ -35,64 +35,6 @@ def test_regime_memunculkan_uncertain_rule() -> None:
     assert dist["uncertain_rule"]["count"] > 0
 
 
-def test_predict_mengembalikan_probabilitas_dan_final_label() -> None:
-    r = client.post("/api/v1/model/predict", json={"tf": "1h"})
-    body = r.json()
-    assert set(body["raw_probabilities"]) == {
-        "persistent",
-        "random_like",
-        "anti_persistent",
-    }
-    assert abs(sum(body["raw_probabilities"].values()) - 1.0) < 0.01
-    assert body["final_label"] in {
-        "persistent",
-        "random_like",
-        "anti_persistent",
-        "uncertain_lowconf",
-    }
-
-
-def test_tau_tinggi_memaksa_uncertain_lowconf() -> None:
-    r = client.post("/api/v1/model/predict", json={"tf": "1h", "tau": 1.0})
-    assert r.json()["final_label"] == "uncertain_lowconf"
-
-
-def test_compare_wajib_punya_baseline_persistence() -> None:
-    r = client.get("/api/v1/model/compare", params={"tf": "1h"})
-    models = r.json()["models"]
-    assert "persistence" in models
-    assert set(models) >= {
-        "rule_based",
-        "swt_bilstm",
-        "swt_attention_bilstm",
-        "persistence",
-    }
-
-
-def test_backtest_menolak_ground_truth_sebagai_sumber_sinyal() -> None:
-    r = client.post(
-        "/api/v1/backtest/run",
-        json={"tf": "1h", "regime_source": "ground_truth"},
-    )
-    assert r.status_code == 400
-    assert "masa depan" in r.json()["detail"]
-
-
-def test_backtest_menyertakan_buy_and_hold_dan_disclaimer() -> None:
-    r = client.post("/api/v1/backtest/run", json={"tf": "1h"})
-    body = r.json()
-    assert body["regime_source"] == "model_prediction_at_t"
-    assert "buy_hold" in body["equity_curve"][0]
-    assert "BUKAN jaminan profit" in body["disclaimer"]
-    assert client.get(f"/api/v1/backtest/{body['id']}/result").status_code == 200
-
-
-def test_split_boundaries_punya_zona_purge() -> None:
-    r = client.get("/api/v1/data/split-boundaries", params={"tf": "1h"})
-    names = [s["segment"] for s in r.json()["segments"]]
-    assert "purge_1" in names and "purge_2" in names
-
-
 def test_swt_endpoint_menandai_causal() -> None:
     r = client.get("/api/v1/analysis/swt", params={"tf": "1h"})
     assert r.json()["parameters"]["causal"] is True

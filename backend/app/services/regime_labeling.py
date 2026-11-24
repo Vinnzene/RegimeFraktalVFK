@@ -20,7 +20,7 @@ from typing import Dict, Iterable, List, Optional, Sequence, cast
 import numpy as np
 import pandas as pd
 
-from app.core.config import REGIME_CATEGORIES, REGIME_CLASSES
+from app.core.config import REGIME_CATEGORIES
 
 PERSISTENT = "persistent"
 RANDOM_LIKE = "random_like"
@@ -318,11 +318,3 @@ def build_targets(
     return [labels[t + h] if t + h < n else None for t in range(n)]
 
 
-def trainable_mask(targets: Sequence[Optional[str]]) -> List[bool]:
-    """Sampel dipakai training hanya jika targetnya salah satu dari 3 kelas.
-
-    Catatan penting: yang dibuang adalah SAMPEL dengan target uncertain_rule,
-    bukan potongan deret input. Input sequence tetap kontinu supaya BiLSTM
-    tidak melihat lompatan waktu tersembunyi.
-    """
-    return [t in REGIME_CLASSES for t in targets]

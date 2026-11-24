@@ -9,7 +9,7 @@ perbandingan memakai fitur yang berbeda untuk model yang sama.
 from __future__ import annotations
 
 import os
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -81,19 +81,6 @@ def sequence_length(model_key: str, timeframe: str, default: int = 32) -> int:
     meta = load_metadata(model_key, timeframe)
     value = meta.get("seq_len")
     return value if isinstance(value, int) and value > 0 else default
-
-
-def scaled_features_for(
-    symbol: str,
-    timeframe: str,
-    regime_df: pd.DataFrame,
-    model_key: str = "swt_attention_bilstm",
-) -> np.ndarray:
-    """Fitur yang siap disuapkan ke model: sudah memakai seq_len dan scaler artefak."""
-    seq_len = sequence_length(model_key, timeframe)
-    features = build_features_for(symbol, timeframe, regime_df, seq_len)
-    meta = load_metadata(model_key, timeframe)
-    return apply_scaler(features, meta.get("scaler"))
 
 
 def build_features_for(
@@ -195,8 +182,3 @@ def _cached_source(symbol: str, timeframe: str, model_key: str, fallback: str) -
     return _SOURCE.get((symbol, timeframe, model_key), fallback)
 
 
-def to_dicts(probs: np.ndarray) -> List[Dict[str, float]]:
-    """Ubah matriks probabilitas menjadi daftar dict per kelas."""
-    return [
-        {cls: float(round(v, 4)) for cls, v in zip(REGIME_CLASSES, row)} for row in probs
-    ]

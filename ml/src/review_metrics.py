@@ -259,7 +259,7 @@ def ablation_md(title: str, intro: List[str], tf_rows: Dict[str, List[tuple]]) -
 
 
 # ------------------------------------------------------------------ poin 3
-def market_conditions(tf: str, t_thr: float = 2.0):
+def market_conditions(tf: str):
     d = rue.prepare_timeframe_data(tf)
     from app.db.repository import get_repository  # noqa: PLC0415
     from app.services.hurst_dfa import to_log_return  # noqa: PLC0415

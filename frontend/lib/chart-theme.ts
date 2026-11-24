@@ -29,12 +29,3 @@ export const TOOLTIP_LABEL_STYLE = { color: "rgb(var(--c-txt-dim))" } as const;
 
 export const LEGEND_STYLE = { fontSize: 11 } as const;
 
-/** Palet garis untuk deret bertumpuk, urut sesuai kepentingan. */
-export const SERIES_COLORS = [
-  "#3b82f6",
-  "#f59e0b",
-  "#10b981",
-  "#a78bfa",
-  "#ef4444",
-  "#06b6d4",
-] as const;

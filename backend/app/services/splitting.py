@@ -9,7 +9,7 @@ test terlihat bagus karena kebocoran, bukan karena modelnya bekerja.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Sequence, cast
+from typing import Any, Dict, Sequence, cast
 
 import pandas as pd
 
@@ -87,41 +87,6 @@ def split_indices(n: int, ratios: Sequence[float], purge_gap: int) -> Dict[str, 
         "validation": [purge1_end, val_end],
         "purge_2": [val_end, purge2_end],
         "test": [purge2_end, n],
-    }
-
-
-def split_boundaries(
-    timestamps: Sequence[int],
-    ratios: Sequence[float],
-    purge_gap: int,
-) -> Dict[str, object]:
-    """Versi berbasis timestamp untuk digambar sebagai band di chart."""
-    n = len(timestamps)
-    idx = split_indices(n, ratios, purge_gap)
-
-    def _stamp(pair: List[int]) -> Optional[Dict[str, Any]]:
-        start, end = pair
-        if start >= n or end <= start:
-            return None
-        return {
-            "start_index": start,
-            "end_index": end,
-            "start_time": timestamps[start],
-            "end_time": timestamps[min(end, n - 1)],
-        }
-
-    segments = []
-    for name in ("train", "purge_1", "validation", "purge_2", "test"):
-        stamped = _stamp(idx[name])  # type: ignore[arg-type]
-        if stamped:
-            stamped["segment"] = name
-            segments.append(stamped)
-
-    return {
-        "n": n,
-        "purge_gap": purge_gap,
-        "ratios": list(ratios),
-        "segments": segments,
     }
 
 

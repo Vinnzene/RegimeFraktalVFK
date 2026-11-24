@@ -68,11 +68,11 @@ def main() -> None:
                    "agak terpusat" if e["mean"] >= 0.85 else "terpusat pada langkah tertentu")
         md += [f"## {tf.upper()} ({o['n_windows']} jendela uji)", "",
                f"- Entropi ternormalisasi: rata-rata **{e['mean']:.3f}**, median {e['median']:.3f}, min {e['min']:.3f}, maks {e['max']:.3f}, P5 {e['p05']:.3f}.",
-               f"- Per seed (rata-rata): " + ", ".join(f"s{k} {v:.3f}" for k, v in o["entropy_per_seed_mean"].items()) + ".",
+               "- Per seed (rata-rata): " + ", ".join(f"s{k} {v:.3f}" for k, v in o["entropy_per_seed_mean"].items()) + ".",
                f"- Bobot terbesar per jendela: rata-rata {o['max_weight']['mean']:.4f} (maksimum seluruh jendela {o['max_weight']['max']:.4f}); bobot rata = 0,0313.",
                f"- Porsi 8 langkah terakhir (bar terbaru): {o['last8_share_mean']:.3f}; 8 langkah pertama: {o['first8_share_mean']:.3f} (rata = 0,250).",
-               f"- Langkah dengan bobot terbesar paling sering: " + ", ".join(f"langkah {k} ({v} jendela)" for k, v in top) + ".",
-               f"- Entropi per kelas label: " + ", ".join(f"{k} {v:.3f}" for k, v in o["entropy_by_class"].items()) + ".",
+               "- Langkah dengan bobot terbesar paling sering: " + ", ".join(f"langkah {k} ({v} jendela)" for k, v in top) + ".",
+               "- Entropi per kelas label: " + ", ".join(f"{k} {v:.3f}" for k, v in o["entropy_by_class"].items()) + ".",
                f"- **Kesimpulan: {verdict}.**", "",
                "| Langkah | Akhir sub-jendela (bar) | rata-rata α | min α | maks α |", "|---|---|---|---|---|"]
         for k in range(SEQ):

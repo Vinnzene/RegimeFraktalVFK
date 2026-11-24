@@ -365,10 +365,6 @@ def series(symbol: str, tf: str) -> pd.DataFrame:
     return update_cache(symbol, tf, max_new=MAX_SYNC_WINDOWS)
 
 
-def building(symbol: str, tf: str) -> bool:
-    return bool(_building.get(f"{symbol}_{tf}"))
-
-
 def describe(tf: str) -> Dict[str, Any]:
     """Ringkasan model untuk respons API dan halaman metodologi."""
     m = meta(tf)

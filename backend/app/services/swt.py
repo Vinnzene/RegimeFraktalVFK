@@ -15,7 +15,7 @@ Solusi:
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 import numpy as np
 import pywt
@@ -72,7 +72,7 @@ def swt_decompose(x: np.ndarray, level: int, wavelet: str = DEFAULT_WAVELET) -> 
 
     out: Dict[str, np.ndarray] = {}
     # pywt.swt mengurutkan dari level terkasar ke terhalus.
-    for i, (cA, cD) in enumerate(coeffs):
+    for i, (_, cD) in enumerate(coeffs):
         detail_level = lvl - i
         out[f"detail_{detail_level}"] = np.asarray(cD)[offset:]
     out["approx"] = np.asarray(coeffs[0][0])[offset:]
@@ -102,21 +102,3 @@ def causal_swt_at(
     return {k: float(v[-1]) for k, v in dec.items()}
 
 
-def causal_swt_series(
-    x: np.ndarray,
-    level: int,
-    window: int,
-    step: int = 1,
-    wavelet: str = DEFAULT_WAVELET,
-) -> Dict[str, List[float]]:
-    """Deret koefisien SWT kausal untuk banyak titik t sekaligus."""
-    x = np.asarray(x, dtype=float)
-    out: Dict[str, List[float]] = {}
-    indices: List[int] = []
-    for t in range(window - 1, x.size, step):
-        coeffs = causal_swt_at(x, t, level=level, window=window, wavelet=wavelet)
-        indices.append(t)
-        for key, val in coeffs.items():
-            out.setdefault(key, []).append(val)
-    out["index"] = [float(i) for i in indices]
-    return out

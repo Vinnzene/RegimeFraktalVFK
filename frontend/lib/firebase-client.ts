@@ -22,8 +22,6 @@ const config = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-export const firebaseConfigured = Boolean(config.apiKey && config.authDomain && config.projectId);
-
 function app(): FirebaseApp {
   return getApps()[0] ?? initializeApp(config);
 }

@@ -28,10 +28,8 @@ import numpy as np
 from app.core.config import ARTIFACTS_DIR, REGIME_CLASSES
 from app.services.regime_labeling import (
     UNCERTAIN_RULE,
-    apply_tau,
 )
 
-MODEL_KEYS = ["rule_based", "swt_bilstm", "swt_attention_bilstm"]
 MODEL_LABELS = {
     "rule_based": "Baseline 1 — Hurst-DFA rule-based",
     "swt_bilstm": "Baseline 2 — SWT + BiLSTM",
@@ -105,15 +103,6 @@ def load_model(model_key: str, timeframe: str) -> Any:
             return None
 
 
-def load_error(model_key: str, timeframe: str) -> Optional[str]:
-    return _load_failures.get(f"{model_key}_{timeframe}")
-
-
-def reset_model_cache() -> None:
-    _loaded.clear()
-    _load_failures.clear()
-
-
 def prediction_source(model_key: str, timeframe: str) -> str:
     """Asal angka prediksi: artefak terlatih atau stand-in deterministik.
 
@@ -157,20 +146,6 @@ def predict_proba(
     logits = rng.normal(size=3) * sharpness.get(model_key, 1.0)
     probs = _softmax(logits)
     return {cls: float(round(p, 4)) for cls, p in zip(REGIME_CLASSES, probs)}
-
-
-def predict_labels(
-    model_key: str,
-    feature_rows: Sequence[Sequence[float]],
-    tau: float,
-) -> List[Dict[str, object]]:
-    """Prediksi banyak window sekaligus, sudah melalui post-processing tau."""
-    out = []
-    for i, row in enumerate(feature_rows):
-        probs = predict_proba(model_key, row, seed=i)
-        resolved = apply_tau(probs, tau)
-        out.append({"raw_probabilities": probs, **resolved})
-    return out
 
 
 def predict_sequences(
@@ -259,29 +234,6 @@ def matthews_corrcoef(y_true: Sequence[str], y_pred: Sequence[str]) -> float:
         max(n**2 - float(t_sum @ t_sum), 0.0)
     )
     return float(round(num / den, 4)) if den > 0 else float("nan")
-
-
-def evaluate_against_truth(
-    y_true: Sequence[str],
-    y_pred: Sequence[str],
-) -> Dict[str, object]:
-    """Metrik SEKUNDER. Bukan indikator keberhasilan utama penelitian ini.
-
-    Window dengan ground truth uncertain_rule dikeluarkan dari perhitungan
-    karena model memang tidak pernah dilatih untuk kategori tersebut.
-    """
-    pairs = [(t, p) for t, p in zip(y_true, y_pred) if t != UNCERTAIN_RULE and p is not None]
-    if not pairs:
-        return {"n_evaluated": 0}
-    yt = [t for t, _ in pairs]
-    yp = [p for _, p in pairs]
-    return {
-        "n_evaluated": len(pairs),
-        "balanced_accuracy": balanced_accuracy(yt, yp),
-        "mcc": matthews_corrcoef(yt, yp),
-        "plain_accuracy": float(round(sum(t == p for t, p in pairs) / len(pairs), 4)),
-        "catatan": "Metrik sekunder — bukan indikator keberhasilan utama penelitian ini.",
-    }
 
 
 def evaluate_with_coverage(

@@ -101,7 +101,7 @@ def tf_md() -> None:
                "| dari \\ ke | " + " | ".join(L4) + " |", "|---|---|---|---|---|"]
         for i, lab in enumerate(L4):
             md.append(f"| {lab} | " + " | ".join(c(v) for v in o["transition"]["prob"][i]) + " |")
-        md += ["", f"Tanpa uncertain_rule (transisi ke label definitif berikutnya):", "",
+        md += ["", "Tanpa uncertain_rule (transisi ke label definitif berikutnya):", "",
                "| dari \\ ke | " + " | ".join(L4[:3]) + " |", "|---|---|---|---|"]
         for i, lab in enumerate(L4[:3]):
             md.append(f"| {lab} | " + " | ".join(c(v) for v in o["transition_definitive_only"]["prob"][i]) + " |")

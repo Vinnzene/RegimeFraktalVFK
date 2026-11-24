@@ -13,9 +13,7 @@ from app.services import scheduler
 from app.services.data_ingestion import (
     IngestionError,
     TLSInterceptionError,
-    check_connectivity,
 )
-from app.services.splitting import split_boundaries
 
 router = APIRouter(prefix="/api/v1", tags=["data"])
 
@@ -155,27 +153,3 @@ def data_status(symbol: str = Query("BTCUSDT")) -> dict:
     }
 
 
-@router.get("/data/connectivity")
-def connectivity() -> dict:
-    """Uji sumber data — membantu membedakan blokir jaringan dari galat lain."""
-    cfg = get_config()
-    return check_connectivity(cfg.source.base_urls)
-
-
-@router.get("/data/split-boundaries")
-def read_split_boundaries(symbol: str = Query("BTCUSDT"), tf: str = Query("1h")) -> dict:
-    cfg = get_config()
-    repo = get_repository()
-    df = repo.get_ohlcv(symbol, tf)
-    bounds = split_boundaries(
-        df["time"].tolist(),
-        cfg.split.ratios,
-        cfg.model.purge_gap,
-    )
-    bounds["config_hash"] = cfg.config_hash
-    bounds["timeframe"] = tf
-    bounds["catatan"] = (
-        "Split time-based tanpa shuffle. Zona purge dibuang dari training "
-        "agar window train tidak tumpang tindih dengan window test."
-    )
-    return bounds

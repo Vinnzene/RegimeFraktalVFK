@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-from app.core.config import REGIME_CATEGORIES, get_config, reload_config
+from app.core.config import REGIME_CATEGORIES, get_config
 
 router = APIRouter(prefix="/api/v1/meta", tags=["meta"])
 
@@ -18,12 +18,6 @@ def read_config() -> dict:
         "short_hash": cfg.short_hash,
         "regime_categories": REGIME_CATEGORIES,
     }
-
-
-@router.post("/config/reload")
-def do_reload_config() -> dict:
-    cfg = reload_config()
-    return {"config_hash": cfg.config_hash, "short_hash": cfg.short_hash}
 
 
 @router.get("/methodology")

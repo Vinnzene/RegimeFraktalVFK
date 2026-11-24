@@ -123,35 +123,6 @@ def calculate_trade_ofi(
     return np.nan_to_num(ofi, nan=0.0, posinf=0.0, neginf=0.0)
 
 
-def calculate_book_ofi(
-    bid_price: np.ndarray,
-    bid_size: np.ndarray,
-    ask_price: np.ndarray,
-    ask_size: np.ndarray,
-) -> np.ndarray:
-    """OFI berbasis order book level-1 (Cont, Kukanov & Stoikov, 2014).
-
-    e_t = 1{P^b_t >= P^b_{t-1}} q^b_t − 1{P^b_t <= P^b_{t-1}} q^b_{t-1}
-        − 1{P^a_t <= P^a_{t-1}} q^a_t + 1{P^a_t >= P^a_{t-1}} q^a_{t-1}
-
-    Disiapkan untuk eksperimen lanjutan. TIDAK dipakai pada versi utama
-    penelitian karena arsip order book BTC/USDT spot tidak tersedia di
-    Binance Vision untuk rentang data penelitian.
-    """
-    pb, qb = np.asarray(bid_price, float), np.asarray(bid_size, float)
-    pa, qa = np.asarray(ask_price, float), np.asarray(ask_size, float)
-    e = np.zeros_like(pb)
-    if pb.size < 2:
-        return e
-    e[1:] = (
-        (pb[1:] >= pb[:-1]) * qb[1:]
-        - (pb[1:] <= pb[:-1]) * qb[:-1]
-        - (pa[1:] <= pa[:-1]) * qa[1:]
-        + (pa[1:] >= pa[:-1]) * qa[:-1]
-    )
-    return e
-
-
 def calculate_delta_volume(buy_volume: np.ndarray, sell_volume: np.ndarray) -> np.ndarray:
     """DeltaVolume_t = Buy_t − Sell_t."""
     return np.asarray(buy_volume, dtype=float) - np.asarray(sell_volume, dtype=float)

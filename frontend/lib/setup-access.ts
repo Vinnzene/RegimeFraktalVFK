@@ -61,12 +61,6 @@ export async function getAccess(user: SessionUser, feature: AccessFeature = "set
   return snap.exists ? (snap.data() as AccessRecord) : null;
 }
 
-/** Admin selalu punya akses; pengguna lain hanya bila disetujui. */
-export async function hasAccess(user: SessionUser, feature: AccessFeature = "setup"): Promise<boolean> {
-  if (isAdmin(user)) return true;
-  return (await getAccess(user, feature))?.status === "approved";
-}
-
 export async function requestAccess(user: SessionUser, note: string | null, feature: AccessFeature = "setup"): Promise<AccessRecord> {
   const rec: AccessRecord = {
     uid: user.uid,

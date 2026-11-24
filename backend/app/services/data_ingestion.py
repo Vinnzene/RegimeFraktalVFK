@@ -348,21 +348,3 @@ def merge_ohlcv(existing: pd.DataFrame, incoming: pd.DataFrame) -> pd.DataFrame:
     return combined.sort_values("time").reset_index(drop=True)
 
 
-def check_connectivity(base_urls: Optional[List[str]] = None) -> Dict[str, object]:
-    """Uji cepat ketersediaan sumber, untuk ditampilkan di UI."""
-    candidates = base_urls or [PRIMARY_BASE, *FALLBACK_BASES]
-    results = []
-    for base_url in candidates:
-        try:
-            _request_klines(base_url, "BTCUSDT", "1h", None, 1, timeout=8)
-            results.append({"base_url": base_url, "reachable": True, "error": None})
-        except TLSInterceptionError as exc:
-            results.append(
-                {"base_url": base_url, "reachable": False, "error": str(exc), "intercepted": True}
-            )
-        except IngestionError as exc:
-            results.append({"base_url": base_url, "reachable": False, "error": str(exc)})
-    return {
-        "any_reachable": any(r["reachable"] for r in results),
-        "sources": results,
-    }

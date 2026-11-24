@@ -14,7 +14,7 @@ import json
 import sys
 import time
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 import numpy as np
 import pandas as pd
@@ -261,7 +261,6 @@ def part_tf() -> Dict[str, Any]:
 
 def _kappa(a: pd.Series, b: pd.Series) -> float:
     cats = sorted(set(a) | set(b))
-    n = len(a)
     po = float((a.values == b.values).mean())
     pe = sum((a == c).mean() * (b == c).mean() for c in cats)
     return (po - pe) / (1 - pe) if pe < 1 else 0.0

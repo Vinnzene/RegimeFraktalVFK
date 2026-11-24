@@ -112,33 +112,8 @@ export const REGIME_PLAIN: Record<
   },
 };
 
-export function regimePlain(regime: string): string {
-  return REGIME_PLAIN[regime as Regime]?.name ?? regime;
-}
-
-export function regimeColor(regime: string): string {
-  return REGIME_META[regime as Regime]?.color ?? "#252c37";
-}
-
 export function regimeLabel(regime: string): string {
   return REGIME_META[regime as Regime]?.label ?? regime;
-}
-
-/** Hitung ulang label dari probabilitas mentah — dipakai saat slider τ digeser. */
-export function applyTau(
-  probabilities: Record<string, number>,
-  tau: number
-): { finalLabel: Regime; argmax: string; maxProb: number } {
-  const entries = Object.entries(probabilities);
-  if (entries.length === 0) {
-    return { finalLabel: "uncertain_lowconf", argmax: "", maxProb: 0 };
-  }
-  const [argmax, maxProb] = entries.reduce((a, b) => (b[1] > a[1] ? b : a));
-  return {
-    finalLabel: maxProb >= tau ? (argmax as Regime) : "uncertain_lowconf",
-    argmax,
-    maxProb,
-  };
 }
 
 export const SEGMENT_META: Record<string, { label: string; color: string }> = {
