@@ -11,16 +11,16 @@ import BrandMark from "@/components/login/BrandMark";
 /**
  * Navigasi horizontal di header, dikelompokkan menurut pertanyaan pengguna.
  *
- * Dua belas menu sejajar membuat pengunjung tidak tahu harus mulai dari mana.
- * Grup bertanda adminOnly (Identifikasi, Riset, Arsip Fase 0, Tentang) hanya tampil
- * untuk admin. Halaman Riset, Arsip Fase 0, dan Tentang juga ditolak middleware bagi
- * akun lain; halaman Identifikasi tetap terbuka lewat tautan langsung.
- * Kelompok mengikuti alur cerita dashboard: kondisi pasar sekarang, strategi
- * yang cocok, bukti riset di baliknya, lalu metodologi. Seluruh lebar layar
- * tetap tersedia untuk chart karena navigasi ada di header, bukan sidebar.
+ * Pengguna biasa hanya melihat ruang lingkup skripsi: Ringkasan (menu Pasar) dan
+ * grup Identifikasi. Grup atau menu bertanda adminOnly (fitur tambahan di luar ruang
+ * lingkup: Walk-Forward multi-aset, Analisis Aset, Analisa Teknikal, Order Flow Live,
+ * Strategi, Riset, Arsip Fase 0, Tentang) hanya tampil untuk admin dan juga ditolak
+ * middleware (ADMIN_ONLY) bagi akun lain. Seluruh lebar layar tetap tersedia untuk
+ * chart karena navigasi ada di header, bukan sidebar.
  */
 
-type NavItem = { href: string; label: string; hint: string; locked?: boolean };
+/** adminOnly pada item: menu hanya tampil untuk admin, walaupun grupnya umum. */
+type NavItem = { href: string; label: string; hint: string; locked?: boolean; adminOnly?: boolean };
 /** adminOnly: grup hanya tampil untuk akun admin (email di ADMIN_EMAILS). */
 type NavGroup = { label: string; items: NavItem[]; adminOnly?: boolean };
 
@@ -29,17 +29,13 @@ const GROUPS: NavGroup[] = [
     label: "Pasar",
     items: [
       { href: "/", label: "Ringkasan", hint: "Kondisi pasar 1H & 4H menurut model identifikasi AI + grafik harga" },
-      { href: "/walk-forward-evaluation", label: "Walk-Forward (2019–2026)", hint: "Uji identifikasi berjalan 2019→2026 pada 12 aset (BTC, ETH, TAO, Emas, Perak) + grafik TradingView" },
-      { href: "/analisis", label: "Analisis Aset", hint: "Identifikasi regime untuk pair/ticker apa pun (Binance, Yahoo) · 10 per hari" },
-      { href: "/analisa-teknikal", label: "Analisa Teknikal", hint: "Tarik garis, fibonacci, dan indikator (TradingView)" },
-      { href: "/orderflow-live", label: "Order Flow Live", hint: "Heatmap order book, footprint, delta & CVD (kripto)" },
+      { href: "/analisis", label: "Analisis Aset", hint: "Identifikasi regime untuk pair/ticker apa pun (Binance, Yahoo) · 10 per hari", adminOnly: true },
+      { href: "/analisa-teknikal", label: "Analisa Teknikal", hint: "Tarik garis, fibonacci, dan indikator (TradingView)", adminOnly: true },
+      { href: "/orderflow-live", label: "Order Flow Live", hint: "Heatmap order book, footprint, delta & CVD (kripto)", adminOnly: true },
     ],
   },
   {
     label: "Identifikasi",
-    // Disembunyikan dari menu pengguna biasa; halamannya tetap dapat dibuka lewat tautan
-    // langsung (mis. daftar halaman di Kuesioner SUS).
-    adminOnly: true,
     items: [
       { href: "/evaluasi-identifikasi", label: "Hasil Uji Identifikasi", hint: "Persentase identifikasi benar per kelas (backtest) dan per tahap walk-forward, BTC/USDT 1H & 4H" },
       { href: "/regime-explorer", label: "Hurst-DFA Klasik", hint: "Pembanding: label konsensus R/S–DFA, perpindahan & durasi" },
@@ -50,6 +46,7 @@ const GROUPS: NavGroup[] = [
   },
   {
     label: "Strategi",
+    adminOnly: true,
     items: [
       { href: "/strategi", label: "Regime → Strategi", hint: "Strategi per kondisi beserta hasil uji Fase 2" },
       { href: "/setup", label: "Panduan Setup", hint: "Setup yang cocok dan dihindari per kondisi pasar · perlu persetujuan admin" },
@@ -109,9 +106,11 @@ export default function TopNav() {
 
   const groups = GROUPS.filter((g) => !g.adminOnly || admin).map((g) => ({
     ...g,
-    items: g.items.map((i) =>
-      i.href === LOCKED_HREF && !ujiTerbuka ? { ...i, locked: true, hint: "Terkunci · buka halaman untuk meminta akses ke pemilik" } : i,
-    ),
+    items: g.items
+      .filter((i) => !i.adminOnly || admin)
+      .map((i) =>
+        i.href === LOCKED_HREF && !ujiTerbuka ? { ...i, locked: true, hint: "Terkunci · buka halaman untuk meminta akses ke pemilik" } : i,
+      ),
   }));
   const [openGroup, setOpenGroup] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -200,16 +199,16 @@ export default function TopNav() {
         })}
 
         <Link
-          href="/walk-forward-evaluation"
+          href="/evaluasi-identifikasi"
           className={`ml-2 flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[12px] font-medium transition-colors ${
-            isActive(pathname, "/walk-forward-evaluation")
+            isActive(pathname, "/evaluasi-identifikasi")
               ? "border-accent bg-accent/15 text-accent"
               : "border-edge bg-surface/50 text-txt hover:border-accent/60 hover:text-accent"
           }`}
-          title="Uji Walk-Forward Identifikasi Regime (2019→2026) pada 12 aset + grafik TradingView"
+          title="Persentase identifikasi benar: historical backtesting dan 5-fold walk-forward, BTC/USDT 1H & 4H"
         >
           <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-          Walk-Forward 2019–2026
+          Hasil Uji Identifikasi
         </Link>
       </nav>
 

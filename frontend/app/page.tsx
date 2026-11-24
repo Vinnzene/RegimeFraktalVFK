@@ -99,16 +99,16 @@ export default function DashboardPage() {
             </span>
           </div>
           <p className="mt-1 text-[13px] text-txtMuted">
-            Sifat gerakan harga menurut model identifikasi Hybrid Attention-BiLSTM dan apa artinya untuk strategi Anda.
+            Sifat gerakan harga BTC/USDT menurut model identifikasi Hybrid Attention-BiLSTM.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
           <Link
-            href="/walk-forward-evaluation"
+            href="/evaluasi-identifikasi"
             className="flex items-center gap-1.5 rounded-md border border-accent/40 bg-accent/10 px-2.5 py-1 text-[12px] font-medium text-accent transition-colors hover:bg-accent/20"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-accent" />
-            Uji Walk-Forward 2019–2026 (12 Aset) →
+            Hasil Uji Identifikasi →
           </Link>
           <span data-tour="timeframe" className="flex items-center gap-2.5">
             <span className="text-[12px] text-txtMuted">Skala waktu</span>

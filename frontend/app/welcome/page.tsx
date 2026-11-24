@@ -36,16 +36,16 @@ const FEATURES = [
     text: "Hurst R/S dan DFA ditampilkan terhadap pita acak, sehingga terlihat kapan angka klasik sebenarnya tidak berbeda dari pasar tanpa memori.",
   },
   {
-    title: "Analisis aset apa pun",
-    text: "Pilih pair Binance atau saham, indeks, emas, dan forex dari Yahoo Finance, lalu jalankan model identifikasi yang sama (eksperimental di luar BTC/USDT).",
+    title: "Hasil uji terbuka",
+    text: "Persentase identifikasi benar per kelas pada historical backtesting dan 5-fold walk-forward, untuk 1H dan 4H.",
   },
   {
-    title: "Notifikasi Telegram",
-    text: "Pesan otomatis saat regime berganti, setelah dikonfirmasi tiga jendela berturut-turut agar tidak mudah salah alarm.",
+    title: "Wavelet (SWT)",
+    text: "Dekomposisi Stationary Wavelet Transform empat level yang menjadi bagian fitur masukan model.",
   },
   {
-    title: "Panduan setup",
-    text: "Jenis setup yang cocok dan yang sebaiknya dihindari untuk tiap kondisi, dengan status bukti dari hasil uji.",
+    title: "Fokus model",
+    text: "Bobot attention pada 32 langkah sekuens menunjukkan bagian jendela yang paling diperhatikan model.",
   },
 ];
 
@@ -56,7 +56,7 @@ const STEPS = [
     title: "Belajar dari konsensus Hurst–DFA",
     text: "Hybrid Attention-BiLSTM dilatih pada 70% riwayat BTC/USDT untuk mengenali label konsensus Hurst R/S–DFA-1 (Trend-Aware Soft Consensus) pada jendela itu sendiri, lalu diuji pada periode yang tidak pernah dilihat.",
   },
-  { n: "03", title: "Label + keyakinan", text: "Setiap 4 bar (1H) atau 2 bar (4H) sistem memberi label dan probabilitas tiap kelas. Notifikasi dikirim setelah tiga konfirmasi berturut-turut." },
+  { n: "03", title: "Label + keyakinan", text: "Setiap 4 bar (1H) atau 2 bar (4H) sistem memberi label dan probabilitas tiap kelas. Di bawah keyakinan 75% label ditandai ragu." },
 ];
 
 // Hanya model aplikasi (tanpa perbandingan algoritma). Angka: updated_eval_summary.json, partisi uji.
@@ -68,8 +68,8 @@ const BARS = [
 const LIMITS = [
   "Bukan peramal arah harga. “Berlanjut” berlaku untuk naik maupun turun.",
   "BTC 1H paling sering terbaca acak. Itu temuan penelitian, bukan galat: estimator klasik pun membaca 98% jendela sebagai acak.",
-  "Untuk aset selain BTC/USDT 1H, hasil bersifat eksperimental; uji generalisasi belum memenuhi kriteria.",
-  "Memilih strategi berdasarkan regime tidak menambah Sharpe setelah biaya pada uji kami. Nilai utamanya sebagai filter “jangan trading”.",
+  "Hanya untuk BTC/USDT pada kerangka waktu 1H dan 4H, dengan data spot Binance.",
+  "Mengidentifikasi kondisi jendela saat ini, bukan menghitung keuntungan atau memberi sinyal beli dan jual.",
 ];
 
 function Nav() {
@@ -200,13 +200,6 @@ export default function WelcomePage() {
                   <p className="mt-2 text-[14.5px] leading-relaxed text-txtDim">{s.text}</p>
                 </div>
               ))}
-            </div>
-            <div className="mt-14">
-              <Screenshot
-                src="/landing/analisis-light.webp"
-                alt="Hasil Analisis Aset ETHUSDT 1H: kondisi, pembanding klasik, grafik, dan riwayat kondisi"
-                caption="Analisis Aset: detektor yang sama untuk pair lain, ditandai eksperimental di luar BTC/USDT 1H."
-              />
             </div>
           </div>
         </section>

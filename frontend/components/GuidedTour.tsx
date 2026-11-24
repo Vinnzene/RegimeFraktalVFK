@@ -28,7 +28,7 @@ type Step = {
   title: string;
   body: React.ReactNode;
   only?: "desktop" | "mobile";
-  /** Hanya untuk admin atau hanya untuk pengguna biasa (menu Identifikasi khusus admin). */
+  /** Hanya untuk admin atau hanya untuk pengguna biasa (fitur di luar ruang lingkup khusus admin). */
   audience?: "admin" | "user";
 };
 
@@ -78,6 +78,7 @@ const STEPS: Step[] = [
   {
     target: ["nav-pasar"],
     only: "desktop",
+    audience: "admin",
     title: "Menu Pasar",
     body: (
       <p>
@@ -87,9 +88,15 @@ const STEPS: Step[] = [
     ),
   },
   {
+    target: ["nav-pasar"],
+    only: "desktop",
+    audience: "user",
+    title: "Menu Pasar",
+    body: <p>Kembali ke halaman Ringkasan kapan saja lewat menu ini.</p>,
+  },
+  {
     target: ["nav-identifikasi"],
     only: "desktop",
-    audience: "admin",
     title: "Menu Identifikasi",
     body: (
       <p>
@@ -100,6 +107,7 @@ const STEPS: Step[] = [
   {
     target: ["nav-strategi"],
     only: "desktop",
+    audience: "admin",
     title: "Menu Strategi",
     body: (
       <p>
@@ -127,15 +135,15 @@ const STEPS: Step[] = [
     title: "Semua menu",
     body: (
       <p>
-        Ketuk <b>Menu</b> untuk membuka semua halaman: <b>Pasar</b> (ringkasan, analisis aset lain) dan <b>Strategi</b> (strategi per kondisi,
-        notifikasi Telegram).
+        Ketuk <b>Menu</b> untuk membuka semua halaman: <b>Pasar</b> (ringkasan) dan <b>Identifikasi</b> (hasil uji, Hurst-DFA, wavelet, dan
+        fokus model).
       </p>
     ),
   },
   {
     target: ["user"],
     title: "Akun Anda",
-    body: <p>Status akun, notifikasi Telegram, dan tombol keluar. Ganti tema terang/gelap dengan tombol di sebelahnya.</p>,
+    body: <p>Status akun, Kuesioner SUS, dan tombol keluar. Ganti tema terang/gelap dengan tombol di sebelahnya.</p>,
   },
   {
     target: ["help"],

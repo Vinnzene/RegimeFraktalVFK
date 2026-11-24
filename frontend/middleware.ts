@@ -6,8 +6,26 @@ import { readSession } from "@/lib/session";
  * login, endpoint pembuat sesi, dan berkas statis. Halaman diarahkan ke /login; API menjawab 401.
  * Halaman pada ADMIN_ONLY hanya dapat dibuka akun yang emailnya ada di ADMIN_EMAILS.
  */
-/** Halaman di grup Riset, Arsip Fase 0, dan Tentang: hanya untuk admin. */
-const ADMIN_ONLY = ["/uji-ketahanan", "/multifractal", "/order-flow", "/methodology", "/about"];
+/**
+ * Hanya untuk admin: fitur tambahan di luar ruang lingkup skripsi (Walk-Forward multi-aset,
+ * Analisis Aset, Analisa Teknikal, Order Flow Live, grup Strategi) serta grup Riset,
+ * Arsip Fase 0, dan Tentang. Pengguna biasa hanya membuka Ringkasan, grup Identifikasi,
+ * dan Kuesioner SUS.
+ */
+const ADMIN_ONLY = [
+  "/walk-forward-evaluation",
+  "/analisis",
+  "/analisa-teknikal",
+  "/orderflow-live",
+  "/strategi",
+  "/setup",
+  "/notifikasi",
+  "/uji-ketahanan",
+  "/multifractal",
+  "/order-flow",
+  "/methodology",
+  "/about",
+];
 
 function isAdminEmail(email: string | null): boolean {
   const list = (process.env.ADMIN_EMAILS ?? "")
