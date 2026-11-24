@@ -11,11 +11,9 @@ import BrandMark from "@/components/login/BrandMark";
 /**
  * Navigasi horizontal di header, dikelompokkan menurut pertanyaan pengguna.
  *
- * Pengguna biasa hanya melihat ruang lingkup skripsi: Ringkasan (menu Pasar) dan
- * grup Identifikasi. Grup atau menu bertanda adminOnly (fitur tambahan di luar ruang
- * lingkup: Walk-Forward multi-aset, Analisis Aset, Analisa Teknikal, Order Flow Live,
- * Strategi, Riset, Arsip Fase 0, Tentang) hanya tampil untuk admin dan juga ditolak
- * middleware (ADMIN_ONLY) bagi akun lain. Seluruh lebar layar tetap tersedia untuk
+ * Semua akun melihat grup Pasar, Identifikasi, dan Strategi. Grup atau menu bertanda
+ * adminOnly (Riset termasuk Walk-Forward multi-aset, Arsip Fase 0, Tentang) hanya tampil
+ * untuk admin dan juga ditolak middleware (ADMIN_ONLY) bagi akun lain. Seluruh lebar layar tetap tersedia untuk
  * chart karena navigasi ada di header, bukan sidebar.
  */
 
@@ -29,9 +27,9 @@ const GROUPS: NavGroup[] = [
     label: "Pasar",
     items: [
       { href: "/", label: "Ringkasan", hint: "Kondisi pasar 1H & 4H menurut model identifikasi AI + grafik harga" },
-      { href: "/analisis", label: "Analisis Aset", hint: "Identifikasi regime untuk pair/ticker apa pun (Binance, Yahoo) · 10 per hari", adminOnly: true },
-      { href: "/analisa-teknikal", label: "Analisa Teknikal", hint: "Tarik garis, fibonacci, dan indikator (TradingView)", adminOnly: true },
-      { href: "/orderflow-live", label: "Order Flow Live", hint: "Heatmap order book, footprint, delta & CVD (kripto)", adminOnly: true },
+      { href: "/analisis", label: "Analisis Aset", hint: "Identifikasi regime untuk pair/ticker apa pun (Binance, Yahoo) · 10 per hari" },
+      { href: "/analisa-teknikal", label: "Analisa Teknikal", hint: "Tarik garis, fibonacci, dan indikator (TradingView)" },
+      { href: "/orderflow-live", label: "Order Flow Live", hint: "Heatmap order book, footprint, delta & CVD (kripto)" },
     ],
   },
   {
@@ -46,7 +44,6 @@ const GROUPS: NavGroup[] = [
   },
   {
     label: "Strategi",
-    adminOnly: true,
     items: [
       { href: "/strategi", label: "Regime → Strategi", hint: "Strategi per kondisi beserta hasil uji Fase 2" },
       { href: "/setup", label: "Panduan Setup", hint: "Setup yang cocok dan dihindari per kondisi pasar · perlu persetujuan admin" },

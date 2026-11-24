@@ -7,19 +7,11 @@ import { readSession } from "@/lib/session";
  * Halaman pada ADMIN_ONLY hanya dapat dibuka akun yang emailnya ada di ADMIN_EMAILS.
  */
 /**
- * Hanya untuk admin: fitur tambahan di luar ruang lingkup skripsi (Walk-Forward multi-aset,
- * Analisis Aset, Analisa Teknikal, Order Flow Live, grup Strategi) serta grup Riset,
- * Arsip Fase 0, dan Tentang. Pengguna biasa hanya membuka Ringkasan, grup Identifikasi,
- * dan Kuesioner SUS.
+ * Hanya untuk admin: grup Riset (termasuk Walk-Forward multi-aset), Arsip Fase 0, dan
+ * Tentang. Grup Pasar, Identifikasi, dan Strategi terbuka untuk semua akun.
  */
 const ADMIN_ONLY = [
   "/walk-forward-evaluation",
-  "/analisis",
-  "/analisa-teknikal",
-  "/orderflow-live",
-  "/strategi",
-  "/setup",
-  "/notifikasi",
   "/uji-ketahanan",
   "/multifractal",
   "/order-flow",

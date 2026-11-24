@@ -78,21 +78,12 @@ const STEPS: Step[] = [
   {
     target: ["nav-pasar"],
     only: "desktop",
-    audience: "admin",
     title: "Menu Pasar",
     body: (
       <p>
-        Ringkasan, uji Walk-Forward 2019–2026 pada 12 aset, <b>Analisis Aset</b> untuk pair atau ticker lain (Binance, Yahoo; 10 kali per hari),
-        Analisa Teknikal, dan Order Flow Live.
+        Ringkasan, <b>Analisis Aset</b> untuk pair atau ticker lain (Binance, Yahoo; 10 kali per hari), Analisa Teknikal, dan Order Flow Live.
       </p>
     ),
-  },
-  {
-    target: ["nav-pasar"],
-    only: "desktop",
-    audience: "user",
-    title: "Menu Pasar",
-    body: <p>Kembali ke halaman Ringkasan kapan saja lewat menu ini.</p>,
   },
   {
     target: ["nav-identifikasi"],
@@ -107,7 +98,6 @@ const STEPS: Step[] = [
   {
     target: ["nav-strategi"],
     only: "desktop",
-    audience: "admin",
     title: "Menu Strategi",
     body: (
       <p>
@@ -119,7 +109,6 @@ const STEPS: Step[] = [
   {
     target: ["nav-mobile"],
     only: "mobile",
-    audience: "admin",
     title: "Semua menu",
     body: (
       <p>
@@ -129,21 +118,9 @@ const STEPS: Step[] = [
     ),
   },
   {
-    target: ["nav-mobile"],
-    only: "mobile",
-    audience: "user",
-    title: "Semua menu",
-    body: (
-      <p>
-        Ketuk <b>Menu</b> untuk membuka semua halaman: <b>Pasar</b> (ringkasan) dan <b>Identifikasi</b> (hasil uji, Hurst-DFA, wavelet, dan
-        fokus model).
-      </p>
-    ),
-  },
-  {
     target: ["user"],
     title: "Akun Anda",
-    body: <p>Status akun, Kuesioner SUS, dan tombol keluar. Ganti tema terang/gelap dengan tombol di sebelahnya.</p>,
+    body: <p>Status akun, notifikasi Telegram, Kuesioner SUS, dan tombol keluar. Ganti tema terang/gelap dengan tombol di sebelahnya.</p>,
   },
   {
     target: ["help"],

@@ -52,7 +52,6 @@ export default function UserMenu() {
             {email && <div className="truncate text-2xs text-txtMuted">{email}</div>}
             {demo && <div className="mt-1.5 text-2xs leading-snug text-warn">Mode demo lokal, tanpa akun Google.</div>}
           </div>
-          {me.admin && (
           <Link
             href="/notifikasi"
             onClick={() => setOpen(false)}
@@ -63,7 +62,6 @@ export default function UserMenu() {
               {tg ? (tg.enabled ? "aktif" : "jeda") : "belum"}
             </span>
           </Link>
-          )}
           <Link
             href="/uat"
             onClick={() => setOpen(false)}

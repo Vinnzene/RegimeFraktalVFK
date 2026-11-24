@@ -174,7 +174,7 @@ export default function RegimeOverview({
   candles: Candle[];
 }) {
   const [showEvidence, setShowEvidence] = useState(false);
-  // Metodologi dan Strategi hanya untuk admin (middleware ADMIN_ONLY); pengguna lain diarahkan ke Hasil Uji Identifikasi.
+  // Metodologi hanya untuk admin (middleware ADMIN_ONLY); pengguna lain diarahkan ke Hasil Uji Identifikasi.
   const isAdmin = Boolean(useUser().me?.admin);
   const active = timeframe === "4h" ? ai4h : ai1h;
   const other = timeframe === "4h" ? ai1h : ai4h;
@@ -330,8 +330,7 @@ export default function RegimeOverview({
         </div>
       </div>
 
-      {/* Saran strategi ada di luar ruang lingkup skripsi, jadi hanya tampil untuk admin. */}
-      <div className={`mt-3 grid gap-2.5 ${isAdmin ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
+      <div className="mt-3 grid gap-2.5 md:grid-cols-3">
         <InfoCard title="Berlangsung sejak">
           <div className="mt-1 text-[18px] font-semibold text-txt">{run ? formatDate(run.since) : "–"}</div>
           <div className="text-[12px] text-txtMuted">{run ? `± ${formatDuration(run.last - run.since)}` : ""}</div>
@@ -340,7 +339,6 @@ export default function RegimeOverview({
           <div className="mt-1 text-[18px] font-semibold text-txt">{run ? `${run.switches}×` : "–"}</div>
           <div className="text-[12px] text-txtMuted">dalam 30 hari terakhir</div>
         </InfoCard>
-        {isAdmin && (
         <InfoCard title="Apa artinya untuk Anda?">
           <div className="mt-1 text-[16px] font-semibold text-txt">{plan?.strategy ?? "–"}</div>
           <div className="mt-1 flex flex-wrap items-center justify-center gap-2">
@@ -350,7 +348,6 @@ export default function RegimeOverview({
             </Link>
           </div>
         </InfoCard>
-        )}
       </div>
 
       <div className="mt-4 border-t border-edge pt-3">
