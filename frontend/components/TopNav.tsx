@@ -12,8 +12,9 @@ import BrandMark from "@/components/login/BrandMark";
  * Navigasi horizontal di header, dikelompokkan menurut pertanyaan pengguna.
  *
  * Dua belas menu sejajar membuat pengunjung tidak tahu harus mulai dari mana.
- * Grup bertanda adminOnly (Riset, Arsip Fase 0, Tentang) hanya tampil untuk
- * admin; middleware juga menolak halamannya bagi akun lain.
+ * Grup bertanda adminOnly (Identifikasi, Riset, Arsip Fase 0, Tentang) hanya tampil
+ * untuk admin. Halaman Riset, Arsip Fase 0, dan Tentang juga ditolak middleware bagi
+ * akun lain; halaman Identifikasi tetap terbuka lewat tautan langsung.
  * Kelompok mengikuti alur cerita dashboard: kondisi pasar sekarang, strategi
  * yang cocok, bukti riset di baliknya, lalu metodologi. Seluruh lebar layar
  * tetap tersedia untuk chart karena navigasi ada di header, bukan sidebar.
@@ -36,6 +37,9 @@ const GROUPS: NavGroup[] = [
   },
   {
     label: "Identifikasi",
+    // Disembunyikan dari menu pengguna biasa; halamannya tetap dapat dibuka lewat tautan
+    // langsung (mis. daftar halaman di Kuesioner SUS).
+    adminOnly: true,
     items: [
       { href: "/evaluasi-identifikasi", label: "Hasil Uji Identifikasi", hint: "Persentase identifikasi benar per kelas (backtest) dan per tahap walk-forward, BTC/USDT 1H & 4H" },
       { href: "/regime-explorer", label: "Hurst-DFA Klasik", hint: "Pembanding: label konsensus R/S–DFA, perpindahan & durasi" },

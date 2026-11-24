@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useUser } from "@/components/UserContext";
 
 /**
  * Panduan pertama kali membuka aplikasi: sorotan (spotlight) pada bagian penting
@@ -27,6 +28,8 @@ type Step = {
   title: string;
   body: React.ReactNode;
   only?: "desktop" | "mobile";
+  /** Hanya untuk admin atau hanya untuk pengguna biasa (menu Identifikasi khusus admin). */
+  audience?: "admin" | "user";
 };
 
 const STEPS: Step[] = [
@@ -86,6 +89,7 @@ const STEPS: Step[] = [
   {
     target: ["nav-identifikasi"],
     only: "desktop",
+    audience: "admin",
     title: "Menu Identifikasi",
     body: (
       <p>
@@ -107,11 +111,24 @@ const STEPS: Step[] = [
   {
     target: ["nav-mobile"],
     only: "mobile",
+    audience: "admin",
     title: "Semua menu",
     body: (
       <p>
         Ketuk <b>Menu</b> untuk membuka semua halaman: <b>Pasar</b> (ringkasan, analisis aset lain), <b>Identifikasi</b> (hasil uji, Hurst-DFA,
         wavelet, dan fokus model), serta <b>Strategi</b> (strategi per kondisi, notifikasi Telegram).
+      </p>
+    ),
+  },
+  {
+    target: ["nav-mobile"],
+    only: "mobile",
+    audience: "user",
+    title: "Semua menu",
+    body: (
+      <p>
+        Ketuk <b>Menu</b> untuk membuka semua halaman: <b>Pasar</b> (ringkasan, analisis aset lain) dan <b>Strategi</b> (strategi per kondisi,
+        notifikasi Telegram).
       </p>
     ),
   },
@@ -169,12 +186,14 @@ export default function GuidedTour() {
   const cardRef = useRef<HTMLDivElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
   const [cardH, setCardH] = useState(220);
+  const admin = Boolean(useUser().me?.admin);
 
   const begin = useCallback(() => {
     const desktop = window.innerWidth >= 1024;
-    setSteps(STEPS.filter((s) => !s.only || s.only === (desktop ? "desktop" : "mobile")));
+    const role = admin ? "admin" : "user";
+    setSteps(STEPS.filter((s) => (!s.only || s.only === (desktop ? "desktop" : "mobile")) && (!s.audience || s.audience === role)));
     setI(0);
-  }, []);
+  }, [admin]);
 
   const finish = useCallback(() => {
     writeDone();
