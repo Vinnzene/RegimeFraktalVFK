@@ -1,46 +1,4 @@
-"""Statistical Jump Model untuk pelabelan regime yang persistence-aware.
-
-Masalah yang diatasi
---------------------
-Pelabelan berbasis ambang per titik menghasilkan label yang berkedip
-(flip-flop). Pengukuran pada data BTC/USDT 1H menunjukkan kelas `random_like`
-hanya bertahan rata-rata 1,8 window dengan peluang bertahan 0,446 — padahal
-window bertetangga berbagi 99,2% data yang sama (stride 4 bar, L=500). Label
-berubah sementara datanya nyaris identik; itu derau estimator, bukan perubahan
-pasar.
-
-Penyebabnya terukur: pita ambang hasil kalibrasi kuantil hanya selebar ~0,028
-pada Hurst, sementara selisih |ΔH| antar-window bertetangga berada pada orde
-yang sebanding. Sesempit itu, derau saja cukup melempar window keluar-masuk
-kelas.
-
-Solusi (Nystrup, Kolm & Lindström, 2020)
-----------------------------------------
-Jump Model meminimalkan biaya gabungan: jarak tiap titik ke pusat state-nya,
-ditambah penalti setiap kali state berganti.
-
-    min_{Θ,S}  Σ_t ‖x_t − θ_{s_t}‖²  +  λ Σ_t 1{s_{t−1} ≠ s_t}
-
-Parameter λ mengatur seberapa "malas" model berpindah state: λ = 0 setara
-k-means tanpa memori, λ besar menghasilkan sedikit blok panjang. Optimasi
-dilakukan bergantian (coordinate descent):
-
-1. **Penugasan state** — dynamic programming (Viterbi) yang menemukan barisan
-   state optimal secara global untuk parameter tetap, bukan greedy per titik.
-2. **Pembaruan parameter** — pusat tiap state dihitung ulang sebagai rata-rata
-   anggotanya.
-
-Keduanya menurunkan fungsi objektif secara monoton, sehingga iterasi dijamin
-konvergen ke optimum lokal.
-
-Catatan metodologis
--------------------
-Masukan model adalah nilai Hurst dan DFA — keduanya dipakai untuk MEMBENTUK
-label, bukan sebagai fitur model klasifikasi. Ini tetap konsisten dengan
-prinsip anti-kebocoran: yang dilarang adalah memberi Hurst/DFA sebagai input
-Attention-BiLSTM, sedangkan di sini keduanya berperan sebagai sumber ground
-truth seperti sebelumnya.
-"""
+"""Statistical Jump Model untuk pelabelan regime yang persistence-aware."""
 
 from __future__ import annotations
 
@@ -48,8 +6,7 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 
-# Urutan state diselaraskan berdasarkan nilai Hurst: indeks 0 = paling rendah
-# (anti-persistent), indeks terakhir = paling tinggi (persistent).
+# Urutan state diselaraskan berdasarkan nilai Hurst: indeks 0 = paling rendah.
 DEFAULT_MAX_ITER = 50
 DEFAULT_N_INIT = 5
 
@@ -79,13 +36,7 @@ def _init_centers(X: np.ndarray, k: int, rng: np.random.Generator) -> np.ndarray
 
 
 def _assign_states(costs: np.ndarray, jump_penalty: float) -> np.ndarray:
-    """Barisan state optimal lewat dynamic programming.
-
-    `costs[t, s]` adalah biaya menempatkan titik t pada state s. Penalti
-    dikenakan setiap kali state berganti antar langkah waktu. Pendekatan DP
-    menemukan solusi optimal global untuk parameter tetap — berbeda dari
-    penugasan greedy per titik yang justru menghasilkan flip-flop.
-    """
+    """Barisan state optimal lewat dynamic programming."""
     n, k = costs.shape
     dp = np.empty((n, k))
     back = np.zeros((n, k), dtype=int)
@@ -115,11 +66,7 @@ def fit_jump_model(
     n_init: int = DEFAULT_N_INIT,
     seed: int = 42,
 ) -> Dict[str, object]:
-    """Fit Statistical Jump Model lewat coordinate descent.
-
-    Mengembalikan barisan state, pusat tiap state, dan nilai objektif. Beberapa
-    inisialisasi dicoba karena objektifnya non-konveks; hasil terbaik dipilih.
-    """
+    """Fit Statistical Jump Model lewat coordinate descent."""
     X = np.atleast_2d(np.asarray(X, dtype=float))
     if X.shape[0] < n_states * 2:
         return {
@@ -139,9 +86,7 @@ def fit_jump_model(
         states = np.zeros(Z.shape[0], dtype=int)
         prev_obj = np.inf
         converged = False
-        # Diinisialisasi sebelum loop: dengan max_iter = 0 loop tidak berjalan
-        # sama sekali, dan tanpa nilai awal ini pembentukan `best` di bawah
-        # gagal dengan UnboundLocalError.
+        # Diinisialisasi sebelum loop: dengan max_iter = 0 loop tidak berjalan sama sekali.
         obj = float("inf")
         fit_cost = float("inf")
         switches = 0
@@ -185,12 +130,7 @@ def order_states_by_feature(
     centers: np.ndarray,
     feature_index: int = 0,
 ) -> Tuple[np.ndarray, np.ndarray]:
-    """Urutkan state menaik menurut satu fitur acuan.
-
-    Tanpa ini, indeks state bersifat arbitrer antar-pemanggilan dan pemetaan ke
-    nama regime menjadi tidak konsisten. Dengan mengurutkan berdasarkan nilai
-    Hurst, state 0 selalu yang paling anti-persistent.
-    """
+    """Urutkan state menaik menurut satu fitur acuan."""
     order = np.argsort(centers[:, feature_index])
     remap = {int(old): new for new, old in enumerate(order)}
     return np.array([remap[int(s)] for s in states]), centers[order]
@@ -204,12 +144,7 @@ def label_with_jump_model(
     seed: int = 42,
     n_init: int = DEFAULT_N_INIT,
 ) -> Dict[str, Any]:
-    """Label regime dari deret Hurst dan DFA memakai Jump Model.
-
-    Kedua estimator dipakai bersama sebagai vektor dua dimensi, sehingga model
-    tidak perlu memutuskan mana yang "benar" ketika keduanya berbeda — posisi
-    relatif dalam ruang dua dimensi itulah yang menentukan state.
-    """
+    """Label regime dari deret Hurst dan DFA memakai Jump Model."""
     h = np.asarray(list(hurst), dtype=float)
     a = np.asarray(list(dfa), dtype=float)
 

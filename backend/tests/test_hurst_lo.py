@@ -22,8 +22,7 @@ def test_matches_classic_rs_on_white_noise():
 
 
 def test_less_biased_than_classic_rs_under_short_memory():
-    # AR(1) phi=0.5 tidak bermemori panjang (H sejati 0,5); R/S klasik
-    # menggelembung, versi Lo harus lebih dekat ke 0,5.
+    # AR(1) phi=0.5 tidak bermemori panjang (H sejati 0,5).
     rng = np.random.default_rng(1)
     lo, rs = [], []
     for _ in range(40):

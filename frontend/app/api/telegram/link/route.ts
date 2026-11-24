@@ -6,10 +6,7 @@ import { requireUser } from "@/lib/server-user";
 
 const TOKEN_MINUTES = 15;
 
-/**
- * Buat kode sekali pakai dan tautan t.me/<bot>?start=<kode>.
- * Bot (backend) menukar kode ini dengan chat ID pengguna.
- */
+/** Buat kode sekali pakai dan tautan t.me/<bot>?start=<kode>. */
 export async function POST() {
   const user = await requireUser();
   if (user instanceof NextResponse) return user;

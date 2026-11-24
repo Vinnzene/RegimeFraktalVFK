@@ -1,13 +1,4 @@
-"""Pita acak estimator Hurst R/S dan DFA-1: sebaran nilai pada deret tanpa memori.
-
-    python ml/src/random_band.py
-
-Deret sintetis dengan H = 0,5 (S1 bersih dan S4 berkarakter kripto, generator
-Fase 1) diukur dengan estimator yang sama persis dengan backend. Persentil
-2,5–97,5% menjadi "pita acak": nilai di dalam pita tidak dapat dibedakan dari
-pasar tanpa memori pada panjang jendela tersebut. Dipakai dashboard untuk
-memberi label pembanding klasik yang jujur, alih-alih sekadar di atas/di bawah 0,5.
-"""
+"""Pita acak estimator Hurst R/S dan DFA-1: sebaran nilai pada deret tanpa memori."""
 
 from __future__ import annotations
 

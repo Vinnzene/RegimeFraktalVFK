@@ -1,17 +1,4 @@
-"""Studi horizon Hybrid PS dengan label Trend-Aware Soft Consensus (review poin 14).
-
-Target sampel pada baris i = label soft consensus pada baris i + k, k = round(h / stride)
-(h = 0 → identifikasi, identik dengan `run_updated_evaluation.py`). Input, fitur, seed,
-hiperparameter, class weight 0,60, dan ambang label train-only sama persis.
-
-Split tetap split backtest (70/15/15 + purge L). Agar target tidak menyeberang batas,
-baris latih hanya dipakai bila i + k < akhir train, baris validasi bila i + k < akhir
-validasi, dan baris uji bila i + k < n. Augmentasi ETH/BNB 4H TIDAK dipakai di sini
-(labelnya tidak bisa digeser tanpa posisi asli); baris h = 0 + augmentasi dilaporkan
-sebagai rujukan dari run normal.
-
-    python ml/src/review_horizon.py --tf 1h
-"""
+"""Studi horizon Hybrid PS dengan label Trend-Aware Soft Consensus (review poin 14)."""
 
 from __future__ import annotations
 
@@ -80,8 +67,7 @@ def run(tf: str, threads: int) -> Dict[str, Any]:
         ens_v = np.mean(pv, 0).argmax(1)
         seed_acc = [float((p.argmax(1) == y_te).mean()) for p in pt]
         seed_ba = [_bal(y_te, p.argmax(1)) for p in pt]
-        # Baseline persistence: label pada t dipakai sebagai tebakan label t+h; bila label t uncertain_rule,
-        # dipakai kelas mayoritas latih.
+        # Baseline persistence: label pada t dipakai sebagai tebakan label t+h.
         maj = int(Yt[tr].sum(0).argmax())
         base = np.where(M0[te], Y0[te].argmax(1), maj)
         rec = {

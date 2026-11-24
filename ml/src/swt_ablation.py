@@ -1,14 +1,4 @@
-"""Ablasi fitur energi SWT pada detektor resmi (praregistrasi Fase 1 adendum 4).
-
-Jalankan (setelah `synthetic_benchmark.py --stage data`):
-    python ml/src/swt_ablation.py
-
-A0 = detektor resmi (50 fitur struktural + sekuens PS).
-A1 = sama, tanpa 12 fitur rasio energi SWT (38 fitur).
-Konfigurasi latih sama dengan `train_detector.py`; tiap varian dilatih 3 seed.
-
-Keluaran: ml/artifacts/swt_ablation.{json,md}
-"""
+"""Ablasi fitur energi SWT pada detektor resmi (praregistrasi Fase 1 adendum 4)."""
 
 from __future__ import annotations
 

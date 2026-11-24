@@ -1,20 +1,4 @@
-"""Inference regime — HANYA memuat artefak hasil training offline.
-
-Backend tidak pernah melatih model saat request; TensorFlow diimpor secara malas
-hanya ketika artefak benar-benar dimuat, sehingga endpoint non-model tetap
-ringan dan tidak bergantung pada TF.
-
-Tiga model yang dibandingkan:
-    rule_based           : baseline 1 — Hurst-DFA dari window <= t
-    swt_bilstm           : baseline 2 — tanpa attention
-    swt_attention_bilstm : model usulan skripsi
-Ditambah `persistence` sebagai baseline naif (regime t+h = regime t).
-Tanpa baseline persistence, angka model apa pun tidak bisa dinilai.
-
-Bila artefak belum ada, modul memakai stand-in deterministik agar dashboard
-tetap dapat dijalankan. Statusnya selalu dilaporkan lewat `prediction_source`
-supaya angka stand-in tidak pernah disalahartikan sebagai hasil pembelajaran.
-"""
+"""Inference regime — HANYA memuat artefak hasil training offline."""
 
 from __future__ import annotations
 
@@ -68,11 +52,7 @@ def load_metadata(model_key: str, timeframe: str) -> Dict[str, Any]:
 
 
 def load_model(model_key: str, timeframe: str) -> Any:
-    """Muat artefak Keras sekali lalu simpan di memori.
-
-    TensorFlow diimpor di dalam fungsi, bukan di tingkat modul: endpoint yang
-    tidak menyentuh model tidak perlu menanggung waktu impornya.
-    """
+    """Muat artefak Keras sekali lalu simpan di memori."""
     cache_key = f"{model_key}_{timeframe}"
     if cache_key in _loaded:
         return _loaded[cache_key]
@@ -97,18 +77,13 @@ def load_model(model_key: str, timeframe: str) -> Any:
             _loaded[cache_key] = model
             return model
         except Exception as exc:  # noqa: BLE001
-            # Kegagalan memuat tidak boleh menjatuhkan dashboard; dicatat agar
-            # tidak dicoba berulang kali pada setiap request.
+            # Kegagalan memuat tidak boleh menjatuhkan dashboard.
             _load_failures[cache_key] = f"{type(exc).__name__}: {exc}"[:200]
             return None
 
 
 def prediction_source(model_key: str, timeframe: str) -> str:
-    """Asal angka prediksi: artefak terlatih atau stand-in deterministik.
-
-    Dipakai UI untuk menandai panel model, supaya angka stand-in tidak pernah
-    disalahartikan sebagai hasil model yang sudah dilatih.
-    """
+    """Asal angka prediksi: artefak terlatih atau stand-in deterministik."""
     if model_key == "rule_based":
         return "rule_based"
     return "trained_artifact" if artifact_available(model_key, timeframe) else "placeholder"
@@ -125,23 +100,12 @@ def predict_proba(
     features: Sequence[float],
     seed: int = 42,
 ) -> Dict[str, float]:
-    """Probabilitas 3 kelas untuk satu window.
-
-    Saat artefak hasil training belum tersedia, skor dibangkitkan deterministik
-    dari fitur sehingga stabil antar-request — bukan angka acak per panggilan.
-
-    Catatan penting: ketersediaan artefak TIDAK terikat pada `runtime.use_mock`.
-    Flag itu hanya mengatur sumber data harga (mock vs Binance). Data pasar asli
-    bisa dipakai jauh sebelum model dilatih, jadi keduanya dipisah. Status
-    sebenarnya dilaporkan lewat `artifact_loaded` di endpoint agar tidak ada
-    yang mengira angka stand-in berasal dari model terlatih.
-    """
+    """Probabilitas 3 kelas untuk satu window."""
     vec = np.asarray(list(features) or [0.0], dtype=float)
     digest = float(np.sum(np.sin(vec * 12.9898 + 78.233))) + hash(model_key) % 97
     rng = np.random.default_rng(int(abs(digest) * 1000) % (2**31) + seed)
 
-    # Model dengan attention dibuat sedikit lebih tajam (entropi lebih rendah)
-    # agar perbedaan antar-model terlihat di panel perbandingan.
+    # Model dengan attention dibuat sedikit lebih tajam.
     sharpness = {"rule_based": 1.0, "swt_bilstm": 1.4, "swt_attention_bilstm": 1.9}
     logits = rng.normal(size=3) * sharpness.get(model_key, 1.0)
     probs = _softmax(logits)
@@ -154,11 +118,7 @@ def predict_sequences(
     sequences: np.ndarray,
     batch_size: int = 256,
 ) -> Optional[np.ndarray]:
-    """Probabilitas untuk banyak sekuens sekaligus memakai artefak terlatih.
-
-    Mengembalikan None bila artefak tidak tersedia atau gagal dimuat, sehingga
-    pemanggil dapat jatuh ke stand-in tanpa menggagalkan request.
-    """
+    """Probabilitas untuk banyak sekuens sekaligus memakai artefak terlatih."""
     if model_key not in NEURAL_KEYS or len(sequences) == 0:
         return None
     model = load_model(model_key, timeframe)
@@ -241,19 +201,7 @@ def evaluate_with_coverage(
     y_argmax: Sequence[Optional[str]],
     y_final: Sequence[Optional[str]],
 ) -> Dict[str, object]:
-    """Metrik dua lapis: sebelum dan sesudah ambang tau.
-
-    Alasan pemisahan ini: ketika model jarang yakin, hampir semua window menjadi
-    uncertain_lowconf dan metrik pasca-tau jatuh ke 0. Angka nol itu menyesatkan
-    karena terbaca seolah model salah total, padahal artinya model tidak pernah
-    cukup yakin untuk memberi label tegas.
-
-    - `argmax`   : kemampuan diskriminatif murni, mengabaikan tau.
-    - `thresholded` : yang benar-benar dipakai dashboard, dihitung hanya pada
-                      window yang lolos tau.
-    - `coverage` : porsi window yang mendapat label tegas. Tanpa angka ini,
-                   pembaca tidak bisa membedakan "salah" dari "tidak menjawab".
-    """
+    """Metrik dua lapis: sebelum dan sesudah ambang tau."""
     valid = [
         (t, a, f)
         for t, a, f in zip(y_true, y_argmax, y_final)

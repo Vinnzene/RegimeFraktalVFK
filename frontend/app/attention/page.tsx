@@ -24,12 +24,7 @@ import { REGIME_META, REGIME_PLAIN } from "@/lib/regime";
 const pct = (v: number) => `${(v * 100).toLocaleString("id-ID", { maximumFractionDigits: 1 })}%`;
 const num = (v: number, d = 3) => v.toLocaleString("id-ID", { minimumFractionDigits: d, maximumFractionDigits: d });
 
-/**
- * Fokus model: bobot attention alpha 32 langkah dari model identifikasi resmi (h = 0).
- *
- * Bobot berasal dari lapisan `attention_pool` ketiga seed Hybrid Attention-BiLSTM
- * dan dirata-rata. Tiap langkah adalah sub-jendela 128 bar di dalam jendela 500 bar.
- */
+/** Fokus model: bobot attention alpha 32 langkah dari model identifikasi resmi (h = 0). */
 export default function AttentionPage() {
   const { timeframe } = useAppConfig();
   const att = useApi(() => api.attention(timeframe), [timeframe]);

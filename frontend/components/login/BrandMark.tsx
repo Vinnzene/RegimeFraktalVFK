@@ -4,8 +4,7 @@ import { useId } from "react";
 
 /** Logo regimefraktalVFK: segitiga bersegi (puncak = regime, sisi = tiga kelas). */
 export default function BrandMark({ size = 40, className = "" }: { size?: number; className?: string }) {
-  // ID gradien unik per instans: bila dua logo memakai ID sama dan yang pertama
-  // tersembunyi (display:none), gradien logo kedua ikut tidak tergambar.
+  // ID gradien unik per instans: bila dua logo memakai ID sama dan yang pertama tersembunyi.
   const uid = useId().replace(/:/g, "");
   const edge = `bm-edge-${uid}`;
   const face = `bm-face-${uid}`;

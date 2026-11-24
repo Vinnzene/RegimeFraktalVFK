@@ -1,11 +1,4 @@
-/**
- * Kuesioner System Usability Scale (SUS; Brooke, 1996) RFraktal: instrumen, skor, rekap, CSV.
- *
- * Satu sumber untuk halaman responden, rute API, halaman Rekap SUS, dan unit test.
- * Modul ini sengaja tanpa impor agar dapat diuji langsung dengan `node --test`.
- *
- * Alur: persetujuan + profil → mencoba aplikasi (minimal 3 halaman) → 10 butir SUS → saran.
- */
+/** Kuesioner System Usability Scale (SUS; Brooke, 1996) RFraktal: instrumen, skor, rekap, CSV. */
 
 export const SUS_VERSION = "sus-v1";
 
@@ -99,12 +92,7 @@ export function susScore(answers: unknown): number {
   return sum * 2.5;
 }
 
-/**
- * Skala kata sifat Bangor, Kortum & Miller (2009). Rata-rata SUS tiap kata sifat:
- * Worst Imaginable 12,5 · Awful 20,3 · Poor 35,7 · OK 50,9 · Good 71,4 · Excellent 85,5 ·
- * Best Imaginable 90,9. Skor dikelompokkan ke kata sifat terdekat (batas = titik tengah
- * antar-rata-rata).
- */
+/** Skala kata sifat Bangor, Kortum & Miller (2009). */
 export const BANGOR_ADJECTIVES = [
   { label: "Worst Imaginable", mean: 12.5, upper: 16.4 },
   { label: "Awful", mean: 20.3, upper: 28.0 },
@@ -142,7 +130,7 @@ export type ItemRecap = {
   text: string;
   polarity: "positif" | "negatif";
   mean: number;
-  /** Sumbangan ke skor (0–4): ganjil = rata-rata − 1, genap = 5 − rata-rata. Terkecil = butir terlemah. */
+  /** Sumbangan ke skor (0–4): ganjil = rata-rata − 1, genap = 5 − rata-rata. */
   contribution: number;
 };
 

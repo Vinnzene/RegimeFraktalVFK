@@ -1,21 +1,4 @@
-"""Langkah 7 — Validasi walk-forward + confusion matrix agregat.
-
-Jalankan:
-    python ml/src/walk_forward_study.py --timeframe 1h
-    python ml/src/walk_forward_study.py --timeframe 1h --binary
-    python ml/src/walk_forward_study.py --timeframe 1h --labeling jump
-
-Model dilatih ULANG pada tiap fold, lalu seluruh prediksi digabung menjadi satu
-confusion matrix. Ini menjawab pertanyaan yang tidak dapat dijawab split
-tunggal: apakah performa bertahan sepanjang rentang data, atau hanya kebetulan
-baik di satu periode.
-
-Pengklasifikasi memakai ExtraTrees pada fitur struktural — bukan
-Attention-BiLSTM — karena walk-forward memerlukan pelatihan ulang pada tiap
-fold. Melatih jaringan saraf lima kali memakan waktu sangat lama, sementara
-tujuan pengujian di sini adalah kestabilan LABELING dan FITUR lintas periode,
-bukan mencari akurasi tertinggi mutlak.
-"""
+"""Langkah 7 — Validasi walk-forward + confusion matrix agregat."""
 
 from __future__ import annotations
 
@@ -46,12 +29,7 @@ BINARY_CLASSES = ["anti_persistent", "persistent"]
 
 
 def make_fit_predict(seed: int):
-    """Pengklasifikasi dilatih ulang pada tiap fold.
-
-    Penskalaan dipasang dari data latih fold itu saja. Menghitungnya sekali di
-    luar loop akan memakai statistik periode uji — kebocoran halus yang tidak
-    memunculkan error apa pun.
-    """
+    """Pengklasifikasi dilatih ulang pada tiap fold."""
 
     def fit_predict(
         X_tr: np.ndarray, y_tr: Sequence[str], X_te: np.ndarray

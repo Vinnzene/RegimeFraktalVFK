@@ -1,24 +1,4 @@
-"""Uji ketahanan metode: walk-forward, sensitivitas, dan Monte Carlo.
-
-Bagian:
-  --part sensitivity --tf 1h|4h
-      Sensitivitas ambang aturan Trend-Aware Soft Consensus (ER atas 0,60, ER bawah 0,35,
-      ER kuat 0,85), satu per satu. Untuk tiap setelan: label dibentuk ulang (ambang Hurst/DFA
-      dan skor ER_q tetap, dari data latih), Hybrid PS dilatih ulang (3 seed, hiperparameter
-      Bab 4) dan diuji pada partisi uji backtest. 4H TANPA augmentasi ETH/BNB agar semua
-      setelan sebanding (label augmentasi tidak dapat dibentuk ulang).
-  --part montecarlo
-      Dari probabilitas tersimpan (review/raw/{tf}_normal.npz):
-        * moving-block bootstrap (blok = L/stride jendela = 500 bar) untuk selang
-          kepercayaan 95% akurasi dan rata-rata 3 kelas (backtest & walk-forward pooled);
-        * uji permutasi geser-sirkular (label digeser ≥ 1 blok terhadap prediksi; menjaga
-          autokorelasi) untuk p-value terhadap kebetulan;
-        * sebaran antar-seed.
-  --part assemble
-      Gabungkan semuanya (+ walk-forward, sweep bobot kelas, ablasi, horizon, surrogat)
-      ke ml/artifacts/robustness_tests.json (dibaca endpoint /api/v1/model/robustness)
-      dan review/robustness_tests.md.
-"""
+"""Uji ketahanan metode: walk-forward, sensitivitas, dan Monte Carlo."""
 
 from __future__ import annotations
 

@@ -2,14 +2,7 @@ import { FieldValue } from "firebase-admin/firestore";
 import { adminDb } from "@/lib/firebase-admin";
 import type { SessionUser } from "@/lib/session";
 
-/**
- * Analisis aset di sisi server Next.js: kuota harian, riwayat per pengguna, dan
- * panggilan ke endpoint internal backend.
- *
- * Kuota dan riwayat disimpan di Firestore (users/{uid}/analyses dan
- * analysis_quota/{uid}). Sesi demo lokal memakai memori proses agar pengujian
- * di laptop tidak menulis ke Firestore produksi.
- */
+/** Analisis aset di sisi server Next.js: kuota harian, riwayat per pengguna. */
 
 export const DAILY_LIMIT = 10;
 const BACKEND = process.env.BACKEND_INTERNAL_URL ?? "http://localhost:8000";

@@ -1,32 +1,4 @@
-"""Validasi walk-forward untuk deret waktu.
-
-Kenapa bukan split tunggal
---------------------------
-Split tunggal hanya menguji satu periode. Bila periode itu kebetulan mudah —
-misalnya pasar sedang tenang — angka validasinya terlalu optimis dan tidak
-memberi tahu apa pun tentang kestabilan model di periode lain.
-
-Walk-forward melatih ulang model pada beberapa fold berurutan waktu, lalu
-menggabungkan seluruh prediksi menjadi satu confusion matrix agregat. Hasilnya
-menjawab pertanyaan yang lebih tepat: apakah model bekerja konsisten sepanjang
-rentang data, bukan hanya di satu potongan.
-
-Dua skema disediakan
---------------------
-- **expanding**: data latih terus bertambah (t0..t1, t0..t2, t0..t3, ...).
-  Meniru penggunaan nyata — model dilatih ulang dengan seluruh riwayat yang
-  tersedia saat itu.
-- **rolling**: jendela latih berukuran tetap dan ikut bergeser. Berguna untuk
-  memeriksa apakah data lama justru mengganggu, misalnya karena rezim pasar
-  sudah berubah.
-
-Purge gap
----------
-Setiap fold menyisipkan jeda antara akhir data latih dan awal data uji. Tanpa
-jeda itu, window latih terakhir masih berbagi bar dengan window uji pertama —
-baik lewat panjang window L maupun jarak horizon h — sehingga angka uji
-membaik karena kebocoran, bukan karena modelnya bekerja.
-"""
+"""Validasi walk-forward untuk deret waktu."""
 
 from __future__ import annotations
 
@@ -43,11 +15,7 @@ def generate_folds(
     min_train: Optional[int] = None,
     test_size: Optional[int] = None,
 ) -> List[Dict[str, object]]:
-    """Bentuk fold walk-forward berurutan waktu.
-
-    Mengembalikan daftar dict berisi rentang indeks latih, purge, dan uji.
-    Fold yang tidak memiliki cukup data dilewati, bukan dipaksakan.
-    """
+    """Bentuk fold walk-forward berurutan waktu."""
     if n <= 0 or n_splits < 1:
         return []
 
@@ -141,13 +109,7 @@ def run_walk_forward(
     purge: int = 0,
     scheme: str = "expanding",
 ) -> Dict[str, object]:
-    """Jalankan validasi walk-forward.
-
-    `fit_predict(X_train, y_train, X_test)` dipanggil sekali per fold dan harus
-    mengembalikan prediksi untuk X_test. Model dilatih ULANG pada tiap fold;
-    memakai model yang sama untuk seluruh fold akan membocorkan informasi dari
-    periode sesudahnya.
-    """
+    """Jalankan validasi walk-forward."""
     n = len(y)
     folds = generate_folds(n, n_splits=n_splits, purge=purge, scheme=scheme)
     if not folds:

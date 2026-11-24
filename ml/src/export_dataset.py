@@ -1,27 +1,4 @@
-"""Ekspor dataset training ke CSV untuk diperiksa manual.
-
-Menjawab kebutuhan pemeriksaan: apa yang sebenarnya dilatih, dan bagaimana
-label dibentuk dari Hurst-DFA.
-
-Jalankan:
-    python ml/src/export_dataset.py --timeframe 1h
-    python ml/src/export_dataset.py --timeframe 1h --binary
-
-Berkas yang dihasilkan di data/export/:
-
-    01_labeling_<tf>.csv       Bagaimana label dibentuk: nilai H, alpha,
-                               ambang yang berlaku, kelas masing-masing
-                               estimator, dan keputusan akhir. Kolom
-                               `alasan` menjelaskan tiap baris.
-
-    02_dataset_<tf>_<mode>.csv Sampel training: fitur struktural, target,
-                               dan segmen (train/purge/validation/test).
-
-    03_sequence_sample_<tf>.csv Contoh satu sekuens SWT (32 timestep x 5
-                               kanal) yang benar-benar masuk ke BiLSTM.
-
-    04_ringkasan_<tf>.csv      Statistik per kelas dan per segmen.
-"""
+"""Ekspor dataset training ke CSV untuk diperiksa manual."""
 
 from __future__ import annotations
 

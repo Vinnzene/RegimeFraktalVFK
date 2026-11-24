@@ -4,13 +4,7 @@ import { useMemo } from "react";
 import type { AiRegimePoint } from "@/lib/api-client";
 import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
 
-/**
- * Riwayat kondisi terbaru sebagai daftar periode: kapan mulai, berapa lama,
- * dan seberapa yakin detektor rata-rata selama periode itu. Titik deteksi
- * berurutan dengan label sama digabung menjadi satu periode. Label sama
- * dengan pita grafik; periode dengan keyakinan rata-rata di bawah ambang
- * ditandai "ragu".
- */
+/** Riwayat kondisi terbaru sebagai daftar periode: kapan mulai, berapa lama. */
 
 const TF_SECONDS: Record<string, number> = { "15m": 900, "1h": 3600, "4h": 14400, "1d": 86400 };
 

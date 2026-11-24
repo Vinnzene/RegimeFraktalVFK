@@ -1,12 +1,6 @@
 "use client";
 
-/**
- * Diagram walk-forward statis (SVG).
- *
- * Bersifat penjelas, bukan interaktif: jendela training bergeser maju dan
- * selalu diikuti purge gap sebelum jendela test, sehingga tidak ada window
- * training yang tumpang tindih dengan window test.
- */
+/** Diagram walk-forward statis (SVG). */
 export default function WalkForwardDiagram() {
   const folds = [0, 1, 2, 3];
   const rowH = 34;

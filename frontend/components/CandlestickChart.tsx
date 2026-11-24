@@ -14,24 +14,12 @@ import type { Candle, RegimePoint } from "@/lib/api-client";
 import { REGIME_META, REGIME_PLAIN, SEGMENT_META, type Regime } from "@/lib/regime";
 import { themeColor, useTheme } from "@/lib/theme";
 
-/**
- * Candlestick bergaya terminal perdagangan.
- *
- * Tiga lapis digambar pada satu chart:
- *  1. Band regime  — HistogramSeries tinggi penuh pada price scale tersembunyi,
- *     dibuat lebih dulu agar berada di lapisan paling belakang.
- *  2. Candlestick  — deret utama.
- *  3. Volume       — histogram di 18% bawah, price scale terpisah.
- *
- * Legend OHLC mengikuti posisi crosshair; saat kursor keluar area, legend
- * kembali menampilkan bar terakhir supaya tidak pernah kosong.
- */
+/** Candlestick bergaya terminal perdagangan. */
 
 const EMPTY_REGIMES: RegimePoint[] = [];
 const EMPTY_SEGMENTS: { segment: string; start_time: number; end_time: number }[] = [];
 
-// Rentang dinyatakan dalam DETIK, bukan jumlah bar. Versi berbasis bar
-// menganggap 1 bar = 1 jam, sehingga "1Y" pada 4H menampilkan empat tahun.
+// Rentang dinyatakan dalam DETIK, bukan jumlah bar.
 const DAY = 24 * 3600;
 const RANGES = [
   { label: "1D", seconds: DAY },
@@ -50,8 +38,7 @@ function hexToRgba(hex: string, alpha: number): string {
 function regimeBandColor(regime: string): string {
   const meta = REGIME_META[regime as Regime];
   if (!meta) return "rgba(51,65,85,0.10)";
-  // Acak adalah kondisi paling umum (±76% waktu); pitanya dibuat paling samar
-  // agar kondisi yang jarang (berlanjut/berbalik) menonjol.
+  // Acak adalah kondisi paling umum (±76% waktu).
   const alpha = regime === "random_like" ? 0.05 : meta.pattern === "solid" ? 0.12 : 0.16;
   return hexToRgba(meta.color, alpha);
 }
@@ -100,8 +87,7 @@ export default function CandlestickChart({
   const [hover, setHover] = useState<HoverInfo | null>(null);
   const [activeRange, setActiveRange] = useState<string>(defaultRange);
 
-  // Efek 1 — membuat chart. Hanya bergantung pada `height`, sehingga instance
-  // tidak dibongkar setiap kali data berubah.
+  // Efek 1 — membuat chart.
   useEffect(() => {
     if (!containerRef.current) return;
 
@@ -200,8 +186,7 @@ export default function CandlestickChart({
     };
   }, [height]);
 
-  // Efek 1b — warna mengikuti tema. Canvas tidak memahami var(), jadi token
-  // tema dibaca sebagai warna jadi dan diterapkan ulang saat tema berganti.
+  // Efek 1b — warna mengikuti tema.
   const theme = useTheme();
   useEffect(() => {
     const chart = chartRef.current;
@@ -217,8 +202,7 @@ export default function CandlestickChart({
     });
   }, [theme, height]);
 
-  // Rentang aktif dibaca lewat ref agar efek data tidak ikut berjalan ulang
-  // setiap kali pengguna menekan tombol rentang.
+  // Rentang aktif dibaca lewat ref.
   const rangeRef = useRef(activeRange);
   rangeRef.current = activeRange;
 
@@ -238,12 +222,7 @@ export default function CandlestickChart({
     [candles]
   );
 
-  // Efek 2a — candle & volume. Hanya berjalan saat candle berganti.
-  //
-  // Dipisah dari overlay regime: regime datang belakangan, dan dulu
-  // kedatangannya memicu setData ulang atas seluruh candle — pada riwayat
-  // penuh (~68 ribu bar) itu pekerjaan sia-sia yang membuat chart tersendat
-  // tepat saat halaman baru terbuka.
+  // Efek 2a — candle & volume.
   useEffect(() => {
     const series = seriesRef.current;
     const volume = volumeRef.current;
@@ -289,8 +268,7 @@ export default function CandlestickChart({
 
     const lookup = new Map<number, string>();
     if (showRegime && regimes.length > 0) {
-      // Regime dihitung per window (lebih jarang dari bar) — perluas ke depan
-      // sampai window berikutnya supaya bandnya kontinu.
+      // Regime dihitung per window (lebih jarang dari bar).
       const sorted = [...regimes].sort((a, b) => a.time - b.time);
       let ptr = 0;
       band.setData(
@@ -322,8 +300,7 @@ export default function CandlestickChart({
         }))
     );
 
-    // Tanpa fitContent di sini: overlay yang datang belakangan tidak boleh
-    // melempar pengguna keluar dari rentang yang sedang dilihatnya.
+    // Tanpa fitContent di sini: overlay.
     const last = candles[candles.length - 1];
     setHover((h) =>
       h && h.time !== last.time ? h : { ...(h ?? last), regime: lookup.get(last.time) }

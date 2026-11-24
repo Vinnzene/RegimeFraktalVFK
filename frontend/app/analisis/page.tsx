@@ -7,10 +7,7 @@ import SymbolSearch, { type SymbolItem } from "@/components/SymbolSearch";
 import { analyses, SOURCE_META, type AnalysisRecord, type AnalysisSource } from "@/lib/analyses-client";
 import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
 
-/**
- * Analisis Aset: jalankan detektor regime pada pair atau ticker apa pun dari
- * Binance atau Yahoo Finance, dibatasi 10 analisis per hari per akun.
- */
+/** Analisis Aset: jalankan detektor regime pada pair atau ticker apa pun dari Binance atau Yahoo Finance, dibatasi 10 analisis per hari per akun. */
 
 const BARS = [500, 1000, 2000, 3000, 5000];
 

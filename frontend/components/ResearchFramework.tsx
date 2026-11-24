@@ -1,13 +1,6 @@
 "use client";
 
-/**
- * Kerangka penelitian dalam format masalah-solusi.
- *
- * Disusun berpasangan agar setiap solusi terbaca sebagai jawaban atas masalah
- * tepat di atasnya — bentuk yang lazim dipakai saat mempertahankan rancangan
- * penelitian. Angka pada kolom bukti diambil dari hasil nyata sistem, bukan
- * ditulis ulang sebagai teks statis.
- */
+/** Kerangka penelitian dalam format masalah-solusi. */
 
 interface Row {
   stage: string;

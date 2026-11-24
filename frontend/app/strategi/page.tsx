@@ -9,14 +9,7 @@ import { api, type RegimePoint } from "@/lib/api-client";
 import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
 import { FASE2_BTC_1H, STRATEGY_PLAN as PLAN, VERDICT_META } from "@/lib/strategy";
 
-/**
- * Regime → strategi.
- *
- * Menjawab pertanyaan pengguna "kondisi pasar sekarang cocok untuk strategi
- * apa?". Peta strategi berasal dari teori; hasil uji Fase 2 di BTC 1H
- * (setelah biaya) ditampilkan berdampingan dan halaman menyatakan terang-terangan
- * bagian mana yang tidak didukung data.
- */
+/** Regime → strategi. */
 
 const MOM = REGIME_META.persistent.color;
 const MR = REGIME_META.anti_persistent.color;

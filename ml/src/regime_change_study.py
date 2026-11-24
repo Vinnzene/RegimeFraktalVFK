@@ -1,14 +1,4 @@
-"""Deteksi pergantian regime (§8) dan kurva abstain — praregistrasi Fase 1 adendum 5.
-
-Jalankan (setelah `synthetic_benchmark.py --stage data` dan `train_detector.py`):
-    python ml/src/regime_change_study.py
-
-B. Abstain: kurva cakupan vs BA tercakup; τ dipilih di validasi campuran S1–S4.
-A. Pergantian regime: 40 deret S4 × 20.000 bar dengan 8–12 titik ganti,
-   detektor bergulir (jendela 500, langkah 4), konfirmasi K = 3.
-
-Keluaran: ml/artifacts/regime_change_study.{json,md}
-"""
+"""Deteksi pergantian regime (§8) dan kurva abstain — praregistrasi Fase 1 adendum 5."""
 
 from __future__ import annotations
 

@@ -5,7 +5,7 @@ import { summarize } from "@/lib/sus";
 
 export const dynamic = "force-dynamic";
 
-/** Rekap SUS untuk admin: ringkasan, rata-rata per butir, dan jawaban per responden (tanpa nama/email). */
+/** Rekap SUS untuk admin: ringkasan, rata-rata per butir, dan jawaban per responden. */
 export async function GET() {
   const user = await requireUser();
   if (user instanceof NextResponse) return user;

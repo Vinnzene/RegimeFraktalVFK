@@ -1,14 +1,6 @@
 "use client";
 
-/**
- * Disclaimer wajib tampil di UI (bukan hanya di dokumen).
- *  - variant "backtest"  : hasil eksploratif, bukan jaminan profit
- *  - variant "fractal"   : istilah "regime fraktal" dipakai operasional,
- *                          bukan klaim matematis ketat (Bab 2.1.3)
- *  - variant "mock"      : data masih sintetis
- *  - variant "archive"   : halaman Fase 0 (model/label lama), bukan detektor sistem
- *  - variant "classic"   : label konsensus Hurst-DFA, hanya pembanding
- */
+/** Disclaimer wajib tampil di UI (bukan hanya di dokumen). */
 export default function Disclaimer({
   variant,
   className = "",

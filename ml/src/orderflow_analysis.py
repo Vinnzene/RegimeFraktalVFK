@@ -1,25 +1,4 @@
-"""Analisis hubungan regime Hurst-DFA dengan distribusi OFI dan CVD.
-
-Jalankan:
-    python ml/src/orderflow_analysis.py --timeframe 1h
-    python ml/src/orderflow_analysis.py --timeframe 1h --plot   # + gambar timeline
-
-Tidak ada pola yang diasumsikan. Untuk tiap regime dihitung statistik deskriptif
-OFI/CVD pada window-nya, lalu diuji apakah distribusinya berbeda antar regime
-(Kruskal-Wallis + effect size epsilon²). Karena window bertetangga tumpang
-tindih dan OFI berautokorelasi, p-value uji klasik terlalu optimistis; maka
-juga dilaporkan uji permutasi BLOK (label regime digeser melingkar) yang
-mempertahankan struktur autokorelasi.
-
-Statistik per window (dihitung dari bar di dalam window [t−L+1, t] saja):
-- ofi_mean          : rata-rata OFI — arah tekanan bersih
-- ofi_abs_mean      : rata-rata |OFI| — intensitas ketidakseimbangan
-- ofi_sign_persist  : porsi bar dengan tanda OFI sama dengan bar sebelumnya
-- ofi_ac1           : autokorelasi lag-1 OFI
-- ofi_ret_agree     : porsi bar dengan tanda OFI = tanda return (searah harga)
-- cvd_norm_end      : CVD z-score pada akhir window
-- cvd_slope         : delta CVD window / volume window, dalam [−1, 1]
-"""
+"""Analisis hubungan regime Hurst-DFA dengan distribusi OFI dan CVD."""
 
 from __future__ import annotations
 

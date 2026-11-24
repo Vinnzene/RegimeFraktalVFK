@@ -11,13 +11,7 @@ import { ApiState, useApi } from "@/components/useApi";
 import { api } from "@/lib/api-client";
 import { REGIME_META, regimeLabel, type Regime } from "@/lib/regime";
 
-/**
- * Timeline regime sebagai pita horizontal — memudahkan perbandingan 1H vs 4H.
- *
- * Titik berurutan dengan regime sama digabung menjadi satu elemen. Satu div per
- * window akan menghasilkan ~1375 node per kolom (2750 untuk dua kolom); setelah
- * dikompresi biasanya tinggal puluhan.
- */
+/** Timeline regime sebagai pita horizontal — memudahkan perbandingan 1H vs 4H. */
 function RegimeTimeline({ series }: { series: any[] }) {
   const runs = useMemo(() => {
     const out: { regime: string; length: number; start: number; end: number }[] = [];

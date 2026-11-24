@@ -1,18 +1,4 @@
-"""Peringatan dini dua kecepatan — praregistrasi docs/praregistrasi_peringatan_dini.md.
-
-Jalankan (setelah `regime_change_study.py` dan `fast_detection_study.py`, yang
-membuat cache deret panjang dan data latih):
-    python ml/src/early_warning_study.py
-
-D0 (detektor resmi) menentukan label; A (jendela 500, dilatih juga pada
-pergantian regime) hanya memberi peringatan bila mengonfirmasi kelas yang
-berbeda dari keadaan D0.
-
-Keluaran:
-    ml/artifacts/early_warning_study.{json,md}
-    ml/artifacts/detector/early_warning_s{seed}.keras (tidak di-commit)
-    ml/artifacts/detector/early_warning_meta.json
-"""
+"""Peringatan dini dua kecepatan — praregistrasi docs/praregistrasi_peringatan_dini.md."""
 
 from __future__ import annotations
 

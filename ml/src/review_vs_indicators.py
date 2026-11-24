@@ -1,19 +1,4 @@
-"""RFraktal dibandingkan indikator klasik ADX(14) dan Choppiness Index (14 dan 500).
-
-Pertanyaan praktis: "ADX/Choppiness gratis di TradingView juga bisa bilang trending atau
-sideways. Apa bedanya, dan mana yang lebih berguna?"
-
-1. Keterkaitan label: tabel silang dan Cramér's V antara label RFraktal (acuan soft
-   consensus dan prediksi model) dan kategori indikator pada jendela uji backtest.
-2. Kegunaan praktis: aturan momentum sederhana (arah return 24 bar terakhir dipakai sebagai
-   tebakan arah h bar berikutnya). Bila sebuah alat benar memisahkan pasar "berlanjut" dan
-   "berbalik", ketepatan momentum harus lebih tinggi pada kelompok tren daripada kelompok
-   berbalik/sideways. Selisihnya (spread) dibandingkan antar-alat, dengan selang kepercayaan
-   block bootstrap (blok = 500 bar) karena jendela bertumpuk. Tanpa biaya transaksi; ini uji
-   sifat gerakan, bukan uji profit.
-
-    python ml/src/review_vs_indicators.py
-"""
+"""RFraktal dibandingkan indikator klasik ADX(14) dan Choppiness Index (14 dan 500)."""
 
 from __future__ import annotations
 

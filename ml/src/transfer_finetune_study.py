@@ -1,23 +1,4 @@
-"""Fase 0b: pralatih sintetis + fine-tune pada label Hurst-DFA BTC.
-
-Praregistrasi: docs/praregistrasi_fase0b_transfer.md (dikunci sebelum skrip ini).
-
-Jalankan:
-    python ml/src/transfer_finetune_study.py --timeframe 1h
-    python ml/src/transfer_finetune_study.py --timeframe 4h
-
-Model:
-    B0  Hybrid PS dari nol, Adam 1e-3
-    T1  Hybrid PS mulai dari bobot detektor sintetis resmi, Adam 1e-4
-    T2  T1 + label smoothing 0,1
-    T0  detektor resmi tanpa fine-tune (deskriptif)
-
-Masukan seluruh model sama dengan detektor resmi: return tiap jendela
-diskalakan ke sigma 0,0066, lalu fitur distandarkan dengan statistik detektor
-sintetis (tidak dihitung ulang dari BTC).
-
-Keluaran: ml/artifacts/transfer_finetune_<tf>.{json,md}
-"""
+"""Fase 0b: pralatih sintetis + fine-tune pada label Hurst-DFA BTC."""
 
 from __future__ import annotations
 

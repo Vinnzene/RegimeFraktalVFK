@@ -24,8 +24,7 @@ from app.services.swt import causal_swt_at, max_useful_level, swt_decompose
 
 router = APIRouter(prefix="/api/v1/analysis", tags=["analysis"])
 
-# Kolom bernilai konstan di seluruh baris. Dikirim sekali lewat `parameters`,
-# tidak diulang 16.771 kali di dalam deret.
+# Kolom bernilai konstan di seluruh baris.
 THRESHOLD_COLUMNS = {
     "hurst_lower",
     "hurst_upper",
@@ -44,11 +43,7 @@ def _random_bands() -> Optional[dict]:
 
 
 def random_band(window: Optional[int], scenario: str = "S4") -> Optional[dict]:
-    """Pita acak R/S dan DFA untuk jendela terdekat (ml/src/random_band.py).
-
-    Persentil 2,5–97,5% estimator pada deret sintetis H = 0,5: nilai di dalam
-    pita tidak dapat dibedakan dari pasar tanpa memori pada panjang jendela itu.
-    """
+    """Pita acak R/S dan DFA untuk jendela terdekat (ml/src/random_band.py)."""
     data = _random_bands()
     if not data or not window or scenario not in data["bands"]:
         return None
@@ -69,13 +64,7 @@ def read_hurst_dfa(
         description="Jumlah titik maksimum. Deret dijarangkan bila melebihi.",
     ),
 ) -> dict:
-    """Deret Hurst dan DFA.
-
-    Deret dijarangkan memakai LTTB sebelum dikirim: layar tidak dapat
-    menampilkan belasan ribu titik secara bermakna, sementara payload penuh
-    mencapai 4,6 MB. LTTB dipilih karena mempertahankan puncak dan lembah —
-    titik ekstrem itulah yang menentukan batas kelas regime.
-    """
+    """Deret Hurst dan DFA."""
     cfg = get_config()
     repo = get_repository()
     df = repo.get_regime(symbol, tf)
@@ -118,18 +107,11 @@ def read_regime(
         description="Jumlah titik maksimum pada deret. Statistik tetap dari data penuh.",
     ),
 ) -> dict:
-    """Deret regime beserta distribusi dan segmen split.
-
-    Distribusi, regime aktif, dan seluruh statistik dihitung dari data PENUH;
-    hanya `series` yang dijarangkan untuk keperluan gambar. Dengan begitu angka
-    di panel tetap tepat meski grafiknya memakai titik yang lebih sedikit.
-    """
+    """Deret regime beserta distribusi dan segmen split."""
     cfg = get_config()
     repo = get_repository()
     df = repo.get_regime(symbol, tf)
     # purge_gap di config bersatuan BAR, sedangkan df berindeks WINDOW.
-    # Tanpa konversi, 1000 bar terbaca sebagai 1000 baris window (= 4000 bar)
-    # dan zona purge menelan seluruh validation serta test.
     stride = stride_bars_of(df)
     purge_rows = bars_to_rows(cfg.model.purge_gap, stride)
     df = assign_segment(df, cfg.split.ratios, purge_rows)
@@ -152,8 +134,7 @@ def read_regime(
         if len(df)
         else None
     )
-    # Penjarangan seragam agar urutan regime tidak terpotong tidak beraturan;
-    # LTTB dapat melompati blok regime pendek.
+    # Penjarangan seragam agar urutan regime tidak terpotong tidak beraturan.
     sampled = apply_downsample(rows, limit, method="uniform")
 
     return {
@@ -183,13 +164,7 @@ def read_ai_regime(
     symbol: str = Query("BTCUSDT"),
     limit: Optional[int] = Query(3000, ge=100, le=50000),
 ) -> dict:
-    """Identifikasi regime oleh model resmi sistem (Hybrid Attention-BiLSTM, h = 0).
-
-    Model yang sama dengan Bab 4: dilatih pada partisi latih BTC (70%) untuk
-    mengidentifikasi label Trend-Aware Soft Consensus jendela itu sendiri.
-    Titik sebelum batas latih adalah data latih model; `split_boundaries`
-    menandai batasnya agar tidak dibaca sebagai hasil luar sampel.
-    """
+    """Identifikasi regime oleh model resmi sistem (Hybrid Attention-BiLSTM, h = 0)."""
     from app.services import ai_detector  # noqa: PLC0415
 
     cfg = get_config()
@@ -267,11 +242,7 @@ def read_swt(
     levels: Optional[int] = Query(None, ge=1, le=8),
     end_index: Optional[int] = Query(None, ge=0),
 ) -> dict:
-    """Dekomposisi SWT untuk satu window yang berakhir di `end_index`.
-
-    Window dipotong pada end_index sebelum transform, sehingga tampilan
-    konsisten dengan cara fitur model dihitung (causal).
-    """
+    """Dekomposisi SWT untuk satu window yang berakhir di `end_index`."""
     cfg = get_config()
     repo = get_repository()
     ohlcv = repo.get_ohlcv(symbol, tf)
@@ -314,22 +285,7 @@ def read_multifractal(
         description="Jumlah titik maksimum pada deret H(q).",
     ),
 ) -> dict:
-    """Generalized Hurst H(q) untuk q = 1, 2, 4 — flow.md langkah 2 & 5.
-
-    H tunggal meringkas satu skala rata-rata saja: dua window dengan struktur
-    berbeda dapat memiliki H sama. H(q) memisahkannya dengan menimbang momen
-    berbeda — q kecil menyoroti fluktuasi kecil yang sering, q besar menyoroti
-    lompatan besar yang jarang.
-
-    Lebar spektrum `H(1) - H(4)` adalah ukuran multifraktalitas: nol berarti
-    monofraktal (fBm murni), makin lebar makin multifraktal. Nilai acuannya
-    diuji terhadap fBm sintetis di `tests/test_multifractal.py`.
-
-    Estimator di sini adalah FUNGSI STRUKTUR, berbeda dari R/S dan DFA yang
-    membentuk label regime. Karena itu H(2) di panel ini tidak wajib sama persis
-    dengan kolom `hurst`; kedekatan keduanya justru berguna sebagai pemeriksaan
-    silang antar-estimator.
-    """
+    """Generalized Hurst H(q) untuk q = 1, 2, 4 — flow.md langkah 2 & 5."""
     cfg = get_config()
     repo = get_repository()
     ohlcv = repo.get_ohlcv(symbol, tf)
@@ -360,10 +316,7 @@ def read_multifractal(
         for r in clean
         if isinstance(r.get("hq_width"), float) and np.isfinite(r["hq_width"])
     ]
-    # Pemeriksaan silang H(2) fungsi-struktur terhadap Hurst R/S. Keduanya
-    # diambil dari baris yang SAMA, jadi pasangannya dibentuk per baris —
-    # bukan dari dua list yang disaring terpisah, yang akan salah sejajar
-    # begitu salah satu estimator gagal pada window tertentu.
+    # Pemeriksaan silang H(2) fungsi-struktur terhadap Hurst R/S.
     pairs = [
         (r["hq_2"], r["hurst_rs"])
         for r in clean
@@ -418,12 +371,7 @@ def read_attention(
     symbol: str = Query("BTCUSDT"),
     at_time: Optional[int] = Query(None, description="Unix detik; bawaan jendela terbaru."),
 ) -> dict:
-    """Bobot attention alpha (32 langkah) model identifikasi resmi (h = 0).
-
-    Bobot diambil dari lapisan `attention_pool` ketiga seed Hybrid Attention-BiLSTM lalu
-    dirata-rata. Tiap langkah adalah sub-jendela 128 bar di dalam jendela 500 bar;
-    langkah terakhir berakhir di bar terakhir jendela.
-    """
+    """Bobot attention alpha (32 langkah) model identifikasi resmi (h = 0)."""
     from app.services import ai_detector  # noqa: PLC0415
 
     cfg = get_config()

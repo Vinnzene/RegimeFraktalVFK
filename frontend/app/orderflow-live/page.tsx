@@ -8,13 +8,7 @@ import HeatmapCanvas from "@/components/orderflow/HeatmapCanvas";
 import { useOrderFlow } from "@/components/orderflow/useOrderFlow";
 import type { Status } from "@/lib/orderflow/engine";
 
-/**
- * Order flow real-time untuk aset kripto Binance: heatmap likuiditas order
- * book, footprint candle, delta/CVD, dan tangga order book.
- *
- * Hanya kripto: order book saham IDX dan emas tidak tersedia gratis. Heatmap
- * dimulai saat halaman dibuka karena order book historis spot tidak tersedia.
- */
+/** Order flow real-time untuk aset kripto Binance: heatmap likuiditas order book. */
 
 const ASSETS = ["BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT", "ADAUSDT", "DOGEUSDT", "PAXGUSDT"];
 const CANDLES = [

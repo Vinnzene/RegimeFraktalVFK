@@ -4,13 +4,7 @@ import { useState } from "react";
 import { useAppConfig } from "@/components/ConfigContext";
 import TimeframeToggle from "@/components/TimeframeToggle";
 
-/**
- * Bar parameter global.
- *
- * Reproducibility untuk keperluan akademik: semua parameter yang memengaruhi
- * hasil tetap tersedia, tetapi disembunyikan di balik tombol agar tidak
- * membingungkan pembaca awam. Tiap parameter diberi keterangan singkat.
- */
+/** Bar parameter global. */
 export default function ParameterBar({ showTimeframe = true }: { showTimeframe?: boolean }) {
   const { config, shortHash, loading, error } = useAppConfig();
   const [open, setOpen] = useState(false);

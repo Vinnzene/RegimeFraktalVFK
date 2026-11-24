@@ -3,10 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { BANGOR_ADJECTIVES, SUS_BENCHMARK, SUS_ITEMS, susScore, type PublicSus, type SusSummary } from "@/lib/sus";
 
-/**
- * Rekap SUS untuk admin: ringkasan skor, rata-rata per butir (butir terlemah), dan jawaban
- * per responden. Tanpa nama dan email; ekspor CSV juga anonim.
- */
+/** Rekap SUS untuk admin: ringkasan skor, rata-rata per butir (butir terlemah). */
 
 type Payload = { source: string; demo: boolean; summary: SusSummary; responses: PublicSus[] };
 

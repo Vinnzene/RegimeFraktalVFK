@@ -1,20 +1,4 @@
-"""Unduh data aset tambahan untuk uji generalisasi (model dilatih di BTC saja).
-
-Jalankan:
-    python ml/src/fetch_assets.py            # semua aset
-    python ml/src/fetch_assets.py --only ETHUSDT BBRIJK
-
-Sumber:
-- Binance (repository yang sama dengan BTC): kripto utama dan PAXGUSDT
-  (token beragunan emas fisik, 24/7), 1h dan 4h sejak config data.start.
-- Yahoo Finance chart API (tanpa yfinance): saham IDX, IHSG, dan GC=F (emas
-  berjangka COMEX). 1h hanya ±730 hari terakhir dari Yahoo; 1d sejak 2000.
-  XAUUSD spot (Dukascopy) tidak tersedia: jaringan memblokir host-nya.
-
-Data disimpan di data/processed/ohlcv_<simbol>_<tf>.parquet dengan kolom yang
-sama dengan BTC; kolom taker_buy_volume dan n_trades kosong untuk Yahoo.
-Inventaris: ml/artifacts/asset_inventory.json
-"""
+"""Unduh data aset tambahan untuk uji generalisasi (model dilatih di BTC saja)."""
 
 from __future__ import annotations
 

@@ -1,33 +1,4 @@
-"""Pretraining fBm + fine-tune multi-task — flow.md langkah 4 & 6.
-
-    python ml/src/train_multitask.py --timeframe 1h
-    python ml/src/train_multitask.py --timeframe 1h --no-pretrain   # ablasi
-    python ml/src/train_multitask.py --timeframe 1h --lambda-reg 0.0  # ablasi
-
-Dua langkah flow.md digabung dalam satu skrip karena saling bergantung:
-pretraining hanya masuk akal bila arsitektur yang dilatih di data sintetis sama
-persis dengan yang di-fine-tune, dan head regresi H adalah alasan utama
-pretraining fBm berguna — di sana H diketahui persis.
-
-Urutan kerja
-------------
-1. Bangkitkan fBm dengan H diketahui, latih model penuh di sana.
-2. Muat bobot hasil langkah 1, lanjutkan training pada data BTC.
-3. Laporkan kedua tahap, plus dua ablasi bawaan:
-   - tanpa pretraining (`--no-pretrain`)
-   - tanpa head regresi (`--lambda-reg 0`)
-
-Dua ablasi itu yang membuktikan apakah langkah 4 dan langkah 6 benar-benar
-berkontribusi, bukan sekadar menambah kerumitan. Hasil yang menunjukkan TIDAK
-berkontribusi tetap dilaporkan apa adanya — seperti temuan order flow.
-
-Catatan tentang scaler
-----------------------
-Scaler sintetis tidak dibawa ke tahap fine-tuning. Koefisien SWT fBm dan BTC
-punya skala berbeda; memakai statistik fBm pada data riil akan menggeser
-seluruh masukan. Yang dipindahkan hanya BOBOT, dan itu sah karena bentuk
-masukan (seq_len, jumlah channel) identik.
-"""
+"""Pretraining fBm + fine-tune multi-task — flow.md langkah 4 & 6."""
 
 from __future__ import annotations
 
@@ -55,26 +26,14 @@ from train import class_weights  # noqa: E402
 
 
 def sample_weights_from(y_class: np.ndarray) -> np.ndarray:
-    """Bobot per sampel, berbanding terbalik dengan frekuensi kelasnya.
-
-    Model multi-output tidak menerima `class_weight` di Keras, sehingga
-    penyeimbangan kelas dinyatakan sebagai sample_weight pada head klasifikasi
-    saja. Head regresi tetap berbobot seragam: nilai H kontinu tidak punya
-    kelas, dan memberinya bobot kelas akan membuat galat pada regime minoritas
-    dihukum lebih keras tanpa alasan.
-    """
+    """Bobot per sampel, berbanding terbalik dengan frekuensi kelasnya."""
     weights = class_weights(y_class)
     idx = np.asarray(y_class).argmax(axis=1)
     return np.asarray([weights[int(i)] for i in idx], dtype=float)
 
 
 def evaluate(model, X, y_class, y_hurst, classes: List[str]) -> dict:
-    """Metrik kedua head sekaligus.
-
-    Head regresi dilaporkan bersama MAE baseline "selalu tebak rata-rata".
-    Tanpa pembanding itu, MAE 0.05 tidak bisa dinilai: bisa saja sebaran H
-    memang hanya selebar 0.05.
-    """
+    """Metrik kedua head sekaligus."""
     if len(y_class) == 0:
         return {"n": 0}
 
@@ -152,16 +111,12 @@ def pretrain_on_fbm(
     )
     history = model.fit(
         Xs_tr,
-        # Target dan bobot ditulis sebagai LIST mengikuti urutan output model
-        # (regime, lalu hurst). Pada Keras 3.9, sample_weight berbentuk dict
-        # gagal dengan `KeyError: 0`, dan mencampur dict untuk y dengan list
-        # untuk sample_weight ditolak karena strukturnya harus sepadan.
+        # Target dan bobot ditulis sebagai LIST mengikuti urutan output model (regime, lalu hurst).
         [yc_tr, yh_tr],
         validation_data=(Xs_va, [yc_va, yh_va]) if len(yc_va) else None,
         epochs=args.pretrain_epochs,
         batch_size=args.batch_size,
-        # Grid H tidak menghasilkan jumlah sampel yang sama per kelas: pita
-        # netral di sekitar 0.5 lebih sempit daripada dua sisi lainnya.
+        # Grid H tidak menghasilkan jumlah sampel yang sama per kelas.
         sample_weight=cast(Any, [sample_weights_from(yc_tr), np.ones(len(yh_tr), dtype=float)]),
         callbacks=[
             tf.keras.callbacks.EarlyStopping(
@@ -278,8 +233,7 @@ def main() -> None:
                 swt_level=cfg.analysis.J,
             )
         except (ValueError, SystemExit) as exc:
-            # Pretraining gagal tidak boleh menggagalkan seluruh eksperimen;
-            # yang penting statusnya tercatat, bukan hilang diam-diam.
+            # Pretraining gagal tidak boleh menggagalkan seluruh eksperimen.
             print(f"  pretraining dilewati: {exc}")
             pretrain_report = {"gagal": str(exc)[:200]}
             model = None
@@ -290,9 +244,7 @@ def main() -> None:
             lambda_regression=args.lambda_reg,
         )
     else:
-        # Bobot dipertahankan, optimizer di-reset: momentum dari data sintetis
-        # tidak berlaku untuk lanskap loss data riil. Learning rate diturunkan
-        # agar fine-tuning tidak langsung menghapus apa yang sudah dipelajari.
+        # Bobot dipertahankan, optimizer di-reset.
         model = compile_multitask(
             model, lr=3e-4, lambda_regression=args.lambda_reg
         )
@@ -304,10 +256,7 @@ def main() -> None:
         validation_data=(X_va, [yc_va, yh_va]) if len(yc_va) else None,
         epochs=args.epochs,
         batch_size=args.batch_size,
-        # class_weight tidak dipakai di sini: Keras menolaknya pada model
-        # multi-output. Penyeimbangan kelas dinyatakan sebagai sample_weight
-        # yang hanya membebani head klasifikasi (urutan list mengikuti urutan
-        # output: regime, lalu hurst).
+        # class_weight tidak dipakai di sini: Keras menolaknya pada model multi-output.
         sample_weight=cast(Any, [sample_weights_from(yc_tr), np.ones(len(yh_tr), dtype=float)]),
         callbacks=[
             tf.keras.callbacks.EarlyStopping(

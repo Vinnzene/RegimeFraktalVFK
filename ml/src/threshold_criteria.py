@@ -1,24 +1,4 @@
-"""Dasar pemilihan ambang kelas regime untuk Fase 1 (sebelum praregistrasi dikunci).
-
-Jalankan:
-    python ml/src/threshold_criteria.py
-
-Ambang kelas tidak boleh dipilih dari kinerja model (itu menyetel kunci
-jawaban). Skrip ini menghitung dua kriteria yang independen dari hasil Fase 1
-dan tidak menyentuh data BTC:
-
-B. Statistik: sebaran taksiran R/S dan DFA pada deret acak murni (H = 0,5)
-   sepanjang n bar. Selisih |H - 0,5| di dalam pita ini tidak dapat dibedakan
-   dari acak oleh estimator klasik.
-C. Ekonomi: H di mana strategi yang cocok (momentum untuk H > 0,5,
-   mean-reversion untuk H < 0,5) mulai untung setelah biaya. Di antara kedua
-   titik impas itu tidak ada strategi yang menguntungkan, yaitu definisi
-   praktis "acak".
-
-Strategi dan biaya sama dengan `regime_strategy_demo.py`.
-
-Keluaran: ml/artifacts/threshold_criteria.{json,md}
-"""
+"""Dasar pemilihan ambang kelas regime untuk Fase 1 (sebelum praregistrasi dikunci)."""
 
 from __future__ import annotations
 

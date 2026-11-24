@@ -2,8 +2,7 @@
 
 function getBaseUrl(): string {
   const envBase = process.env.NEXT_PUBLIC_API_BASE?.trim();
-  // "same-origin": backend diakses lewat reverse proxy di domain/IP yang sama
-  // (/api/v1/* diteruskan ke FastAPI), sehingga tidak ada port 8000 di browser.
+  // "same-origin": backend diakses lewat reverse proxy di domain/IP yang sama.
   if (envBase === "same-origin" && typeof window !== "undefined") return window.location.origin;
   if (envBase && envBase !== "same-origin") return envBase;
   if (typeof window !== "undefined") {
@@ -171,14 +170,7 @@ function decodeColumnar(r: ColumnarOhlcv): OhlcvResponse {
   return { ...rest, candles };
 }
 
-/**
- * Cache riwayat penuh per timeframe, hidup selama tab terbuka.
- *
- * Riwayat penuh ~1,4 MB di kabel. Tanpa cache, setiap pindah halaman atau
- * ganti timeframe bolak-balik mengunduhnya ulang. Promise yang disimpan —
- * bukan hasilnya — supaya dua komponen yang meminta bersamaan berbagi satu
- * request, dan kegagalan tidak ikut di-cache.
- */
+/** Cache riwayat penuh per timeframe, hidup selama tab terbuka. */
 const historyCache = new Map<string, Promise<OhlcvResponse>>();
 
 function ohlcvHistory(tf: string, symbol = "BTCUSDT"): Promise<OhlcvResponse> {
@@ -308,10 +300,9 @@ export const api = {
     get<any>("/api/v1/analysis/swt", { tf, levels, end_index: endIndex }),
   /** Bobot attention 32 langkah model identifikasi (h = 0), rata-rata 3 seed. */
   attention: (tf: string, atTime?: number) => get<AttentionResponse>("/api/v1/analysis/attention", { tf, at_time: atTime }),
-  /** Hasil uji identifikasi Bab 4 (updated_eval_summary.json): backtest + walk-forward per kelas/fold. */
+  /** Hasil uji identifikasi Bab 4 (updated_eval_summary.json). */
   evaluation: () => get<any>("/api/v1/model/evaluation"),
-  // Uji Ketahanan Metode tidak dibaca dari sini: datanya terkunci per akun dan
-  // hanya dikirim rute Next.js /api/robustness (lihat app/uji-ketahanan/page.tsx).
+  // Uji Ketahanan Metode tidak dibaca dari sini: datanya terkunci per akun.
   transitionMatrix: (tf: string) => get<any>("/api/v1/analysis/transition-matrix", { tf }),
   regimeDuration: (tf: string) => get<any>("/api/v1/analysis/regime-duration", { tf }),
   walkForwardMultiAsset: () =>

@@ -1,8 +1,4 @@
-"""Verification script to ensure Bab 4 numbers match source artifacts.
-
-Fails (exit 1) if any discrepancies are found between docs/bab4_hasil.md
-and the underlying JSON artifacts in ml/artifacts/.
-"""
+"""Verification script to ensure Bab 4 numbers match source artifacts."""
 
 import json
 import re

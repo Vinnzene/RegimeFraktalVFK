@@ -21,13 +21,7 @@ import {
   TOOLTIP_STYLE,
 } from "@/lib/chart-theme";
 
-/**
- * Deret Hurst & DFA α dengan pita ambang.
- *
- * Pita [lower, upper] digambar sebagai ReferenceArea supaya terlihat kenapa
- * suatu window jatuh ke kategori tertentu — dan kenapa window dengan H dan α
- * di sisi berbeda ditandai uncertain_rule.
- */
+/** Deret Hurst & DFA α dengan pita ambang. */
 export default function HurstDfaPanel({
   series,
   hurstThreshold,

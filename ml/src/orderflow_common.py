@@ -1,8 +1,4 @@
-"""Penyiapan data bersama untuk eksperimen order flow (sanity check, ablation, analisis).
-
-Satu fungsi saja yang membangun dataset, sehingga sanity check memeriksa
-tensor yang PERSIS sama dengan yang dipakai training.
-"""
+"""Penyiapan data bersama untuk eksperimen order flow (sanity check, ablation, analisis)."""
 
 from __future__ import annotations
 
@@ -21,8 +17,7 @@ from app.db.repository import get_repository  # noqa: E402
 from app.services.order_flow import coverage  # noqa: E402
 from dataset import build_dataset  # noqa: E402
 
-# Ablation: kanal order flow yang dipakai tiap model. Indeks merujuk ke
-# ORDER_FLOW_CHANNELS = ("ofi", "cvd").
+# Ablation: kanal order flow yang dipakai tiap model.
 ABLATION_MODELS: Dict[str, Dict[str, Any]] = {
     "A": {"name": "SWT + Attention-BiLSTM", "ofi": False, "cvd": False, "channels": []},
     "B": {"name": "SWT + Attention-BiLSTM + OFI", "ofi": True, "cvd": False, "channels": [0]},
@@ -32,15 +27,7 @@ ABLATION_MODELS: Dict[str, Dict[str, Any]] = {
 
 
 def ablation_purge_bars(seq_len: int, stride_bars: int, window: int, cvd_window: int) -> int:
-    """Purge yang menutup jangkauan input terjauh di antara keempat model.
-
-    Sekuens SWT/OFI/CVD memakai seq_len BAR berurutan yang berakhir di t, dan
-    tiap langkah menoleh ke belakang sejauh max(window_SWT, window_CVD). Label
-    Hurst-DFA memakai window_label bar. Jadi input sampel bertitik akhir t
-    menyentuh bar hingga t − (seq_len − 1) − max(window, cvd_window) + 1.
-    Purge ≥ angka itu (dibulatkan ke atas satu stride) menjamin sampel test
-    tidak berbagi satu bar pun dengan sampel train, baik lewat input maupun label.
-    """
+    """Purge yang menutup jangkauan input terjauh di antara keempat model."""
     return max(window, cvd_window) + seq_len + stride_bars
 
 

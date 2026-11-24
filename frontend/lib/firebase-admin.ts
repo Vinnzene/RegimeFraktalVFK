@@ -4,12 +4,7 @@ import { cert, getApps, initializeApp, type App, type ServiceAccount } from "fir
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 
-/**
- * Firebase Admin untuk server Next.js (route handler, bukan middleware).
- *
- * Kredensial dibaca dari FIREBASE_SERVICE_ACCOUNT_JSON (isi JSON, untuk hosting)
- * atau FIREBASE_SERVICE_ACCOUNT (path; relatif terhadap root project).
- */
+/** Firebase Admin untuk server Next.js (route handler, bukan middleware). */
 
 function loadServiceAccount(): ServiceAccount | null {
   const inline = process.env.FIREBASE_SERVICE_ACCOUNT_JSON?.trim();

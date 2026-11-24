@@ -1,11 +1,4 @@
-"""Loader config.yaml + perhitungan config_hash.
-
-config.yaml adalah satu-satunya sumber parameter. Hash SHA-256 dihitung dari
-representasi kanonik (JSON terurut) sehingga stabil terhadap perubahan urutan
-key atau komentar, tapi berubah begitu ada nilai parameter yang berbeda.
-Hash inilah yang ditempel di footer setiap panel frontend agar setiap angka
-di dashboard bisa ditelusuri ke konfigurasi yang menghasilkannya.
-"""
+"""Loader config.yaml + perhitungan config_hash."""
 
 from __future__ import annotations
 
@@ -38,12 +31,7 @@ class DataConfig(BaseModel):
 
 
 class SourceConfig(BaseModel):
-    """Sumber data pasar.
-
-    `drop_open_bar` sengaja divalidasi keras: bar yang belum tutup membuat nilai
-    Hurst dan label regime pada window terakhir berubah setiap refresh, sehingga
-    tampilan bisa berkedip di tengah sidang.
-    """
+    """Sumber data pasar."""
 
     provider: str = "binance"
     base_urls: List[str] = Field(
@@ -138,8 +126,7 @@ class AnalysisConfig(BaseModel):
     @field_validator("input")
     @classmethod
     def _must_be_log_return(cls, v: str) -> str:
-        # Harga level punya unit root: estimasi Hurst akan selalu ~0.9-1.0 dan
-        # seluruh window terklasifikasi Persistent. Guard ini disengaja keras.
+        # Harga level punya unit root: estimasi Hurst akan selalu ~0.9-1.0.
         if v != "log_return":
             raise ValueError(
                 "analysis.input harus 'log_return'. Harga level menghasilkan "
@@ -228,9 +215,7 @@ def _cached_config() -> AppConfig:
     return load_config()
 
 
-# Override eksplisit, dipakai test agar tidak menembak jaringan atau menimpa
-# data produksi. Pemeriksaan dilakukan di dalam get_config() supaya modul yang
-# mengimpor fungsi ini secara langsung tetap melihat nilai yang sama.
+# Override eksplisit, dipakai test agar tidak menembak jaringan atau menimpa data produksi.
 _override: Optional[AppConfig] = None
 
 

@@ -1,25 +1,4 @@
-"""Training tugas IDENTIFIKASI regime.
-
-Berbeda dari `train.py` yang memprediksi regime h bar ke depan, skrip ini
-menjawab pertanyaan yang sesuai judul penelitian: *window ini regimenya apa?*
-
-    python ml/src/train_identification.py --timeframe 1h
-    python ml/src/train_identification.py --timeframe 1h --binary
-
-Catatan metodologis penting
----------------------------
-Hurst dan DFA TIDAK boleh menjadi fitur. Label regime dibentuk dari keduanya
-lewat aturan ambang, sehingga memberikannya sebagai input membuat model sekadar
-menghafal aturan if-else — label sirkular. Pengujian memberi balanced accuracy
-~0.99 dengan cara itu, dan angka tersebut tidak membuktikan apa pun.
-
-Fitur yang dipakai berkaitan dengan persistensi secara teoretis tetapi dihitung
-berbeda: variance ratio, autokorelasi multi-lag, rasio energi antar-skala.
-
-Mode biner (`--binary`) membandingkan hanya persistent lawan anti-persistent.
-Kelas random_like dikeluarkan karena batasnya memang kabur secara definisi —
-ia dinyatakan sebagai "tidak persisten dan tidak anti-persisten".
-"""
+"""Training tugas IDENTIFIKASI regime."""
 
 from __future__ import annotations
 

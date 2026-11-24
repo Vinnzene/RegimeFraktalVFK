@@ -1,18 +1,4 @@
-"""Rekap Kuesioner SUS untuk naskah dari CSV ekspor halaman Rekap SUS.
-
-Membaca CSV ekspor (/api/sus/admin/export, tanpa nama dan email), menghitung ulang skor
-setiap responden dengan rumus yang sama dengan aplikasi, memastikan skor sama dengan kolom
-`skor_sus` di CSV, lalu menulis tabel per responden dan ringkasan ke Markdown.
-
-    python scripts/rekap_sus.py docs/naskah/cek_silang/sus_rfraktal_2026-12-01.csv
-    python scripts/rekap_sus.py <csv> --out docs/naskah/cek_silang/sus_hasil.md
-
-Skrip menolak berjalan bila CSV tidak berisi responden.
-
-Rumus: SUS = 2,5 × [Σ(butir ganjil − 1) + Σ(5 − butir genap)] (Brooke, 1996).
-Kata sifat: kelompok terdekat dari rata-rata Bangor, Kortum & Miller (2009); sama dengan
-`frontend/lib/sus.ts`.
-"""
+"""Rekap Kuesioner SUS untuk naskah dari CSV ekspor halaman Rekap SUS."""
 
 from __future__ import annotations
 
@@ -106,8 +92,7 @@ SIM_SOURCE = "Sumber: data simulasi prasidang (2026), bukan jawaban responden; d
 
 
 def is_simulated(rows: List[Dict[str, str]]) -> bool:
-    """Data simulasi ditandai kolom versi_instrumen berisi "SIMULASI" (ekspor aplikasi tidak pernah
-    menulisnya). Campuran simulasi dan asli ditolak."""
+    """Data simulasi ditandai kolom versi_instrumen berisi "SIMULASI"."""
     sim = [SIM_MARK in (r.get("versi_instrumen") or "").upper() for r in rows]
     if any(sim) and not all(sim):
         raise RekapError("CSV mencampur data simulasi dan data responden asli. Pisahkan dulu.")

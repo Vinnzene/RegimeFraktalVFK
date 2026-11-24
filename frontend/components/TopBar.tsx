@@ -4,13 +4,7 @@ import { useEffect, useState } from "react";
 import { useAppConfig } from "@/components/ConfigContext";
 import { api } from "@/lib/api-client";
 
-/**
- * Bar harga global di puncak layar.
- *
- * Menampilkan harga terakhir dan perubahan 24 jam, mengikuti kebiasaan terminal
- * data kripto. Angka diambil dari bar TERTUTUP terakhir — bar berjalan sengaja
- * dibuang di sisi ingestion, sehingga nilai di sini stabil dan tidak berkedip.
- */
+/** Bar harga global di puncak layar. */
 export default function TopBar() {
   const { timeframe, config } = useAppConfig();
   const [stat, setStat] = useState<{

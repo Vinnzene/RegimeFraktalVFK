@@ -1,15 +1,4 @@
-"""Kalibrasi volatilitas stokastik S3/S4 ke BTC 1H (praregistrasi Fase 1 §3).
-
-Jalankan:
-    python ml/src/calibrate_synthetic.py
-
-Hanya memakai statistik deskriptif return BTC 1H (autokorelasi |r| dan
-kurtosis), bukan label maupun hasil strategi. Grid (phi, eta) dipilih agar
-autokorelasi |r| deret S4 berada dalam ±0,05 dari BTC pada lag 1, 5, 24, 100;
-di antara yang lolos dipilih simpangan maksimum terkecil.
-
-Keluaran: ml/artifacts/synthetic_calibration.json
-"""
+"""Kalibrasi volatilitas stokastik S3/S4 ke BTC 1H (praregistrasi Fase 1 §3)."""
 
 from __future__ import annotations
 

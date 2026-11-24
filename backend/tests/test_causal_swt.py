@@ -1,10 +1,4 @@
-"""Bukti kausalitas SWT.
-
-Uji inti: potong deret di t, hitung ulang SWT, koefisien pada t-1 harus
-identik dengan hasil dari deret yang lebih panjang. Kalau test ini gagal,
-fitur model menyerap data masa depan (look-ahead bias) dan seluruh hasil
-identifikasi regime tidak sah.
-"""
+"""Bukti kausalitas SWT."""
 
 import numpy as np
 import pytest

@@ -4,15 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useUser } from "@/components/UserContext";
 
-/**
- * Panduan pertama kali membuka aplikasi: sorotan (spotlight) pada bagian penting
- * halaman Ringkasan dan menu, satu per satu, dengan penjelasan singkat.
- *
- * - Muncul otomatis sekali per browser saat pertama membuka Ringkasan ("/").
- * - Dapat diulang lewat tombol "Panduan" di header (event `rfraktal:tour`).
- * - Elemen ditandai dengan atribut `data-tour="..."`. Bila elemen tidak ada
- *   (mis. data belum dimuat), kartu tampil di tengah layar.
- */
+/** Panduan pertama kali membuka aplikasi: sorotan. */
 
 const STORAGE_KEY = "rfraktal_tour_v1";
 export const TOUR_EVENT = "rfraktal:tour";

@@ -1,32 +1,4 @@
-"""Evaluasi utama skripsi — semua model, split identik, multi-seed.
-
-Jalankan:
-    python ml/src/main_evaluation.py --timeframe 1h
-    python ml/src/main_evaluation.py --timeframe 4h
-    python ml/src/main_evaluation.py --timeframe 1h --seeds 42 43 44 --epochs 80
-
-Tugas: IDENTIFIKASI regime (h = 0). Target = label konsensus Hurst-DFA pada
-window yang sama. Window `uncertain_rule` (Hurst dan DFA tidak sepakat)
-dikeluarkan dari training dan evaluasi, sama seperti pipeline existing.
-
-Model yang dibandingkan (semua memakai dataset, split, purge, scaler, class
-weight, dan callback yang SAMA):
-
-    majority            tebak kelas terbanyak di training (batas bawah)
-    stratified          tebak acak sesuai proporsi kelas training
-    structural_mlp      MLP atas 44 fitur statistik window (tanpa sekuens)
-    swt_bilstm          BiLSTM atas sekuens SWT, tanpa attention
-    swt_attention_bilstm  BiLSTM + attention atas sekuens SWT
-    hybrid_attention_bilstm  MODEL USULAN: cabang sekuens SWT + Attention-BiLSTM
-                             digabung cabang fitur statistik
-
-Hurst dan DFA TIDAK pernah menjadi input model mana pun.
-
-Keluaran (tidak menimpa artefak lama):
-    ml/artifacts/main_eval_{tf}.json        metrik lengkap per model per seed
-    ml/artifacts/main_eval_{tf}.md          tabel ringkas untuk Bab 4
-    ml/artifacts/main_eval_pred_{tf}.parquet  prediksi test per sampel (seed pertama)
-"""
+"""Evaluasi utama skripsi — semua model, split identik, multi-seed."""
 
 from __future__ import annotations
 

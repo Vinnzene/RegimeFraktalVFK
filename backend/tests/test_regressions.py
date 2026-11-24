@@ -1,8 +1,4 @@
-"""Regression test untuk temuan code review.
-
-Tiap test di sini mengunci satu bug yang pernah lolos. Konversi satuan antara
-BAR dan WINDOW adalah sumber dua cacat paling serius, jadi porsinya paling besar.
-"""
+"""Regression test untuk temuan code review."""
 
 from typing import Any, Dict, List
 
@@ -73,8 +69,7 @@ def test_endpoint_regime_punya_segmen_test_tidak_kosong() -> None:
 
 
 def test_stride_bars_ikut_tersimpan_di_hasil_regime() -> None:
-    # Repositori terisolasi dari conftest (folder sementara). ParquetRepository()
-    # bawaan menunjuk data/processed asli dan menimpa cache regime dashboard.
+    # Repositori terisolasi dari conftest (folder sementara).
     repo = get_repository()
     df = repo.get_regime("BTCUSDT", "1h")
     assert "stride_bars" in df.columns
@@ -134,11 +129,7 @@ def test_path_selalu_di_dalam_data_processed() -> None:
 
 
 def test_inference_tidak_gagal_saat_artefak_belum_ada() -> None:
-    """runtime.use_mock mengatur sumber DATA, bukan ketersediaan artefak MODEL.
-
-    Data pasar asli dipakai jauh sebelum training selesai; menyatukan keduanya
-    membuat seluruh endpoint model balas 500 begitu use_mock dimatikan.
-    """
+    """runtime.use_mock mengatur sumber DATA, bukan ketersediaan artefak MODEL."""
     from app.services.model_registry import predict_proba
 
     probs = predict_proba("swt_attention_bilstm", [0.6, 0.5])
@@ -149,11 +140,7 @@ def test_inference_tidak_gagal_saat_artefak_belum_ada() -> None:
 
 
 def test_coverage_nol_tidak_terbaca_sebagai_prediksi_salah() -> None:
-    """Semua window uncertain_lowconf berarti 'jarang menjawab', bukan 'sering salah'.
-
-    Sebelum pemisahan ini, balanced_accuracy jatuh ke 0.0 dan terbaca seolah
-    model salah total, padahal model hanya tidak pernah cukup yakin.
-    """
+    """Semua window uncertain_lowconf berarti 'jarang menjawab', bukan 'sering salah'."""
     from app.services.model_registry import evaluate_with_coverage
 
     truth = ["persistent", "random_like", "anti_persistent"] * 10
@@ -199,12 +186,7 @@ def test_ground_truth_uncertain_rule_dikeluarkan() -> None:
 
 
 def test_fitur_struktural_tidak_memuat_hurst_atau_dfa() -> None:
-    """Penjaga label sirkular.
-
-    Label regime dibentuk dari Hurst dan DFA. Memasukkan keduanya sebagai fitur
-    membuat model sekadar menghafal aturan ambang — pengujian memberi balanced
-    accuracy ~0.99 dengan cara itu, dan angka tersebut tidak bermakna.
-    """
+    """Penjaga label sirkular."""
     from app.services.structural_features import feature_names
 
     names = feature_names()
@@ -317,18 +299,13 @@ def test_konsistensi_mendeteksi_urutan_terbalik() -> None:
 
 
 def test_jump_penalty_memperpanjang_durasi_regime() -> None:
-    """Penalti yang lebih besar harus menghasilkan blok regime yang lebih panjang.
-
-    Inilah alasan Jump Model dipakai: label berbasis ambang berkedip karena
-    derau estimator, sementara regime pasar jarang berubah tiap window.
-    """
+    """Penalti yang lebih besar harus menghasilkan blok regime yang lebih panjang."""
     import numpy as np
 
     from app.services.jump_model import label_with_jump_model
 
     rng = np.random.default_rng(3)
-    # Dua blok dengan tingkat Hurst berbeda, ditambah derau yang cukup untuk
-    # memicu flip-flop bila dilabeli per titik.
+    # Dua blok dengan tingkat Hurst berbeda, ditambah derau.
     h = np.concatenate(
         [
             rng.normal(0.40, 0.05, 150),
@@ -386,8 +363,7 @@ def test_walk_forward_rolling_menjaga_ukuran_jendela() -> None:
 
     folds: List[Dict[str, Any]] = generate_folds(2000, n_splits=4, purge=20, scheme="rolling")
     sizes = [f["n_train"] for f in folds]
-    # Ukuran jendela tetap, sehingga sebarannya jauh lebih sempit daripada
-    # skema expanding.
+    # Ukuran jendela tetap, sehingga sebarannya jauh lebih sempit daripada skema expanding.
     assert max(sizes) - min(sizes) < max(sizes) * 0.5
 
 
@@ -402,13 +378,7 @@ def test_confusion_agregat_konsisten() -> None:
 
 
 def test_cache_probabilitas_memperhitungkan_jumlah_baris() -> None:
-    """Hasil dari deret pendek tidak boleh terpakai untuk deret penuh.
-
-    Tanpa jumlah baris pada kunci cache, matriks probabilitas milik DataFrame
-    yang lebih pendek akan tersaji untuk deret penuh, dan pengindeksan baris
-    terakhir melampaui batas — IndexError yang hanya muncul pada urutan
-    pemanggilan tertentu.
-    """
+    """Hasil dari deret pendek tidak boleh terpakai untuk deret penuh."""
     import pandas as pd
 
     from app.services.inference import clear_inference_cache, probabilities_for
@@ -439,11 +409,7 @@ def test_cache_probabilitas_memperhitungkan_jumlah_baris() -> None:
 
 
 def test_purge_gap_menyesuaikan_horizon_yang_diuji() -> None:
-    """Saat h diubah untuk uji sensitivitas, purge gap harus ikut menyesuaikan.
-
-    Purge tetap sebesar L + h dari config akan terlalu lebar untuk horizon
-    pendek sehingga membuang data tanpa alasan.
-    """
+    """Saat h diubah untuk uji sensitivitas, purge gap harus ikut menyesuaikan."""
     cfg = get_config()
     for h in (125, 250, 500):
         expected = min(cfg.analysis.L + h, cfg.model.purge_gap)
@@ -463,12 +429,7 @@ def _incremental_repo(tmp_path, n_bars: int) -> ParquetRepository:
 
 
 def test_regime_incremental_identik_dengan_hitung_penuh(tmp_path) -> None:
-    """Bar baru hanya menghitung window baru, tetapi hasilnya harus identik.
-
-    Dulu setiap bar baru menghapus berkas regime dan memicu perhitungan ulang
-    ~17 ribu window (~40 detik). Kini H/alpha lama dipakai ulang. Test ini
-    mengunci bahwa jalan pintas itu tidak mengubah satu angka pun.
-    """
+    """Bar baru hanya menghitung window baru, tetapi hasilnya harus identik."""
     from app.mock.generator import generate_ohlcv
 
     full = generate_ohlcv("1h", seed=7, bars=3200)

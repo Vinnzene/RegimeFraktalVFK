@@ -1,24 +1,12 @@
 import type { Config } from "tailwindcss";
 
-/**
- * Dua tema berbagi nama warna yang sama: terang (bawaan, putih bersih dengan
- * garis tipis) dan gelap (terminal data kripto). Nilainya ada di globals.css;
- * aksen merek oranye dan hijau-merah khusus untuk arah harga.
- *
- * Catatan penting soal warna regime: hijau/merah SENGAJA tidak dipakai untuk
- * kategori regime. Persistent bukan berarti naik dan anti-persistent bukan
- * berarti turun — keduanya menyatakan sifat persistensi, bukan arah. Memakai
- * hijau/merah di sana akan membuat penonton menyamakannya dengan candle.
- */
+/** Dua tema berbagi nama warna yang sama: terang. */
 const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./lib/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        // Semua warna dibaca dari variabel CSS (globals.css) supaya tema terang
-        // dan gelap berbagi nama kelas yang sama. Format "r g b" memungkinkan
-        // modifier opasitas Tailwind seperti bg-surface/70.
-        // Lapisan latar, dari paling dalam ke paling depan.
+        // Semua warna dibaca dari variabel CSS (globals.css) supaya tema terang.
         panelAlt: "rgb(var(--c-panel-alt) / <alpha-value>)",
         panel: "rgb(var(--c-panel) / <alpha-value>)",
         surface: "rgb(var(--c-surface) / <alpha-value>)",

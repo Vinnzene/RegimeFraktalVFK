@@ -1,19 +1,4 @@
-"""Analisis sensitivitas horizon prediksi.
-
-Menjawab pertanyaan yang hampir pasti muncul saat sidang: apakah daya prediksi
-model menurun seiring jauhnya horizon? Kalau ya, seberapa cepat?
-
-Jalankan:
-    python ml/src/horizon_study.py --timeframe 1h --horizons 125 250 500 1000
-
-Setiap horizon dilatih dari awal dengan konfigurasi identik kecuali `h`, lalu
-dibandingkan terhadap Baseline Persistence pada horizon yang sama. Membandingkan
-lintas horizon tanpa baseline per-horizon akan menyesatkan: regime bertahan lebih
-lama pada horizon pendek, sehingga tebakan naif pun otomatis lebih baik di sana.
-
-Hasil disimpan ke ml/artifacts/horizon_study_<tf>.json dan dibaca oleh endpoint
-/api/v1/model/horizon-study.
-"""
+"""Analisis sensitivitas horizon prediksi."""
 
 from __future__ import annotations
 
@@ -132,8 +117,7 @@ def main() -> None:
         )
 
         test_metrics = evaluate(model, X_te, y_te)
-        # Selisih terhadap baseline pada horizon yang SAMA — ini angka yang
-        # sebanding antar horizon, bukan BA mentahnya.
+        # Selisih terhadap baseline pada horizon yang SAMA — ini angka yang sebanding antar horizon.
         lift = None
         if test_metrics.get("balanced_accuracy") is not None and baseline.get(
             "balanced_accuracy"

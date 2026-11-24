@@ -2,12 +2,7 @@
 
 import { regimeLabel } from "@/lib/regime";
 
-/**
- * Heatmap matriks transisi P(R_t+1 = j | R_t = i).
- *
- * Dibuat dengan grid CSS, bukan Recharts — Recharts tidak punya tipe heatmap,
- * dan matriks 5x5 terlalu kecil untuk membenarkan dependensi tambahan.
- */
+/** Heatmap matriks transisi P(R_t+1 = j | R_t = i). */
 export default function TransitionMatrix({
   categories,
   matrix,

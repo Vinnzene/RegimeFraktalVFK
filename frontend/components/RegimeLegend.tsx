@@ -2,10 +2,7 @@
 
 import { REGIME_META, REGIME_ORDER, REGIME_PLAIN } from "@/lib/regime";
 
-/**
- * Legenda 5 kategori. Dua jenis Uncertain ditampilkan dengan pola berbeda.
- * Nama awam ditampilkan lebih dulu; istilah teknis tetap ada sebagai keterangan.
- */
+/** Legenda 5 kategori. */
 export default function RegimeLegend({ compact = false }: { compact?: boolean }) {
   return (
     <div className="flex flex-wrap gap-x-4 gap-y-2">

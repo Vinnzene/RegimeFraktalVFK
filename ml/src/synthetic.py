@@ -1,30 +1,4 @@
-"""Dataset sintetis fBm untuk pretraining — flow.md langkah 4.
-
-Gagasannya
-----------
-Pada data BTC, label regime berasal dari ESTIMASI Hurst, dan estimasi itu
-sendiri mengandung galat. Model karenanya belajar dari target yang sudah
-tercemar. Pada fractional Brownian motion, H adalah parameter pembangkit:
-nilainya diketahui persis, bukan ditaksir. Melatih model di sana lebih dulu
-membuatnya mempelajari bentuk pola tiap regime dalam keadaan bersih, sebelum
-dihadapkan pada derau pasar sungguhan.
-
-Yang penting dijaga
--------------------
-1. **Fitur dibentuk dengan fungsi yang sama** seperti data riil
-   (`build_sequence_features`). Kalau berbeda, bobot hasil pretraining memetakan
-   masukan yang tak pernah muncul saat fine-tuning dan justru memperburuk.
-2. **Label berasal dari H pembangkit**, bukan dari estimator. Memakai estimator
-   di sini akan mengulang galat yang justru ingin dihindari.
-3. **Ambang label mengikuti definisi regime yang sama**: H < 0.5 anti-persisten,
-   H > 0.5 persisten, di sekitar 0.5 random-like. Lebar pita netral dibuat
-   eksplisit lewat `neutral_band` supaya tidak ada ambang tersembunyi.
-
-Perbedaan yang disengaja dari `backend/tests/test_hurst_dfa.py`: di sana fBm
-dipakai untuk MENGUJI ESTIMATOR, di sini untuk MELATIH MODEL. Keduanya memakai
-pembangkit yang sama (`hurst_dfa.fbm_increments`) sehingga tidak ada dua versi
-fBm yang bisa menyimpang diam-diam.
-"""
+"""Dataset sintetis fBm untuk pretraining — flow.md langkah 4."""
 
 from __future__ import annotations
 
@@ -49,8 +23,7 @@ from app.services.multifractal import (  # noqa: E402
 )
 from app.services.structural_features import build_feature_matrix  # noqa: E402
 
-# Rentang H yang disimulasikan. Sengaja melebar ke 0.2 dan 0.8 agar model
-# melihat contoh tegas di kedua ujung, bukan hanya kasus batas.
+# Rentang H yang disimulasikan.
 DEFAULT_HURST_GRID: Tuple[float, ...] = (0.2, 0.3, 0.4, 0.45, 0.5, 0.55, 0.6, 0.7, 0.8)
 
 
@@ -77,27 +50,11 @@ def build_synthetic_dataset(
     seed: int = 42,
     validation_share: float = 0.2,
 ) -> Dict[str, object]:
-    """Rakit X, fitur, target kelas, dan target H dari fBm.
-
-    Parameter
-    ---------
-    n_series_per_h
-        Banyak realisasi independen per nilai H. Beberapa realisasi diperlukan
-        karena satu lintasan fBm tunggal bisa kebetulan tidak khas.
-    samples_per_series
-        Banyak titik t yang diambil dari tiap lintasan. Titik-titik ini saling
-        tumpang tindih, jadi menambahnya tidak setara dengan menambah lintasan.
-    validation_share
-        Pemisahan dilakukan per LINTASAN, bukan per sampel. Memisah per sampel
-        akan menempatkan potongan dari lintasan yang sama di kedua sisi dan
-        membuat skor validasi terlalu bagus.
-    """
+    """Rakit X, fitur, target kelas, dan target H dari fBm."""
     target_classes: List[str] = list(classes) if classes else list(REGIME_CLASSES)
     rng = np.random.default_rng(seed)
 
-    # Panjang deret: satu window penuh untuk sampel pertama, ditambah ruang
-    # gerak sepanjang satu window lagi agar titik-titik sampel benar-benar
-    # tersebar dan tidak bertumpuk di ujung yang sama.
+    # Panjang deret: satu window penuh untuk sampel pertama.
     series_len = 2 * window + 64
 
     seq_rows: List[np.ndarray] = []
@@ -115,8 +72,7 @@ def build_synthetic_dataset(
             series_seed = int(rng.integers(0, 2**31 - 1))
             x = fbm_increments(series_len, float(h), seed=series_seed)
 
-            # Titik pengambilan dimulai setelah satu window penuh terkumpul,
-            # sehingga tidak ada sampel yang windownya terpotong di awal deret.
+            # Titik pengambilan dimulai setelah satu window penuh terkumpul, sehingga tidak ada sampel.
             lo = window - 1
             hi = x.size - 1
             positions = sorted(

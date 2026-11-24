@@ -1,15 +1,4 @@
-/**
- * Palet & label regime — satu sumber untuk seluruh halaman.
- *
- * Dua jenis Uncertain sengaja dibedakan secara visual:
- *  - uncertain_rule    : hatching diagonal (Hurst & DFA tidak sepakat -> soal DATA)
- *  - uncertain_lowconf : hatching titik    (max(P) < tau            -> soal MODEL)
- *
- * Warna dipilih bernada tengah agar terbaca di tema terang maupun gelap.
- * Hijau dan merah TIDAK dipakai di sini meski tema memakainya untuk candle.
- * Regime menyatakan sifat persistensi, bukan arah harga: Persistent tidak
- * berarti naik. Memakai warna arah akan membuat pembaca menyamakan keduanya.
- */
+/** Palet & label regime — satu sumber untuk seluruh halaman. */
 
 export type Regime =
   | "persistent"
@@ -62,10 +51,7 @@ export const REGIME_META: Record<
   },
 };
 
-/**
- * Bahasa awam untuk tiap regime. Istilah teknis tetap dipakai di halaman
- * analisis; versi ini untuk ringkasan yang dibaca orang tanpa latar statistik.
- */
+/** Bahasa awam untuk tiap regime. */
 export const REGIME_PLAIN: Record<
   Regime,
   { name: string; icon: string; summary: string; meaning: string; analogy: string }

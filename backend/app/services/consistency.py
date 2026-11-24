@@ -1,24 +1,4 @@
-"""Konsistensi identifikasi model terhadap karakteristik Hurst-DFA.
-
-Menjawab rumusan masalah: seberapa konsisten hasil identifikasi
-Attention-BiLSTM dengan karakteristik regime yang diperoleh dari Hurst-DFA?
-
-Akurasi saja tidak memadai untuk menjawabnya. Model dapat benar secara agregat
-namun kehilangan struktur temporal, atau menghasilkan distribusi kategori yang
-timpang. Karena itu konsistensi diperiksa pada empat lapis:
-
-1. **Kesepakatan window** — berapa persen window dilabeli sama.
-2. **Distribusi kategori** — apakah proporsi tiap regime terjaga. Diukur dengan
-   total variation distance; nilai 0 berarti distribusi identik.
-3. **Struktur temporal** — durasi regime dan peluang bertahan. Model yang
-   akurat tetapi berpindah-pindah terlalu sering tidak menangkap sifat
-   persistensi yang justru menjadi inti penelitian.
-4. **Kesesuaian nilai eksponen** — rata-rata Hurst dan DFA pada window yang
-   DIPREDIKSI model, dibandingkan dengan kategori Hurst-DFA sebenarnya. Lapis
-   ini paling menentukan: bila model menandai suatu window "persistent" dan
-   nilai Hurst di window itu memang tinggi, berarti model benar-benar menangkap
-   karakteristik statistiknya — bukan sekadar menebak label yang cocok.
-"""
+"""Konsistensi identifikasi model terhadap karakteristik Hurst-DFA."""
 
 from __future__ import annotations
 
@@ -35,17 +15,7 @@ def cohen_kappa(
     pred: Sequence[str],
     classes: Sequence[str],
 ) -> float:
-    """Kesepakatan yang melebihi kebetulan (Cohen, 1960).
-
-    Akurasi mentah menyesatkan saat kelas tidak seimbang: menebak kelas
-    mayoritas terus-menerus sudah memberi angka tinggi. Kappa mengoreksi
-    dengan mengurangkan kesepakatan yang diharapkan muncul secara kebetulan.
-
-        κ = (p_o − p_e) / (1 − p_e)
-
-    Tafsir lazim: < 0.20 lemah, 0.21–0.40 cukup, 0.41–0.60 sedang,
-    0.61–0.80 kuat, > 0.80 sangat kuat.
-    """
+    """Kesepakatan yang melebihi kebetulan (Cohen, 1960)."""
     n = len(true)
     if n == 0:
         return float("nan")
@@ -224,12 +194,7 @@ def exponent_alignment(
     dfa: np.ndarray,
     classes: Sequence[str],
 ) -> Dict[str, object]:
-    """Lapis 4 — apakah kategori prediksi mencerminkan nilai eksponen sebenarnya.
-
-    Inilah bukti terkuat konsistensi: bila window yang ditandai model sebagai
-    "persistent" memang memiliki Hurst tinggi, model menangkap karakteristik
-    statistiknya, bukan sekadar mencocokkan label.
-    """
+    """Lapis 4 — apakah kategori prediksi mencerminkan nilai eksponen sebenarnya."""
     rows: List[Dict[str, Any]] = []
     for c in classes:
         sel_p = [i for i, p in enumerate(pred) if p == c]
@@ -255,8 +220,7 @@ def exponent_alignment(
     else:
         gap_h = gap_a = 0.0
 
-    # Apakah urutan antar kategori terjaga? Persistent harus punya Hurst
-    # tertinggi, anti-persistent terendah.
+    # Apakah urutan antar kategori terjaga?
     ordering_ok = None
     by_regime = {r["regime"]: r for r in rows}
     if {"persistent", "anti_persistent"} <= set(by_regime):
@@ -287,15 +251,7 @@ def transition_alignment(
     pred: Sequence[str],
     tolerance: int = 2,
 ) -> Dict[str, object]:
-    """Seberapa tepat model menangkap WAKTU pergantian regime.
-
-    Rancangan penelitian menuntut perbandingan titik transisi, bukan hanya
-    label per window. Model bisa saja benar secara agregat namun terlambat
-    mengenali pergantian — hal yang tidak terlihat pada akurasi.
-
-    `tolerance` menyatakan berapa window pergeseran yang masih dianggap cocok;
-    dengan window tumpang tindih, pergeseran satu-dua langkah wajar terjadi.
-    """
+    """Seberapa tepat model menangkap WAKTU pergantian regime."""
     cp_true = _change_points(true)
     cp_pred = _change_points(pred)
     if not cp_true:

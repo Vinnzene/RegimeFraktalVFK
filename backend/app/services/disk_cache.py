@@ -1,15 +1,4 @@
-"""Cache berbasis berkas untuk hasil perhitungan berat.
-
-Masalah yang diatasi: `/model/compare` memerlukan ~17 detik dan
-`/model/consistency` ~4,5 detik pada panggilan pertama, karena keduanya
-menjalankan inference atas belasan ribu window. Cache di memori menyelesaikan
-panggilan kedua dan seterusnya, tetapi hilang setiap kali proses dimulai ulang —
-dan saat sidang, restart berarti penguji menunggu.
-
-Kunci cache menyertakan `config_hash`, sehingga hasil otomatis gugur ketika
-parameter berubah. Artefak model ikut diperiksa lewat mtime: melatih ulang
-model membuat entri lama tidak lagi dipakai meski konfigurasinya sama.
-"""
+"""Cache berbasis berkas untuk hasil perhitungan berat."""
 
 from __future__ import annotations
 
@@ -24,11 +13,7 @@ CACHE_DIR = PROCESSED_DIR / "cache"
 
 
 def _artifacts_fingerprint() -> str:
-    """Sidik jari seluruh artefak model berdasarkan nama dan waktu ubah.
-
-    Tanpa ini, hasil lama tetap disajikan setelah model dilatih ulang —
-    kesalahan yang sulit disadari karena tidak memunculkan error apa pun.
-    """
+    """Sidik jari seluruh artefak model berdasarkan nama dan waktu ubah."""
     if not ARTIFACTS_DIR.exists():
         return "no-artifacts"
     parts = []
@@ -76,8 +61,7 @@ def write(key: str, value: dict) -> None:
     path = CACHE_DIR / f"{key}.json"
     tmp = path.with_suffix(".tmp")
     try:
-        # Tulis ke berkas sementara lalu pindahkan, agar pembaca lain tidak
-        # pernah menemukan berkas yang separuh tertulis.
+        # Tulis ke berkas sementara lalu pindahkan, agar pembaca lain tidak pernah menemukan berkas.
         tmp.write_text(json.dumps(value), encoding="utf-8")
         tmp.replace(path)
     except OSError:

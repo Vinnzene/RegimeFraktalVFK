@@ -7,15 +7,7 @@ import type { AiRegimeClass, AiRegimeResponse, Candle } from "@/lib/api-client";
 import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
 import { STRATEGY_PLAN, VERDICT_META } from "@/lib/strategy";
 
-/**
- * Kartu ringkasan beranda: satu kesimpulan besar, empat angka pendukung, dan
- * satu kalimat penjelasan yang buktinya dapat dibuka.
- *
- * Label besar selalu dari model identifikasi AI. Estimator klasik R/S dan DFA hanya
- * pembanding dan dibaca terhadap pita acak (persentil 2,5–97,5% pada deret
- * tanpa memori), bukan terhadap 0,5: pada jendela 500 bar R/S bias ke atas,
- * sehingga 0,59 pun masih sepenuhnya acak.
- */
+/** Kartu ringkasan beranda: satu kesimpulan besar, empat angka pendukung. */
 
 const DAY = 24 * 3600;
 const AI_CLASSES: AiRegimeClass[] = ["persistent", "random_like", "anti_persistent"];
@@ -174,7 +166,7 @@ export default function RegimeOverview({
   candles: Candle[];
 }) {
   const [showEvidence, setShowEvidence] = useState(false);
-  // Metodologi hanya untuk admin (middleware ADMIN_ONLY); pengguna lain diarahkan ke Hasil Uji Identifikasi.
+  // Metodologi hanya untuk admin (middleware ADMIN_ONLY).
   const isAdmin = Boolean(useUser().me?.admin);
   const active = timeframe === "4h" ? ai4h : ai1h;
   const other = timeframe === "4h" ? ai1h : ai4h;

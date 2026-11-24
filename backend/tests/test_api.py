@@ -77,12 +77,7 @@ def test_multifractal_melaporkan_tiga_orde_q() -> None:
 
 
 def test_multifractal_lebar_spektrum_konsisten_dengan_hq() -> None:
-    """hq_width wajib sama dengan H(1) - H(4) pada baris yang sama.
-
-    Tanpa pemeriksaan ini, lebar spektrum bisa saja dihitung dari baris lain
-    akibat salah sejajar saat penjarangan — kesalahan yang tidak memunculkan
-    error apa pun tetapi membuat panel multifraktalitas menipu.
-    """
+    """hq_width wajib sama dengan H(1) - H(4) pada baris yang sama."""
     r = client.get("/api/v1/analysis/multifractal", params={"tf": "1h"})
     rows = [
         x

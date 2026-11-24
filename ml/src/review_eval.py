@@ -1,22 +1,4 @@
-"""Evaluasi ulang untuk review naskah Bab 4 (ml/artifacts/review/).
-
-Mereplikasi persis prosedur `run_updated_evaluation.py` (seed 42/43/44, split
-70/15/15 + purge, ambang kuantil train-only, label Trend-Aware Soft Consensus,
-augmentasi ETH/BNB 4H hanya pada backtest, eksponen class weight 0,60/0,55,
-epoch/batch/patience yang sama), tetapi:
-
-- menyimpan probabilitas per seed pada set VALIDASI dan UJI (backtest dan tiap
-  fold walk-forward) agar metrik lengkap dapat dihitung tanpa melatih ulang;
-- mendukung varian ablasi (fitur dihapus / arsitektur tanpa attention);
-- opsional menyimpan model .keras + scaler (varian normal, Hybrid PS).
-
-Tidak menulis ke ml/artifacts/updated_eval_summary.json.
-
-Pemakaian:
-    python ml/src/review_eval.py --tf 1h --variant normal --save-models
-    python ml/src/review_eval.py --tf 4h --variant no_er
-    python ml/src/review_eval.py --tf 1h --variant cw_sweep   # sweep eksponen (validasi saja)
-"""
+"""Evaluasi ulang untuk review naskah Bab 4 (ml/artifacts/review/)."""
 
 from __future__ import annotations
 
@@ -296,7 +278,7 @@ def main() -> None:
     bs_wf = 128 if args.tf == "1h" else 64
 
     if args.variant == "cw_sweep":
-        # Sweep eksponen class weight Hybrid PS; dilaporkan pada VALIDASI (uji ikut disimpan untuk transparansi).
+        # Sweep eksponen class weight Hybrid PS; dilaporkan pada VALIDASI.
         d = slice_data(data, [], [])
         powers = [float(x) for x in args.powers.split(",")] if args.powers else CW_SWEEP
         for p in powers:

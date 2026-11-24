@@ -15,16 +15,7 @@ import {
   type SusResponse,
 } from "@/lib/sus";
 
-/**
- * Penyimpanan Kuesioner SUS di sisi server Next.js.
- *
- * Firestore: sus_responses/{uid} (satu dokumen per akun: satu akun satu kali) dan
- * sus_meta/counter (nomor kode R01, R02, ...). Data UAT lama (uat_responses) tidak dibaca
- * dan tidak diubah. Nama dan email akun tidak disimpan bersama jawaban.
- *
- * Akses dibuka dengan kode undangan `SUS_INVITE_CODE` (atau `UAT_INVITE_CODE` lama).
- * Sesi demo lokal memakai memori proses dan boleh mencoba tanpa kode.
- */
+/** Penyimpanan Kuesioner SUS di sisi server Next.js. */
 
 const now = () => Math.floor(Date.now() / 1000);
 
@@ -45,7 +36,7 @@ export function inviteCode(): string {
   return (process.env.SUS_INVITE_CODE ?? process.env.UAT_INVITE_CODE ?? "").trim();
 }
 
-/** Rekap: admin (ADMIN_EMAILS) membaca Firestore; sesi demo lokal hanya melihat data demo di memori. */
+/** Rekap: admin (ADMIN_EMAILS) membaca Firestore. */
 export function canAdminSus(user: SessionUser): boolean {
   return isAdmin(user) || user.demo;
 }
@@ -101,7 +92,7 @@ function intIn(v: unknown, lo: number, hi: number): number | null {
   return typeof n === "number" && Number.isInteger(n) && n >= lo && n <= hi ? n : null;
 }
 
-/** Persetujuan + profil. Bila akun sudah pernah memulai, dokumen lama dikembalikan (satu akun satu kali). */
+/** Persetujuan + profil. */
 export async function start(user: SessionUser, body: any): Promise<SusResponse> {
   if (!susOpen(user)) throw new SusError("Kuesioner SUS belum dibuka.", 403);
   const existing = await getResponse(user);
@@ -190,7 +181,7 @@ export async function resetDemo(user: SessionUser): Promise<void> {
   memory.responses.delete(user.uid);
 }
 
-/** Semua jawaban untuk rekap admin, tanpa uid. Admin membaca Firestore; sesi demo membaca memori. */
+/** Semua jawaban untuk rekap admin, tanpa uid. */
 export async function listResponses(admin: SessionUser): Promise<PublicSus[]> {
   const d = db(admin);
   const raw: SusResponse[] = d

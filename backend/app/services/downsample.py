@@ -1,22 +1,4 @@
-"""Penjarangan deret untuk pengiriman ke browser.
-
-Layar selebar 2000 piksel tidak dapat menampilkan 16.771 titik secara bermakna —
-belasan titik jatuh pada piksel yang sama. Mengirim seluruhnya membuat payload
-membengkak (deret regime saja 2,3 MB, Hurst-DFA 4,6 MB) tanpa menambah
-informasi yang terlihat.
-
-Dua strategi disediakan:
-
-- `downsample_uniform` — ambil tiap ke-k. Cepat, cocok untuk deret yang
-  bentuknya halus.
-- `downsample_lttb` — Largest Triangle Three Buckets (Steinarsson, 2013).
-  Mempertahankan puncak dan lembah yang justru paling penting pada deret Hurst,
-  karena titik ekstrem menentukan batas kelas regime.
-
-Titik terakhir SELALU disertakan pada kedua metode: dashboard menampilkan nilai
-terkini, dan kehilangan titik itu membuat angka di panel tidak cocok dengan
-ujung grafik.
-"""
+"""Penjarangan deret untuk pengiriman ke browser."""
 
 from __future__ import annotations
 
@@ -43,13 +25,7 @@ def downsample_lttb(
     x_key: str = "time",
     y_key: str = "hurst",
 ) -> List[dict]:
-    """Largest Triangle Three Buckets — mempertahankan bentuk visual deret.
-
-    Untuk tiap bucket dipilih satu titik yang membentuk segitiga terluas
-    bersama titik terpilih sebelumnya dan rata-rata bucket berikutnya. Hasilnya
-    puncak dan lembah bertahan, berbeda dari penjarangan seragam yang dapat
-    memotongnya.
-    """
+    """Largest Triangle Three Buckets — mempertahankan bentuk visual deret."""
     n = len(rows)
     if target <= 2 or n <= target:
         return list(rows)
@@ -107,12 +83,7 @@ def apply_downsample(
     method: str = "uniform",
     y_key: str = "hurst",
 ) -> Dict[str, Any]:
-    """Terapkan penjarangan dan laporkan metadatanya.
-
-    Metadata disertakan agar UI dapat menyatakan bahwa grafik memakai deret
-    yang dijarangkan — angka ringkasan tetap dihitung dari data penuh di sisi
-    server.
-    """
+    """Terapkan penjarangan dan laporkan metadatanya."""
     n = len(rows)
     if not limit or n <= limit:
         return {"rows": list(rows), "downsampled": False, "original_count": n}

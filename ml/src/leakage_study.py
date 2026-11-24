@@ -1,45 +1,4 @@
-"""Eksperimen kebocoran data: protokol bersih vs protokol bocor yang umum.
-
-Jalankan:
-    python ml/src/leakage_study.py --timeframe 1h
-    python ml/src/leakage_study.py --timeframe 4h --seeds 42 43 44
-    python ml/src/leakage_study.py --timeframe 1h --variants clean no_purge --models hybrid_attention_bilstm
-
-Tujuan: mengukur seberapa besar angka evaluasi MENGGELEMBUNG bila protokol
-evaluasi bocor. Selisih "bocor − bersih" adalah bukti kuantitatif kontribusi
-metodologi skripsi (evaluasi tanpa kebocoran), bukan klaim tanpa data.
-
-Varian (arsitektur, hyperparameter, seed, epoch, callback IDENTIK; yang beda
-hanya protokol data):
-
-    clean            protokol skripsi: SWT kausal, split kronologis, purge L
-                     bar, scaler dari train saja
-    shuffle_split    split ACAK antar window (window bertetangga berbagi
-                     ~L bar, jadi test "mirip" train)
-    no_purge         kronologis tetapi TANPA purge gap di batas split
-    global_scaler    scaler dihitung dari SELURUH data (statistik test bocor)
-    noncausal_swt    SWT atas seluruh deret sekaligus (filter wavelet memakai
-                     sampel SESUDAH t)
-    all_leaks        noncausal_swt + shuffle_split + global_scaler
-
-    ABLATION FITUR (bukan varian bocor; protokol bersih, fitur dikurangi):
-    no_multifractal  tanpa 6 fitur H(q). H(2) adalah estimator persistensi
-                     lain (fungsi struktur), berbeda dari R/S dan DFA.
-    no_vr            tanpa variance ratio (vr_*)
-    no_vr_ac         tanpa variance ratio dan autokorelasi (vr_*, ac_*)
-    no_persistence_proxies  tanpa vr_*, ac_*, DAN H(q)
-                     Semua kelompok ini secara matematis berkaitan dengan
-                     eksponen Hurst. Bila hasil turun mendekati model SWT
-                     murni tanpa mereka, model sebagian besar "membaca ulang"
-                     label lewat proksi persistensi — temuan yang wajib
-                     dilaporkan (uji sirkularitas).
-
-Hurst dan DFA tidak pernah menjadi input di varian mana pun.
-
-Keluaran (tidak menimpa artefak lain):
-    ml/artifacts/leakage_study_{tf}.json
-    ml/artifacts/leakage_study_{tf}.md
-"""
+"""Eksperimen kebocoran data: protokol bersih vs protokol bocor yang umum."""
 
 from __future__ import annotations
 
@@ -92,8 +51,7 @@ VARIANTS: Dict[str, Dict[str, object]] = {
     "no_persistence_proxies": {"swt": "causal", "split": "chrono", "purge": True, "scaler": "train", "mf": False,
                                "drop": ("vr_", "ac_ret_", "ac_abs_"),
                                "desc": "Bersih, tanpa VR, autokorelasi, dan H(q)"},
-    # Hanya bermakna untuk model PS: kanal VR/AC juga dibuang dari SEKUENS PS,
-    # menyisakan sign_flip dan log_vol per langkah.
+    # Hanya bermakna untuk model PS: kanal VR/AC juga dibuang dari SEKUENS PS.
     "no_persistence_proxies_all": {"swt": "causal", "split": "chrono", "purge": True, "scaler": "train", "mf": False,
                                    "drop": ("vr_", "ac_ret_", "ac_abs_"), "ps_drop": ("vr_", "ac_", "acabs_"),
                                    "desc": "Tanpa VR, AC, H(q) di fitur DAN di sekuens PS"},
@@ -210,8 +168,7 @@ def build_base(
         "labels": labels, "positions": positions, "mask": mask, "y": y,
         "X_causal": X_causal, "X_noncausal": X_noncausal, "F_struct": F_struct, "F_mf": F_mf,
         "window": window, "stride": stride,
-        # Eksponen kontinu disertakan hanya untuk kalibrasi ulang ambang per
-        # fold walk-forward; TIDAK boleh dipakai sebagai fitur.
+        # Eksponen kontinu disertakan hanya untuk kalibrasi ulang ambang per fold walk-forward.
         "hurst": regime["hurst"].to_numpy(dtype=float),
         "dfa": regime["dfa_alpha"].to_numpy(dtype=float),
         "er_full": regime["er_full"].to_numpy(dtype=float),
@@ -245,8 +202,7 @@ def make_split(base: Dict[str, Any], spec: Dict[str, Any], ref_sizes: Dict[str, 
 
 def prepare(base: Dict[str, Any], spec: Dict[str, Any], rows: Dict[str, np.ndarray], seq: str = "swt") -> Dict[str, tuple]:
     if seq == "ps":
-        # PS sudah kausal per konstruksi; varian noncausal_swt tidak relevan
-        # (ditolak di main) sehingga sekuens PS selalu dipakai apa adanya.
+        # PS sudah kausal per konstruksi.
         X = base["PS"]
         ps_drop = tuple(spec.get("ps_drop", ()))
         if ps_drop:

@@ -1,13 +1,4 @@
-"""Verifikasi: identifikasi aplikasi (backend ai_detector) pada jendela uji backtest
-harus sama dengan hasil Bab 4 (1H 1.624/2.005, 4H 568/761).
-
-Jalur aplikasi dipakai apa adanya: `ai_detector.update_cache` (featurisasi + model +
-cache), lalu titik pada posisi uji dibandingkan dengan label soft consensus uji dari
-`run_updated_evaluation.prepare_timeframe_data`. Probabilitas juga dibandingkan dengan
-probabilitas ensemble dari `review/raw/{tf}_normal.npz` (run evaluasi).
-
-    python ml/src/review_verify_app.py
-"""
+"""Verifikasi: identifikasi aplikasi."""
 
 from __future__ import annotations
 

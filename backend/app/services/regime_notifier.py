@@ -1,23 +1,4 @@
-"""Notifikasi pergantian regime ke pelanggan Telegram.
-
-Aturan konfirmasi: regime baru diumumkan hanya bila K window terakhir
-(bawaan 3, `NOTIFY_CONFIRM_WINDOWS`) berlabel sama, termasuk salah satu dari tiga
-regime utama, dan berbeda dari regime terkonfirmasi sebelumnya. Label regime
-sering "berkedip" antar window bertetangga (lihat jump_model.py); tanpa
-konfirmasi pelanggan menerima pesan bolak-balik. Window `uncertain_rule` tidak
-memicu notifikasi dan memutus rentetan konfirmasi.
-
-Label berasal dari model identifikasi resmi (`ai_detector.py`), sama dengan dashboard.
-Label dengan keyakinan di bawah τ = 0,75 diperlakukan sebagai tidak pasti dan
-memutus rentetan konfirmasi.
-Saat pertama kali berjalan, atau saat sumber label berganti (keadaan lama
-dicatat dari label konsensus Hurst–DFA), regime terkini hanya dicatat sebagai
-keadaan awal tanpa mengirim pesan, supaya tidak ada siaran palsu.
-
-Setiap notifikasi dicatat ke data/signals/regime_notifications.jsonl. Berkas
-ini adalah catatan uji maju (forward test): sinyal tercatat sebelum harga
-sesudahnya terjadi, sehingga tidak dapat disesuaikan belakangan.
-"""
+"""Notifikasi pergantian regime ke pelanggan Telegram."""
 
 from __future__ import annotations
 
@@ -50,8 +31,7 @@ PLAIN = {
     "uncertain_lowconf": "Keyakinan Rendah",
 }
 
-# Sama dengan peta keputusan di dashboard (frontend/lib/strategy.ts): strategi
-# menurut teori + ringkasan bukti Fase 2 di BTC 1H setelah biaya.
+# Sama dengan peta keputusan di dashboard.
 STRATEGY = {
     "persistent": (
         "Trend-following (teori)",
@@ -67,7 +47,6 @@ STRATEGY = {
     ),
 }
 # Diganti saat model berganti agar keadaan lama direset tanpa siaran palsu.
-# "ai" = detektor latih-sintetis lama; "ai_id1" = model identifikasi Bab 4 (h = 0).
 SOURCE = "ai_id1"
 
 _lock = threading.Lock()
@@ -149,11 +128,7 @@ def check(
     log_path: Path = LOG_PATH,
     k: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
-    """Periksa tiap timeframe, kirim notifikasi bila ada pergantian terkonfirmasi.
-
-    `regimes` memetakan timeframe ke tabel regime detektor AI (kolom time,
-    close, regime, confidence). Mengembalikan daftar event yang dikirim.
-    """
+    """Periksa tiap timeframe, kirim notifikasi bila ada pergantian terkonfirmasi."""
     k = k or confirm_windows()
     events: List[Dict[str, Any]] = []
     with _lock:
@@ -270,7 +245,7 @@ def _since(df: pd.DataFrame) -> Optional[float]:
 
 
 def format_daily(regimes: Dict[str, pd.DataFrame], dashboard_url: str, tau: float, now: datetime) -> str:
-    """Ringkasan kondisi pasar semua timeframe. `regimes` = deret identifikasi apa adanya (tanpa abstain)."""
+    """Ringkasan kondisi pasar semua timeframe."""
     lines = [f"<b>Ringkasan harian BTC/USDT</b> · {_fmt_date_wib(now.timestamp())}"]
     ref = regimes.get("1h")
     if ref is None or ref.empty:
@@ -330,11 +305,7 @@ def daily_once(
     log_path: Path = LOG_PATH,
     hour: Optional[int] = -1,
 ) -> Optional[Dict[str, Any]]:
-    """Kirim ringkasan harian sekali per tanggal WIB, mulai pukul `hour` WIB.
-
-    Dipanggil setiap siklus penjadwal (±15 menit). Tanggal terakhir disimpan di berkas
-    state agar restart server tidak mengirim ulang pada hari yang sama.
-    """
+    """Kirim ringkasan harian sekali per tanggal WIB, mulai pukul `hour` WIB."""
     hour = daily_hour() if hour == -1 else hour
     if hour is None or store is None:
         return None

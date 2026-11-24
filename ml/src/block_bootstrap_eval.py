@@ -1,18 +1,4 @@
-"""Evaluasi Block Bootstrap dengan Sampel Efektif Eksplisit & Koreksi Holm-Bonferroni (T1.4).
-
-Spesifikasi:
-1. Window L = 500 bar, stride s = 4 bar -> L_min = ceil(500/4) = 125 window.
-2. Sampel efektif N_eff ≈ (N_test_bars) / 500.
-3. Evaluasi ensemble 3 seed (rata-rata probabilitas softmax), menggantikan aturan ad-hoc.
-4. Moving-block bootstrap untuk ΔMacro F1 dan ΔBalanced Accuracy.
-5. Sensitivitas panjang blok: 0.5× (63), 1.0× (125), 2.0× (250).
-6. Koreksi perbandingan ganda Holm-Bonferroni untuk keluarga hipotesis H1–H6.
-
-Jalankan:
-    python ml/src/block_bootstrap_eval.py --timeframe 1h
-    python ml/src/block_bootstrap_eval.py --timeframe 4h
-    python ml/src/block_bootstrap_eval.py --timeframe all
-"""
+"""Evaluasi Block Bootstrap dengan Sampel Efektif Eksplisit & Koreksi Holm-Bonferroni (T1.4)."""
 
 from __future__ import annotations
 
@@ -60,10 +46,7 @@ def compute_effective_sample_size(n_windows: int, window_bars: int = 500, stride
 
 
 def holm_bonferroni_correction(raw_p_values: Sequence[float]) -> List[float]:
-    """Koreksi perbandingan ganda Holm-Bonferroni step-down.
-
-    p_adj(k) = min(1.0, max_{j <= k} ((K - j + 1) * p_(j)))
-    """
+    """Koreksi perbandingan ganda Holm-Bonferroni step-down."""
     k = len(raw_p_values)
     if k == 0:
         return []
@@ -158,9 +141,7 @@ def get_or_train_ensemble_predictions(
     prob_cache_file = ARTIFACTS_DIR / f"ensemble_test_probs_{timeframe}.parquet"
     meta_cache_file = ARTIFACTS_DIR / f"ensemble_test_meta_{timeframe}.json"
 
-    # Periksa cache prediksi probabilitas jika ada
-    # Cache hanya sah untuk config, sumber ambang, dan daftar model yang sama;
-    # selain itu prediksi lama akan dipakai diam-diam untuk label yang berbeda.
+    # Periksa cache prediksi probabilitas jika ada Cache hanya sah untuk config, sumber ambang.
     cache_key = {
         "config_hash": cfg.config_hash,
         "threshold_source": cfg.analysis.threshold_source,

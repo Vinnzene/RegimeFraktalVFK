@@ -1,11 +1,4 @@
-"""Pengujian black-box BB-01..BB-07 pada aplikasi yang sedang berjalan (localhost).
-
-Prasyarat: backend di :8000 dan frontend (next start) di :3000, sesi demo lokal.
-Keluaran: ml/artifacts/review/blackbox_evidence.json dan tangkapan layar
-docs/naskah/gambar/blackbox/BB-0x*.png.
-
-    python ml/src/review_blackbox.py
-"""
+"""Pengujian black-box BB-01..BB-07 pada aplikasi yang sedang berjalan (localhost)."""
 
 from __future__ import annotations
 

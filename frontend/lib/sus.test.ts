@@ -1,7 +1,4 @@
-/**
- * Unit test rumus SUS yang dipakai aplikasi (halaman Rekap SUS dan ekspor CSV).
- * Jalankan: `npm test` di folder frontend (Node ≥ 22.6, TypeScript dijalankan langsung).
- */
+/** Unit test rumus SUS yang dipakai aplikasi (halaman Rekap SUS dan ekspor CSV). */
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { SUS_ITEMS, SusInputError, acceptability, bangorAdjective, summarize, susScore, toCsv, type PublicSus } from "./sus.ts";
@@ -91,8 +88,7 @@ test("rekap: rata-rata, SD sampel, median, min, maks, jumlah ≥ 68, butir terle
   assert.equal(s.max, 100);
   assert.equal(s.at_or_above_68, 2);
   assert.equal(s.items[0].mean, 4); // butir 1: (3 + 5 + 4) / 3
-  // Butir 8: 5 − (3+1+3)/3 = 2,67 dan butir 9: (3+5+3)/3 − 1 = 2,67 sama-sama terkecil;
-  // bila seri, butir bernomor terkecil yang ditandai.
+  // Butir 8: 5 − (3+1+3)/3 = 2,67 dan butir 9: (3+5+3)/3 − 1 = 2,67 sama-sama terkecil.
   assert.ok(Math.abs(s.items[7].contribution - 8 / 3) < 1e-12 && Math.abs(s.items[8].contribution - 8 / 3) < 1e-12);
   assert.equal(s.weakest_item, 8);
 });

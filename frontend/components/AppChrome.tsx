@@ -7,12 +7,7 @@ import TopBar from "@/components/TopBar";
 import TopNav from "@/components/TopNav";
 import { UserProvider } from "@/components/UserContext";
 
-/**
- * Kerangka aplikasi: pengguna, config, dan dua baris header.
- *
- * Halaman login dan landing page tampil tanpa header karena pengunjung belum
- * masuk dan data pasar belum perlu dimuat.
- */
+/** Kerangka aplikasi: pengguna, config, dan dua baris header. */
 export default function AppChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   if (pathname === "/login" || pathname === "/welcome") return <>{children}</>;

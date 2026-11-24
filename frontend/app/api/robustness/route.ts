@@ -17,11 +17,7 @@ async function openForAll(): Promise<boolean> {
   }
 }
 
-/**
- * Status akses Uji Ketahanan Metode, dan datanya hanya untuk admin, akun yang
- * disetujui admin, atau bila pemilik membuka halaman untuk semua.
- * `?status=1` hanya mengembalikan status (dipakai menu navigasi).
- */
+/** Status akses Uji Ketahanan Metode, dan datanya hanya untuk admin, akun. */
 export async function GET(req: Request) {
   const user = await requireUser();
   if (user instanceof NextResponse) return user;

@@ -1,8 +1,4 @@
-"""Test ingestion data pasar — tanpa menyentuh jaringan.
-
-Semua respons Binance dipalsukan supaya test deterministik dan tetap jalan di
-jaringan yang memblokir exchange (kondisi normal di Indonesia).
-"""
+"""Test ingestion data pasar — tanpa menyentuh jaringan."""
 
 from __future__ import annotations
 
@@ -84,11 +80,7 @@ def test_kolom_ohlcv_lengkap_dan_bertipe_angka() -> None:
 
 
 def test_kolom_order_flow_terbaca_dari_kline() -> None:
-    """Kline Binance memuat takerBuyBaseAssetVolume pada indeks 9.
-
-    Ini yang membuat OFI dapat dihitung tanpa mengunduh arsip aggTrades,
-    yang untuk rentang 2019-2026 berukuran puluhan gigabyte.
-    """
+    """Kline Binance memuat takerBuyBaseAssetVolume pada indeks 9."""
     now_ms = int(time.time() * 1000)
     row = make_kline(now_ms - 5 * HOUR_MS)
     row[8] = 1234  # numberOfTrades

@@ -1,9 +1,4 @@
-"""Tes validasi sumber ambang kuantil (train_only vs full_history).
-
-Memastikan secara matematis bahwa dengan threshold_source="train_only",
-data validasi, uji, dan masa depan tidak memiliki pengaruh apa pun
-(zero influence) terhadap ambang kuantil yang dipakai untuk pelabelan.
-"""
+"""Tes validasi sumber ambang kuantil (train_only vs full_history)."""
 
 from __future__ import annotations
 

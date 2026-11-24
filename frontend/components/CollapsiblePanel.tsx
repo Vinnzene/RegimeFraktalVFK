@@ -3,13 +3,7 @@
 import { useState } from "react";
 import { useAppConfig } from "@/components/ConfigContext";
 
-/**
- * Panel yang dapat dilipat.
- *
- * Dipakai untuk konten pendukung di bawah chart. Saat tertutup, chart memperoleh
- * hampir seluruh tinggi layar; saat dibuka, detailnya tetap tersedia tanpa
- * berpindah halaman.
- */
+/** Panel yang dapat dilipat. */
 export default function CollapsiblePanel({
   title,
   subtitle,

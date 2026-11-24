@@ -60,8 +60,7 @@ export default function HeatmapCanvas({ engine, version }: { engine: OrderFlowEn
     const topIdx = Math.floor(mid / step) + Math.floor(nRows / 2);
     const x0 = nCols - cols.length;
 
-    // Normalisasi: persentil 99 bucket yang terlihat di kolom terbaru, kurva
-    // pangkat 0,6 agar hanya antrean yang benar-benar besar tampak terang.
+    // Normalisasi: persentil 99 bucket yang terlihat di kolom terbaru, kurva pangkat 0,6.
     const lo = topIdx - nRows;
     const recent = [...last.liq.entries()].filter(([k, q]) => q > 0 && k > lo && k <= topIdx).map(([, q]) => q).sort((a, b) => a - b);
     const ref99 = (recent.length ? recent[Math.floor(recent.length * 0.99)] : 1) || 1;

@@ -1,13 +1,4 @@
-"""Pembentukan fitur SWT untuk inference.
-
-Fungsi di sini WAJIB menghasilkan tensor yang identik dengan `ml/src/dataset.py`.
-Bila keduanya berbeda—urutan channel, panjang sekuens, atau cara padding—model
-menerima masukan yang tidak pernah dilihatnya saat training, dan keluarannya
-tidak bermakna meski tidak ada error yang muncul.
-
-Karena itu urutan koefisien diambil dengan `sorted(...)` di kedua sisi, dan
-`seq_len` dibaca dari metadata artefak, bukan dari angka yang ditulis ulang.
-"""
+"""Pembentukan fitur SWT untuk inference."""
 
 from __future__ import annotations
 
@@ -25,11 +16,7 @@ def build_sequence_features(
     seq_len: int,
     swt_window: int,
 ) -> np.ndarray:
-    """Sekuens fitur SWT causal berbentuk (n_samples, seq_len, n_channels).
-
-    Nilai pada langkah ke-k mengacu pada indeks t-(seq_len-1-k), sehingga elemen
-    terakhir selalu koefisien pada t. Tidak ada data setelah t yang tersentuh.
-    """
+    """Sekuens fitur SWT causal berbentuk (n_samples, seq_len, n_channels)."""
     cache: Dict[int, List[float]] = {}
 
     def coeffs(t: int) -> List[float]:
@@ -55,16 +42,7 @@ def build_sequence_features(
 
 
 def fit_scaler(features: np.ndarray) -> Dict[str, List[float]]:
-    """Hitung mean/std per channel dari SUBSET TRAINING saja.
-
-    Koefisien SWT log-return berskala ~1e-3, sedangkan bobot LSTM diinisialisasi
-    untuk masukan berskala ~1. Tanpa penskalaan, gradien nyaris nol sejak awal
-    dan model runtuh menebak satu kelas saja.
-
-    Statistik wajib berasal dari data training. Menghitungnya dari seluruh
-    dataset akan menyelipkan informasi periode test ke dalam praproses —
-    kebocoran yang halus dan sulit terlihat pada metrik.
-    """
+    """Hitung mean/std per channel dari SUBSET TRAINING saja."""
     if features.size == 0:
         return {"mean": [], "std": []}
     flat = features.reshape(-1, features.shape[-1])

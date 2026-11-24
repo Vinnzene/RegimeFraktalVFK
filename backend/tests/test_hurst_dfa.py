@@ -1,9 +1,4 @@
-"""Validasi estimator Hurst & DFA terhadap fractional Brownian motion sintetis.
-
-Kalau estimator meleset pada data yang H-nya sudah diketahui, semua label
-regime di dashboard tidak bermakna. Test ini adalah gerbang pertama sebelum
-chart apa pun dibangun di atasnya.
-"""
+"""Validasi estimator Hurst & DFA terhadap fractional Brownian motion sintetis."""
 
 import numpy as np
 import pytest

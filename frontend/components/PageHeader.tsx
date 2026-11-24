@@ -1,10 +1,4 @@
-/**
- * Judul halaman ringkas.
- *
- * Deskripsi panjang disembunyikan di balik tombol agar tidak memakan ruang
- * vertikal yang dibutuhkan chart. Teksnya tetap tersedia — penting untuk
- * penjelasan saat sidang — hanya tidak selalu tampil.
- */
+/** Judul halaman ringkas. */
 "use client";
 
 import { useState } from "react";

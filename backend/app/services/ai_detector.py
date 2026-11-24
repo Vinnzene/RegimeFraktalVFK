@@ -1,25 +1,4 @@
-"""Identifikasi regime resmi sistem: Hybrid Attention-BiLSTM pipeline naskah (h = 0).
-
-Model = model yang dilaporkan di Bab 4 (`ml/src/run_updated_evaluation.py`), disimpan
-ulang tanpa perubahan oleh `ml/src/review_eval.py --variant normal --save-models`:
-
-    ml/artifacts/review/models/hybrid_ps_updated_{tf}_s{42,43,44}.keras
-    ml/artifacts/review/models/hybrid_ps_updated_{tf}_scaler.json
-
-Label yang dipelajari = Trend-Aware Soft Consensus Hurst R/S–DFA-1 dengan ambang
-kuantil train-only, horizon h = 0 (identifikasi regime jendela itu sendiri, bukan
-prediksi). Inference harus sama persis dengan evaluasi:
-
-- jendela L = 500 log-return; grid titik identifikasi mulai return ke-500, tiap 4 bar
-  (1H) atau 2 bar (4H);
-- TANPA normalisasi σ per jendela (berbeda dari detektor latih-sintetis lama);
-- input [PS 32 × 14, F 56] (50 fitur struktural + 6 multifraktal), distandarkan
-  dengan statistik partisi latih yang tersimpan di `*_scaler.json`;
-- ensemble = rata-rata softmax 3 seed.
-
-Fitur dihitung atas seluruh deret log-return (semua fungsi fitur kausal: hanya
-data ≤ t). Hasil disimpan di cache disk dan diperbarui bertahap.
-"""
+"""Identifikasi regime resmi sistem: Hybrid Attention-BiLSTM pipeline naskah (h = 0)."""
 
 from __future__ import annotations
 
@@ -42,16 +21,11 @@ STRIDES = {"1h": 4, "4h": 2}
 DEFAULT_STRIDE = 4
 # Timeframe lain (mis. analisis aset 15m/1d) memakai model timeframe terdekat.
 MODEL_TF = {"15m": "1h", "30m": "1h", "1h": "1h", "4h": "4h", "1d": "4h"}
-# Di atas jumlah ini, permintaan API tidak menunggu; pembangunan dijalankan di
-# latar belakang dan endpoint memberi tahu bahwa cache sedang dibangun.
+# Di atas jumlah ini, permintaan API tidak menunggu.
 MAX_SYNC_WINDOWS = 1500
-# Sampai jumlah jendela ini, sekuens PS dihitung per potongan jendela (cepat untuk
-# pembaruan bertahap); di atasnya dihitung sekali atas seluruh deret.
+# Sampai jumlah jendela ini, sekuens PS dihitung per potongan jendela.
 INCREMENTAL_MAX = 64
-# Penanda keyakinan rendah. Label identifikasi tetap argmax (sesuai evaluasi Bab 4);
-# τ hanya menandai jendela ragu dan memutus konfirmasi notifikasi. Pada set
-# validasi backtest, keyakinan ≥ 0,75 mencakup 25% (1H) / 49% (4H) jendela dengan
-# ketepatan 85,7% / 94,8% (`ml/artifacts/detector_meta.json`).
+# Penanda keyakinan rendah.
 ABSTAIN_TAU = 0.75
 
 _lock = threading.Lock()
@@ -97,11 +71,7 @@ def meta(tf: str = "1h") -> Dict[str, Any]:
 
 
 def _fingerprint(m: Dict[str, Any]) -> str:
-    """Sidik jari isi model + scaler: cache gugur bila model dilatih ulang.
-
-    Memakai hash isi berkas, bukan waktu ubah, agar cache tetap sah setelah
-    model dan cache disalin ke server lain.
-    """
+    """Sidik jari isi model + scaler: cache gugur bila model dilatih ulang."""
     paths = [ARTIFACTS_DIR / f for f in m["files"]] + [ARTIFACTS_DIR / m["scaler_file"]]
     key = "|".join(f"{p}:{p.stat().st_mtime_ns}" for p in paths)
     if key not in _fp_cache:
@@ -149,10 +119,7 @@ def _featurize(r: np.ndarray, pos: np.ndarray, m: Dict[str, Any], jobs: int) -> 
         feat = np.vstack(Parallel(n_jobs=jobs)(delayed(_struct_chunk)(r, ch, L, level) for ch in chunks))
     sub, seq = int(m["sub_window"]), int(m["seq_len"])
     if len(pos_l) <= INCREMENTAL_MAX:
-        # Pembaruan bertahap (beberapa jendela baru): sekuens PS hanya bergantung pada
-        # 500 return di dalam jendela, jadi dihitung dari potongan itu saja (±0,05 s per
-        # jendela, bukan ±5 s untuk seluruh riwayat). Selisih terhadap perhitungan atas
-        # deret penuh hanya pembulatan floating point (< 1e-11).
+        # Pembaruan bertahap (beberapa jendela baru).
         ps = np.stack([
             build_persistence_sequences(r[t - L + 1: t + 1], [L - 1], L, sub, seq)[0] for t in pos_l
         ]).astype(np.float32)
@@ -165,8 +132,7 @@ def predict_proba(feat: np.ndarray, ps: np.ndarray, m: Dict[str, Any]) -> np.nda
     """Probabilitas ensemble (n, 3), urutan kelas = m["classes"]."""
     from app.services.feature_builder import apply_scaler  # noqa: PLC0415
 
-    # Aritmetika float32 untuk F dan float32→float64 untuk PS, sama dengan evaluasi,
-    # agar argmax identik sampai bit terakhir.
+    # Aritmetika float32 untuk F dan float32→float64 untuk PS, sama dengan evaluasi.
     f32 = np.float32
     F = (np.asarray(feat, dtype=f32) - np.asarray(m["feature_mean"], dtype=f32)) / np.asarray(m["feature_std"], dtype=f32)
     S = apply_scaler(np.asarray(ps, dtype=f32), m["ps_scaler"])
@@ -187,12 +153,7 @@ _extractors: Dict[str, List[Any]] = {}
 
 
 def attention_weights(feat: np.ndarray, ps: np.ndarray, m: Dict[str, Any]) -> np.ndarray:
-    """Bobot alpha lapisan `attention_pool` tiap seed: array (n_seed, n, seq_len).
-
-    Bobot dihitung dari keluaran BiLSTM (masukan lapisan attention) dengan
-    `AttentionPooling.compute_attention`, sama persis dengan yang dipakai model
-    saat menghasilkan probabilitas.
-    """
+    """Bobot alpha lapisan `attention_pool` tiap seed: array (n_seed, n, seq_len)."""
     import tensorflow as tf  # noqa: PLC0415
 
     tfm = m["model_timeframe"]
@@ -220,11 +181,7 @@ def _ohlcv_arrays(symbol: str, tf: str):
 
 
 def window_detail(symbol: str, tf: str, at_time: Optional[int] = None) -> Dict[str, Any]:
-    """Fitur, probabilitas, dan bobot attention untuk satu jendela.
-
-    Jendela = titik grid identifikasi terakhir dengan waktu bar terakhir <= `at_time`
-    (bawaan: jendela terbaru).
-    """
+    """Fitur, probabilitas, dan bobot attention untuk satu jendela."""
     m = meta(tf)
     L, stride = int(m["window"]), stride_for(tf)
     r, times, close = _ohlcv_arrays(symbol, tf)
@@ -277,11 +234,7 @@ def _cache_path(symbol: str, tf: str):
 
 
 def update_cache(symbol: str, tf: str, jobs: int = -1, max_new: Optional[int] = None) -> pd.DataFrame:
-    """Hitung probabilitas untuk titik identifikasi yang belum ada di cache.
-
-    Bila jumlah titik baru melebihi `max_new`, `CacheBuilding` dilempar dan
-    pembangunan dijalankan di thread latar belakang.
-    """
+    """Hitung probabilitas untuk titik identifikasi yang belum ada di cache."""
     from app.db.repository import get_repository  # noqa: PLC0415
 
     m = meta(tf)
@@ -351,10 +304,7 @@ def preload(tf: str) -> None:
 
 
 def with_abstain(df: pd.DataFrame, tau: float = ABSTAIN_TAU) -> pd.DataFrame:
-    """Salinan deret dengan label berkeyakinan rendah diganti `uncertain_lowconf`.
-
-    Dipakai untuk notifikasi: label ragu memutus rentetan konfirmasi.
-    """
+    """Salinan deret dengan label berkeyakinan rendah diganti `uncertain_lowconf`."""
     out = df.copy()
     out.loc[out["confidence"] < tau, "regime"] = "uncertain_lowconf"
     return out

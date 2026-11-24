@@ -1,9 +1,4 @@
-"""Pemeriksa Kesiapan Mode Demo Offline (T3.2).
-
-Memeriksa kelengkapan seluruh file data Parquet, model .keras, artefak evaluasi JSON,
-dan laporan setup engine yang dibutuhkan dashboard untuk beroperasi 100% offline
-tanpa sambungan internet.
-"""
+"""Pemeriksa Kesiapan Mode Demo Offline (T3.2)."""
 
 from __future__ import annotations
 

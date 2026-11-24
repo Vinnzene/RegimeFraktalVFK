@@ -1,17 +1,4 @@
-"""Stationary Wavelet Transform (SWT) dengan jaminan kausalitas.
-
-Masalah yang dihindari:
-    `pywt.swt` memakai filter simetris + padding sehingga koefisien pada indeks
-    t ikut menyerap sampel setelah t. Menghitung SWT sekali pada seluruh deret
-    lalu memotongnya per window akan memasukkan informasi masa depan ke fitur
-    model (look-ahead bias) tanpa terlihat jelas.
-
-Solusi:
-    `causal_swt_at` menghitung ulang SWT hanya dari data <= t, lalu mengambil
-    koefisien pada ujung kanan window. Konsekuensinya lebih mahal secara
-    komputasi, tapi properti kausal terjaga dan bisa diuji
-    (lihat backend/tests/test_causal_swt.py).
-"""
+"""Stationary Wavelet Transform (SWT) dengan jaminan kausalitas."""
 
 from __future__ import annotations
 
@@ -31,11 +18,7 @@ def _next_pow2(n: int) -> int:
 
 
 def max_useful_level(n: int, wavelet: str = DEFAULT_WAVELET) -> int:
-    """Level SWT maksimum yang masih masuk akal untuk panjang n.
-
-    Dihitung dari panjang SETELAH padding ke 2^k, karena itulah panjang yang
-    benar-benar masuk ke pywt.swt.
-    """
+    """Level SWT maksimum yang masih masuk akal untuk panjang n."""
     if n < 8:
         return 0
     padded = _next_pow2(n)
@@ -43,12 +26,7 @@ def max_useful_level(n: int, wavelet: str = DEFAULT_WAVELET) -> int:
 
 
 def _pad_to_pow2(x: np.ndarray) -> np.ndarray:
-    """Padding kiri ke panjang 2^k memakai mode 'symmetric'.
-
-    Padding dilakukan di SISI KIRI (masa lalu) supaya ujung kanan window —
-    yaitu titik t yang kita ambil koefisiennya — tidak terkontaminasi nilai
-    buatan.
-    """
+    """Padding kiri ke panjang 2^k memakai mode 'symmetric'."""
     n = x.size
     size = _next_pow2(n)
     if size == n:
@@ -86,11 +64,7 @@ def causal_swt_at(
     window: Optional[int] = None,
     wavelet: str = DEFAULT_WAVELET,
 ) -> Dict[str, float]:
-    """Koefisien SWT pada indeks t, dihitung HANYA dari data x[..t].
-
-    Ini fungsi yang dipakai untuk membangun fitur model. Tidak ada satu pun
-    sampel setelah t yang masuk ke perhitungan.
-    """
+    """Koefisien SWT pada indeks t, dihitung HANYA dari data x[..t]."""
     x = np.asarray(x, dtype=float)
     if t < 0 or t >= x.size:
         raise IndexError(f"t={t} di luar rentang deret (n={x.size})")

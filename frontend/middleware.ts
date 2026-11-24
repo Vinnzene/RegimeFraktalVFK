@@ -1,15 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { readSession } from "@/lib/session";
 
-/**
- * Semua halaman dan API wajib login, kecuali landing page (/welcome), halaman
- * login, endpoint pembuat sesi, dan berkas statis. Halaman diarahkan ke /login; API menjawab 401.
- * Halaman pada ADMIN_ONLY hanya dapat dibuka akun yang emailnya ada di ADMIN_EMAILS.
- */
-/**
- * Hanya untuk admin: grup Riset (termasuk Walk-Forward multi-aset), Arsip Fase 0, dan
- * Tentang. Grup Pasar, Identifikasi, dan Strategi terbuka untuk semua akun.
- */
+/** Semua halaman dan API wajib login, kecuali landing page. */
+/** Hanya untuk admin: grup Riset (termasuk Walk-Forward multi-aset), Arsip Fase 0, dan Tentang. */
 const ADMIN_ONLY = [
   "/walk-forward-evaluation",
   "/uji-ketahanan",

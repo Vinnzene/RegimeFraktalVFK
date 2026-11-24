@@ -1,15 +1,4 @@
-"""Baseline tabular atas fitur statistik window (tanpa sekuens).
-
-Pembanding yang wajib ada sebelum mengklaim model neural unggul: bila regresi
-logistik atau gradient boosting atas fitur yang sama sudah menyamai Hybrid PS,
-keunggulan model usulan tidak berasal dari arsitekturnya.
-
-Perlakuan disamakan dengan model neural:
-- input = matriks fitur statistik yang sudah dinormalisasi dari data latih;
-- bobot kelas berbanding terbalik frekuensi (`class_weight="balanced"`);
-- validasi hanya dipakai untuk early stopping (LightGBM), tidak untuk tuning;
-- hyperparameter tetap (tidak disetel), seed mengikuti seed eksperimen.
-"""
+"""Baseline tabular atas fitur statistik window (tanpa sekuens)."""
 
 from __future__ import annotations
 
@@ -32,11 +21,7 @@ def fit_predict_proba(
     F_eval: Sequence[np.ndarray],
     seed: int,
 ) -> List[np.ndarray]:
-    """Latih baseline `key`, kembalikan probabilitas kelas untuk tiap array di `F_eval`.
-
-    Y_* berbentuk one-hot (N, K) seperti target model neural. Kolom probabilitas
-    selalu berurutan 0..K-1 walau suatu kelas tidak muncul di data latih.
-    """
+    """Latih baseline `key`, kembalikan probabilitas kelas untuk tiap array di `F_eval`."""
     predict = fit_tabular(key, F_train, Y_train, F_val, Y_val, seed)
     return [predict(F) for F in F_eval]
 

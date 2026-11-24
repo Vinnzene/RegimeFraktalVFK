@@ -3,11 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import type { AnalysisSource } from "@/lib/analyses-client";
 
-/**
- * Kotak pencarian simbol ala TradingView: ketik "a", muncul simbol berawalan A.
- * Pengguna memilih dari daftar (klik, atau panah ↑↓ + Enter); simbol yang
- * dikirim selalu berasal dari daftar sumber data, bukan ketikan bebas.
- */
+/** Kotak pencarian simbol ala TradingView: ketik "a", muncul simbol berawalan A. */
 
 export type SymbolItem = { symbol: string; name: string; exchange: string; type: string };
 

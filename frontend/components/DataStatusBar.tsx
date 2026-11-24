@@ -3,14 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api-client";
 
-/**
- * Indikator sumber & kesegaran data.
- *
- * Dua hal yang wajib terlihat saat sidang:
- *  1. Datanya asli (Binance) atau sintetis (mock) — jangan sampai ambigu.
- *  2. Bar terakhir sudah tutup. Candle berjalan sengaja dibuang, jadi jeda
- *     satu bar dari waktu sekarang itu normal, bukan tanda data basi.
- */
+/** Indikator sumber & kesegaran data. */
 
 interface TimeframeStatus {
   timeframe: string;

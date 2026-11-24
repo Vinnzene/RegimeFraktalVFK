@@ -2,12 +2,7 @@
 
 import { useAppConfig } from "@/components/ConfigContext";
 
-/**
- * Pembungkus panel standar.
- *
- * Setiap panel menampilkan config_hash di footer. Tujuannya: angka mana pun
- * yang muncul di sidang bisa ditelusuri ke konfigurasi yang menghasilkannya.
- */
+/** Pembungkus panel standar. */
 export default function Panel({
   title,
   subtitle,

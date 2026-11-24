@@ -1,14 +1,4 @@
-"""Identifikasi regime multi-skala — praregistrasi docs/praregistrasi_multiskala.md.
-
-Jalankan:
-    python ml/src/multiscale_study.py
-
-M1 skala ×1 (500) · M2 ×1+×4 · M3 ×1+×4+×24 · M4 ×1 jendela 2.000 (sub-jendela 512).
-Ketepatan: BA uji S4 (MS-H1..H3, Holm). Kecepatan: deteksi pergantian regime
-pada 20 deret × 30.000 bar, mulai bar 12.000, konfirmasi K = 3.
-
-Keluaran: ml/artifacts/multiscale_study.{json,md}
-"""
+"""Identifikasi regime multi-skala — praregistrasi docs/praregistrasi_multiskala.md."""
 
 from __future__ import annotations
 

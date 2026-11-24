@@ -1,30 +1,4 @@
-"""Demo mekanisme: strategi yang tepat bergantung pada regime persistensi.
-
-Jalankan:
-    python ml/src/regime_strategy_demo.py
-
-Seluruh data di sini SINTETIS (fractional Gaussian noise dengan H diketahui).
-Data BTC sengaja tidak disentuh: kinerja strategi per regime pada BTC adalah
-pertanyaan Fase 2 yang harus dipraregistrasi lebih dulu (docs/
-rencana_pengembangan.md). Demo ini hanya menunjukkan mekanismenya.
-
-Rancangan (tetap, tidak disetel):
-- H = 0,40 / 0,50 / 0,60 untuk memperlihatkan mekanismenya. Pada fGn,
-  H = 0,40/0,60 berarti autokorelasi lag-1 sekitar -/+0,13, jauh lebih kuat dari
-  BTC 1H (sekitar -0,03; Bab 4 §4.7.1), sehingga besarnya hasil DILEBIH-LEBIHKAN.
-- H = 0,48 / 0,52 (autokorelasi lag-1 sekitar -/+0,03) sebagai skenario
-  setara BTC: apakah keunggulan masih tersisa setelah biaya?
-- Volatilitas per bar 0,6% (setara orde BTC 1H), 2.000 bar per jalur,
-  300 jalur per H.
-- Momentum: posisi = tanda return 24 bar terakhir (long/short).
-- Mean-reversion: posisi = kebalikan tanda z-score harga terhadap rata-rata
-  24 bar bila |z| > 1, ditutup saat z kembali melewati 0.
-- Biaya: 0,075% fee + 0,01% slippage per perubahan posisi (per sisi).
-- Posisi diputuskan di akhir bar t dan berlaku untuk return bar t+1.
-
-Keluaran: ml/artifacts/regime_strategy_demo.json, disalin ke
-frontend/public/data/ untuk halaman /strategi di dashboard.
-"""
+"""Demo mekanisme: strategi yang tepat bergantung pada regime persistensi."""
 
 from __future__ import annotations
 

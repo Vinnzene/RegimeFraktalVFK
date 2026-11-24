@@ -1,17 +1,4 @@
-"""Pelabelan regime fraktal — 4 kategori, dua sumber ketidakpastian.
-
-Kategori:
-    persistent        : H > upper DAN alpha > upper
-    random_like       : keduanya di dalam pita [lower, upper]
-    anti_persistent   : H < lower DAN alpha < lower
-    uncertain_rule    : Hurst dan DFA TIDAK konsisten (ground truth, Bab 3.3.3)
-    uncertain_lowconf : max(P) < tau pada output model (post-processing)
-
-Dua jenis uncertain sengaja DIPISAH di seluruh sistem. `uncertain_rule` adalah
-pernyataan tentang datanya (dua estimator tidak sepakat); `uncertain_lowconf`
-adalah pernyataan tentang modelnya (model ragu). Menggabungkannya akan membuat
-penguji tidak bisa membedakan "data ambigu" dari "model lemah".
-"""
+"""Pelabelan regime fraktal — 4 kategori, dua sumber ketidakpastian."""
 
 from __future__ import annotations
 
@@ -44,19 +31,7 @@ def calibrate_thresholds(
     values: Iterable[float],
     quantiles: Sequence[float] = (1 / 3, 2 / 3),
 ) -> List[float]:
-    """Ambang empiris dari distribusi estimator itu sendiri.
-
-    Alasan keberadaannya: R/S dan DFA punya bias sistematis ke arah berbeda pada
-    sampel terbatas. Pada BTC/USDT, Hurst R/S nyaris tidak pernah turun di bawah
-    0.45 (minimum ~0.46) sementara DFA sering di bawahnya. Dengan ambang tetap
-    0.45/0.55 untuk keduanya, kelas anti-persistent kosong dan hampir semua
-    window jatuh ke uncertain_rule — bukan karena datanya ambigu, melainkan
-    karena kedua estimator diukur dengan penggaris yang tidak sebanding.
-
-    Mengambil kuantil dari distribusi masing-masing estimator membuat keduanya
-    dibandingkan pada posisi relatif yang setara. Ambang tetap tetap tersedia
-    lewat mode "fixed" untuk analisis sensitivitas.
-    """
+    """Ambang empiris dari distribusi estimator itu sendiri."""
     arr = np.asarray(list(values), dtype=float)
     arr = arr[np.isfinite(arr)]
     if arr.size < 10:
@@ -137,21 +112,7 @@ def label_from_exponents(
     er_threshold: Sequence[float] = (0.35, 0.60),
     strong_er: float = 0.85,
 ) -> str:
-    """Label ground truth dari sepasang (H, alpha) dengan Trend-Aware Soft Consensus.
-
-    Aturan konsensus kuantil utama dipertahankan bila h_class == a_class (dengan
-    koreksi ke persistent apabila keduanya random_like namun efficiency_ratio
-    menunjukkan tren terarah sangat kuat >= 0.85). Apabila h_class != a_class dan
-    soft_consensus aktif:
-    - Jika salah satu persistent dan pasangannya random_like dengan ER >= q_0.60,
-      tetapkan sebagai persistent.
-    - Jika salah satu anti_persistent dan pasangannya random_like dengan ER <= q_0.35,
-      tetapkan sebagai anti_persistent.
-    - Konflik diametral (persistent vs anti_persistent) tetap uncertain_rule.
-
-    `er_threshold` (bawah, atas) dan `strong_er` dapat diubah untuk uji sensitivitas;
-    nilai bawaan adalah yang dipakai di Bab 4.
-    """
+    """Label ground truth dari sepasang (H, alpha) dengan Trend-Aware Soft Consensus."""
     h_class = _bucket(hurst, hurst_threshold[0], hurst_threshold[1])
     a_class = _bucket(alpha, dfa_threshold[0], dfa_threshold[1])
     if h_class is None or a_class is None:
@@ -187,11 +148,7 @@ def label_series(
     resolved_thresholds: Dict[str, object] | None = None,
     soft_consensus: bool = True,
 ) -> pd.DataFrame:
-    """Tambahkan kolom `regime` pada DataFrame berisi kolom hurst & dfa_alpha.
-
-    Ambang efektif ikut disimpan sebagai kolom agar angka yang tampil di
-    dashboard selalu bisa ditelusuri ke nilai yang benar-benar dipakai.
-    """
+    """Tambahkan kolom `regime` pada DataFrame berisi kolom hurst & dfa_alpha."""
     out = df.copy()
     if resolved_thresholds is not None:
         resolved = resolved_thresholds
@@ -240,13 +197,7 @@ def label_series(
 
 
 def apply_tau(probabilities: Dict[str, float], tau: float) -> Dict[str, object]:
-    """Post-processing softmax 3 kelas menjadi 4 kategori.
-
-    Model dilatih hanya pada 3 kelas (window uncertain_rule dikeluarkan dari
-    training sesuai Bab 3.3.3), jadi kategori keempat lahir di sini: kalau
-    keyakinan tertinggi masih di bawah tau, label dipaksa uncertain_lowconf
-    terlepas dari argmax-nya.
-    """
+    """Post-processing softmax 3 kelas menjadi 4 kategori."""
     if not probabilities:
         return {"final_label": UNCERTAIN_LOWCONF, "argmax_label": None, "max_prob": 0.0}
     argmax_label = max(probabilities, key=lambda k: probabilities[k])
@@ -309,11 +260,7 @@ def build_targets(
     labels: Sequence[str],
     h: int,
 ) -> List[Optional[str]]:
-    """Target Y_{t+h}: regime pada window masa depan.
-
-    Ini yang membuat tugas model bersifat prediktif, bukan sekadar meniru
-    rumus Hurst-DFA pada window yang sama (label sirkular).
-    """
+    """Target Y_{t+h}: regime pada window masa depan."""
     n = len(labels)
     return [labels[t + h] if t + h < n else None for t in range(n)]
 

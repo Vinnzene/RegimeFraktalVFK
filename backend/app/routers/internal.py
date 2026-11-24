@@ -1,10 +1,4 @@
-"""Endpoint internal untuk server Next.js: analisis aset dan data Uji Ketahanan.
-
-Tidak berada di bawah /api/v1, sehingga Caddy tidak meneruskannya ke publik;
-hanya rute Next.js (yang memeriksa login dan kuota harian) yang memanggilnya
-lewat jaringan Docker. Bila ANALYSIS_INTERNAL_TOKEN diisi, header
-X-Internal-Token wajib cocok sebagai lapisan pengaman kedua.
-"""
+"""Endpoint internal untuk server Next.js: analisis aset dan data Uji Ketahanan."""
 
 from __future__ import annotations
 
@@ -60,11 +54,7 @@ robustness_router = APIRouter(prefix="/internal/robustness", tags=["internal"])
 
 @robustness_router.get("")
 def robustness(x_internal_token: Optional[str] = Header(None)) -> dict:
-    """Data Uji Ketahanan Metode untuk rute Next.js `/api/robustness`.
-
-    Rute itu yang memeriksa login dan persetujuan admin; endpoint ini tidak
-    diteruskan Caddy ke publik, sama seperti `/internal/analyses`.
-    """
+    """Data Uji Ketahanan Metode untuk rute Next.js `/api/robustness`."""
     _check_token(x_internal_token)
     from app.routers.model import load_robustness
 

@@ -1,23 +1,4 @@
-"""Penyimpanan langganan notifikasi Telegram.
-
-Struktur Firestore (ditulis dashboard Next.js dan backend ini):
-
-    users/{uid}
-        email, name, photo, created_at, last_login
-        telegram: {chat_id, username, first_name, linked_at, enabled, timeframes, daily}
-
-`daily` (bawaan True bila tidak ada) = ikut ringkasan status harian.
-    link_tokens/{token}
-        uid, email, created_at, expires_at
-
-Alur penautan: dashboard membuat `link_tokens/{token}` sekali pakai lalu membuka
-`t.me/<bot>?start=<token>`. Saat pengguna menekan Start, bot menerima token,
-mencocokkannya ke uid, dan menyimpan chat_id. Pengguna tidak perlu tahu chat
-ID-nya sendiri.
-
-`MemoryStore` dipakai test dan saat Firebase belum dikonfigurasi tidak ada store
-sama sekali (`get_store()` -> None), sehingga backend tetap jalan normal.
-"""
+"""Penyimpanan langganan notifikasi Telegram."""
 
 from __future__ import annotations
 
@@ -162,8 +143,7 @@ class FirestoreStore:
         return hit
 
     def recipients(self, timeframe: str) -> List[int]:
-        # Hanya filter array-contains di server (tanpa indeks komposit);
-        # status aktif disaring di sini.
+        # Hanya filter array-contains di server (tanpa indeks komposit); status aktif disaring di sini.
         out = []
         for snap in self.db.collection("users").where("telegram.timeframes", "array_contains", timeframe).stream():
             tg = (snap.to_dict() or {}).get("telegram") or {}

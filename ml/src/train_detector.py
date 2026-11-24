@@ -1,22 +1,4 @@
-"""Latih dan simpan detektor resmi sistem + pembanding untuk uji generalisasi.
-
-Jalankan (setelah `synthetic_benchmark.py --stage data`):
-    python ml/src/train_detector.py
-
-Sesuai praregistrasi Fase 1 adendum 3 dan generalisasi adendum 1:
-- D-sintetis: model M-kripto terpilih Fase 1 (n = 500, ambang utama), yaitu
-  Hybrid PS yang dilatih pada campuran S1–S4, dengan hyperparameter dan seed
-  yang sama dengan benchmark.
-- D-BTC: regresi logistik latih-BTC 1H (skenario B Fase 0), protokol
-  train_only, fitur statistik yang sama dengan Bab 4.
-- D-klasik: VR(2) dengan ambang terkalibrasi Fase 1.
-- D-konsensus: R/S–DFA dengan ambang BTC train_only.
-
-Keluaran:
-    ml/artifacts/detector/hybrid_ps_sintetis.keras   (tidak di-commit; dibangun ulang dengan skrip ini)
-    ml/artifacts/detector/dbtc_logreg.joblib         (tidak di-commit)
-    ml/artifacts/detector_meta.json                  (di-commit)
-"""
+"""Latih dan simpan detektor resmi sistem + pembanding untuk uji generalisasi."""
 
 from __future__ import annotations
 

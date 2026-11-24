@@ -1,12 +1,4 @@
-"""Estimasi Hurst Exponent (R/S) dan DFA alpha pada rolling window.
-
-Aturan domain penting:
-- Input WAJIB log-return, bukan harga level. Harga BTC bersifat non-stasioner
-  (unit root); estimasi Hurst pada harga level akan menghasilkan H ~ 0.9-1.0
-  untuk hampir semua window sehingga label regime kehilangan daya beda.
-- Seluruh perhitungan bersifat causal: window pada indeks t hanya memakai
-  data pada indeks <= t.
-"""
+"""Estimasi Hurst Exponent (R/S) dan DFA alpha pada rolling window."""
 
 from __future__ import annotations
 
@@ -108,11 +100,7 @@ def andrews_lag(n: int, rho: float) -> int:
 
 
 def _lo_rs_statistic(x: np.ndarray, scale: int, rho: float) -> float:
-    """R/S termodifikasi Lo untuk satu ukuran segmen.
-
-    Penyebut memakai simpangan baku jangka panjang (Newey-West, bobot Bartlett)
-    sehingga autokorelasi jangka pendek tidak terbaca sebagai memori panjang.
-    """
+    """R/S termodifikasi Lo untuk satu ukuran segmen."""
     n_seg = x.size // scale
     if n_seg < 1:
         return np.nan
@@ -132,11 +120,7 @@ def _lo_rs_statistic(x: np.ndarray, scale: int, rho: float) -> float:
 
 
 def hurst_lo(x: np.ndarray, min_scale: int = 8, count: int = 12) -> float:
-    """Hurst via R/S termodifikasi Lo (1991), skala dan regresi sama dengan hurst_rs.
-
-    Lag q per skala dipilih dengan aturan Andrews dari autokorelasi lag-1 seluruh
-    deret. Dengan q = 0 hasilnya setara R/S klasik.
-    """
+    """Hurst via R/S termodifikasi Lo (1991), skala dan regresi sama dengan hurst_rs."""
     x = np.asarray(x, dtype=float)
     x = x[np.isfinite(x)]
     if x.size < 32:
@@ -187,11 +171,7 @@ def rolling_hurst_dfa(
     step: int = 1,
     positions: Optional[Iterable[int]] = None,
 ) -> pd.DataFrame:
-    """Hitung H, alpha, dan Directional Efficiency Ratio secara rolling kausal.
-
-    Nilai pada indeks t dihitung dari log_returns[t-window+1 : t+1] sehingga
-    tidak pernah menyentuh data setelah t.
-    """
+    """Hitung H, alpha, dan Directional Efficiency Ratio secara rolling kausal."""
     x = np.asarray(log_returns, dtype=float)
     n = x.size
     cols = ["index", "hurst", "dfa_alpha", "er_full", "er_128", "er_64"]
@@ -223,11 +203,7 @@ def rolling_hurst_dfa(
 
 
 def fbm_increments(n: int, hurst: float, seed: int = 0) -> np.ndarray:
-    """Bangkitkan fractional Gaussian noise dengan H diketahui (Davies-Harte).
-
-    Dipakai untuk memvalidasi estimator: kalau hurst_rs/dfa_alpha tidak mampu
-    memulihkan H pada data sintetis, seluruh label regime di dashboard batal.
-    """
+    """Bangkitkan fractional Gaussian noise dengan H diketahui (Davies-Harte)."""
     rng = np.random.default_rng(seed)
     size = 1
     while size < n:

@@ -1,9 +1,4 @@
-"""Evaluasi 3 model + Baseline Persistence.
-
-Baseline Persistence ("regime t+h = regime t") wajib dilaporkan. Tanpa angka
-pembanding ini, nilai balanced accuracy model tidak bisa dinilai: pada deret
-yang regimenya bertahan lama, tebakan naif saja sudah tinggi.
-"""
+"""Evaluasi 3 model + Baseline Persistence."""
 
 from __future__ import annotations
 

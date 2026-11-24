@@ -1,37 +1,4 @@
-"""Generalized Hurst exponent H(q) — flow.md langkah 2 & 5.
-
-Kenapa H(q), bukan H tunggal
-----------------------------
-R/S dan DFA menghasilkan satu angka per window. Angka itu meringkas skala rata
-rata saja, sehingga dua window dengan struktur sangat berbeda dapat memiliki H
-yang sama: satu didominasi lompatan besar yang jarang, satunya oleh fluktuasi
-kecil yang merata.
-
-Metode fungsi struktur (Barabasi & Vicsek, 1991; Di Matteo, 2007) memisahkan
-keduanya. Untuk profil kumulatif Y,
-
-    K_q(tau) = < |Y(t + tau) - Y(t)|^q >_t  ~  tau^(q * H(q))
-
-sehingga H(q) diperoleh dari kemiringan regresi log K_q terhadap log tau,
-dibagi q. Pada deret monofraktal (fBm murni) H(q) konstan terhadap q; makin
-melebar selisihnya, makin multifraktal deretnya.
-
-Fitur turunan yang dipakai model
---------------------------------
-- `hq_1`, `hq_2`, `hq_4` — nilai H pada tiga momen.
-- `hq_width` = H(1) - H(4) — lebar spektrum, ukuran langsung multifraktalitas.
-  Nol berarti monofraktal.
-- `hq_slope` — kemiringan H(q) terhadap q lewat regresi, versi kontinu dari
-  lebar spektrum yang memakai seluruh titik q.
-- `tau_curvature` — kelengkungan fungsi skala tau(q) = q*H(q) - 1. Pada deret
-  monofraktal tau(q) linear, sehingga kelengkungan nol.
-
-H(2) di sini TIDAK sama dengan Hurst R/S di `hurst_dfa.py`: estimatornya
-berbeda (fungsi struktur vs rescaled range). Kesamaan nilainya justru berguna
-sebagai pemeriksaan silang, bukan duplikasi.
-
-Seluruh perhitungan causal: hanya memakai data sampai indeks t.
-"""
+"""Generalized Hurst exponent H(q) — flow.md langkah 2 & 5."""
 
 from __future__ import annotations
 
@@ -54,11 +21,7 @@ FEATURE_DIM = len(FEATURE_NAMES)
 
 
 def _scales(n: int, min_tau: int = 2, max_divisor: int = 5, count: int = 12) -> np.ndarray:
-    """Skala tau ter-spasi logaritmik, dibatasi n/max_divisor.
-
-    Batas atas penting: pada tau mendekati n hanya tersisa segelintir pasangan
-    sehingga rata-rata momennya ditentukan oleh derau, bukan oleh skala.
-    """
+    """Skala tau ter-spasi logaritmik, dibatasi n/max_divisor."""
     max_tau = n // max_divisor
     if max_tau <= min_tau:
         return np.array([], dtype=int)
@@ -76,9 +39,7 @@ def structure_function(profile: np.ndarray, tau: int, q: float) -> float:
     increments = increments[np.isfinite(increments) & (increments > 0)]
     if increments.size < 3:
         return np.nan
-    # Momen dihitung lewat rata-rata log agar orde tinggi tidak kehilangan
-    # ketelitian: pada q = 4 dan increment berskala ~1e-3, |dY|^q menyentuh
-    # ~1e-12 dan penjumlahan langsung mulai didominasi satu-dua nilai terbesar.
+    # Momen dihitung lewat rata-rata log agar orde tinggi tidak kehilangan ketelitian.
     log_inc = np.log(increments)
     shift = float(log_inc.max())
     moment = float(np.mean(np.exp(q * (log_inc - shift))))
@@ -93,12 +54,7 @@ def generalized_hurst(
     min_tau: int = 2,
     count: int = 12,
 ) -> float:
-    """H(q) dari log-return lewat fungsi struktur pada profil kumulatifnya.
-
-    Input adalah log-return (stasioner); profilnya — jumlah kumulatif — yang
-    berperilaku seperti fractional Brownian motion dan menjadi objek fungsi
-    struktur. Memberi harga level langsung akan menambah unit root kedua.
-    """
+    """H(q) dari log-return lewat fungsi struktur pada profil kumulatifnya."""
     x = np.asarray(log_returns, dtype=float)
     x = x[np.isfinite(x)]
     if x.size < 32 or q <= 0:
@@ -155,8 +111,7 @@ def compute_features(
     width = float(h_arr[0] - h_arr[-1])
     slope = float(np.polyfit(q_arr, h_arr, 1)[0])
 
-    # tau(q) = q*H(q) - 1 linear pada deret monofraktal; koefisien kuadratnya
-    # mengukur seberapa jauh deret menyimpang dari sifat itu.
+    # tau(q) = q*H(q) - 1 linear pada deret monofraktal.
     tau_q = q_arr * h_arr - 1.0
     curvature = float(np.polyfit(q_arr, tau_q, 2)[0]) if q_arr.size >= 3 else 0.0
 

@@ -1,16 +1,4 @@
-"""Generator deret sintetis berkarakter kripto untuk benchmark Fase 1.
-
-Rancangan dan alasannya: docs/praregistrasi_fase1_sintetis.md §2–§3.
-
-Kebenaran dasar selalu H milik komponen fGn. Transformasi yang ditambahkan
-dipilih agar tidak mengubah eksponen memori itu:
-- S2: transformasi monoton ganjil ke Student-t lewat copula Gaussian
-  (peringkat Hermite 1, eksponen memori jangka panjang tetap H).
-- S3: dikalikan volatilitas stokastik yang independen dari fGn, sehingga
-  autokorelasi return hanya diskalakan, tidak diubah bentuknya.
-- S4: S2 + S3 + lonjakan Poisson independen.
-- S5: dua segmen fGn dengan H dari kelas berbeda; label = segmen terakhir.
-"""
+"""Generator deret sintetis berkarakter kripto untuk benchmark Fase 1."""
 
 from __future__ import annotations
 
@@ -46,8 +34,7 @@ class CryptoParams:
     jump_scale: float = 10.0
 
 
-# S4k (eksploratif, adendum 1): ekor dan lonjakan dikalibrasi ke kurtosis per
-# window BTC, SV dikalibrasi ulang bersamanya. S4 asli tetap sesuai praregistrasi.
+# S4k (eksploratif, adendum 1): ekor dan lonjakan dikalibrasi ke kurtosis per window BTC.
 S4K_PARAMS = CryptoParams(t_dof=4.0, sv_phi=0.99, sv_eta=0.18, jump_prob=0.002, jump_scale=3.0)
 
 
@@ -109,11 +96,7 @@ def make_series(
     scenario: str, n: int, h: float, rng: np.random.Generator, p: CryptoParams = CryptoParams(),
     thresholds: Tuple[float, float] = PRIMARY,
 ) -> Tuple[np.ndarray, Dict[str, float]]:
-    """Satu deret return sepanjang n dengan kebenaran dasar H (S5: H segmen terakhir).
-
-    Mengembalikan (return, info) dengan info berisi h_true dan, untuk S5,
-    h_first serta posisi titik ganti.
-    """
+    """Satu deret return sepanjang n dengan kebenaran dasar H (S5: H segmen terakhir)."""
     info: Dict[str, float] = {"h_true": h}
     if scenario == "S5":
         first_cls = rng.choice([c for c in CLASSES if c != label(h, thresholds)])

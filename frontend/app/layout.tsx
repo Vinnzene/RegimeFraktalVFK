@@ -10,13 +10,7 @@ export const metadata: Metadata = {
     "Dashboard riset identifikasi regime persistensi BTC/USDT dan pemilihan strategi trading berbasis regime.",
 };
 
-/**
- * Tata letak dua baris header, tanpa sidebar.
- *
- * Navigasi dipindah ke header agar lebar penuh layar tersedia untuk chart.
- * Saat demo di proyektor, ruang mendatar lebih berharga daripada daftar menu
- * yang selalu terlihat.
- */
+/** Tata letak dua baris header, tanpa sidebar. */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="id" suppressHydrationWarning>

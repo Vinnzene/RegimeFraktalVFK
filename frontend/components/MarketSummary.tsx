@@ -43,10 +43,7 @@ export function useRecentRegimes(series: RegimePoint[]) {
   }, [series]);
 }
 
-/**
- * Kartu pertama yang dibaca: kondisi pasar sekarang menurut detektor AI, apa
- * artinya bagi pengguna (strategi beserta bukti Fase 2), dan keyakinan model.
- */
+/** Kartu pertama yang dibaca: kondisi pasar sekarang menurut detektor AI. */
 export default function MarketSummary({
   current,
   series,

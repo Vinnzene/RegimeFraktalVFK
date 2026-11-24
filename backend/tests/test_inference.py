@@ -84,11 +84,7 @@ def test_std_nol_tidak_menghasilkan_pembagian_nol() -> None:
 
 
 def test_scaler_dari_training_saja() -> None:
-    """Statistik dihitung dari subset training, bukan seluruh dataset.
-
-    Memakai seluruh data akan menyelipkan informasi periode test ke praproses —
-    kebocoran yang tidak terlihat pada metrik mana pun.
-    """
+    """Statistik dihitung dari subset training, bukan seluruh dataset."""
     rng = np.random.default_rng(5)
     train = rng.normal(loc=0.0, scale=1.0, size=(50, 8, 2))
     test = rng.normal(loc=10.0, scale=1.0, size=(50, 8, 2))

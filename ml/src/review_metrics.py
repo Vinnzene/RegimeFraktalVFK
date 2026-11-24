@@ -1,14 +1,4 @@
-"""Metrik review dari probabilitas tersimpan (ml/artifacts/review/raw/*.npz).
-
-Menghasilkan:
-  review/full_metrics.json + .md               (poin 4)
-  review/ablation_no_er.json + .md             (poin 2)
-  review/ablation_swt_attention.json + .md     (poin 7)
-  review/market_pivot_independent.json + .md   (poin 3)
-  review/cw_sweep.json (+ ringkasan di full_metrics.md) bila raw sweep ada
-
-    python ml/src/review_metrics.py
-"""
+"""Metrik review dari probabilitas tersimpan (ml/artifacts/review/raw/*.npz)."""
 
 from __future__ import annotations
 

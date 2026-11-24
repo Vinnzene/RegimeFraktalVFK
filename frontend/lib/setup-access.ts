@@ -2,14 +2,7 @@ import { FieldValue } from "firebase-admin/firestore";
 import { adminDb } from "@/lib/firebase-admin";
 import type { SessionUser } from "@/lib/session";
 
-/**
- * Akses fitur terkunci (Panduan Setup, Uji Ketahanan Metode): pengguna meminta,
- * admin menyetujui.
- *
- * Status disimpan di Firestore `setup_access/{uid}` atau `robustness_access/{uid}`. Admin ditentukan oleh
- * variabel lingkungan ADMIN_EMAILS (dipisah koma). Sesi demo lokal memakai
- * memori proses agar pengujian di laptop tidak menulis ke Firestore produksi.
- */
+/** Akses fitur terkunci (Panduan Setup, Uji Ketahanan Metode): pengguna meminta, admin menyetujui. */
 
 export type AccessStatus = "pending" | "approved" | "rejected";
 

@@ -1,15 +1,4 @@
-"""Analisis regime untuk aset apa pun (Binance atau Yahoo Finance).
-
-Model identifikasi resmi (Hybrid Attention-BiLSTM, h = 0) dilatih pada BTC/USDT
-1H dan 4H. Aset dan timeframe lain memakai model timeframe terdekat
-(`ai_detector.MODEL_TF`) apa adanya, tanpa normalisasi ulang, sehingga hasilnya
-ditandai eksperimental: model hanya dievaluasi pada BTC/USDT 1H dan 4H.
-
-Alur: data diambil sinkron saat permintaan masuk (simbol yang salah langsung
-ditolak dan tidak memakan kuota), lalu deteksi dijalankan di antrean latar
-belakang satu pekerja. Hasil disimpan di data/processed/analyses/<id>.json
-supaya tetap ada setelah backend dimulai ulang.
-"""
+"""Analisis regime untuk aset apa pun (Binance atau Yahoo Finance)."""
 
 from __future__ import annotations
 
@@ -42,8 +31,7 @@ SOURCES: Dict[str, _Source] = {
     "binance": {"timeframes": ("15m", "1h", "4h", "1d"), "pattern": re.compile(r"^[A-Z0-9]{5,20}$")},
     "yahoo": {"timeframes": ("1h", "1d"), "pattern": re.compile(r"^[A-Za-z0-9.^=\-]{1,20}$")},
 }
-# Satu jendela model = 500 log-return; `bars` = jumlah log-return yang dianalisis, jadi
-# data yang diambil = bars + 1 candle tertutup.
+# Satu jendela model = 500 log-return.
 MIN_BARS, MAX_BARS, DEFAULT_BARS = 500, 5000, 2000
 YAHOO_URL = "https://query1.finance.yahoo.com/v8/finance/chart/{ticker}"
 

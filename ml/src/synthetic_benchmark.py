@@ -1,16 +1,4 @@
-"""Benchmark Fase 1: identifikasi regime pada data sintetis berkarakter kripto.
-
-Rancangan, hipotesis, dan kriteria: docs/praregistrasi_fase1_sintetis.md
-(dikunci) beserta adendumnya. Skrip ini hanya menjalankannya.
-
-Jalankan:
-    python ml/src/synthetic_benchmark.py --stage data   # bangkitkan deret + fitur (paralel, di-cache)
-    python ml/src/synthetic_benchmark.py --stage run    # latih, evaluasi, uji H1-H4
-
-Keluaran:
-    ml/artifacts/synthetic_cache/*.npz          cache fitur (tidak di-commit)
-    ml/artifacts/synthetic_benchmark.{json,md}  hasil
-"""
+"""Benchmark Fase 1: identifikasi regime pada data sintetis berkarakter kripto."""
 
 from __future__ import annotations
 

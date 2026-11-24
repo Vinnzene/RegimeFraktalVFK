@@ -1,15 +1,4 @@
-"""Fase 2: pemilihan strategi berbasis regime lintas aset.
-
-Rancangan terkunci: docs/praregistrasi_fase2_strategi.md. Memakai titik deteksi
-dan label yang sama dengan uji generalisasi (`generalization_study.py`).
-
-Jalankan (setelah `generalization_study.py --stage features`):
-    python ml/src/strategy_selection.py
-
-Keluaran:
-    ml/artifacts/strategy_selection.{json,md}
-    ml/artifacts/figures/fig_strategy_selection.png
-"""
+"""Fase 2: pemilihan strategi berbasis regime lintas aset."""
 
 from __future__ import annotations
 

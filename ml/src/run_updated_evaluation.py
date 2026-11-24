@@ -1,10 +1,4 @@
-"""Eksekusi terpadu upgrade pipeline:
-1. Fitur Directional Efficiency Ratio (Kaufman ER) & Trend t-Stat / Signed Slope
-2. Pelabelan Trend-Aware Soft Consensus (Hurst R/S + DFA-1 + Multiscale ER)
-3. Peningkatan kepadatan sampel 4H (stride = 2 + augmentasi kausal Train-Only)
-4. Pelatihan ulang 5 model (3 seed: 42, 43, 44) & Evaluasi Historical Backtesting
-   serta 5-Fold Expanding Purged Walk-Forward Identifikasi Regime.
-"""
+"""Eksekusi terpadu upgrade pipeline: 1."""
 
 from __future__ import annotations
 
@@ -189,14 +183,14 @@ def prepare_timeframe_data(tf: str) -> Dict[str, Any]:
             y_all[i, CLASSES.index(lab)] = 1.0
     mask = np.array([lab in CLASSES for lab in labels], dtype=bool)
 
-    # Hitung return kumulatif jendela L=500 dan W=128 untuk analisis kondisi pasar (Uptrend / Downtrend / Sideways)
+    # Hitung return kumulatif jendela L=500 dan W=128 untuk analisis kondisi pasar.
     c1 = np.concatenate([[0.0], np.cumsum(log_ret)])
     pos_arr = np.asarray(positions, dtype=int)
     ret_500 = c1[pos_arr + 1] - c1[np.maximum(0, pos_arr - window + 1)]
     ret_128 = c1[pos_arr + 1] - c1[np.maximum(0, pos_arr - 128 + 1)]
     er_q = lab_new["efficiency_ratio"].to_numpy(dtype=float)
 
-    # Extra train-only augmentation for 4H from ETHUSDT and BNBUSDT (strictly cut off before train_end bar)
+    # Extra train-only augmentation for 4H from ETHUSDT and BNBUSDT.
     extra_train = None
     if tf == "4h":
         extra_cache = PROCESSED_DIR / "cache" / "updated_extra_4h_eth_bnb_train.npz"
@@ -368,8 +362,7 @@ def run_historical_backtest(data: Dict[str, Any], epochs: int = 60, batch_size: 
             F_tr_mat = np.concatenate([F_tr_mat, ex_f], axis=0)
             Y_tr_mat = np.concatenate([Y_tr_mat, ex["y"]], axis=0)
 
-        # Untuk model murni harus belajar mengenali sinyal arah secara proporsional:
-        # Gunakan bobot kelas moderat (power 0.65) pada Hybrid PS & MLP agar presisi dan total identifikasi benar optimal
+        # Untuk model murni harus belajar mengenali sinyal arah secara proporsional.
         cw_raw = class_weights(Y_tr_mat)
         if mkey in ("hybrid_ps", "hybrid_swt", "structural_mlp"):
             cw = {k: float(v ** 0.60) for k, v in cw_raw.items()}
@@ -451,10 +444,7 @@ def run_historical_backtest(data: Dict[str, Any], epochs: int = 60, batch_size: 
     prob_hps = np.mean(proba_test_by_model["hybrid_ps"], axis=0)
     pred_hps = [CLASSES[i] for i in prob_hps.argmax(axis=1)]
 
-    # Definisi objektif kondisi pasar pada jendela uji:
-    # 1. Uptrend / Bullish: pergerakan terarah (er_q >= 0.58) atau persistent dengan return bersih positif (ret_500 > 0)
-    # 2. Downtrend / Bearish: pergerakan terarah (er_q >= 0.58) atau persistent dengan return bersih negatif (ret_500 < 0)
-    # 3. Sideways / Konsolidasi: efisiensi arah rendah/menengah (er_q < 0.58 dan bukan tren terarah)
+    # Definisi objektif kondisi pasar pada jendela uji: 1.
     is_trend = (te_er_q >= 0.58) | (y_true_te == 0)
     cond_masks = {
         "uptrend": is_trend & (te_ret_500 >= 0),

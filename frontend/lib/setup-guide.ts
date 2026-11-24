@@ -1,13 +1,4 @@
-/**
- * Isi Panduan Setup per regime. HANYA diimpor oleh rute server
- * (/api/setup-guide), sehingga tidak ikut terkirim ke peramban pengguna yang
- * belum disetujui.
- *
- * Panduan ini bersifat edukatif: jenis setup yang secara logika sesuai atau
- * tidak sesuai dengan sifat gerakan tiap regime, beserta status buktinya dari
- * uji Fase 2 (ml/artifacts/strategy_selection.md). Bukan sinyal entry dan
- * bukan prediksi arah harga.
- */
+/** Isi Panduan Setup per regime. */
 
 export type EvidenceLevel = "didukung" | "indikasi" | "belum_diuji" | "tidak_disarankan";
 

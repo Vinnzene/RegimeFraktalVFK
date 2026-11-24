@@ -1,23 +1,4 @@
-"""Simulasi Walk-Forward Kronologis Tahun-ke-Tahun (2019 -> 2026) Lintas Aset.
-
-Skenario Evaluasi:
-"Seolah kita masih berdiri di tahun 2019, lalu berjalan maju (walk-forward)
-tahun demi tahun dari 2020 hingga 2026 tanpa melihat masa depan (zero look-ahead)."
-
-Aset yang diuji:
-- Kripto Utama & AI: BTCUSDT, ETHUSDT, TAOUSDT, BNBUSDT, SOLUSDT, XRPUSDT, ADAUSDT, DOGEUSDT
-- Logam Mulia (Gold / XAUUSD & Perak / XAGUSD):
-  - PAXGUSDT (Emas Spot Fisik Tokenized 1:1 XAU/USD 24/7, 1H & 4H)
-  - GCF / GC=F (Emas Berjangka COMEX / XAUUSD Proxy, 1H & 1D 2019-2026)
-  - SIF / SI=F (Perak Berjangka COMEX / XAGUSD Proxy, 1H & 1D 2019-2026)
-  - ANTMJK (Saham Tambang Emas/Nikel PT Aneka Tambang Tbk, 1D 2019-2026)
-
-Metrik Fokus (Jalur Perekayasaan Perangkat Lunak):
-- Total Jendela Uji Definitif per Tahun & Total (2020-2026)
-- Jumlah Identifikasi Benar (Prediksi Model == Label Acuan Konsensus Hurst-DFA)
-- Persentase Identifikasi Benar (%) Keseluruhan & per Kelas (Persistent, Random-like, Anti-persistent)
-- Persentase Identifikasi Benar pada Fase Uptrend, Downtrend, dan Sideways
-"""
+"""Simulasi Walk-Forward Kronologis Tahun-ke-Tahun (2019 -> 2026) Lintas Aset."""
 
 from __future__ import annotations
 
@@ -142,8 +123,7 @@ def load_or_build_asset_cache(symbol: str, tf: str) -> Dict[str, Any] | None:
         df = df[df["time"] >= min_ts].reset_index(drop=True)
         cache_ver = "v3"
     else:
-        # Untuk 1D (GC=F, SI=F, ANTM.JK), gunakan sejarah sejak 2010 agar saat berada di tahun 2019
-        # sudah tersedia ~1.800 jendela historis kausal sebelum 2020 (setelah dikurangi purge_gap=500)
+        # Untuk 1D (GC=F, SI=F, ANTM.JK), gunakan sejarah sejak 2010.
         min_ts_1d = int(pd.Timestamp("2010-01-01T00:00:00Z").timestamp())
         df = df[df["time"] >= min_ts_1d].reset_index(drop=True)
         cache_ver = "v4"
@@ -291,7 +271,7 @@ def compute_metrics_dict(y_true: np.ndarray, y_pred: np.ndarray, ret_500: np.nda
 
 
 def extract_causal_standardized_slice(asset_data: Dict[str, Any], test_yr: int) -> Dict[str, Any] | None:
-    """Ambil irisan kausal sebelum `test_yr` (dengan purge_gap=500 bar) yang sudah distandarkan secara kausal."""
+    """Ambil irisan kausal sebelum `test_yr` (dengan purge_gap=500 bar)."""
     years_arr = pd.to_datetime(asset_data["win_times"], unit="s", utc=True).year.to_numpy()
     purge_rows = max(1, WINDOW // asset_data["stride"])
     cutoff_indices = np.where(years_arr < test_yr)[0]
@@ -328,12 +308,7 @@ def train_yearly_btc_models(
     test_years: List[int],
     epochs: int = 38,
 ) -> Dict[int, Dict[str, Any]]:
-    """Latih model Hybrid PS Attention-BiLSTM pada setiap batas akhir tahun (2019..2025).
-
-    Untuk menguji tahun Y (misal Y=2020), model HANYA boleh melihat data <= tahun Y-1 (misal <= 2019).
-    Pada 4H tahun-tahun awal (2019-2020) di mana jumlah bar 1 tahun terbatas, augmentasi kausal
-    dari pair likuid (ETH, BNB, XRP, ADA) yang juga dipotong ketat <= Y-1 digunakan sesuai Bab 3.
-    """
+    """Latih model Hybrid PS Attention-BiLSTM pada setiap batas akhir tahun (2019..2025)."""
     import tensorflow as tf  # type: ignore
 
     yearly_models: Dict[int, Dict[str, Any]] = {}
@@ -427,7 +402,7 @@ def evaluate_asset_walk_forward(
     avail_years = sorted(int(y) for y in np.unique(years_arr))
     purge_rows = max(1, WINDOW // asset_data["stride"])
     if asset_data["tf"] == "1d":
-        # Untuk 1D, purge_rows setara 60 hari perdagangan (~3 bulan kalender) agar riwayat kalibrasi tetap kaya
+        # Untuk 1D, purge_rows setara 60 hari perdagangan (~3 bulan kalender).
         purge_rows = 60
 
     yearly_breakdown: Dict[str, Any] = {}

@@ -1,21 +1,4 @@
-"""Pemilihan jump penalty λ untuk Statistical Jump Model.
-
-Jalankan:
-    python ml/src/tune_jump_penalty.py --timeframe 1h
-
-λ mengatur keseimbangan antara kesetiaan pada data dan kestabilan label.
-Terlalu kecil: label berkedip seperti metode ambang. Terlalu besar: seluruh
-deret runtuh menjadi satu state dan label kehilangan daya beda.
-
-Tiga kriteria dilaporkan agar pemilihan tidak bergantung satu angka saja:
-
-1. **Durasi run** — berapa window regime bertahan sebelum berganti. Target
-   wajar untuk data 1H dengan stride 4 bar adalah puluhan window, bukan 1-2.
-2. **Keseimbangan kelas** — entropi distribusi. Nilai mendekati nol berarti
-   satu kelas mendominasi dan sisanya hampir kosong.
-3. **Kesesuaian dengan nilai eksponen** — apakah urutan rata-rata Hurst antar
-   state tetap monoton. Bila tidak, penamaan regime kehilangan makna.
-"""
+"""Pemilihan jump penalty λ untuk Statistical Jump Model."""
 
 from __future__ import annotations
 
@@ -131,17 +114,7 @@ def main() -> None:
             }
         )
 
-    # Pemilihan λ tidak boleh sekadar mengejar durasi terpanjang: menaikkan λ
-    # selalu memperpanjang run, hingga akhirnya satu kelas menelan sisanya.
-    # Dipakai tiga syarat sekaligus.
-    #
-    #   1. Urutan Hurst antar-state monoton — penamaan regime tetap bermakna.
-    #   2. Entropi tinggi — distribusi kelas tidak timpang.
-    #   3. Tidak ada kelas yang porsinya ekstrem.
-    #
-    # Di antara yang lolos, dipilih titik dengan penurunan switch per satuan λ
-    # yang sudah melandai (siku kurva) — melewati titik itu, tambahan
-    # kestabilan dibayar dengan hilangnya daya beda.
+    # Pemilihan λ tidak boleh sekadar mengejar durasi terpanjang.
     def porsi_maks(x: dict) -> float:
         total = sum(x["distribution"].values()) or 1
         return max(x["distribution"].values()) / total
@@ -162,8 +135,7 @@ def main() -> None:
             prev = layak[i - 1] if i > 0 else hasil[0]
             drop = prev["n_switches"] - x["n_switches"]
             cost = max(x["jump_penalty"] - prev["jump_penalty"], 1e-9)
-            # Manfaat marginal: berapa banyak switch hilang per satuan λ,
-            # ditimbang durasi agar λ sangat kecil tidak menang otomatis.
+            # Manfaat marginal: berapa banyak switch hilang per satuan λ, ditimbang durasi.
             score = (drop / cost) * np.log1p(x["mean_run_length"])
             if score > best_score:
                 best_score, pilihan = score, x

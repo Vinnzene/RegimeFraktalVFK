@@ -5,10 +5,7 @@ import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
 
 const MAIN: Regime[] = ["persistent", "random_like", "anti_persistent", "uncertain_rule"];
 
-/**
- * Panduan singkat, tertutup secara bawaan sebagai satu baris ramping supaya
- * layar pertama berisi kondisi pasar dan grafik, bukan teks panduan.
- */
+/** Panduan singkat, tertutup secara bawaan sebagai satu baris ramping. */
 export default function HowToRead() {
   const [open, setOpen] = useState(false);
   const toggle = () => setOpen((v) => !v);

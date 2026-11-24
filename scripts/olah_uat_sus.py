@@ -1,22 +1,4 @@
-"""USANG (23 Nov 2026): pakai scripts/rekap_sus.py dengan CSV ekspor Rekap SUS di aplikasi.
-
-Olah hasil UAT dan SUS menjadi tabel Bab 4.11.3.
-
-Protokol dan target: docs/uat_sus/PANDUAN_UAT_SUS.md (ditetapkan sebelum pengujian).
-
-Jalankan:
-    python scripts/olah_uat_sus.py \
-        --form docs/uat_sus/data/respon_google_form.csv \
-        --observasi docs/uat_sus/data/lembar_observasi_terisi.csv
-
-Masukan:
-- Ekspor CSV Google Form dari `docs/uat_sus/create_google_form.gs`. Kolom
-  dikenali dari kode di awal judul pertanyaan (A2, SUS1..SUS10, SEQ01..SEQ05).
-- Lembar observasi (`docs/uat_sus/lembar_observasi.csv`): satu baris per
-  responden per tugas; status = berhasil | bantuan | gagal, jawaban_benar = ya | tidak.
-
-Keluaran: <folder --form>/hasil_uat_sus.md
-"""
+"""USANG (23 Nov 2026): pakai scripts/rekap_sus.py dengan CSV ekspor Rekap SUS di aplikasi."""
 
 from __future__ import annotations
 
@@ -64,7 +46,7 @@ def acceptability(score: float) -> str:
 
 
 def adjective(score: float) -> str:
-    """Kategori kata sifat terdekat dari rata-rata Bangor dkk. (2009), batas = titik tengah antar-rata-rata."""
+    """Kategori kata sifat terdekat dari rata-rata Bangor dkk. (2009)."""
     means = [("Worst imaginable", 12.5), ("Awful", 20.3), ("Poor", 35.7), ("OK", 50.9),
              ("Good", 71.4), ("Excellent", 85.5), ("Best imaginable", 100.0)]
     return min(means, key=lambda m: abs(m[1] - score))[0]

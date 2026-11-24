@@ -1,16 +1,4 @@
-"""Eksperimen Optimasi Generalization Sweet Spot.
-
-Tujuan:
-1. Mengatasi Overfitting pada timeframe 4H akibat kapasitas berlebih (over-parameterization)
-   pada ukuran sampel efektif kecil (N_eff ~3.09 blok).
-2. Mengatasi Fast Overfitting saat training dengan label smoothing, L2 regularization,
-   dan penyesuaian learning rate.
-3. Mengatasi Underfitting pada kelas `random_like` melalui asymmetric class weighting.
-
-Keluaran:
-- ml/artifacts/sweet_spot_study.json
-- ml/artifacts/sweet_spot_study.md
-"""
+"""Eksperimen Optimasi Generalization Sweet Spot."""
 
 from __future__ import annotations
 

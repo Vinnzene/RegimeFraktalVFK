@@ -1,32 +1,4 @@
-"""Walk-forward untuk model usulan (Hybrid Attention-BiLSTM) dan pembandingnya.
-
-Jalankan:
-    python ml/src/walk_forward_neural.py --timeframe 1h
-    python ml/src/walk_forward_neural.py --timeframe 4h --splits 5 --seeds 42 43 44
-
-Menjawab masalah khusus "apakah hasilnya stabil antar periode". Berbeda dari
-`walk_forward_study.py` (ExtraTrees), skrip ini melatih ulang model yang
-DIBELA skripsi di setiap fold.
-
-Fold (expanding, kronologis, `app.services.walk_forward.generate_folds`):
-
-    [ train_fit | purge | val ] purge [ test ]
-     ^^^^^^^^^^^^^^^^^^^^^^^^^ = rentang latih fold
-
-- purge = L bar (dalam baris window) di DUA batas: train_fit→val dan
-  latih→test, sehingga tidak ada window yang berbagi bar lintas batas.
-- val = 15% akhir rentang latih, hanya untuk early stopping.
-- Scaler sekuens & fitur dipasang ulang dari train_fit fold itu saja.
-- Bila `analysis.threshold_source = train_only`, ambang kuantil label juga
-  dikalibrasi ulang dari train_fit fold itu saja, lalu dibekukan untuk val
-  dan test fold tersebut. Ambang dari split tunggal (70% data) tidak dipakai
-  karena untuk fold awal itu berarti melihat distribusi masa depan.
-- Hurst/DFA tidak pernah menjadi input; nilainya hanya dipakai membentuk label.
-
-Keluaran:
-    ml/artifacts/walk_forward_neural_{tf}.json
-    ml/artifacts/walk_forward_neural_{tf}.md
-"""
+"""Walk-forward untuk model usulan (Hybrid Attention-BiLSTM) dan pembandingnya."""
 
 from __future__ import annotations
 
@@ -87,11 +59,7 @@ def fit_range(fold: Dict, purge: int) -> tuple[int, int, int]:
 
 
 def fold_labels(base: Dict, fold: Dict, purge: int, classes: List[str], cfg) -> tuple[np.ndarray, np.ndarray, Dict]:
-    """Label (one-hot), mask, dan ambang untuk satu fold.
-
-    full_history: label global dari tabel regime. train_only: ambang kuantil
-    dihitung dari Hurst/DFA baris train_fit fold ini saja.
-    """
+    """Label (one-hot), mask, dan ambang untuk satu fold."""
     if base["threshold_source"] != "train_only" or cfg.analysis.threshold_mode != "quantile":
         return base["y"], base["mask"], base["thresholds"]
     tr0, fit_end, _ = fit_range(fold, purge)

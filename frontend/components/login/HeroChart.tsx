@@ -1,8 +1,4 @@
-/**
- * Ilustrasi grafik untuk halaman login: candlestick, gelombang bercahaya, dan
- * bar volume dalam perspektif. Data dibangkitkan deterministik (dekoratif),
- * bukan harga sungguhan.
- */
+/** Ilustrasi grafik untuk halaman login: candlestick, gelombang bercahaya. */
 
 const W = 640;
 const H = 380;

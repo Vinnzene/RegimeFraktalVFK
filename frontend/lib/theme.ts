@@ -3,11 +3,7 @@
 import { useEffect, useState } from "react";
 import { THEME_KEY } from "@/lib/theme-script";
 
-/**
- * Tema terang/gelap. Pilihan disimpan per peramban (localStorage) dan dipasang
- * sebagai atribut data-theme pada <html>; skrip di layout.tsx memasangnya
- * sebelum halaman dilukis agar tidak berkedip.
- */
+/** Tema terang/gelap. */
 
 export type Theme = "light" | "dark";
 
@@ -37,11 +33,7 @@ export function useTheme(): Theme {
   return theme;
 }
 
-/**
- * Warna token tema sebagai rgba(r, g, b, a), untuk pustaka canvas yang tidak
- * memahami var(). Format berkoma dipakai karena lightweight-charts menolak
- * sintaks rgb() berpemisah spasi.
- */
+/** Warna token tema sebagai rgba(r, g, b, a), untuk pustaka canvas yang tidak memahami var(). */
 export function themeColor(token: string, alpha = 1): string {
   if (typeof document === "undefined") return "rgba(0, 0, 0, 1)";
   const v = getComputedStyle(document.documentElement).getPropertyValue(`--c-${token}`).trim();

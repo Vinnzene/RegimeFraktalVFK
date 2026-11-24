@@ -1,23 +1,4 @@
-"""Gambar Bab 4 dari artefak evaluasi.
-
-Jalankan (setelah main_evaluation, leakage_study, walk_forward_neural):
-    python ml/src/make_figures.py
-    python ml/src/make_figures.py --skip-train     # tanpa learning curve & attention
-
-Gambar dari artefak (tanpa training):
-    fig_main_comparison_{tf}.png   BA & Macro F1 semua model (mean ± std seed)
-    fig_confusion_{tf}.png         confusion matrix Hybrid vs MLP (jumlah 3 seed)
-    fig_feature_ablation.png       BA saat kelompok fitur persistensi dibuang
-    fig_leakage.png                inflasi BA akibat protokol bocor
-    fig_walk_forward.png           BA per fold, Hybrid vs MLP, 1H & 4H
-
-Gambar yang melatih ulang SATU model Hybrid (seed pertama, protokol bersih
-identik main_evaluation) karena history & bobot tidak disimpan sebelumnya:
-    fig_learning_curve_{tf}.png    loss/akurasi train vs validasi + titik early stop
-    fig_attention_{tf}.png         rata-rata bobot attention per regime pada data test
-
-Semua ke ml/artifacts/figures/. Artefak lain tidak diubah.
-"""
+"""Gambar Bab 4 dari artefak evaluasi."""
 
 from __future__ import annotations
 

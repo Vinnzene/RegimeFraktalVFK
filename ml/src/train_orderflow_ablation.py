@@ -1,21 +1,4 @@
-"""Ablation order flow: Model A (SWT) vs B (+OFI) vs C (+CVD) vs D (+OFI+CVD).
-
-Jalankan:
-    python ml/src/sanity_check_orderflow.py --timeframe 1h      # wajib lulus dulu
-    python ml/src/train_orderflow_ablation.py --timeframe 1h
-    python ml/src/train_orderflow_ablation.py --timeframe 4h --seeds 42 43 44
-
-Tugas: IDENTIFIKASI regime (h = 0). Target = label Hurst-DFA pada window yang
-sama. Hurst dan DFA TIDAK masuk input; input hanya sekuens SWT dan (opsional)
-OFI/CVD. Window uncertain_rule dikeluarkan dari training/evaluasi seperti
-pipeline existing; uncertainty model dilaporkan lewat ambang tau.
-
-Keadilan perbandingan: dataset, split, purge, scaler, seed, epoch, callback,
-class weight, dan seluruh hyperparameter IDENTIK. Satu-satunya perbedaan
-adalah kanal order flow yang diberikan. Tiap model dilatih pada beberapa seed
-dan hasilnya dilaporkan sebagai rata-rata ± simpangan baku, karena selisih
-kecil antar model pada satu seed bisa saja hanya variasi inisialisasi.
-"""
+"""Ablation order flow: Model A (SWT) vs B (+OFI) vs C (+CVD) vs D (+OFI+CVD)."""
 
 from __future__ import annotations
 
@@ -121,11 +104,7 @@ def mcnemar(true, pred_a, pred_b) -> Dict:
 
 
 def block_bootstrap_f1_diff(true, pred_a, pred_b, classes, block=50, reps=1000, seed=42) -> Dict:
-    """Moving-block bootstrap selisih macro F1 (B − A).
-
-    Blok berurutan dipakai karena window bertetangga saling tumpang tindih;
-    bootstrap biasa per sampel akan meremehkan ketidakpastian.
-    """
+    """Moving-block bootstrap selisih macro F1 (B − A)."""
     from sklearn.metrics import f1_score
 
     true, pa, pb = np.asarray(true), np.asarray(pred_a), np.asarray(pred_b)
@@ -188,8 +167,7 @@ def main() -> None:
     for s in Xs:
         print(f"  {s:10s} X_swt={Xs[s].shape} X_orderflow={Xo[s].shape} y={Ys[s].shape}")
 
-    # Seluruh window di rentang test (termasuk uncertain_rule) — untuk
-    # statistik stabilitas deret prediksi dan timeline.
+    # Seluruh window di rentang test (termasuk uncertain_rule).
     split = data["split"]
     te_lo, te_hi = split["test"]
     test_range = np.arange(te_lo, te_hi)

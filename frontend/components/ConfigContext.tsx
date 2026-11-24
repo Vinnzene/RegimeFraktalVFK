@@ -3,13 +3,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/api-client";
 
-/**
- * Konteks config global.
- *
- * Semua parameter analisis (L, J, threshold, h, τ) berasal dari config.yaml di
- * backend dan ditampilkan apa adanya — tidak ada parameter tersembunyi.
- * `configHash` ikut ditempel di footer setiap panel sebagai jejak reproducibility.
- */
+/** Konteks config global. */
 
 export interface AppConfig {
   data: { symbol: string; timeframes: string[]; start: string | null; end: string | null };

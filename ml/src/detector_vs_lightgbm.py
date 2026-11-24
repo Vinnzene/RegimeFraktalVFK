@@ -1,11 +1,4 @@
-"""Uji formal detektor resmi vs LightGBM pada data sintetis (Fase 1 adendum 6).
-
-    python ml/src/detector_vs_lightgbm.py
-
-Detektor resmi dimuat apa adanya; LightGBM dilatih ulang persis seperti
-synthetic_benchmark.train_models. Deret uji saling independen, sehingga uji
-McNemar per deret sah, berdampingan dengan bootstrap berpasangan ΔBA.
-"""
+"""Uji formal detektor resmi vs LightGBM pada data sintetis (Fase 1 adendum 6)."""
 
 from __future__ import annotations
 

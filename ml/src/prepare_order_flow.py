@@ -1,29 +1,4 @@
-"""Langkah 0b — Lengkapi data order flow (volume beli/jual per candle).
-
-Jalankan:
-    python ml/src/prepare_order_flow.py --timeframe 1h
-    python ml/src/prepare_order_flow.py --timeframe 4h
-    python ml/src/prepare_order_flow.py --timeframe 1h --verify-day 2023-03-15
-    python ml/src/prepare_order_flow.py --timeframe 1h --trades-csv path/aggTrades.csv
-
-Masalah yang diselesaikan
--------------------------
-Data OHLCV tersimpan sebagian besar dibuat sebelum kolom `taker_buy_volume`
-ditambahkan, sehingga kolom itu bernilai 0 pada mayoritas baris. Skrip ini
-menarik ulang kline untuk rentang yang sama dan HANYA mengisi kolom order flow
-(taker_buy_volume, n_trades). Kolom harga (open/high/low/close/volume) TIDAK
-ditimpa, sehingga label Hurst-DFA yang sudah ada tetap identik.
-
-Verifikasi trade-level
-----------------------
-`--verify-day` mengunduh aggTrades satu hari dari data.binance.vision,
-mengagregasinya per candle dengan `aggregate_trades_to_candles`, lalu
-membandingkannya dengan taker_buy_volume kline. Ini membuktikan bahwa
-OFI dari kline = OFI dari agregasi trade mentah (buyer/seller-initiated).
-
-`--trades-csv` memakai file trade lokal (kolom: timestamp, price, quantity,
-is_buyer_maker atau side) sebagai sumber utama volume beli/jual.
-"""
+"""Langkah 0b — Lengkapi data order flow (volume beli/jual per candle)."""
 
 from __future__ import annotations
 
@@ -105,8 +80,7 @@ def backfill_from_klines(symbol: str, timeframe: str) -> None:
     merged["n_trades"] = merged["n_trades"].fillna(0.0)
     merged_clean = pd.DataFrame(merged.drop(columns=["_close_src", "_vol_src"])[stored.columns])
 
-    # Simpan lewat path parquet langsung: refresh_ohlcv akan memicu invalidasi
-    # cache regime padahal harga tidak berubah.
+    # Simpan lewat path parquet langsung.
     repo.save_ohlcv(symbol, timeframe, merged_clean)
     print(
         f"  cocok {matched.sum()}/{len(stored)} bar; "

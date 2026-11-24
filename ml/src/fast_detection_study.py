@@ -1,14 +1,4 @@
-"""Mempercepat deteksi pergantian regime — praregistrasi docs/praregistrasi_deteksi_cepat.md.
-
-Jalankan (setelah `regime_change_study.py`, yang membuat cache deret panjang):
-    python ml/src/fast_detection_study.py
-
-D0 detektor resmi · A jendela 500 + latih pergantian · B0 jendela 256 ·
-B jendela 256 + latih pergantian. Kecepatan diuji pada 40 deret panjang yang
-sama dengan adendum 5 Fase 1.
-
-Keluaran: ml/artifacts/fast_detection_study.{json,md}
-"""
+"""Mempercepat deteksi pergantian regime — praregistrasi docs/praregistrasi_deteksi_cepat.md."""
 
 from __future__ import annotations
 
@@ -47,12 +37,7 @@ CACHE = ARTIFACTS_DIR / "fast_detection_cache"
 
 
 def attention_weights(model, X: List[np.ndarray]) -> np.ndarray:
-    """Bobot attention per langkah, dihitung eager pada keluaran BiLSTM.
-
-    `model_architecture.attention_extractor` membangun graf simbolik yang tidak
-    lagi didukung Keras 3, sehingga bobot dihitung dari keluaran lapisan sebelum
-    attention pooling (dropout nonaktif saat prediksi).
-    """
+    """Bobot attention per langkah, dihitung eager pada keluaran BiLSTM."""
     import tensorflow as tf  # type: ignore
 
     pool = model.get_layer("attention_pool")

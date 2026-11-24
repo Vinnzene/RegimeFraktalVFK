@@ -1,11 +1,4 @@
-"""Tes sintetis untuk Moving Block Bootstrap dan Koreksi Holm-Bonferroni (T1.4).
-
-Memastikan:
-1. Perhitungan sampel efektif N_eff sesuai rumus teoretis.
-2. Koreksi Holm-Bonferroni mengendalikan FWER dan menghasilkan urutan monoton.
-3. Pada data sintetis di mana hipotesis nol benar (Model A dan B setara),
-   bootstrap TIDAK menghasilkan signifikansi berlebihan (false positives terkendali).
-"""
+"""Tes sintetis untuk Moving Block Bootstrap dan Koreksi Holm-Bonferroni (T1.4)."""
 
 from __future__ import annotations
 
@@ -26,13 +19,11 @@ from block_bootstrap_eval import (  # noqa: E402
 
 def test_effective_sample_size_calculation() -> None:
     """N_eff = total_bars / window_bars."""
-    # 1H test split: 1619 window, L=500, stride=4
-    # (1618 * 4 + 500) / 500 = 6972 / 500 = 13.94
+    # 1H test split: 1619 window, L=500, stride=4 (1618 * 4 + 500) / 500 = 6972 / 500 = 13.94
     n_eff_1h = compute_effective_sample_size(1619, window_bars=500, stride_bars=4)
     assert np.isclose(n_eff_1h, 13.94, atol=0.05)
 
-    # 4H test split: 257 window, L=500, stride=4
-    # (256 * 4 + 500) / 500 = 1524 / 500 = 3.05
+    # 4H test split: 257 window, L=500, stride=4 (256 * 4 + 500) / 500 = 1524 / 500 = 3.05
     n_eff_4h = compute_effective_sample_size(257, window_bars=500, stride_bars=4)
     assert np.isclose(n_eff_4h, 3.05, atol=0.05)
 
@@ -41,13 +32,7 @@ def test_holm_bonferroni_correction() -> None:
     """Koreksi step-down Holm-Bonferroni."""
     # 6 hipotesis dengan p-values beragam
     raw_p = [0.001, 0.012, 0.040, 0.150, 0.020, 0.800]
-    # Urutan ascending:
-    # 0.001 (x6 = 0.006)
-    # 0.012 (x5 = 0.060)
-    # 0.020 (x4 = 0.080)
-    # 0.040 (x3 = 0.120)
-    # 0.150 (x2 = 0.300)
-    # 0.800 (x1 = 0.800)
+    # Urutan ascending: 0.001.
     adj_p = holm_bonferroni_correction(raw_p)
 
     assert len(adj_p) == len(raw_p)

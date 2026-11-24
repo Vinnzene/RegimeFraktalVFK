@@ -1,16 +1,4 @@
-"""Pembentukan dataset training — titik paling rawan look-ahead bias.
-
-Tiga aturan yang dijaga di sini:
-
-1. Fitur X_t hanya dari data <= t (SWT causal per window).
-2. Target Y_t = Regime(window yang berakhir di t+h) — bukan regime window yang
-   sama, supaya tugas model benar-benar prediktif dan bukan meniru rumus
-   Hurst-DFA (label sirkular).
-3. Sampel dengan target uncertain_rule dibuang, TAPI deret input tidak
-   dipotong. Yang hilang adalah barisnya, bukan kontinuitas sekuensnya.
-   Di batas split dibuang purge_gap bar agar window train tidak tumpang tindih
-   dengan window test.
-"""
+"""Pembentukan dataset training — titik paling rawan look-ahead bias."""
 
 from __future__ import annotations
 
@@ -58,9 +46,6 @@ from app.services.splitting import bars_to_rows, split_indices  # noqa: E402
 
 
 # Pembentukan fitur memakai fungsi yang sama dengan backend inference.
-# Menduplikasinya di dua tempat pernah menjadi sumber ketidakcocokan senyap:
-# model menerima tensor berbeda dari yang dilihatnya saat training tanpa ada
-# error yang muncul.
 build_features = build_sequence_features
 
 
@@ -84,66 +69,7 @@ def build_dataset(
     soft_consensus: bool = True,
     extra_train_symbols: Sequence[str] | None = None,
 ) -> Dict[str, Any]:
-    """Rakit X, Y, dan indeks split dari deret harga penutupan.
-
-    Parameter
-    ---------
-    h_bars
-        Menimpa `model.h` dari config. Nilai 0 berarti tugas IDENTIFIKASI:
-        target adalah regime window yang sedang diamati. Nilai > 0 berarti
-        tugas PREDIKSI ke depan sejauh h bar.
-    classes
-        Subset kelas yang dipakai. Memberi ["persistent", "anti_persistent"]
-        menghasilkan tugas biner; window di luar daftar itu dikeluarkan.
-    with_structural
-        Menyertakan fitur struktural (variance ratio, autokorelasi multi-lag,
-        energi antar-skala) di samping sekuens SWT. Fitur ini menaikkan
-        balanced accuracy identifikasi dari ~0.38 ke ~0.61 tanpa memakai
-        Hurst/DFA sebagai input — lihat app/services/structural_features.py.
-    with_multifractal
-        Menyertakan generalized Hurst H(q) untuk q = 1, 2, 4 beserta lebar
-        spektrumnya (flow.md langkah 2 & 5). H(q) dihitung lewat fungsi
-        struktur, estimator yang BERBEDA dari R/S maupun DFA yang membentuk
-        label, sehingga tidak menjadikan label sirkular. Yang ditambahkan
-        adalah informasi multifraktalitas — bagaimana persistensi berubah
-        antar orde momen — yang tidak tertangkap oleh H tunggal.
-    return_hurst
-        Ikut mengembalikan nilai Hurst dan DFA kontinu per split sebagai target
-        auxiliary untuk head regresi (flow.md langkah 6). Nilai ini TIDAK boleh
-        dipakai sebagai fitur; ia hanya sah sebagai target.
-    with_orderflow
-        Menyertakan fitur mikrostruktur dari Order Flow Imbalance. Memerlukan
-        `ohlcv` yang memuat kolom `taker_buy_volume` dan `n_trades`.
-
-        Bawaannya False berdasarkan hasil ablation: penambahan 26 fitur OFI
-        MENURUNKAN akurasi identifikasi pada 1H — biner 0.8686 → 0.8399,
-        tiga kelas 0.6895 → 0.6814. Fitur OFI memperoleh 28,4% feature
-        importance namun tetap memperburuk hasil, pola khas fitur derau yang
-        dipakai pohon untuk memecah secara semu. OFI sendirian hanya mencapai
-        0.6020 (biner), hampir setara tebakan mayoritas.
-
-        Parameter dipertahankan agar hasil negatif ini dapat direproduksi dan
-        dilaporkan, bukan dihapus diam-diam.
-    ohlcv
-        DataFrame OHLCV lengkap. Diperlukan bila `with_orderflow` atau
-        `with_orderflow_seq` aktif.
-    with_orderflow_seq
-        Menyiapkan input branch order flow SEKUENSIAL (OFI, CVD) berbentuk
-        (N, seq_len, 2) dengan indeks yang identik dengan sekuens SWT. Input
-        SWT, label, mask, dan split TIDAK berubah. Hasil tersedia lewat kunci
-        `orderflow` (per split) dan `full` (seluruh baris, untuk timeline).
-    cvd_window
-        Panjang rolling window (bar) untuk normalisasi z-score CVD. Bawaan:
-        panjang window Hurst-DFA, sehingga CVD dinilai pada rentang yang sama
-        dengan window yang diberi label.
-    purge_bars_override
-        Purge gap eksplisit dalam bar. Dipakai eksperimen ablation agar keempat
-        model memakai split identik dengan purge yang menutup jangkauan input
-        terpanjang (window CVD + seq_len).
-    threshold_source
-        "train_only" (ambang dari data latih saja) atau "full_history" (uji
-        sensitivitas). None = ikut `analysis.threshold_source` di config.
-    """
+    """Rakit X, Y, dan indeks split dari deret harga penutupan."""
     cfg = get_config()
     threshold_source = threshold_source or cfg.analysis.threshold_source
     target_classes: List[str] = list(classes) if classes else list(REGIME_CLASSES)
@@ -153,8 +79,7 @@ def build_dataset(
     if step is not None:
         stride_bars = max(1, int(step))
     elif timeframe == "4h" or (10000 <= len(close) <= 25000):
-        # Khusus timeframe 4H gunakan stride = 2 agar kepadatan sampel jendela
-        # meningkat 2x lipat dengan tetap menjaga purge_gap = 500 bar utuh.
+        # Khusus timeframe 4H gunakan stride = 2.
         stride_bars = 2
     else:
         stride_bars = max(1, cfg.analysis.stride_bars)
@@ -193,23 +118,13 @@ def build_dataset(
     positions = labeled["index"].astype(int).tolist()
 
     # h dinyatakan dalam bar; deret label bergerak per stride_bars bar.
-    # Konversi memakai helper yang sama dengan router /model/compare supaya
-    # horizon evaluasi dan horizon training tidak bisa berbeda diam-diam.
-    #
-    # h = 0 berarti tugas IDENTIFIKASI: target adalah regime window yang sedang
-    # diamati, bukan window di masa depan. Ini bukan label sirkular selama fitur
-    # yang dipakai berbeda dari cara label dibentuk — model belajar mengenali
-    # regime dari koefisien SWT, sementara label berasal dari Hurst dan DFA.
     effective_h = h_bars if h_bars is not None else cfg.model.h
     h_windows = bars_to_rows(effective_h, stride_bars) if effective_h > 0 else 0
     targets = labels[:] if h_windows == 0 else build_targets(labels, h_windows)
-    # Sampel hanya dipakai bila targetnya termasuk kelas yang diminta. Pada mode
-    # biner, window random_like ikut tersaring di sini.
+    # Sampel hanya dipakai bila targetnya termasuk kelas yang diminta.
     mask = [t in target_classes for t in targets]
 
-    # Target auxiliary untuk head regresi (flow.md langkah 6): nilai Hurst
-    # kontinu pada window yang SAMA dengan target klasifikasi. Menggesernya
-    # berbeda dari label akan membuat dua head belajar horizon yang berbeda.
+    # Target auxiliary untuk head regresi.
     hurst_series = labeled["hurst"].to_numpy(dtype=float)
     if h_windows == 0:
         hurst_targets = hurst_series.copy()
@@ -218,9 +133,7 @@ def build_dataset(
         if h_windows < hurst_series.size:
             shifted[: hurst_series.size - h_windows] = hurst_series[h_windows:]
         hurst_targets = shifted
-    # NaN tidak boleh masuk ke loss. Window yang nilainya tidak terdefinisi
-    # sudah tersaring lewat `mask` karena labelnya bukan salah satu kelas,
-    # tetapi penggantian ini menjaga array tetap aman bila urutan berubah.
+    # NaN tidak boleh masuk ke loss.
     hurst_targets = np.nan_to_num(hurst_targets, nan=0.5)
 
     X_all = build_features(
@@ -232,20 +145,14 @@ def build_dataset(
         else np.empty((len(positions), 0), dtype=float)
     )
 
-    # Fitur multifraktal H(q). Ditempel setelah fitur struktural supaya urutan
-    # kolom tetap stabil: `feature_names` di bawah mengikuti urutan yang sama,
-    # dan artefak lama yang tidak memakainya tetap dapat dibaca berdasarkan
-    # jumlah kolom yang tersimpan di metadata.
+    # Fitur multifraktal H(q).
     mf_names: List[str] = []
     if with_multifractal:
         MF_all = build_multifractal_matrix(log_ret, positions, window=window)
         mf_names = multifractal_names()
         F_all = np.hstack([F_all, MF_all]) if F_all.shape[1] else MF_all
 
-    # Fitur order flow. Penyelarasan indeks penting: `positions` menunjuk ke
-    # indeks pada deret LOG-RETURN, sedangkan OFI berbasis BAR. Log-return
-    # memangkas satu bar di awal, sehingga bar yang bersesuaian adalah
-    # positions + 1.
+    # Fitur order flow.
     of_names: List[str] = []
     if with_orderflow and ohlcv is not None and "taker_buy_volume" in ohlcv.columns:
         vol = ohlcv["volume"].to_numpy(dtype=float)
@@ -265,17 +172,13 @@ def build_dataset(
                 np.hstack([F_all, OF_all]) if F_all.shape[1] else OF_all
             )
 
-    # Purge gap harus mengikuti horizon yang benar-benar dipakai. Saat h
-    # diubah untuk uji sensitivitas, memakai nilai tetap dari config membuat
-    # gap terlalu sempit (bocor) atau terlalu lebar (membuang data sia-sia).
+    # Purge gap harus mengikuti horizon yang benar-benar dipakai.
     purge_bars = (
         cfg.model.purge_gap
         if h_bars is None
         else min(cfg.analysis.L + effective_h, cfg.model.purge_gap)
     )
-    # Pada tugas identifikasi (h = 0) purge tetap sebesar L: window training dan
-    # test masih berbagi bar yang sama selama L bar terakhir, sehingga gap itu
-    # tetap diperlukan meski tidak ada jarak ke depan.
+    # Pada tugas identifikasi.
     if effective_h == 0:
         purge_bars = cfg.analysis.L
     if purge_bars_override is not None:
@@ -287,17 +190,13 @@ def build_dataset(
     )
     class_index = {c: i for i, c in enumerate(target_classes)}
 
-    # Scaler dipasang HANYA pada rentang training, lalu diterapkan ke semua
-    # split. Menghitungnya dari seluruh data akan membocorkan statistik periode
-    # test ke dalam praproses.
+    # Scaler dipasang HANYA pada rentang training, lalu diterapkan ke semua split.
     train_start, train_end = split["train"]  # type: ignore[misc]
     train_rows = [i for i in range(train_start, train_end) if mask[i]]
     scaler = fit_scaler(X_all[train_rows]) if train_rows else {"mean": [], "std": []}
     X_all = apply_scaler(X_all, scaler)
 
-    # Fitur struktural dinormalisasi terpisah, dengan statistik dari training
-    # saja. Skalanya sangat berbeda antar kolom (korelasi ~1, variance ratio
-    # bisa puluhan), jadi tanpa penskalaan kolom besar akan mendominasi.
+    # Fitur struktural dinormalisasi terpisah, dengan statistik dari training saja.
     if F_all.shape[1] and train_rows:
         f_mean = F_all[train_rows].mean(axis=0)
         f_std = F_all[train_rows].std(axis=0)
@@ -307,10 +206,7 @@ def build_dataset(
     else:
         feature_scaler = {"mean": [], "std": []}
 
-    # Branch order flow sekuensial. Deret per bar dibangun kausal (OFI dari
-    # candle itu sendiri, CVD dinormalisasi rolling ke belakang), lalu digeser
-    # ke ruang indeks log-return dan dipotong dengan indeks yang SAMA dengan
-    # sekuens SWT. Scaler dipasang dari baris training saja.
+    # Branch order flow sekuensial.
     OFS_all: np.ndarray | None = None
     of_bars = None
     of_scaler: Dict[str, List[float]] = {"mean": [], "std": []}
@@ -336,13 +232,7 @@ def build_dataset(
         return [i for i in range(start, end) if mask[i]]
 
     def take(rng: List[int]) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """Tuple (sekuens, fitur, target kelas).
-
-        Bentuknya sengaja tetap 3 elemen meski head regresi sudah ada. Target
-        Hurst dikembalikan lewat kunci terpisah `hurst_targets` supaya seluruh
-        pemanggil lama — train.py, train_identification.py, walk_forward_study
-        — tidak perlu diubah dan tidak bisa diam-diam salah membongkar tuple.
-        """
+        """Tuple (sekuens, fitur, target kelas)."""
         sel = rows_of(rng)
         if not sel:
             return (
@@ -481,8 +371,7 @@ def build_dataset(
             "cvd_raw": of_bars["cvd"].to_numpy()[bar_idx],
             "bars": of_bars,
         }
-        # Indeks baris (ruang window) untuk tiap split — dipakai sanity check
-        # dan pemetaan prediksi kembali ke timeline.
+        # Indeks baris (ruang window) untuk tiap split — dipakai sanity check.
         result["rows"] = {
             "train": rows_of(split["train"]),  # type: ignore[arg-type]
             "validation": rows_of(split["validation"]),  # type: ignore[arg-type]

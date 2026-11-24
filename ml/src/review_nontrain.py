@@ -1,11 +1,4 @@
-"""Analisis review tanpa pelatihan: pita acak + surrogat (poin 5), karakteristik
-regime 1H vs 4H (poin 6), dan cek angka naskah (poin 8).
-
-Label = Trend-Aware Soft Consensus dari `run_updated_evaluation.prepare_timeframe_data`
-(grid, split, purge, dan ambang train-only yang sama).
-
-    python ml/src/review_nontrain.py --part band|tf|numbers|all
-"""
+"""Analisis review tanpa pelatihan: pita acak + surrogat."""
 
 from __future__ import annotations
 

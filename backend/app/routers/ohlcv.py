@@ -44,14 +44,7 @@ def read_ohlcv(
         ),
     ),
 ) -> dict:
-    """Candle OHLCV.
-
-    Format `columnar` dipakai chart: nama kolom tidak diulang di setiap
-    candle, kolom order flow yang tidak digambar dibuang, dan harga dibulatkan
-    ke presisi tick BTC/USDT (0.01). Untuk seluruh riwayat 1H (~68 ribu bar)
-    payload turun dari ~9,5 MB ke ~3,7 MB sebelum gzip, ~1,4 MB setelahnya.
-    Tidak ada candle yang dibuang — hanya representasinya yang dipadatkan.
-    """
+    """Candle OHLCV."""
     cfg = get_config()
     repo = get_repository()
     try:
@@ -81,8 +74,7 @@ def read_ohlcv(
     }
     if format == "columnar":
         cols = [c for c in CHART_COLUMNS if c in df.columns]
-        # .tolist() mengubah ke tipe Python bawaan dalam satu langkah C,
-        # jauh lebih cepat daripada to_dict per baris lalu jsonable_encoder.
+        # .tolist() mengubah ke tipe Python bawaan dalam satu langkah C.
         body["format"] = "columnar"
         body["columns"] = {
             c: (
@@ -99,11 +91,7 @@ def read_ohlcv(
 
 @router.post("/data/refresh")
 def refresh_data(req: RefreshRequest | None = None) -> dict:
-    """Tarik data terbaru dari exchange.
-
-    Bar yang belum tutup selalu dibuang, sehingga hasil analisis tidak berubah
-    hanya karena candle berjalan.
-    """
+    """Tarik data terbaru dari exchange."""
     cfg = get_config()
     repo = get_repository()
     body = req or RefreshRequest()

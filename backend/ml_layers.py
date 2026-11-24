@@ -1,18 +1,8 @@
-"""Lapisan kustom yang dibutuhkan untuk memuat artefak Keras.
-
-Definisi ini harus tersedia di sisi backend karena `tf.keras.models.load_model`
-perlu merekonstruksi lapisan non-standar. Ditaruh di tingkat `backend/` agar
-paket `app` tidak mengimpor TensorFlow secara tidak sengaja: modul ini hanya
-diimpor dari dalam `model_registry.load_model()`, yang memang sudah berada di
-jalur yang membutuhkan TF.
-
-Isinya harus identik dengan `ml/src/model_architecture.py`. Perbedaan sekecil
-apa pun membuat bobot terlatih dipetakan ke lapisan yang salah.
-"""
+"""Lapisan kustom yang dibutuhkan untuk memuat artefak Keras."""
 
 from __future__ import annotations
 
-import tensorflow as tf  # pyrefly: ignore[untyped-import]  # TensorFlow tidak menyediakan stub tipe
+import tensorflow as tf  # pyrefly: ignore[untyped-import] # TensorFlow tidak menyediakan stub tipe
 
 layers = tf.keras.layers
 

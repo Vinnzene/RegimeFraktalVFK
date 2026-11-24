@@ -1,13 +1,4 @@
-"""Inference tugas identifikasi + laporan konsistensi terhadap Hurst-DFA.
-
-Modul ini memuat artefak hasil `ml/src/train_identification.py`, menjalankan
-prediksi pada rentang test, lalu membandingkan hasilnya dengan label Hurst-DFA
-pada empat lapis konsistensi (lihat app/services/consistency.py).
-
-Perhitungan berat di-cache per (symbol, timeframe, mode, config_hash) karena
-hasilnya deterministik: artefak tidak berubah kecuali dilatih ulang, dan
-perubahan konfigurasi selalu menggeser config_hash.
-"""
+"""Inference tugas identifikasi + laporan konsistensi terhadap Hurst-DFA."""
 
 from __future__ import annotations
 
@@ -41,11 +32,7 @@ def clear_identification_cache(symbol: Optional[str] = None, timeframe: Optional
 
 
 def _apply_feature_scaler(features: np.ndarray, scaler: Optional[dict]) -> np.ndarray:
-    """Penskalaan fitur struktural memakai statistik dari artefak.
-
-    Statistik wajib berasal dari artefak, bukan dihitung ulang dari data
-    terkini — menghitung ulang akan memakai periode test.
-    """
+    """Penskalaan fitur struktural memakai statistik dari artefak."""
     if not scaler or not scaler.get("mean"):
         return features
     mean = np.asarray(scaler["mean"], dtype=float)
@@ -67,9 +54,7 @@ def consistency_report(
     if cache_key in _CACHE:
         return _CACHE[cache_key]
 
-    # Cache disk: perhitungan memerlukan ~4,5 detik karena menjalankan
-    # inference atas seluruh rentang test. Menyimpannya ke disk membuat waktu
-    # itu tidak terulang setiap backend dimulai ulang.
+    # Cache disk: perhitungan memerlukan ~4,5 detik.
     disk_key = disk_cache.cache_key(
         "consistency", symbol=symbol, tf=timeframe, mode=mode, model=model_key
     )
@@ -105,8 +90,7 @@ def consistency_report(
     seq_len = int(meta.get("seq_len") or 32)
     stride = int(meta.get("stride_bars") or cfg.analysis.stride_bars)
 
-    # Evaluasi hanya pada rentang test — konsistensi harus diukur di data yang
-    # tidak pernah dilihat model.
+    # Evaluasi hanya pada rentang test — konsistensi harus diukur di data.
     split = split_indices(
         len(positions), cfg.split.ratios, bars_to_rows(cfg.analysis.L, stride)
     )

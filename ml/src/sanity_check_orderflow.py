@@ -1,12 +1,4 @@
-"""Sanity check sebelum training ablation order flow.
-
-Jalankan:
-    python ml/src/sanity_check_orderflow.py --timeframe 1h
-
-Memeriksa: shape, alignment timestamp, NaN/inf, future leakage, jumlah sampel
-per branch, label = Hurst-DFA, dan bahwa Hurst/DFA tidak ada di input.
-Keluar dengan kode 1 bila satu saja pemeriksaan gagal.
-"""
+"""Sanity check sebelum training ablation order flow."""
 
 from __future__ import annotations
 

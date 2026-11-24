@@ -1,15 +1,4 @@
-"""Bot Telegram: kirim notifikasi dan tautkan chat ke akun dashboard.
-
-Memakai long polling (`getUpdates`), bukan webhook, supaya bot jalan di laptop
-tanpa alamat publik. Satu token bot hanya boleh punya satu pembaca
-`getUpdates`; jangan jalankan dua backend dengan token yang sama.
-
-Perintah:
-    /start <kode>  tautkan chat ini ke akun (kode dibuat di dashboard)
-    /status        kondisi regime terbaru
-    /stop          berhenti menerima notifikasi
-    /harian on|off ringkasan status harian (bawaan aktif, pukul DAILY_STATUS_HOUR WIB)
-"""
+"""Bot Telegram: kirim notifikasi dan tautkan chat ke akun dashboard."""
 
 from __future__ import annotations
 

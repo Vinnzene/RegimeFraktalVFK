@@ -91,8 +91,7 @@ def test_bars_before_label_window_do_not_matter():
     y = x.copy()
     y[: t - 499] = rng.normal(size=t - 499) * 7
     b = build_persistence_sequences(y, [t], window=500)
-    # Selisih hanya pembulatan cumsum (nilai lama dibuat 700x lebih besar);
-    # perubahan informasi nyata akan berukuran ~1e-1.
+    # Selisih hanya pembulatan cumsum (nilai lama dibuat 700x lebih besar).
     np.testing.assert_allclose(a, b, rtol=0, atol=1e-7)
 
 

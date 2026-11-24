@@ -1,37 +1,4 @@
-"""Order flow sekuensial: OFI dan CVD per candle, diselaraskan ke rolling window.
-
-Modul ini BERBEDA dari `orderflow_features.py`. Modul lama meringkas satu
-window menjadi 26 statistik skalar (autokorelasi OFI, variance ratio, dst.)
-untuk model berbasis fitur. Modul ini menghasilkan DERET per candle yang masuk
-ke branch BiLSTM terpisah, berdampingan dengan branch SWT yang sudah ada:
-
-    OFI_window_t = [ofi_{t-S+1}, ..., ofi_t]
-    CVD_window_t = [cvd_{t-S+1}, ..., cvd_t]
-
-dengan S = panjang sekuens yang sama dengan input SWT.
-
-Sumber volume beli/jual
------------------------
-Versi utama memakai OFI berbasis TRADE. Volume beli = volume transaksi yang
-diinisiasi pembeli (taker buy), volume jual = sisanya. Dua jalur setara:
-
-1. Data trade mentah (aggTrades: price, qty, time, is_buyer_maker) diagregasi
-   per candle lewat `aggregate_trades_to_candles`.
-2. Kolom `taker_buy_base_volume` pada kline Binance, yang oleh Binance sendiri
-   dihitung dari trade yang sama. `ml/src/prepare_order_flow.py --verify-day`
-   membuktikan kesetaraannya pada satu hari penuh.
-
-Aturan kausalitas
------------------
-Setiap nilai pada indeks t hanya bergantung pada candle <= t:
-- OFI_t     : murni dari candle t.
-- CVD_t     : jumlah kumulatif delta sampai t.
-- CVD_norm_t: z-score CVD terhadap rolling window [t-W+1, t]. Z-score invarian
-  terhadap konstanta, sehingga titik awal akumulasi CVD tidak memengaruhi
-  nilai ternormalisasi — tidak ada ketergantungan pada panjang riwayat.
-
-Hurst dan DFA TIDAK disentuh di modul ini. Keduanya hanya membentuk label.
-"""
+"""Order flow sekuensial: OFI dan CVD per candle, diselaraskan ke rolling window."""
 
 from __future__ import annotations
 
@@ -63,16 +30,7 @@ def aggregate_trades_to_candles(
     timeframe: str,
     candle_times: Optional[Sequence[int]] = None,
 ) -> pd.DataFrame:
-    """Agregasi trade mentah menjadi volume beli/jual per candle.
-
-    Kolom wajib: `timestamp`, `quantity`, dan salah satu dari:
-    - `is_buyer_maker` (format Binance): True berarti pembeli adalah maker,
-      jadi transaksi DIINISIASI PENJUAL.
-    - `side`: "buy"/"sell" (sisi taker).
-
-    Bucket candle tertutup-kiri: [open, open + durasi). Trade tepat di batas
-    masuk candle berikutnya, sama dengan konvensi openTime kline Binance.
-    """
+    """Agregasi trade mentah menjadi volume beli/jual per candle."""
     if timeframe not in TIMEFRAME_SECONDS:
         raise ValueError(f"timeframe '{timeframe}' tidak didukung")
     step = TIMEFRAME_SECONDS[timeframe]
@@ -141,16 +99,7 @@ def normalize_cvd(
     epsilon: float = EPSILON,
     min_periods: Optional[int] = None,
 ) -> np.ndarray:
-    """Normalisasi CVD secara KAUSAL terhadap rolling window [t−W+1, t].
-
-    method="zscore": (CVD_t − mean(CVD_window)) / (std(CVD_window) + ε)
-        Posisi CVD saat ini relatif terhadap rentang window: positif berarti
-        akumulasi beli bersih mendorong CVD ke atas rentangnya.
-    method="volume": (CVD_t − CVD_{t−W}) / (Σ volume_window + ε)
-        Delta bersih window sebagai porsi volume total, dalam [−1, 1].
-
-    Indeks dengan riwayat < min_periods diberi 0 (netral), bukan NaN.
-    """
+    """Normalisasi CVD secara KAUSAL terhadap rolling window [t−W+1, t]."""
     cvd = np.asarray(cvd, dtype=float)
     min_periods = min_periods or max(2, window // 4)
     s = pd.Series(cvd)
@@ -175,11 +124,7 @@ def build_order_flow_bars(
     cvd_window: int,
     cvd_method: str = "zscore",
 ) -> pd.DataFrame:
-    """Deret order flow per CANDLE dari OHLCV yang memuat `taker_buy_volume`.
-
-    Kolom hasil: time, buy_volume, sell_volume, ofi, delta_volume, cvd,
-    cvd_norm. Indeks baris sama dengan indeks bar pada `ohlcv`.
-    """
+    """Deret order flow per CANDLE dari OHLCV yang memuat `taker_buy_volume`."""
     if "taker_buy_volume" not in ohlcv.columns:
         raise ValueError("OHLCV tidak memuat kolom taker_buy_volume")
     bs = buy_sell_from_klines(ohlcv["volume"].to_numpy(), ohlcv["taker_buy_volume"].to_numpy())
@@ -218,14 +163,7 @@ def prepare_order_flow_windows(
     positions: Sequence[int],
     seq_len: int,
 ) -> np.ndarray:
-    """Sekuens (N, seq_len, C) dengan indeks IDENTIK branch SWT.
-
-    `series` berbentuk (n_return, C) dan sudah berada di ruang indeks
-    LOG-RETURN (bar ke-i+1 untuk return ke-i). Langkah ke-k pada sampel
-    bertitik akhir t mengambil indeks t − (seq_len − 1 − k), persis seperti
-    `feature_builder.build_sequence_features`. Elemen terakhir selalu t; tidak
-    ada indeks > t yang diakses. Indeks negatif diisi 0.
-    """
+    """Sekuens (N, seq_len, C) dengan indeks IDENTIK branch SWT."""
     arr = np.asarray(series, dtype=float)
     if arr.ndim == 1:
         arr = arr[:, None]

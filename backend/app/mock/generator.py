@@ -1,15 +1,4 @@
-"""Generator data mock realistis untuk fase 1 (runtime.use_mock = true).
-
-Tujuan: chart bisa dibangun & diuji sebelum data exchange asli tersedia
-(sumber data resmi masih open question di skripsi). Karakter data sengaja
-dibuat menyerupai BTC/USDT:
-- harga bergerak di rentang ~25.000-70.000 lewat GBM dengan drift & vol berubah
-- volatilitas dan persistensi berganti fase, supaya regime tidak monoton
-- DFA alpha berkorelasi dengan Hurst TAPI tidak identik, sehingga kategori
-  uncertain_rule benar-benar muncul (bukan nol) di visualisasi.
-
-Semua fungsi deterministik terhadap seed dari config.
-"""
+"""Generator data mock realistis untuk fase 1 (runtime.use_mock = true)."""
 
 from __future__ import annotations
 
@@ -42,8 +31,7 @@ def generate_ohlcv(timeframe: str, seed: int = 42, bars: int | None = None) -> p
     minutes = TF_MINUTES.get(timeframe, 60)
 
     target_h = _phase_profile(n, rng)
-    # AR(1) dengan koefisien terkait target Hurst: phi > 0 -> persisten,
-    # phi < 0 -> anti-persisten (mean-reverting).
+    # AR(1) dengan koefisien terkait target Hurst: phi > 0 -> persisten.
     phi = np.clip((target_h - 0.5) * 1.6, -0.75, 0.75)
     vol = 0.004 * np.exp(0.35 * np.cumsum(rng.normal(scale=0.02, size=n)))
     vol = np.clip(vol, 0.0015, 0.02)

@@ -1,17 +1,4 @@
-"""Analisis Persistensi Regime ke Depan / Forward-Looking Horizon (T2.1).
-
-Menguji:
-1. H-F1: Probabilitas regime bertahan P(R_{t+k} = c | R_t = c) vs tingkat dasar marginal P(c).
-2. H-F2: Kinerja prediksi model Hybrid PS pada waktu t dalam memprediksi label R_{t+k}
-   dibandingkan baseline naif persistensi (asumsi label t bertahan).
-3. Moving block bootstrap CI95 untuk selisih Balanced Accuracy dan Macro F1.
-4. Visualisasi kurva persistensi forward dan perbandingan baseline di ml/artifacts/figures/.
-
-Jalankan:
-    python ml/src/forward_persistence_analysis.py --timeframe 1h
-    python ml/src/forward_persistence_analysis.py --timeframe 4h
-    python ml/src/forward_persistence_analysis.py --timeframe all
-"""
+"""Analisis Persistensi Regime ke Depan / Forward-Looking Horizon (T2.1)."""
 
 from __future__ import annotations
 
@@ -65,8 +52,7 @@ def evaluate_forward_persistence(timeframe: str) -> None:
     }
     majority_class = max(marginal_base_rates, key=lambda k: marginal_base_rates[k])
 
-    # Horizon evaluasi (dalam satuan window step, dengan stride_bars = 4)
-    # Step 1 = 4 bar, Step 2 = 8 bar, Step 4 = 16 bar, Step 8 = 32 bar, Step 16 = 64 bar, Step 32 = 128 bar
+    # Horizon evaluasi (dalam satuan window step, dengan stride_bars = 4) Step 1 = 4 bar.
     window_steps = [1, 2, 4, 8, 16, 32]
     stride = cfg.analysis.stride_bars
 
@@ -80,8 +66,7 @@ def evaluate_forward_persistence(timeframe: str) -> None:
     for w in window_steps:
         k_bars = w * stride
 
-        # Pada test set: bandingkan kondisi di index i vs index i + w
-        # Perhatikan: hanya ambil pasangan di mana kedua window (t dan t+w) ada dalam test split
+        # Pada test set: bandingkan kondisi di index i vs index i + w Perhatikan.
         valid_pairs = []
         for local_i in range(len(test_indices) - w):
             lab_t = test_labels[local_i]

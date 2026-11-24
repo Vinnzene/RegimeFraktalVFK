@@ -34,16 +34,8 @@ function Note({ children }: { children: React.ReactNode }) {
   return <p className="mt-3 text-[12px] leading-relaxed text-txtDim">{children}</p>;
 }
 
-/**
- * Uji ketahanan metode identifikasi (h = 0): apakah hasilnya bertahan bila
- * periode diubah (walk-forward), bila parameter diubah (sensitivitas), dan
- * bila keacakan sampel diperhitungkan (Monte Carlo). Bukan uji strategi/profit.
- */
-/**
- * Halaman ini terkunci per akun: pengguna meminta akses, admin menyetujui di
- * /admin/akses. Data hanya dikirim rute /api/robustness untuk admin, akun yang
- * disetujui, atau bila pemilik membuka untuk semua (UJI_KETAHANAN_TERBUKA=1).
- */
+/** Uji ketahanan metode identifikasi. */
+/** Halaman ini terkunci per akun: pengguna meminta akses, admin menyetujui di /admin/akses. */
 type AccessResponse = {
   access: "pending" | "approved" | "rejected" | null;
   requested_at: number | null;

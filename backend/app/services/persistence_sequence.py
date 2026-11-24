@@ -1,26 +1,4 @@
-"""Sekuens Statistik Persistensi (PS) — input cabang Attention-BiLSTM.
-
-Rancangan dan hipotesis: docs/praregistrasi_persistence_sequence.md.
-
-Untuk sampel bertitik akhir t dan window label L, sekuens berisi T langkah.
-Langkah k berakhir di
-
-    e_k = t − (T − 1 − k) · s,      s = (L − W) / (T − 1)
-
-dan setiap kanal dihitung atas sub-window [e_k − W + 1, e_k] (W bar). Langkah
-pertama mulai tepat di t − L + 1, langkah terakhir berakhir di t. Seluruh
-sekuens memakai bar di dalam window label saja dan tidak ada bar > t.
-
-Kanal (semua tanpa Hurst/DFA):
-    vr_2, vr_4, vr_8, vr_16     variance ratio (Lo & MacKinlay)
-    ac_1, ac_2, ac_3, ac_5      autokorelasi return
-    acabs_1                     autokorelasi |return| (volatility clustering)
-    sign_flip                   laju pergantian tanda return
-    log_vol                     log simpangan baku sub-window
-
-Implementasi vektor (rolling sum) — setiap kanal dihitung sekali untuk semua
-titik akhir, lalu diindeks; hasilnya identik dengan perhitungan per segmen.
-"""
+"""Sekuens Statistik Persistensi (PS) — input cabang Attention-BiLSTM."""
 
 from __future__ import annotations
 
@@ -58,10 +36,7 @@ def step_offsets(window: int, sub_window: int, seq_len: int) -> np.ndarray:
 
 
 def channel_series(log_ret: np.ndarray, sub_window: int) -> Dict[str, np.ndarray]:
-    """Nilai tiap kanal untuk sub-window yang BERAKHIR di setiap indeks e.
-
-    Indeks e < sub_window − 1 (riwayat kurang) bernilai NaN.
-    """
+    """Nilai tiap kanal untuk sub-window yang BERAKHIR di setiap indeks e."""
     x = np.asarray(log_ret, dtype=float)
     n = x.size
     W = sub_window
@@ -76,8 +51,7 @@ def channel_series(log_ret: np.ndarray, sub_window: int) -> Dict[str, np.ndarray
     var1 = np.maximum(s2 / W - mean**2, 0.0)
 
     for q in PS_VR_Q:
-        # Agregat q tidak-tumpang-tindih yang berakhir di e: blok [e−q+1..e],
-        # [e−2q+1..e−q], ... sebanyak m = W // q blok (rata kanan).
+        # Agregat q tidak-tumpang-tindih yang berakhir di e: blok [e−q+1..e], [e−2q+1..e−q], ...
         m = W // q
         blk = np.full(n, np.nan)
         cs = _csum(x)
@@ -120,8 +94,7 @@ def channel_series(log_ret: np.ndarray, sub_window: int) -> Dict[str, np.ndarray
     out["sign_flip"] = full((cf[ends + 1] - cf[ends + 2 - W]) / (W - 1))
     out["log_vol"] = full(np.log(np.sqrt(var1) + 1e-12))
 
-    # Directional Efficiency Ratio (Kaufman ER) pada sub-jendela W dan W_fast (W//2),
-    # serta Normalized Cumulative Return / Trend t-Statistic.
+    # Directional Efficiency Ratio.
     c_abs = _csum(np.abs(x))
     s_abs = _window_sum(c_abs, ends, W)
     out["er_w"] = full(np.abs(s1) / (s_abs + 1e-12))

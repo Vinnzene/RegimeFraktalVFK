@@ -1,8 +1,4 @@
-"""Bangun docs/presentasi/peta_regime_strategi.html dari template + hasil simulasi.
-
-    python ml/src/regime_strategy_demo.py
-    python scripts/build_regime_page.py docs/presentasi/peta_regime_strategi.template.html ml/artifacts/regime_strategy_demo.json docs/presentasi/peta_regime_strategi.html
-"""
+"""Bangun docs/presentasi/peta_regime_strategi.html dari template + hasil simulasi."""
 
 import json
 import sys

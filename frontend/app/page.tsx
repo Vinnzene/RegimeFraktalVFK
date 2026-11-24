@@ -63,13 +63,11 @@ export default function DashboardPage() {
 
   // Seluruh riwayat, tidak dipotong; hasil di-cache per timeframe.
   const ohlcv = useApi(() => api.ohlcvHistory(timeframe), [timeframe]);
-  // Detektor resmi untuk kedua timeframe: yang aktif untuk grafik dan kartu
-  // utama, keduanya untuk strip multi-timeframe.
+  // Detektor resmi untuk kedua timeframe: yang aktif untuk grafik dan kartu utama.
   const ai1h = useApi(() => api.aiRegime("1h"), []);
   const ai4h = useApi(() => api.aiRegime("4h"), []);
   const regime = timeframe === "4h" ? ai4h : ai1h;
   // Estimator klasik Hurst R/S dan DFA sebagai pembanding beserta pita acaknya.
-  // 2000 titik cukup rapat untuk membaca selisih terhadap ±30 hari lalu.
   const classic = useApi(() => api.hurstDfa(timeframe, 2000), [timeframe]);
 
   // Chart harga hanya menunggu OHLCV; overlay regime menyusul.

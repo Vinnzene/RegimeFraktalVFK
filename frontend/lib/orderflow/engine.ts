@@ -1,19 +1,4 @@
-/**
- * Mesin order flow real-time untuk aset kripto Binance (tanpa React).
- *
- * Sumber (mirror market-data Binance yang tidak diblokir jaringan):
- *   REST  https://data-api.binance.vision/api/v3/{depth,aggTrades}
- *   WS    wss://data-stream.binance.vision/stream?streams=<sym>@depth@100ms/<sym>@aggTrade
- *
- * - Order book lokal: snapshot 5.000 level lalu diff berurutan, sesuai prosedur
- *   resmi Binance; celah urutan memicu sinkron ulang.
- * - Heatmap: tiap 500 ms likuiditas buku diringkas per bucket harga menjadi satu
- *   kolom; 1.200 kolom terakhir (10 menit) disimpan. Hanya real-time: order book
- *   historis spot tidak tersedia gratis.
- * - Footprint: transaksi agresif per candle per bucket harga. aggTrade dengan
- *   m=true berarti pembeli adalah maker, jadi penjual yang agresif.
- *   Diisi mundur 30 menit dari REST aggTrades.
- */
+/** Mesin order flow real-time untuk aset kripto Binance (tanpa React). */
 
 const REST = "https://data-api.binance.vision/api/v3";
 const WS = "wss://data-stream.binance.vision/stream";

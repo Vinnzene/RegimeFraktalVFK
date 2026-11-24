@@ -3,11 +3,7 @@ import Link from "next/link";
 import BrandMark from "@/components/login/BrandMark";
 import ThemeToggle from "@/components/ThemeToggle";
 
-/**
- * Landing page publik (tanpa login). Pengunjung yang belum masuk dan membuka
- * "/" diarahkan ke sini oleh middleware; tombol Masuk menuju /login.
- * Angka di halaman ini sama dengan hasil uji di naskah dan ml/artifacts.
- */
+/** Landing page publik (tanpa login). */
 
 export const metadata: Metadata = {
   title: "rfraktal — Kenali sifat pasar sebelum memilih strategi",
@@ -59,7 +55,7 @@ const STEPS = [
   { n: "03", title: "Label + keyakinan", text: "Setiap 4 bar (1H) atau 2 bar (4H) sistem memberi label dan probabilitas tiap kelas. Di bawah keyakinan 75% label ditandai ragu." },
 ];
 
-// Hanya model aplikasi (tanpa perbandingan algoritma). Angka: updated_eval_summary.json, partisi uji.
+// Hanya model aplikasi (tanpa perbandingan algoritma).
 const BARS = [
   { label: "BTC/USDT 1H · 1.624 dari 2.005 jendela uji", value: 0.81, tone: "bg-accent" },
   { label: "BTC/USDT 4H · 568 dari 761 jendela uji", value: 0.7464, tone: "bg-accent/70" },

@@ -36,7 +36,7 @@ def test_nilai_kunci_dibaca_dari_env(monkeypatch, tmp_path) -> None:
 
 
 def test_endpoint_internal_untuk_akun_disetujui(monkeypatch) -> None:
-    """Rute Next.js membaca data lewat /internal (tidak diteruskan Caddy), walau kunci global tertutup."""
+    """Rute Next.js membaca data lewat /internal (tidak diteruskan Caddy)."""
     monkeypatch.setattr(model_router, "_uji_ketahanan_terbuka", lambda: False)
     monkeypatch.setenv("ANALYSIS_INTERNAL_TOKEN", "rahasia")
     assert client.get("/internal/robustness").status_code == 403

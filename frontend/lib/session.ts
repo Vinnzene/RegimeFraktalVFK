@@ -1,13 +1,6 @@
 import { SignJWT, importX509, jwtVerify, decodeProtectedHeader, type KeyLike } from "jose";
 
-/**
- * Verifikasi sesi yang bisa dipakai di middleware (edge) maupun route handler.
- *
- * - Sesi Google: cookie sesi Firebase (dibuat lewat Admin SDK) diverifikasi
- *   dengan kunci publik Google, tanpa Admin SDK, supaya jalan di edge.
- * - Sesi demo: JWT HS256 yang ditandatangani SESSION_SECRET. Hanya dibuat
- *   bila DEMO_LOGIN=true dan permintaan datang dari localhost.
- */
+/** Verifikasi sesi yang bisa dipakai di middleware (edge) maupun route handler. */
 
 export const SESSION_COOKIE = "__session";
 export const DEMO_COOKIE = "demo_session";

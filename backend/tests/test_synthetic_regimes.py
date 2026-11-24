@@ -75,8 +75,7 @@ def test_stochastic_volatility_keeps_return_signs():
 
 @pytest.mark.parametrize("h", [0.3, 0.7])
 def test_s1_ground_truth_recoverable_on_long_series(h):
-    # Pada deret panjang DFA harus memulihkan H pembangkit; bila tidak,
-    # kebenaran dasar benchmark tidak sah.
+    # Pada deret panjang DFA harus memulihkan H pembangkit; bila tidak.
     rng = np.random.default_rng(11)
     est = np.mean([dfa_alpha(make_series("S1", 8192, h, rng)[0]) for _ in range(6)])
     assert abs(est - h) < 0.06

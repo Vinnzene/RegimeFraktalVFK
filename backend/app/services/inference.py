@@ -1,10 +1,4 @@
-"""Jembatan antara data regime tersimpan dan model terlatih.
-
-Satu tempat yang menyiapkan fitur SWT lalu menjalankan inference, dipakai
-bersama oleh /model/compare, /model/raw-probabilities, /model/predict, dan
-/backtest. Menyalin logika ini ke tiap router pernah membuat backtest dan panel
-perbandingan memakai fitur yang berbeda untuk model yang sama.
-"""
+"""Jembatan antara data regime tersimpan dan model terlatih."""
 
 from __future__ import annotations
 
@@ -27,22 +21,12 @@ from app.services.model_registry import (
 
 # Fitur mahal dihitung sekali per (symbol, timeframe, config_hash, seq_len).
 def placeholder_allowed() -> bool:
-    """Stand-in deterministik untuk model neural hanya bila diizinkan eksplisit.
-
-    Sengaja lewat variabel lingkungan, bukan config.yaml: menambah field
-    config mengubah config_hash dan membuat semua artefak terbaca "config
-    berbeda". Juga terpisah dari runtime.use_mock, yang mengatur sumber DATA.
-    """
+    """Stand-in deterministik untuk model neural hanya bila diizinkan eksplisit."""
     return os.environ.get("ALLOW_MODEL_PLACEHOLDER", "").strip().lower() in {"1", "true", "yes"}
 
 
 class ModelUnavailable(RuntimeError):
-    """Artefak model neural tidak ada atau gagal dimuat, dan stand-in dilarang.
-
-    Angka buatan tidak boleh tampil seolah keluaran model: endpoint menjawab
-    503 dan halaman menandai model sebagai tidak tersedia. Salin berkas .keras
-    ke ml/artifacts/ untuk memulihkan.
-    """
+    """Artefak model neural tidak ada atau gagal dimuat, dan stand-in dilarang."""
 
     def __init__(self, model_key: str, timeframe: str):
         super().__init__(
@@ -54,8 +38,7 @@ class ModelUnavailable(RuntimeError):
 
 
 _FEATURE_CACHE: Dict[Tuple[str, str, str, int, int], np.ndarray] = {}
-# Probabilitas dikunci pula pada jumlah baris: hasil dari deret yang lebih
-# pendek tidak boleh terpakai untuk deret penuh.
+# Probabilitas dikunci pula pada jumlah baris: hasil dari deret.
 _PROBA_CACHE: Dict[Tuple[str, str, str, str, int], np.ndarray] = {}
 
 
@@ -72,12 +55,7 @@ def clear_inference_cache(symbol: Optional[str] = None, timeframe: Optional[str]
 
 
 def sequence_length(model_key: str, timeframe: str, default: int = 32) -> int:
-    """Panjang sekuens diambil dari metadata artefak, bukan ditulis ulang.
-
-    Menuliskannya sebagai konstanta di dua tempat berisiko: begitu training
-    memakai seq_len berbeda, inference tetap berjalan tetapi memberi model
-    bentuk masukan yang salah.
-    """
+    """Panjang sekuens diambil dari metadata artefak, bukan ditulis ulang."""
     meta = load_metadata(model_key, timeframe)
     value = meta.get("seq_len")
     return value if isinstance(value, int) and value > 0 else default
@@ -120,20 +98,13 @@ def probabilities_for(
     regime_df: pd.DataFrame,
     model_key: str,
 ) -> Tuple[np.ndarray, str]:
-    """Matriks probabilitas (n_window, 3) beserta asal angkanya.
-
-    Mengembalikan ("trained_artifact") bila model terlatih dipakai, atau
-    ("placeholder") bila jatuh ke stand-in deterministik. Stand-in untuk model
-    neural hanya bila placeholder_allowed(); di luar itu ModelUnavailable.
-    """
+    """Matriks probabilitas (n_window, 3) beserta asal angkanya."""
     cfg = get_config()
     n = len(regime_df)
     if n == 0:
         return np.empty((0, 3)), "placeholder"
 
-    # Jumlah baris ikut menjadi kunci cache. Tanpa itu, hasil dari DataFrame
-    # yang lebih pendek dapat terpakai untuk deret penuh, dan pengindeksan
-    # baris terakhir melampaui batas matriks.
+    # Jumlah baris ikut menjadi kunci cache.
     cache_key = (symbol, timeframe, model_key, cfg.config_hash, n)
     if cache_key in _PROBA_CACHE:
         cached = _PROBA_CACHE[cache_key]
@@ -147,8 +118,7 @@ def probabilities_for(
     if model_key in NEURAL_KEYS:
         seq_len = sequence_length(model_key, timeframe)
         features = build_features_for(symbol, timeframe, regime_df, seq_len)
-        # Statistik penskalaan diambil dari artefak, bukan dihitung ulang di
-        # sini: menghitung ulang dari data terkini akan memakai periode test.
+        # Statistik penskalaan diambil dari artefak, bukan dihitung ulang di sini.
         meta = load_metadata(model_key, timeframe)
         features = apply_scaler(features, meta.get("scaler"))
         probs = predict_sequences(model_key, timeframe, features)
@@ -160,8 +130,7 @@ def probabilities_for(
     if model_key in NEURAL_KEYS and not placeholder_allowed():
         raise ModelUnavailable(model_key, timeframe)
 
-    # Stand-in deterministik: dipakai untuk rule_based, dan untuk model neural
-    # hanya bila diizinkan (pengembangan tanpa artefak).
+    # Stand-in deterministik: dipakai untuk rule_based, dan untuk model neural hanya bila diizinkan.
     rows = []
     for i, (h_val, a_val) in enumerate(
         zip(regime_df["hurst"].fillna(0.0), regime_df["dfa_alpha"].fillna(0.0))

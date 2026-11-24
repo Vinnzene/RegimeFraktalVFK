@@ -1,19 +1,4 @@
-"""Uji generalisasi lintas aset (praregistrasi generalisasi + adendum 1–2).
-
-Jalankan (setelah `fetch_assets.py` dan `train_detector.py`):
-    python ml/src/generalization_study.py --stage features   # fitur per window (paralel, di-cache)
-    python ml/src/generalization_study.py --stage run        # deteksi, VR maju, bootstrap, G1–G4
-
-Empat detektor: D-sintetis (utama, latih sintetis), D-BTC (regresi logistik
-latih-BTC), D-klasik (VR(2) terkalibrasi Fase 1), D-konsensus (R/S–DFA, ambang
-BTC train_only). Ukuran: Δ = rata-rata log VR(4) maju setelah label
-persistent − setelah label anti-persistent. Detektor yang benar: Δ > 0.
-
-Keluaran:
-    ml/artifacts/generalization_cache/*.npz   (tidak di-commit)
-    ml/artifacts/generalization.{json,md}
-    ml/artifacts/figures/fig_generalization.png
-"""
+"""Uji generalisasi lintas aset (praregistrasi generalisasi + adendum 1–2)."""
 
 from __future__ import annotations
 

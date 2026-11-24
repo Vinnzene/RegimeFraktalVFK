@@ -1,13 +1,4 @@
-"""Penyegaran data berkala.
-
-Memakai thread daemon sederhana, bukan APScheduler: kebutuhannya hanya satu
-tugas periodik, dan menghindari satu dependensi berarti lebih sedikit yang bisa
-gagal saat demo sidang.
-
-Kegagalan jaringan sengaja tidak menghentikan scheduler. Saat sidang berlangsung
-di jaringan yang memblokir exchange, dashboard harus tetap menyajikan data
-terakhir yang tersimpan, bukan mati.
-"""
+"""Penyegaran data berkala."""
 
 from __future__ import annotations
 
@@ -65,15 +56,7 @@ def refresh_once() -> List[Dict[str, object]]:
 
 
 def warm_cache() -> List[Dict[str, object]]:
-    """Hitung hasil berat lebih awal supaya permintaan pertama tidak menunggu.
-
-    Tanpa ini, permintaan pertama harus menanggung seluruh perhitungan:
-    regime ~60 detik, `/model/compare` ~17 detik, `/model/consistency` ~4,5
-    detik. Dashboard menunggu respons itu sebelum menggambar apa pun, sehingga
-    halaman tampak berat padahal datanya sudah tersedia.
-
-    Dijalankan di thread latar belakang agar startup tidak terblokir.
-    """
+    """Hitung hasil berat lebih awal supaya permintaan pertama tidak menunggu."""
     cfg = get_config()
     repo = get_repository()
     results: List[Dict[str, object]] = []
@@ -93,16 +76,14 @@ def warm_cache() -> List[Dict[str, object]]:
         except Exception as exc:  # noqa: BLE001
             results.append({"timeframe": tf, "ok": False, "error": str(exc)[:200]})
 
-    # Detektor AI resmi: hitung titik deteksi baru (seluruh riwayat bila cache
-    # masih kosong) sebelum dashboard memintanya.
+    # Detektor AI resmi: hitung titik deteksi baru.
     for tf in cfg.data.timeframes:
         started = time.time()
         try:
             from app.services import ai_detector
 
             ai = ai_detector.update_cache(cfg.data.symbol, tf)
-            # Muat 3 model ke memori sekarang, agar identifikasi jendela baru pertama
-            # setelah restart tidak menunggu TensorFlow memuat model (±6 detik).
+            # Muat 3 model ke memori sekarang.
             ai_detector.preload(tf)
             results.append(
                 {"timeframe": tf, "ok": True, "warmed": "ai_detector", "windows": len(ai), "seconds": round(time.time() - started, 1)}
@@ -117,11 +98,7 @@ def warm_cache() -> List[Dict[str, object]]:
 
 
 def notify_once() -> List[Dict[str, object]]:
-    """Kirim notifikasi Telegram bila regime berganti sejak pemeriksaan terakhir.
-
-    Tidak melakukan apa pun bila bot belum dikonfigurasi. Kegagalan dicatat,
-    tidak dilempar, agar penyegaran data tetap berjalan.
-    """
+    """Kirim notifikasi Telegram bila regime berganti sejak pemeriksaan terakhir."""
     from app.services import ai_detector, regime_notifier, telegram_bot
     from app.services.telegram_store import get_store
 
@@ -131,12 +108,11 @@ def notify_once() -> List[Dict[str, object]]:
     cfg = get_config()
     try:
         # Label dari detektor AI resmi, sama dengan yang tampil di dashboard.
-        # Label berkeyakinan rendah (< τ) memutus konfirmasi agar salah alarm berkurang.
         raw = {tf: ai_detector.update_cache(cfg.data.symbol, tf) for tf in cfg.data.timeframes}
         regimes = {tf: ai_detector.with_abstain(df) for tf, df in raw.items()}
         store = get_store()
         events = regime_notifier.check(regimes, store, telegram_bot.send_message, bot.dashboard_url)
-        # Ringkasan harian (sekali per tanggal WIB, mulai DAILY_STATUS_HOUR); memakai label apa adanya + keyakinan.
+        # Ringkasan harian (sekali per tanggal WIB, mulai DAILY_STATUS_HOUR).
         daily = regime_notifier.daily_once(raw, store, telegram_bot.send_message, bot.dashboard_url, ai_detector.ABSTAIN_TAU)
         if daily:
             _record({"at": int(time.time()), "daily_status": {k: daily[k] for k in ("date", "recipients", "sent", "failed")}})
@@ -157,11 +133,7 @@ def _loop(interval_seconds: int) -> None:
 
 
 def start(warm: bool = True) -> Dict[str, object]:
-    """Jalankan pemanasan cache dan, bila diaktifkan, penyegaran berkala.
-
-    Pemanasan dijalankan terpisah dari penyegaran: dashboard tetap responsif
-    meski `auto_refresh` dimatikan untuk demo yang benar-benar statis.
-    """
+    """Jalankan pemanasan cache dan, bila diaktifkan, penyegaran berkala."""
     global _thread, _warm_thread
     cfg = get_config()
 

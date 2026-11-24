@@ -1,13 +1,4 @@
-"""Validasi generalized Hurst H(q) — flow.md langkah 2 & 5.
-
-Tiga hal yang harus benar sebelum H(q) boleh dipakai sebagai fitur:
-
-1. Pada fBm dengan H diketahui, H(q) harus memulihkan nilai itu untuk setiap q.
-2. fBm bersifat MONOFRAKTAL: H(q) harus hampir konstan terhadap q, sehingga
-   lebar spektrum mendekati nol. Kalau estimator melaporkan lebar besar pada
-   data monofraktal, seluruh klaim multifraktalitas pada BTC tidak bermakna.
-3. Perhitungan wajib causal.
-"""
+"""Validasi generalized Hurst H(q) — flow.md langkah 2 & 5."""
 
 import numpy as np
 import pytest
@@ -44,15 +35,10 @@ def test_fbm_monofraktal_lebar_spektrum_kecil() -> None:
 
 
 def test_hq_membedakan_deret_multifraktal() -> None:
-    """Deret dengan volatilitas berlompat harus punya spektrum lebih lebar.
-
-    Kontrol positif: tanpa uji ini, lebar spektrum yang selalu kecil bisa saja
-    berarti estimatornya memang tidak peka terhadap apa pun.
-    """
+    """Deret dengan volatilitas berlompat harus punya spektrum lebih lebar."""
     rng = np.random.default_rng(7)
     base = fbm_increments(4096, 0.6, seed=1)
-    # Volatilitas berganda bergantian — sumber multifraktalitas paling umum
-    # pada data keuangan.
+    # Volatilitas berganda bergantian — sumber multifraktalitas paling umum pada data keuangan.
     vol = np.where(rng.random(base.size) < 0.1, 8.0, 1.0)
     multi = base * vol
 

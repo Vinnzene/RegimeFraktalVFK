@@ -14,11 +14,7 @@ import {
   type PublicSus,
 } from "@/lib/sus";
 
-/**
- * Kuesioner System Usability Scale (SUS) RFraktal: persetujuan dan profil, mencoba
- * aplikasi secara bebas (minimal tiga halaman), 10 butir SUS, lalu saran.
- * Satu akun mengisi satu kali; jawaban tidak dapat diubah setelah dikirim.
- */
+/** Kuesioner System Usability Scale. */
 
 type State = { open: boolean; invite_required: boolean; demo: boolean; admin: boolean; response: PublicSus | null };
 

@@ -3,15 +3,7 @@ import { requireUser } from "@/lib/server-user";
 
 export const dynamic = "force-dynamic";
 
-/**
- * Pencarian simbol untuk Analisis Aset, seperti kotak pencarian TradingView:
- * ketik "a" → simbol berawalan A lebih dulu.
- *
- * Binance: daftar pair aktif dari exchangeInfo (±6 MB) disimpan di memori
- * proses dan diperbarui tiap 6 jam, sehingga pencarian berikutnya instan.
- * Yahoo Finance: diteruskan ke API pencarian Yahoo, lalu hasil berawalan
- * kata kunci diurutkan ke atas.
- */
+/** Pencarian simbol untuk Analisis Aset, seperti kotak pencarian TradingView. */
 
 type SymbolItem = { symbol: string; name: string; exchange: string; type: string };
 
@@ -53,7 +45,7 @@ const cache: {
   volumes: Map<string, number>;
 } = ((globalThis as any).__binancePairs ??= { at: 0, pairs: null, loading: null, volumeAt: 0, volumes: new Map() });
 
-/** Volume 24 jam (dalam mata uang quote) untuk mengurutkan pair populer ke atas, seperti TradingView. */
+/** Volume 24 jam (dalam mata uang quote) untuk mengurutkan pair populer ke atas. */
 async function refreshVolumes(): Promise<void> {
   if (Date.now() - cache.volumeAt < VOLUME_TTL) return;
   cache.volumeAt = Date.now();
@@ -122,9 +114,7 @@ async function searchBinance(q: string): Promise<SymbolItem[]> {
     .map((x) => binanceItem(x.p));
 }
 
-// Saham IDX yang paling sering dicari. Pencarian Yahoo mengutamakan bursa AS
-// ("bb" → BlackBerry), jadi ticker IDX yang cocok ditampilkan lebih dulu.
-// Ticker IDX lain tetap ditemukan lewat pencarian Yahoo bila diketik lebih lengkap.
+// Saham IDX yang paling sering dicari.
 const IDX_STOCKS: [string, string][] = [
   ["BBCA", "Bank Central Asia Tbk"], ["BBRI", "Bank Rakyat Indonesia (Persero) Tbk"], ["BMRI", "Bank Mandiri (Persero) Tbk"],
   ["BBNI", "Bank Negara Indonesia (Persero) Tbk"], ["BBTN", "Bank Tabungan Negara (Persero) Tbk"], ["BRIS", "Bank Syariah Indonesia Tbk"],

@@ -1,11 +1,4 @@
-"""Split data time-based + purge gap.
-
-Split dilakukan berurutan waktu TANPA shuffle. Di setiap batas (train|val dan
-val|test) dibuang `purge_gap` bar (= L + h). Alasannya: dengan stride=1 window
-training yang berdekatan dengan batas masih tumpang tindih dengan window test —
-baik lewat input (panjang L) maupun lewat target (jarak h). Tanpa purge, angka
-test terlihat bagus karena kebocoran, bukan karena modelnya bekerja.
-"""
+"""Split data time-based + purge gap."""
 
 from __future__ import annotations
 
@@ -17,13 +10,7 @@ DEFAULT_STRIDE_BARS = 1
 
 
 def stride_bars_of(df: pd.DataFrame, default: int = DEFAULT_STRIDE_BARS) -> int:
-    """Baca jarak antar-baris (satuan bar) dari hasil compute_regime.
-
-    Deret regime berindeks WINDOW, sedangkan purge_gap dan horizon h di
-    config.yaml dinyatakan dalam BAR. Setiap konversi antar keduanya harus
-    lewat angka ini; menebaknya dari effective_window pernah menghasilkan
-    horizon yang meleset 125x.
-    """
+    """Baca jarak antar-baris (satuan bar) dari hasil compute_regime."""
     if "stride_bars" in df.columns and len(df):
         try:
             return max(1, int(df["stride_bars"].iloc[0]))
@@ -38,16 +25,7 @@ def bars_to_rows(bars: int, stride_bars: int) -> int:
 
 
 def split_indices(n: int, ratios: Sequence[float], purge_gap: int) -> Dict[str, Any]:
-    """Hitung batas indeks train/val/test beserta dua zona purge.
-
-    Dua zona purge dialokasikan LEBIH DULU dari total, baru sisanya dibagi
-    menurut rasio. Menghitung batas dari rasio dulu lalu menyisipkan purge akan
-    memakan jatah validation dan test — pada dataset pendek keduanya bisa habis
-    sama sekali tanpa error yang terlihat.
-
-    Bila purge tidak muat, lebarnya dikecilkan secara proporsional agar setiap
-    segmen tetap memperoleh minimal satu baris.
-    """
+    """Hitung batas indeks train/val/test beserta dua zona purge."""
     if n <= 0:
         zero = [0, 0]
         return {

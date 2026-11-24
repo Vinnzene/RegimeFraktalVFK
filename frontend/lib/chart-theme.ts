@@ -1,10 +1,4 @@
-/**
- * Tema bersama untuk seluruh chart Recharts.
- *
- * Disatukan agar panel metrik tampil konsisten dengan candlestick
- * (lightweight-charts) yang memakai palet dan tipografi monospace serupa.
- * Tanpa ini, tiap panel mudah menyimpang saat ditambahkan belakangan.
- */
+/** Tema bersama untuk seluruh chart Recharts. */
 
 // Warna memakai variabel CSS tema (globals.css) agar ikut berganti terang/gelap.
 export const AXIS_TICK = {

@@ -4,13 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import PageHeader from "@/components/PageHeader";
 import { useUser } from "@/components/UserContext";
 
-/**
- * Langganan notifikasi Telegram.
- *
- * Pengguna tidak perlu tahu chat ID-nya: tombol "Hubungkan" membuat kode sekali
- * pakai dan membuka bot di Telegram. Begitu pengguna menekan Start, backend
- * menautkan chat itu ke akun ini, dan halaman ini mendeteksinya otomatis.
- */
+/** Langganan notifikasi Telegram. */
 
 const TF_LABEL: Record<string, string> = { "1h": "1H (lebih sering, ±4 jam per window)", "4h": "4H (lebih jarang, ±8 jam per window)" };
 

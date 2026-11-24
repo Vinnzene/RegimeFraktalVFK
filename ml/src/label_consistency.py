@@ -1,22 +1,4 @@
-"""Konsistensi label Hurst-DFA — masalah khusus 1 (tanpa training).
-
-Jalankan:
-    python ml/src/label_consistency.py
-    python ml/src/label_consistency.py --timeframes 1h 4h --plot
-
-Pertanyaan: seberapa sering dua estimator persistensi (Hurst R/S dan DFA)
-TIDAK sepakat tentang regime sebuah window, dan bagaimana itu bervariasi
-antar timeframe dan antar tahun?
-
-Sumber: data/processed/regime_btcusdt_{tf}.parquet (tabel regime existing).
-Tidak ada yang dihitung ulang; ambang yang dipakai adalah ambang yang
-tersimpan di tabel itu.
-
-Keluaran:
-    ml/artifacts/label_consistency.json
-    ml/artifacts/label_consistency.md
-    ml/artifacts/figures/fig_label_consistency_{tf}.png   (--plot)
-"""
+"""Konsistensi label Hurst-DFA — masalah khusus 1 (tanpa training)."""
 
 from __future__ import annotations
 

@@ -1,16 +1,4 @@
-"""KNF-02: waktu respons identifikasi jendela terbaru + pembaruan grafik (target < 3 detik).
-
-Skenario (masing-masing 10 kali, aplikasi berjalan di localhost):
-  A. cache terisi    : GET /api/v1/analysis/ai-regime (backend) dan muat halaman Ringkasan
-                       sampai kartu identifikasi + grafik tampil (browser).
-  B. 1 jendela baru  : jendela terbaru dihapus dari cache identifikasi sebelum tiap
-                       pengulangan, sehingga backend menghitung fitur + 3 model untuk
-                       jendela itu (kondisi setelah candle baru tutup).
-  C. cache kosong    : seluruh cache identifikasi 1H dihapus (1 kali; riwayat penuh
-                       dihitung ulang di latar belakang).
-
-    python ml/src/review_knf02.py
-"""
+"""KNF-02: waktu respons identifikasi jendela terbaru + pembaruan grafik (target < 3 detik)."""
 
 from __future__ import annotations
 
@@ -82,7 +70,7 @@ def main() -> None:
         out["B_ui_1_jendela_baru"] = stats([ui_once(True) for _ in range(N)])
         br.close()
 
-    # C. cache kosong (1 kali): API langsung menjawab 503 "sedang menghitung", lalu dibangun di latar belakang.
+    # C.
     backup = CACHE.read_bytes()
     CACHE.unlink()
     t0 = time.perf_counter()

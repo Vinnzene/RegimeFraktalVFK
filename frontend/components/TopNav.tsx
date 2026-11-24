@@ -8,14 +8,7 @@ import UserMenu from "@/components/UserMenu";
 import { startTour } from "@/components/GuidedTour";
 import BrandMark from "@/components/login/BrandMark";
 
-/**
- * Navigasi horizontal di header, dikelompokkan menurut pertanyaan pengguna.
- *
- * Semua akun melihat grup Pasar, Identifikasi, dan Strategi. Grup atau menu bertanda
- * adminOnly (Riset termasuk Walk-Forward multi-aset, Arsip Fase 0, Tentang) hanya tampil
- * untuk admin dan juga ditolak middleware (ADMIN_ONLY) bagi akun lain. Seluruh lebar layar tetap tersedia untuk
- * chart karena navigasi ada di header, bukan sidebar.
- */
+/** Navigasi horizontal di header, dikelompokkan menurut pertanyaan pengguna. */
 
 /** adminOnly pada item: menu hanya tampil untuk admin, walaupun grupnya umum. */
 type NavItem = { href: string; label: string; hint: string; locked?: boolean; adminOnly?: boolean };

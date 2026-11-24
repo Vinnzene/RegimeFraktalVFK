@@ -1,21 +1,4 @@
-"""Uji Sensitivitas Sumber Ambang Kuantil Label (T1.3).
-
-Membandingkan kinerja model dan keputusan hipotesis H1–H6 antara:
-1. `train_only` (protokol utama sejak praregistrasi adendum §5, config.yaml):
-   ambang kuantil dihitung HANYA dari data latih (bebas kebocoran).
-2. `full_history` (uji sensitivitas): ambang kuantil dihitung dari seluruh riwayat.
-
-Hasil protokol utama dibaca dari ps_study_{tf}.json (artefak Bab 4) bila
-config_hash-nya cocok, sehingga angka utama di sini identik dengan Bab 4;
-protokol pembanding selalu dihitung ulang. Versi lama skrip ini membaca
-ps_study sebagai "full_history", padahal sejak ambang train_only menjadi
-bawaan berkas itu berisi hasil train_only — label kolomnya tertukar.
-
-Jalankan:
-    python ml/src/run_threshold_sensitivity.py --timeframe 1h
-    python ml/src/run_threshold_sensitivity.py --timeframe 4h
-    python ml/src/run_threshold_sensitivity.py --timeframe all
-"""
+"""Uji Sensitivitas Sumber Ambang Kuantil Label (T1.3)."""
 
 from __future__ import annotations
 

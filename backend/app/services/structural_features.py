@@ -1,36 +1,4 @@
-"""Fitur struktural untuk identifikasi regime.
-
-Alasan keberadaan modul ini
----------------------------
-Koefisien SWT saja hanya mencapai balanced accuracy ~0.38 pada tugas
-identifikasi. Sebaliknya, memberikan Hurst dan DFA langsung sebagai fitur
-mencapai ~0.99 — tetapi angka itu tidak sah: label regime DIBENTUK dari Hurst
-dan DFA lewat aturan ambang, sehingga model hanya menghafal aturan if-else.
-Itu label sirkular.
-
-Fitur di bawah dipilih karena memenuhi dua syarat sekaligus:
-
-1. Berkaitan dengan persistensi secara teoretis, sehingga masuk akal dipakai.
-2. Dihitung dengan cara yang BERBEDA dari Hurst maupun DFA, sehingga model
-   harus benar-benar mempelajari hubungannya, bukan menyalin hasil.
-
-Kelompok fitur
---------------
-- **Variance ratio (Lo & MacKinlay, 1988)** — uji baku untuk hipotesis random
-  walk. VR(q) = Var(agregat q) / (q · Var(1)). Nilai > 1 menandakan
-  persistensi, < 1 menandakan pembalikan, ≈ 1 menyerupai random walk.
-  Pada pengujian, kelompok inilah yang paling berpengaruh.
-- **Autokorelasi multi-lag** — persistensi meninggalkan jejak pada banyak lag,
-  bukan hanya lag-1.
-- **Autokorelasi |return|** — clustering volatilitas, sifat yang berbeda dari
-  persistensi arah.
-- **Rasio energi antar-skala SWT** — distribusi energi lintas frekuensi,
-  dihitung pada beberapa ukuran sub-window.
-- **Statistik sebaran** — kurtosis, skewness, sign-change rate, rasio
-  volatilitas paruh akhir terhadap paruh awal.
-
-Seluruh perhitungan bersifat causal: hanya memakai data sampai indeks t.
-"""
+"""Fitur struktural untuk identifikasi regime."""
 
 from __future__ import annotations
 
@@ -40,8 +8,7 @@ import numpy as np
 
 from app.services.swt import causal_swt_at
 
-# Konfigurasi lag dan horizon. Diekspor agar nama fitur dapat dibentuk
-# konsisten untuk keperluan interpretasi.
+# Konfigurasi lag dan horizon.
 RETURN_LAGS = (1, 2, 3, 4, 5, 8, 10, 15, 20, 30, 50)
 ABS_LAGS = (1, 2, 5, 10, 20)
 VR_HORIZONS = (2, 3, 4, 6, 8, 12, 16, 24, 32, 48)
@@ -81,10 +48,7 @@ def _safe_corr(a: np.ndarray, b: np.ndarray) -> float:
 
 
 def variance_ratio(segment: np.ndarray, q: int) -> float:
-    """VR(q) = Var(agregat q) / (q · Var(1)).
-
-    VR ≈ 1 menyerupai random walk, > 1 persisten, < 1 cenderung berbalik.
-    """
+    """VR(q) = Var(agregat q) / (q · Var(1))."""
     n = segment.size // q * q
     if n < q * 4:
         return 1.0
@@ -140,8 +104,7 @@ def compute_features(
     half = seg.size // 2
     out.append(float(seg[half:].std() / (seg[:half].std() + 1e-12)))
 
-    # Directional Efficiency Ratio (Kaufman ER) pada jendela penuh, W=128, W=64,
-    # serta Normalized Cumulative Return / Trend t-Stat & Signed Trend Slope.
+    # Directional Efficiency Ratio.
     w128 = min(128, seg.size)
     w64 = min(64, seg.size)
     seg128 = seg[-w128:]

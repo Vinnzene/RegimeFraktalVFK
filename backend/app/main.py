@@ -1,8 +1,4 @@
-"""regimefraktalVFK — backend FastAPI.
-
-Backend hanya melakukan analisis + inference. Training model dilakukan
-terpisah di folder ml/ dan hasilnya dibaca dari ml/artifacts/.
-"""
+"""regimefraktalVFK — backend FastAPI."""
 
 from __future__ import annotations
 
@@ -22,11 +18,7 @@ from app.services.inference import ModelUnavailable
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    """Nyalakan penyegaran berkala saat startup, hentikan saat shutdown.
-
-    Kegagalan jaringan tidak boleh menggagalkan startup: dashboard tetap
-    melayani data terakhir yang tersimpan.
-    """
+    """Nyalakan penyegaran berkala saat startup, hentikan saat shutdown."""
     try:
         scheduler.start()
     except Exception:  # noqa: BLE001
@@ -59,9 +51,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Respons analisis berupa JSON deret angka yang sangat repetitif, sehingga
-# kompresi memangkasnya secara drastis. Ambang 1 KB agar respons kecil tidak
-# menanggung ongkos kompresi tanpa manfaat.
+# Respons analisis berupa JSON deret angka yang sangat repetitif.
 app.add_middleware(GZipMiddleware, minimum_size=1024)
 
 

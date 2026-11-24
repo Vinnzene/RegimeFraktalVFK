@@ -7,10 +7,7 @@ import { api } from "@/lib/api-client";
 import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
 import type { EvidenceLevel, RegimeGuide } from "@/lib/setup-guide";
 
-/**
- * Panduan Setup per regime, terkunci per akun: pengguna meminta akses dan
- * admin menyetujui. Isi panduan hanya dikirim server untuk akun yang disetujui.
- */
+/** Panduan Setup per regime, terkunci per akun: pengguna meminta akses dan admin menyetujui. */
 
 type GuideResponse = {
   access: "pending" | "approved" | "rejected" | null;

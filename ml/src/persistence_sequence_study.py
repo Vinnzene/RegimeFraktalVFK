@@ -1,20 +1,4 @@
-"""Eksperimen praregistrasi: Sekuens Statistik Persistensi (PS).
-
-Rancangan, hipotesis H1–H6, dan kriteria keputusan ditetapkan SEBELUM run di
-docs/praregistrasi_persistence_sequence.md. Skrip ini hanya menjalankannya.
-
-Jalankan:
-    python ml/src/persistence_sequence_study.py --timeframe 1h
-    python ml/src/persistence_sequence_study.py --timeframe 4h
-
-Protokol identik main_evaluation.py: label & split kronologis sama
-(dicek terhadap main_eval_{tf}.json), purge L bar, scaler dari train,
-seed 42/43/44, epoch maks 80, early stopping patience 12, class weight.
-
-Keluaran:
-    ml/artifacts/ps_study_{tf}.json
-    ml/artifacts/ps_study_{tf}.md
-"""
+"""Eksperimen praregistrasi: Sekuens Statistik Persistensi (PS)."""
 
 from __future__ import annotations
 
@@ -71,9 +55,7 @@ HYPOTHESES = [
     ("H5", "structural_mlp", "hybrid_ps", "Hybrid PS melampaui MLP?"),
     ("H6", "structural_mlp", "ps_attention_bilstm", "Model sekuens murni menyamai/melampaui MLP?"),
 ]
-# Adendum 2026-10-19 (docs/praregistrasi_addendum.md): pembanding tabular
-# ditambahkan setelah praregistrasi, jadi dilaporkan TERPISAH dan tidak masuk
-# keluarga Holm H1-H6.
+# Adendum 2026-10-19 (docs/praregistrasi_addendum.md).
 ADDENDUM = [
     ("A1", "lightgbm", "hybrid_ps", "Hybrid PS melampaui LightGBM fitur statistik?"),
     ("A2", "logreg", "hybrid_ps", "Hybrid PS melampaui regresi logistik fitur statistik?"),

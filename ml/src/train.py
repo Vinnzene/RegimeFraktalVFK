@@ -1,12 +1,4 @@
-"""Training offline. Backend TIDAK pernah menjalankan file ini saat request.
-
-Jalankan:
-    python ml/src/train.py --timeframe 1h --model swt_attention_bilstm
-
-Artefak disimpan ke ml/artifacts/<model>_<tf>.keras beserta metadata berisi
-config_hash, sehingga hasil di dashboard bisa ditelusuri ke konfigurasi yang
-menghasilkannya.
-"""
+"""Training offline."""
 
 from __future__ import annotations
 
@@ -31,14 +23,7 @@ from dataset import build_dataset  # noqa: E402
 
 
 def class_weights(y: np.ndarray, random_boost: float = 1.0) -> dict:
-    """Bobot berbanding terbalik dengan frekuensi kelas.
-
-    Distribusi regime tidak seimbang; tanpa bobot, model cenderung menebak
-    kelas mayoritas dan balanced accuracy-nya runtuh.
-
-    Parameter `random_boost` (> 1.0) memberikan penalti kerugian ekstra pada
-    kelas `random_like` (indeks 1) untuk mengatasi underfitting akibat SNR rendah.
-    """
+    """Bobot berbanding terbalik dengan frekuensi kelas."""
     counts = y.sum(axis=0)
     total = counts.sum()
     n_classes = len(counts)
@@ -112,9 +97,7 @@ def main() -> None:
     print(f"[{args.timeframe}] menyiapkan dataset dari {len(close)} bar...")
     data = build_dataset(close, seq_len=args.seq_len)
 
-    # build_dataset mengembalikan (sekuens, fitur struktural, target). Skrip ini
-    # memakai jalur sekuens saja — fitur struktural dipakai oleh
-    # train_identification.py.
+    # build_dataset mengembalikan (sekuens, fitur struktural, target).
     X_tr, _, y_tr = data["train"]  # type: ignore[misc]
     X_va, _, y_va = data["validation"]  # type: ignore[misc]
     X_te, _, y_te = data["test"]  # type: ignore[misc]
@@ -183,9 +166,7 @@ def main() -> None:
             "stride_bars": data["stride_bars"],
             "effective_window": data["effective_window"],
             "threshold_mode": cfg.analysis.threshold_mode,
-            # Scaler wajib ikut disimpan: inference harus memakai statistik yang
-            # sama persis dengan training, dan statistik itu berasal dari subset
-            # training saja.
+            # Scaler wajib ikut disimpan: inference harus memakai statistik.
             "scaler": data["scaler"],
             "n_train": int(len(X_tr)),
             "n_val": int(len(X_va)),

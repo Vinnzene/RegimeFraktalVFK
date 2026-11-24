@@ -1,15 +1,6 @@
 import type { Regime } from "@/lib/regime";
 
-/**
- * Peta regime → strategi beserta bukti Fase 2. Satu sumber untuk beranda,
- * halaman Strategi, dan (secara terpisah, di backend) pesan Telegram.
- *
- * Peta strategi adalah dasar teori (Hurst > 0,5 → momentum, < 0,5 →
- * mean-reversion). Kolom `evidence` merangkum hasil uji Fase 2 di BTC 1H
- * (`ml/artifacts/strategy_selection.md`, praregistrasi
- * `docs/praregistrasi_fase2_strategi.md`) dan wajib ikut ditampilkan, karena
- * hasilnya tidak mendukung trading aktif setelah biaya.
- */
+/** Peta regime → strategi beserta bukti Fase 2. */
 export type StrategyPlan = {
   strategy: string;
   tool: string;

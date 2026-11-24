@@ -1,19 +1,4 @@
-"""Audit artefak ml/artifacts — READ-ONLY.
-
-Jalankan:
-    python ml/src/audit_artifacts.py
-
-Untuk setiap berkas JSON hasil eksperimen, laporkan:
-    - tugas (identifikasi vs forecasting) dan horizon h
-    - config_hash artefak vs config.yaml sekarang
-    - n train/val/test dan rentang split
-    - metrik test utama (balanced accuracy, macro F1, MCC)
-    - apakah ada baseline pembanding dan multi-seed
-    - kesimpulan: SAH / ULANG (+ alasan)
-
-Tidak ada berkas yang ditulis selain laporan ke ml/artifacts/audit_report.md
-(opsional, --write). Model dan artefak tidak disentuh.
-"""
+"""Audit artefak ml/artifacts — READ-ONLY."""
 
 from __future__ import annotations
 

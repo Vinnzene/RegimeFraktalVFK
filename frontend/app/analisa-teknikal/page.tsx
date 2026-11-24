@@ -4,19 +4,11 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { themeColor, useTheme } from "@/lib/theme";
 
-/**
- * Analisa teknikal bebas dengan widget resmi TradingView (gratis).
- *
- * Alat gambar (garis tren, fibonacci, channel, teks, dll.) dan indikator
- * disediakan TradingView. Data dan grafik di halaman ini milik TradingView,
- * bukan hasil sistem identifikasi regime; gambar tidak tersimpan setelah
- * halaman ditutup.
- */
+/** Analisa teknikal bebas dengan widget resmi TradingView (gratis). */
 
 type Asset = { label: string; tv: string; group: string };
 
-// 20 aset proyek (praregistrasi generalisasi §2). XAUUSD spot tersedia di
-// TradingView meski tidak bisa diunduh untuk riset (sumber diblokir).
+// 20 aset proyek (praregistrasi generalisasi §2).
 const ASSETS: Asset[] = [
   { label: "BTC", tv: "BINANCE:BTCUSDT", group: "Kripto" },
   { label: "ETH", tv: "BINANCE:ETHUSDT", group: "Kripto" },

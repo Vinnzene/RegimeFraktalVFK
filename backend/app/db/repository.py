@@ -1,10 +1,4 @@
-"""Abstraksi penyimpanan.
-
-Seluruh router HANYA berbicara ke interface `Repository`. Fase 1 memakai
-`ParquetRepository` (tanpa Postgres, tanpa service db di docker-compose).
-Saat data exchange asli & scheduler masuk (roadmap M1+), cukup tambahkan
-`PostgresRepository` dengan interface sama — router tidak perlu diubah.
-"""
+"""Abstraksi penyimpanan."""
 
 from __future__ import annotations
 
@@ -33,8 +27,6 @@ from app.services.regime_labeling import label_series
 from app.services.splitting import bars_to_rows, split_indices
 
 # Skema kolom diambil dari data_ingestion agar hanya ada satu definisi.
-# Mendefinisikannya ulang di sini pernah membuat kolom order flow hilang saat
-# penyimpanan, padahal ingestion sudah mengambilnya.
 OHLCV_COLUMNS = INGESTION_OHLCV_COLUMNS
 
 REGIME_COLUMNS = [
@@ -57,8 +49,7 @@ REGIME_COLUMNS = [
 
 _SYMBOL_RE = re.compile(r"^[A-Za-z0-9]{1,20}$")
 
-# Callback yang dijalankan saat OHLCV berubah. Router mendaftarkan cache-nya
-# di sini supaya hasil turunan tidak menyajikan angka dari data lama.
+# Callback yang dijalankan saat OHLCV berubah.
 _INVALIDATION_HOOKS: List[callable] = []  # type: ignore[valid-type]
 
 
@@ -80,13 +71,7 @@ class InvalidIdentifier(ValueError):
 
 
 def validate_identifiers(symbol: str, timeframe: str, config: AppConfig) -> Tuple[str, str]:
-    """Validasi sebelum nilai apa pun menyentuh filesystem.
-
-    Tanpa ini, `symbol` dari query string masuk langsung ke nama file dan bisa
-    keluar dari data/processed/ lewat komponen '..'. Selain itu setiap symbol
-    baru memicu generate + compute_regime penuh, sehingga nilai bebas juga
-    menjadi jalur pengurasan disk dan CPU.
-    """
+    """Validasi sebelum nilai apa pun menyentuh filesystem."""
     if not _SYMBOL_RE.match(symbol or ""):
         raise InvalidIdentifier(
             f"symbol '{symbol}' tidak valid — hanya huruf/angka, maksimal 20 karakter."
@@ -129,17 +114,14 @@ class ParquetRepository(Repository):
         self.base_dir = base_dir or PROCESSED_DIR
         self.base_dir.mkdir(parents=True, exist_ok=True)
         self.config = config or get_config()
-        # Memo satu proses: beberapa endpoint dalam satu page-load meminta
-        # regime yang sama; tanpa ini pipeline Hurst/DFA berjalan berulang.
+        # Memo satu proses: beberapa endpoint dalam satu page-load meminta regime yang sama.
         self._regime_memo: Dict[Tuple[str, str, str], pd.DataFrame] = {}
 
     def _path(self, kind: str, symbol: str, timeframe: str) -> Path:
         symbol, timeframe = validate_identifiers(symbol, timeframe, self.config)
         path = (self.base_dir / f"{kind}_{symbol.lower()}_{timeframe}.parquet").resolve()
         base = self.base_dir.resolve()
-        # Sabuk pengaman kedua: walau regex sudah menolak '..', batas direktori
-        # tetap diperiksa agar perubahan validator di masa depan tidak diam-diam
-        # membuka path traversal.
+        # Sabuk pengaman kedua: walau regex sudah menolak '..', batas direktori tetap diperiksa.
         if base not in path.parents:
             raise InvalidIdentifier("path hasil resolusi keluar dari data/processed.")
         return path
@@ -174,15 +156,13 @@ class ParquetRepository(Repository):
                     {"source": "mock", "rows": len(df), "fetched_at": int(time.time())},
                 )
                 return df
-            # Data asli belum pernah ditarik: ambil sekarang agar dashboard
-            # tidak kosong pada penggunaan pertama.
+            # Data asli belum pernah ditarik: ambil sekarang.
             self.refresh_ohlcv(symbol, timeframe, full=True)
             return pd.read_parquet(path)
         return pd.read_parquet(path)
 
     def save_ohlcv(self, symbol: str, timeframe: str, df: pd.DataFrame) -> None:
-        # Kolom order flow ditambahkan belakangan; berkas lama yang belum
-        # memilikinya diisi nol agar skema tetap seragam tanpa perlu migrasi.
+        # Kolom order flow ditambahkan belakangan.
         out = df.copy()
         for col in OHLCV_COLUMNS:
             if col not in out.columns:
@@ -193,12 +173,7 @@ class ParquetRepository(Repository):
     def refresh_ohlcv(
         self, symbol: str, timeframe: str, full: bool = False
     ) -> Dict[str, object]:
-        """Tarik data terbaru dari sumber dan gabungkan ke data tersimpan.
-
-        `full=True` menarik ulang seluruh rentang `source.years`; selain itu
-        hanya bar terakhir yang diambil lalu digabung, jauh lebih ringan untuk
-        refresh berkala.
-        """
+        """Tarik data terbaru dari sumber dan gabungkan ke data tersimpan."""
         symbol, timeframe = validate_identifiers(symbol, timeframe, self.config)
         cfg = self.config
 
@@ -252,11 +227,7 @@ class ParquetRepository(Repository):
             }
         )
         self.write_meta(symbol, timeframe, meta)
-        # Hanya batalkan cache bila benar-benar ada bar baru. Scheduler berjalan
-        # tiap beberapa menit sementara bar 1H hanya tutup sekali per jam, jadi
-        # sebagian besar putaran tidak menambah data. Membatalkan cache tanpa
-        # alasan memaksa perhitungan ulang Hurst/DFA untuk puluhan ribu window
-        # (~60 detik) dan membuat dashboard tampak kosong saat dibuka.
+        # Hanya batalkan cache bila benar-benar ada bar baru.
         if added > 0:
             self._invalidate(symbol, timeframe)
         return meta
@@ -292,15 +263,7 @@ class ParquetRepository(Repository):
         }
 
     def _invalidate(self, symbol: str, timeframe: str) -> None:
-        """Buang turunan di memori yang dihitung dari OHLCV lama.
-
-        Berkas regime di disk sengaja TIDAK dihapus. Dulu dihapus, sehingga
-        setiap bar baru — sekali per jam pada 1H — memaksa perhitungan ulang
-        Hurst/DFA atas seluruh ~17 ribu window (~40 detik), dan pengunjung
-        berikutnya menunggu selama itu. Berkas lama kini dipakai sebagai dasar
-        perhitungan incremental; kebasiannya dideteksi di `get_regime` lewat
-        sidik jari data sumber, bukan lewat ada-tidaknya berkas.
-        """
+        """Buang turunan di memori yang dihitung dari OHLCV lama."""
         self._regime_memo.pop((symbol, timeframe, self.config.config_hash), None)
         run_invalidation_hooks(symbol, timeframe)
 
@@ -327,10 +290,7 @@ class ParquetRepository(Repository):
         return df
 
     def save_regime(self, symbol: str, timeframe: str, df: pd.DataFrame) -> None:
-        # config_hash disimpan di attrs; pyarrow mempertahankannya lewat
-        # metadata Parquet sehingga hasil dari konfigurasi berbeda tidak
-        # saling menimpa saat dibaca ulang. n_bars ikut disimpan untuk
-        # mendeteksi hasil yang tertinggal dari data OHLCV terbaru.
+        # config_hash disimpan di attrs.
         df.attrs["config_hash"] = self.config.config_hash
         df.to_parquet(self._path("regime", symbol, timeframe), index=False)
 
@@ -341,24 +301,7 @@ class ParquetRepository(Repository):
         window: int,
         step: int,
     ) -> Optional[pd.DataFrame]:
-        """Ambil H/alpha lama yang masih sah untuk data OHLCV sekarang.
-
-        Nilai Hurst dan DFA pada indeks t hanya bergantung pada data <= t
-        (causal), sehingga baris lama tetap benar selama bar yang mendasarinya
-        tidak berubah. Tiga syarat diperiksa; bila satu saja gagal, hasil lama
-        dibuang dan perhitungan penuh dijalankan:
-
-        1. window dan stride sama — keduanya menentukan posisi window.
-        2. Waktu dan harga penutupan setiap baris lama cocok dengan OHLCV
-           sekarang. Ini menangkap riwayat yang ditarik ulang atau digeser,
-           misalnya refresh penuh dengan tanggal awal berbeda.
-        3. Deret tidak memendek.
-
-        Label TIDAK diambil dari hasil lama: pada threshold_mode = quantile,
-        ambang dihitung dari distribusi seluruh deret, jadi label lama bisa
-        bergeser begitu window baru masuk. Yang dipakai ulang hanya H dan
-        alpha; pelabelan selalu diulang atas seluruh deret (murah).
-        """
+        """Ambil H/alpha lama yang masih sah untuk data OHLCV sekarang."""
         if previous is None or previous.empty:
             return None
         try:
@@ -386,12 +329,7 @@ class ParquetRepository(Repository):
         timeframe: str,
         previous: Optional[pd.DataFrame] = None,
     ) -> pd.DataFrame:
-        """Pipeline label ground truth: harga -> log-return -> rolling H/alpha -> label.
-
-        Bila `previous` diberikan dan masih sah, hanya window baru yang
-        dihitung. Tanpa ini setiap bar baru memicu perhitungan ulang ~17 ribu
-        window (~40 detik pada 1H); dengan ini cukup beberapa window baru.
-        """
+        """Pipeline label ground truth: harga -> log-return -> rolling H/alpha -> label."""
         cfg = self.config
         ohlcv = self.get_ohlcv(symbol, timeframe)
         log_ret = to_log_return(ohlcv["close"].to_numpy())
@@ -415,8 +353,7 @@ class ParquetRepository(Repository):
             metrics = rolling_hurst_dfa(log_ret, window=window, step=step)
 
         if metrics.empty:
-            # Skema penuh, bukan sebagian: konsumen di router menyeleksi kolom
-            # close/effective_window/stride_bars dan akan KeyError bila hilang.
+            # Skema penuh, bukan sebagian: konsumen di router menyeleksi kolom close/effective_window/stride_bars dan akan KeyError bila hilang.
             empty = pd.DataFrame(columns=REGIME_COLUMNS)
             empty.attrs["config_hash"] = cfg.config_hash
             empty.attrs["n_bars"] = len(ohlcv)
@@ -430,17 +367,13 @@ class ParquetRepository(Repository):
             for k_er, v_er in er_dict.items():
                 metrics[k_er] = v_er
 
-        # Ambang (dan skor kuantil ER) mengikuti analysis.threshold_source. Pada
-        # train_only, kalibrasi memakai partisi latih dengan split dan purge yang
-        # sama seperti evaluasi Bab 4 (purge = L bar), sehingga label dashboard
-        # sama dengan label yang dipelajari model identifikasi.
+        # Ambang (dan skor kuantil ER) mengikuti analysis.threshold_source.
         train_mask = None
         if cfg.analysis.threshold_source == "train_only":
             sp = split_indices(len(metrics), cfg.split.ratios, bars_to_rows(window, step))
             train_mask = np.zeros(len(metrics), dtype=bool)
             train_mask[: sp["train"][1]] = True
-        # [0.3333, 0.6667] di config dibaca sebagai tersil eksak (1/3, 2/3), sama
-        # dengan backtest Bab 4; selisih pembulatannya menggeser ambang 1e-4.
+        # [0.3333, 0.6667] di config dibaca sebagai tersil eksak (1/3, 2/3), sama dengan backtest Bab 4.
         quantiles = list(cfg.analysis.threshold_quantiles)
         if all(abs(q - t) < 1e-3 for q, t in zip(quantiles, (1 / 3, 2 / 3))):
             quantiles = [1 / 3, 2 / 3]
@@ -460,10 +393,7 @@ class ParquetRepository(Repository):
         labeled["time"] = ohlcv["time"].to_numpy()[bar_idx]
         labeled["close"] = ohlcv["close"].to_numpy()[bar_idx]
         labeled["effective_window"] = window
-        # stride_bars = jarak antar-baris hasil dalam satuan BAR. Wajib ikut
-        # disimpan: purge_gap dan horizon h dinyatakan dalam bar, sedangkan
-        # DataFrame ini berindeks window. Tanpa angka ini, konversi satuan di
-        # router hanya bisa ditebak — dan tebakannya pernah salah.
+        # stride_bars = jarak antar-baris hasil dalam satuan BAR.
         labeled["stride_bars"] = step
         result = labeled[REGIME_COLUMNS]
         result.attrs["config_hash"] = cfg.config_hash

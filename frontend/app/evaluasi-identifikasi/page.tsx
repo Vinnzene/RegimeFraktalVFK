@@ -43,12 +43,7 @@ function ClassHeads() {
   );
 }
 
-/**
- * Hasil uji identifikasi (h = 0), dibaca apa adanya dari updated_eval_summary.json.
- *
- * Pengguna biasa hanya melihat model aplikasi (Hybrid Attention-BiLSTM); perbandingan
- * dengan model lain hanya ditampilkan untuk admin. Angka tidak diubah.
- */
+/** Hasil uji identifikasi (h = 0), dibaca apa adanya dari updated_eval_summary.json. */
 export default function EvaluationPage() {
   const { timeframe } = useAppConfig();
   const ev = useApi(() => api.evaluation(), []);

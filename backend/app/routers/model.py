@@ -41,12 +41,7 @@ register_invalidation_hook(_drop_caches)
 
 @router.get("/orderflow-ablation")
 def orderflow_ablation(tf: str = Query("1h", pattern="^(1h|4h)$")) -> dict:
-    """Hasil ablation order flow (Model A–D) + analisis regime vs OFI/CVD.
-
-    Dibaca dari artefak ml/src/train_orderflow_ablation.py dan
-    ml/src/orderflow_analysis.py. Bagian `per_seed` dan `scaler` dibuang agar
-    payload ringkas; berkas JSON lengkap tetap ada di ml/artifacts.
-    """
+    """Hasil ablation order flow (Model A–D) + analisis regime vs OFI/CVD."""
     cfg = get_config()
     out: dict = {"timeframe": tf, "config_hash": cfg.config_hash}
 
@@ -214,12 +209,7 @@ def _display_label(key: str, label: str) -> str:
 
 @router.get("/evaluation")
 def evaluation_summary() -> dict:
-    """Hasil uji identifikasi Bab 4 (h = 0) apa adanya dari `updated_eval_summary.json`.
-
-    Historical backtest (5 model, ensemble 3 seed) dan 5-fold expanding purged
-    walk-forward, termasuk jumlah benar per kelas dan per fold. Tidak dihitung
-    ulang di sini: angka harus sama persis dengan naskah.
-    """
+    """Hasil uji identifikasi Bab 4 (h = 0) apa adanya dari `updated_eval_summary.json`."""
     path = ARTIFACTS_DIR / "updated_eval_summary.json"
     if not path.exists():
         raise HTTPException(status_code=404, detail="updated_eval_summary.json tidak ditemukan.")
@@ -277,12 +267,7 @@ _UJI_KETAHANAN_TERKUNCI = (
 
 
 def _uji_ketahanan_terbuka() -> bool:
-    """Halaman Uji Ketahanan terkunci kecuali pemilik membukanya secara eksplisit.
-
-    Dibuka dengan `UJI_KETAHANAN_TERBUKA=1` di `backend/.env` (dibaca ulang setiap
-    permintaan, jadi tidak perlu restart) atau di environment proses backend.
-    Nilai di `backend/.env` didahulukan. Tanpa nilai apa pun, halaman terkunci.
-    """
+    """Halaman Uji Ketahanan terkunci kecuali pemilik membukanya secara eksplisit."""
     nilai = os.environ.get(_UJI_KETAHANAN_ENV)
     env_file = PROJECT_ROOT / "backend" / ".env"
     if env_file.exists():
@@ -299,14 +284,7 @@ def robustness_status() -> dict:
 
 @router.get("/robustness")
 def robustness_tests() -> dict:
-    """Uji ketahanan metode identifikasi (h = 0): walk-forward, sensitivitas, Monte Carlo.
-
-    Dibaca dari `ml/artifacts/robustness_tests.json` (dibuat `ml/src/review_robustness.py`).
-    Perhitungannya butuh puluhan menit (melatih ulang model), jadi tidak dijalankan di server.
-    Terkunci (HTTP 403) kecuali `_uji_ketahanan_terbuka()` bernilai benar. Akun yang
-    disetujui admin membaca data lewat `/internal/robustness` (rute Next.js
-    `/api/robustness` yang memeriksa persetujuan), bukan lewat endpoint publik ini.
-    """
+    """Uji ketahanan metode identifikasi (h = 0): walk-forward, sensitivitas, Monte Carlo."""
     if not _uji_ketahanan_terbuka():
         raise HTTPException(status_code=403, detail=_UJI_KETAHANAN_TERKUNCI)
     return load_robustness()
@@ -415,8 +393,7 @@ def _build_timeline_from_npz(
         if not def_list:
             continue
 
-        # Urutkan berdasarkan jarak dari batas kuantil (jendela dengan sinyal ekstrem
-        # diidentifikasi dengan keyakinan tinggi oleh Hybrid Attention-BiLSTM)
+        # Urutkan berdasarkan jarak dari batas kuantil.
         h_mid = 0.5 * (h_th[0] + h_th[1])
         d_mid = 0.5 * (d_th[0] + d_th[1])
 

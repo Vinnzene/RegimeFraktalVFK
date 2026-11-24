@@ -1,23 +1,4 @@
-"""Ingestion OHLCV BTC/USDT dari Binance.
-
-Endpoint yang dipakai adalah `data-api.binance.vision`, mirror data pasar resmi
-Binance. Alasannya praktis: `api.binance.com` dicegat oleh filter ISP Indonesia
-(Telkomsel "Internet Baik", Indosat) yang menyodorkan sertifikat TLS milik
-operator, sehingga koneksi gagal verifikasi. Mirror ini melayani `/api/v3/klines`
-dengan format identik, tanpa API key, dan tidak ikut terblokir.
-
-Dua aturan yang dijaga di modul ini:
-
-1. **Bar yang belum tutup dibuang.** Binance mengembalikan candle berjalan
-   sebagai baris terakhir. Nilai `close`-nya masih berubah, sehingga Hurst dan
-   label regime pada window terakhir akan berkedip tiap refresh. Baris dengan
-   `closeTime >= sekarang` selalu dipotong.
-
-2. **Verifikasi TLS tidak pernah dimatikan.** Saat koneksi dicegat ISP, respons
-   yang datang bukan data Binance melainkan halaman blokir. Mematikan verifikasi
-   tidak menyelamatkan data, hanya menyembunyikan bahwa datanya sudah rusak.
-   Modul mendeteksi kondisi ini dan memberi pesan yang menjelaskan penyebabnya.
-"""
+"""Ingestion OHLCV BTC/USDT dari Binance."""
 
 from __future__ import annotations
 
@@ -40,9 +21,7 @@ INTERVAL_MAP = {"1h": "1h", "4h": "4h"}
 INTERVAL_MS = {"1h": 3_600_000, "4h": 14_400_000}
 MAX_LIMIT = 1000
 
-# Kolom 8 dan 9 pada respons kline Binance memuat jumlah transaksi dan volume
-# beli sisi taker. Keduanya cukup untuk menghitung Order Flow Imbalance tanpa
-# mengunduh arsip aggTrades, yang untuk rentang 2019-2026 berukuran ~30 GB.
+# Kolom 8 dan 9 pada respons kline Binance memuat jumlah transaksi dan volume beli sisi taker.
 OHLCV_COLUMNS = [
     "time",
     "open",
@@ -60,11 +39,7 @@ class IngestionError(RuntimeError):
 
 
 class TLSInterceptionError(IngestionError):
-    """Koneksi dicegat perangkat jaringan, bukan gagal biasa.
-
-    Dipisahkan dari error lain karena solusinya berbeda: bukan mengulang
-    request, melainkan mengganti jaringan atau memakai VPN.
-    """
+    """Koneksi dicegat perangkat jaringan, bukan gagal biasa."""
 
 
 @dataclass
@@ -174,8 +149,7 @@ def _rows_to_frame(rows: List[list], drop_open_bar: bool, now_ms: int) -> tuple[
     for r in rows:
         close_time = int(r[6])
         if drop_open_bar and close_time >= now_ms:
-            # Candle berjalan: close belum final, ikut menghitungnya membuat
-            # Hurst dan label regime window terakhir berubah tiap refresh.
+            # Candle berjalan: close belum final, ikut menghitungnya membuat Hurst.
             dropped = True
             continue
         records.append(
@@ -186,9 +160,7 @@ def _rows_to_frame(rows: List[list], drop_open_bar: bool, now_ms: int) -> tuple[
                 "low": float(r[3]),
                 "close": float(r[4]),
                 "volume": float(r[5]),
-                # Volume yang dieksekusi taker di sisi beli. Sisanya (volume -
-                # taker_buy) adalah volume jual sisi taker, sehingga
-                # OFI = (buy - sell) / volume dapat dihitung langsung.
+                # Volume yang dieksekusi taker di sisi beli.
                 "taker_buy_volume": float(r[9]) if len(r) > 9 else 0.0,
                 "n_trades": int(r[8]) if len(r) > 8 else 0,
             }
@@ -220,13 +192,7 @@ def fetch_klines(
     pause: float = 0.2,
     start: Optional[str] = None,
 ) -> tuple[pd.DataFrame, FetchReport]:
-    """Tarik riwayat OHLCV dengan paging maju.
-
-    Titik awal diambil dari `start` (YYYY-MM-DD) bila ada; jika tidak, mundur
-    sejauh `years` tahun dari sekarang. Binance membatasi 1000 baris per
-    permintaan, jadi rentang panjang diambil bertahap: mulai dari titik terjauh,
-    lalu maju memakai `openTime` terakhir sebagai penanda halaman berikutnya.
-    """
+    """Tarik riwayat OHLCV dengan paging maju."""
     if timeframe not in INTERVAL_MAP:
         raise IngestionError(f"timeframe '{timeframe}' tidak didukung.")
 
@@ -325,12 +291,7 @@ def fetch_latest(
 
 
 def ensure_schema(df: pd.DataFrame) -> pd.DataFrame:
-    """Lengkapi kolom yang belum ada dengan nol.
-
-    Kolom order flow ditambahkan setelah sebagian data terlanjur tersimpan.
-    Tanpa penyeragaman ini, penggabungan menghasilkan DataFrame dengan kolom
-    bercampur dan pembacaan berikutnya gagal dengan KeyError.
-    """
+    """Lengkapi kolom yang belum ada dengan nol."""
     out = df.copy()
     for col in OHLCV_COLUMNS:
         if col not in out.columns:

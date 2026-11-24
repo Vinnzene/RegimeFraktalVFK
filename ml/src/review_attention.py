@@ -1,11 +1,4 @@
-"""Sebaran bobot attention model identifikasi (h = 0) pada jendela uji backtest.
-
-Bobot alpha diambil dari lapisan `attention_pool` ketiga seed Hybrid PS
-(`backend/app/services/ai_detector.attention_weights`, jalur yang sama dengan
-endpoint /analysis/attention), lalu dirata-rata antar-seed.
-
-    python ml/src/review_attention.py
-"""
+"""Sebaran bobot attention model identifikasi (h = 0) pada jendela uji backtest."""
 
 from __future__ import annotations
 
