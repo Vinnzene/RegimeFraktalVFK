@@ -45,6 +45,7 @@ export default function RekapSusPage() {
 
   const s = data?.summary;
   const done = (data?.responses ?? []).filter((r) => r.status === "done");
+  const saran = done.filter((r) => (r.feedback ?? "").trim() !== "");
 
   return (
     <div className="mx-auto max-w-[1300px] space-y-4 px-1 pb-10 sm:px-4">
@@ -182,7 +183,35 @@ export default function RekapSusPage() {
           )}
           <p className="mt-2 text-2xs text-txtMuted">
             Nama dan email tidak disimpan bersama jawaban. Kolom 1–10 = butir SUS (1 sangat tidak setuju … 5 sangat setuju). Waktu pengisian = saat
-            jawaban dikirim (waktu lokal perangkat ini; CSV memakai UTC). Usia (opsional) dan saran ada di CSV.
+            jawaban dikirim (waktu lokal perangkat ini; CSV memakai UTC). Usia (opsional) ada di CSV; saran ada di bagian bawah.
+          </p>
+        </section>
+      )}
+
+      {data && (
+        <section className={card}>
+          <h2 className="text-[15px] font-semibold text-txt">Saran responden</h2>
+          {saran.length === 0 ? (
+            <p className="mt-2 text-[13px] text-txtMuted">
+              {done.length === 0 ? "Belum ada jawaban yang dikirim." : "Belum ada responden yang menulis saran (kolom saran bersifat opsional)."}
+            </p>
+          ) : (
+            <ul className="mt-3 space-y-2">
+              {saran.map((r) => (
+                <li key={r.code} className="rounded-lg border border-edge bg-surface/40 px-4 py-3">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-2xs text-txtMuted">
+                    <span className="font-mono font-semibold text-txt">{r.code}</span>
+                    <span>{r.profile.role}</span>
+                    <span>skor SUS {n(susScore(r.answers), 1)}</span>
+                    <span>{when(r.submitted_at)}</span>
+                  </div>
+                  <p className="mt-1.5 whitespace-pre-line text-[13px] leading-relaxed text-txtDim">{r.feedback}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+          <p className="mt-2 text-2xs text-txtMuted">
+            {saran.length} dari {done.length} responden menulis saran. Saran juga ikut di kolom &quot;saran&quot; pada ekspor CSV.
           </p>
         </section>
       )}
