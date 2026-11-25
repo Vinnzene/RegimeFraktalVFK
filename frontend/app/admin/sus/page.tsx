@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { BANGOR_ADJECTIVES, SUS_BENCHMARK, SUS_ITEMS, susScore, type PublicSus, type SusSummary } from "@/lib/sus";
+import { SUS_BENCHMARK, SUS_ITEMS, susScore, type PublicSus, type SusSummary } from "@/lib/sus";
 
 /** Rekap SUS untuk admin: ringkasan skor, rata-rata per butir (butir terlemah). */
 
@@ -52,9 +52,6 @@ export default function RekapSusPage() {
       <header className="flex flex-wrap items-end justify-between gap-3 pt-2">
         <div>
           <h1 className="text-[24px] font-bold tracking-tight text-txt">Rekap SUS</h1>
-          <p className="mt-1 text-[13px] text-txtMuted">
-            System Usability Scale (Brooke, 1996), dihitung langsung dari jawaban yang dikirim responden. Sumber: {data?.source ?? "…"}.
-          </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <button type="button" onClick={() => void load()} className="rounded-lg border border-edge px-3 py-2 text-[12.5px] text-txtDim hover:text-txt">
@@ -84,11 +81,6 @@ export default function RekapSusPage() {
                 <Stat label="Skala kata sifat (Bangor, 2009)" value={s.adjective ?? "–"} note={`rentang penerimaan: ${s.acceptability ?? "–"}`} />
                 <Stat label={`Skor ≥ ${SUS_BENCHMARK}`} value={`${s.at_or_above_68} dari ${s.n}`} note={`${n((100 * s.at_or_above_68) / s.n, 0)}% responden`} />
               </div>
-              <p className="mt-3 text-2xs leading-relaxed text-txtMuted">
-                Skor = 2,5 × [Σ(butir ganjil − 1) + Σ(5 − butir genap)]. Kata sifat dipilih dari rata-rata kelompok terdekat Bangor dkk. (2009):{" "}
-                {BANGOR_ADJECTIVES.map((a) => `${a.label} ${n(a.mean, 1)}`).join(" · ")}. Rentang penerimaan: &lt; 50 Not Acceptable, 50–70 Marginal,
-                &gt; 70 Acceptable. Acuan rata-rata {SUS_BENCHMARK}.
-              </p>
             </>
           )}
         </section>
@@ -97,9 +89,6 @@ export default function RekapSusPage() {
       {s && s.n > 0 && (
         <section className={card}>
           <h2 className="text-[15px] font-semibold text-txt">Rata-rata tiap butir</h2>
-          <p className="mt-1 text-2xs text-txtMuted">
-            Sumbangan ke skor (0–4): butir ganjil = rata-rata − 1, butir genap = 5 − rata-rata. Sumbangan terkecil = butir terlemah (tidak ditandai bila semua butir sama).
-          </p>
           <div className="mt-2 overflow-x-auto">
             <table className="w-full text-[12.5px]">
               <thead className="text-txtMuted">
@@ -181,10 +170,6 @@ export default function RekapSusPage() {
               </table>
             </div>
           )}
-          <p className="mt-2 text-2xs text-txtMuted">
-            Nama dan email tidak disimpan bersama jawaban. Kolom 1–10 = butir SUS (1 sangat tidak setuju … 5 sangat setuju). Waktu pengisian = saat
-            jawaban dikirim (waktu lokal perangkat ini; CSV memakai UTC). Usia (opsional) ada di CSV; saran ada di bagian bawah.
-          </p>
         </section>
       )}
 
@@ -210,9 +195,6 @@ export default function RekapSusPage() {
               ))}
             </ul>
           )}
-          <p className="mt-2 text-2xs text-txtMuted">
-            {saran.length} dari {done.length} responden menulis saran. Saran juga ikut di kolom &quot;saran&quot; pada ekspor CSV.
-          </p>
         </section>
       )}
     </div>
