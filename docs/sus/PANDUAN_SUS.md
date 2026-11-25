@@ -1,8 +1,7 @@
 # Panduan Pengumpulan Data Kuesioner SUS — RFraktal
 
 Evaluasi pengguna memakai **System Usability Scale (SUS; Brooke, 1996)** saja, diisi langsung
-di aplikasi pada halaman **Kuesioner SUS** (`https://rfraktal.my.id/uat`). Panduan UAT berbasis
-tugas yang lama (`PANDUAN_UAT_SUS.md`, Google Form, lembar observasi) sudah **usang**.
+di aplikasi pada halaman **Kuesioner SUS** (`https://rfraktal.my.id/sus`).
 
 Semua angka di naskah harus berasal dari jawaban responden asli yang tersimpan di aplikasi.
 Peneliti tidak membuat, mengisi, atau mengubah jawaban.
@@ -46,16 +45,16 @@ mengirim tidak dihitung.
    ```
    docker compose -f infra/docker-compose.vps.yml up -d --force-recreate frontend
    ```
-3. Buka `https://rfraktal.my.id/uat` dengan akun admin hanya untuk memastikan formulir Persetujuan tampil.
+3. Buka `https://rfraktal.my.id/sus` dengan akun admin hanya untuk memastikan formulir Persetujuan tampil.
    **Jangan menekan "Mulai"**: setiap akun yang menekan Mulai memakai satu kode (R01, …) dan
    tercatat sebagai "belum selesai" di Rekap SUS. Uji coba alur lengkap dilakukan di laptop
    dengan mode demo (jawabannya hanya di memori, kode D…).
-4. Buka `https://rfraktal.my.id/admin/uat` (menu akun → **Rekap SUS**) dan pastikan
+4. Buka `https://rfraktal.my.id/admin/sus` (menu akun → **Rekap SUS**) dan pastikan
    "Belum ada responden yang mengirim jawaban."
 
 ## 4. Cara responden mendapat akses dan login
 
-1. Responden membuka tautan **`https://rfraktal.my.id/uat`**.
+1. Responden membuka tautan **`https://rfraktal.my.id/sus`**.
 2. Bila belum login, aplikasi membuka halaman **Masuk**. Responden memilih **Lanjut dengan
    Google**, atau **Buat akun** dengan email dan password.
 3. Setelah login, responden otomatis kembali ke halaman Kuesioner SUS.
@@ -84,7 +83,7 @@ Perkiraan waktu 10–15 menit. Tangkapan layar tiap langkah ada di
 
 ## 6. Setelah data terkumpul
 
-1. Buka **Rekap SUS** (`/admin/uat`). Halaman ini menampilkan jumlah responden, rata-rata,
+1. Buka **Rekap SUS** (`/admin/sus`). Halaman ini menampilkan jumlah responden, rata-rata,
    simpangan baku, minimum, maksimum, median, skala kata sifat Bangor dkk. (2009), jumlah skor
    ≥ 68, rata-rata tiap butir, dan jawaban per responden tanpa nama atau email.
 2. Tekan **Ekspor CSV (tanpa nama/email)**, lalu simpan berkasnya di
@@ -106,7 +105,7 @@ Perkiraan waktu 10–15 menit. Tangkapan layar tiap langkah ada di
 > Boleh minta bantuan isi kuesioner singkat (±10–15 menit)? Syaratnya pernah trading atau
 > analisis kripto, dan bukan programmer/pengembang aplikasi.
 >
-> 1. Buka https://rfraktal.my.id/uat
+> 1. Buka https://rfraktal.my.id/sus
 > 2. Masuk pakai akun Google (atau buat akun dengan email)
 > 3. Coba tiga halaman yang diminta, lalu isi 10 pernyataan
 >

@@ -63,7 +63,7 @@ export default function UserMenu() {
             </span>
           </Link>
           <Link
-            href="/uat"
+            href="/sus"
             onClick={() => setOpen(false)}
             className="flex items-center justify-between rounded px-3 py-2 text-[12.5px] text-txtDim transition-colors hover:bg-surface hover:text-txt"
           >
@@ -72,7 +72,7 @@ export default function UserMenu() {
           </Link>
           {(me.admin || me.user.demo) && (
             <Link
-              href="/admin/uat"
+              href="/admin/sus"
               onClick={() => setOpen(false)}
               className="flex items-center justify-between rounded px-3 py-2 text-[12.5px] text-txtDim transition-colors hover:bg-surface hover:text-txt"
             >

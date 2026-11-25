@@ -7,7 +7,7 @@ Hasil akhir: dashboard dapat dibuka di `http://<IP-VPS>`. Caddy meneruskan
 
 - Login **Google tidak berfungsi** (Firebase hanya mengizinkan domain terdaftar
   dan butuh HTTPS). Login **email/password tetap berfungsi** — siapkan akun
-  untuk responden UAT.
+  untuk responden SUS.
 - Login demo hanya aktif di localhost, jadi tidak tersedia di VPS.
 - Lalu lintas tidak terenkripsi. Jangan memakai password yang dipakai di
   layanan lain. Untuk pemakaian lebih lama, pasang domain + HTTPS (§8).
@@ -123,7 +123,7 @@ Build pertama ±10–15 menit (TensorFlow dan Next.js). Buka `http://<IP-VPS>`.
 - [ ] Ringkasan menampilkan kondisi 1H dan 4H (bila muncul "sedang menghitung",
       tunggu beberapa menit lalu muat ulang).
 - [ ] Notifikasi Telegram: hubungkan akun lalu **Kirim pesan uji**.
-- [ ] Catat hash commit yang berjalan (`git log --oneline -1`) di lembar observasi UAT.
+- [ ] Catat hash commit yang berjalan (`git log --oneline -1`) sebagai catatan versi aplikasi saat pengambilan data SUS.
 
 ## 7. Memperbarui
 
