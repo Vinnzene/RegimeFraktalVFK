@@ -37,17 +37,16 @@ mengirim tidak dihitung.
 
 ## 3. Persiapan peneliti (sekali, sebelum menyebar ajakan)
 
-1. Tentukan kode undangan, misalnya `SUS-RFRAKTAL-2026`, lalu isi di VPS pada
-   `frontend/.env.local`:
+1. Kuesioner terbuka untuk semua akun yang sudah login; tidak ada kode undangan. Pastikan email
+   admin tercantum di VPS pada `frontend/.env.local`:
    ```
-   SUS_INVITE_CODE=SUS-RFRAKTAL-2026
    ADMIN_EMAILS=vinzenne123@gmail.com
    ```
-2. Terapkan perubahan (dari folder project di VPS):
+2. Bila baris itu baru diubah, terapkan (dari folder project di VPS):
    ```
    docker compose -f infra/docker-compose.vps.yml up -d --force-recreate frontend
    ```
-3. Buka tautan undangan dengan akun admin hanya untuk memastikan formulir Persetujuan tampil.
+3. Buka `https://rfraktal.my.id/uat` dengan akun admin hanya untuk memastikan formulir Persetujuan tampil.
    **Jangan menekan "Mulai"**: setiap akun yang menekan Mulai memakai satu kode (R01, …) dan
    tercatat sebagai "belum selesai" di Rekap SUS. Uji coba alur lengkap dilakukan di laptop
    dengan mode demo (jawabannya hanya di memori, kode D…).
@@ -56,11 +55,10 @@ mengirim tidak dihitung.
 
 ## 4. Cara responden mendapat akses dan login
 
-1. Responden membuka tautan **`https://rfraktal.my.id/uat?kode=SUS-RFRAKTAL-2026`**.
+1. Responden membuka tautan **`https://rfraktal.my.id/uat`**.
 2. Bila belum login, aplikasi membuka halaman **Masuk**. Responden memilih **Lanjut dengan
    Google**, atau **Buat akun** dengan email dan password.
-3. Setelah login, responden otomatis kembali ke halaman Kuesioner SUS dan kode undangan sudah
-   terisi. Kode juga bisa diketik manual pada kolom "Kode undangan".
+3. Setelah login, responden otomatis kembali ke halaman Kuesioner SUS.
 4. Halaman ini juga dapat dibuka dari menu akun (pojok kanan atas) → **Isi Kuesioner SUS**.
 
 ## 5. Langkah pengisian (yang dilihat responden)
@@ -108,7 +106,7 @@ Perkiraan waktu 10–15 menit. Tangkapan layar tiap langkah ada di
 > Boleh minta bantuan isi kuesioner singkat (±10–15 menit)? Syaratnya pernah trading atau
 > analisis kripto, dan bukan programmer/pengembang aplikasi.
 >
-> 1. Buka https://rfraktal.my.id/uat?kode=SUS-RFRAKTAL-2026
+> 1. Buka https://rfraktal.my.id/uat
 > 2. Masuk pakai akun Google (atau buat akun dengan email)
 > 3. Coba tiga halaman yang diminta, lalu isi 10 pernyataan
 >

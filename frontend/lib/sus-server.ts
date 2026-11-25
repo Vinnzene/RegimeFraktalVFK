@@ -32,23 +32,9 @@ export class SusError extends Error {
   }
 }
 
-export function inviteCode(): string {
-  return (process.env.SUS_INVITE_CODE ?? process.env.UAT_INVITE_CODE ?? "").trim();
-}
-
 /** Rekap: admin (ADMIN_EMAILS) membaca Firestore. */
 export function canAdminSus(user: SessionUser): boolean {
   return isAdmin(user) || user.demo;
-}
-
-export function susOpen(user: SessionUser): boolean {
-  return user.demo || inviteCode().length > 0;
-}
-
-function checkInvite(user: SessionUser, code: string): boolean {
-  const expected = inviteCode();
-  if (!expected) return user.demo;
-  return code.trim().toUpperCase() === expected.toUpperCase();
 }
 
 export function toPublic(r: SusResponse): PublicSus {
@@ -94,10 +80,8 @@ function intIn(v: unknown, lo: number, hi: number): number | null {
 
 /** Persetujuan + profil. */
 export async function start(user: SessionUser, body: any): Promise<SusResponse> {
-  if (!susOpen(user)) throw new SusError("Kuesioner SUS belum dibuka.", 403);
   const existing = await getResponse(user);
   if (existing) return existing;
-  if (!checkInvite(user, String(body?.invite ?? ""))) throw new SusError("Kode undangan tidak sesuai.", 403);
   if (body?.consent !== true) throw new SusError("Persetujuan diperlukan untuk mengisi kuesioner.");
   const role = String(body?.profile?.role ?? "");
   if (!ROLE_OPTIONS.includes(role)) throw new SusError("Peran utama belum dipilih.");

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/server-user";
-import { SusError, canAdminSus, exploreDone, getResponse, inviteCode, resetDemo, start, submit, susOpen, toPublic, visit } from "@/lib/sus-server";
+import { SusError, canAdminSus, exploreDone, getResponse, resetDemo, start, submit, toPublic, visit } from "@/lib/sus-server";
 
 export const dynamic = "force-dynamic";
 
@@ -10,8 +10,6 @@ export async function GET() {
   if (user instanceof NextResponse) return user;
   const r = await getResponse(user);
   return NextResponse.json({
-    open: susOpen(user),
-    invite_required: inviteCode().length > 0,
     demo: user.demo,
     admin: canAdminSus(user),
     response: r ? toPublic(r) : null,

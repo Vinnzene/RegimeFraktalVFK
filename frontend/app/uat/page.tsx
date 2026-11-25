@@ -16,7 +16,7 @@ import {
 
 /** Kuesioner System Usability Scale. */
 
-type State = { open: boolean; invite_required: boolean; demo: boolean; admin: boolean; response: PublicSus | null };
+type State = { demo: boolean; admin: boolean; response: PublicSus | null };
 
 async function call(body: Record<string, unknown>) {
   const res = await fetch("/api/sus", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
@@ -74,10 +74,7 @@ export default function SusPage() {
           Mode demo lokal: jawaban hanya disimpan di memori server (kode D..), tidak ikut data responden sungguhan.
         </p>
       )}
-      {state && !state.open && !r && (
-        <div className={card}>Kuesioner belum dibuka. Hubungi peneliti untuk mendapatkan tautan atau kode undangan.</div>
-      )}
-      {state && state.open && step === 0 && <Consent inviteRequired={state.invite_required} onDone={setResponse} onError={setError} />}
+      {state && step === 0 && <Consent onDone={setResponse} onError={setError} />}
       {r && step === 1 && <Explore response={r} onUpdate={setResponse} onError={setError} />}
       {r && step === 2 && <Questionnaire onDone={setResponse} onError={setError} />}
       {r && step === 3 && (
@@ -106,19 +103,13 @@ export default function SusPage() {
   );
 }
 
-function Consent({ inviteRequired, onDone, onError }: { inviteRequired: boolean; onDone: (r: PublicSus | null) => void; onError: (e: string | null) => void }) {
-  const [invite, setInvite] = useState("");
+function Consent({ onDone, onError }: { onDone: (r: PublicSus | null) => void; onError: (e: string | null) => void }) {
   const [agree, setAgree] = useState(false);
   const [role, setRole] = useState("");
   const [experience, setExperience] = useState("");
   const [age, setAge] = useState("");
   const [busy, setBusy] = useState(false);
-  const complete = agree && role && experience.trim() !== "" && (!inviteRequired || invite.trim());
-
-  useEffect(() => {
-    const code = new URLSearchParams(window.location.search).get("kode");
-    if (code) setInvite(code);
-  }, []);
+  const complete = agree && role && experience.trim() !== "";
 
   return (
     <form
@@ -131,7 +122,6 @@ function Consent({ inviteRequired, onDone, onError }: { inviteRequired: boolean;
           onDone(
             await call({
               action: "start",
-              invite,
               consent: agree,
               profile: { role, experience_months: experience.trim(), age: age.trim() === "" ? null : age.trim() },
             }),
@@ -155,13 +145,6 @@ function Consent({ inviteRequired, onDone, onError }: { inviteRequired: boolean;
           Saya sudah membaca keterangan di atas dan bersedia mengisi kuesioner.
         </label>
       </div>
-
-      {inviteRequired && (
-        <label className="block">
-          <span className="mb-1 block text-[12px] font-medium text-txtDim">Kode undangan</span>
-          <input value={invite} onChange={(e) => setInvite(e.target.value)} className={`${input} w-48 font-mono text-[14px]`} />
-        </label>
-      )}
 
       <div>
         <h2 className="text-[16px] font-semibold text-txt">Profil singkat</h2>
