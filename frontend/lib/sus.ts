@@ -1,6 +1,6 @@
 /** Kuesioner System Usability Scale (SUS; Brooke, 1996) RFraktal: instrumen, skor, rekap, CSV. */
 
-export const SUS_VERSION = "sus-v1";
+export const SUS_VERSION = "sus-v2";
 
 /** Teks 10 butir SUS (terjemahan Bahasa Indonesia). Butir ganjil positif, genap negatif. */
 export const SUS_ITEMS: string[] = [
@@ -32,15 +32,27 @@ export const AGE_MIN = 15;
 export const AGE_MAX = 100;
 
 /** Halaman yang wajib dibuka sebelum kuesioner (responden boleh mencoba halaman lain). */
+/** Semua halaman di menu Pasar, Identifikasi, dan Strategi; semuanya wajib dibuka sebelum kuesioner. */
 export const EXPLORE_PAGES = [
-  { key: "ringkasan", href: "/", label: "Ringkasan", hint: "Kondisi pasar 1H & 4H, grafik harga berpita kondisi, riwayat kondisi." },
-  { key: "evaluasi", href: "/evaluasi-identifikasi", label: "Hasil Uji Identifikasi", hint: "Berapa persen identifikasi model yang benar, per kelas dan per tahap." },
-  { key: "fokus", href: "/attention", label: "Fokus Model", hint: "Bagian riwayat harga yang paling diperhatikan model." },
+  { group: "Pasar", key: "ringkasan", href: "/", label: "Ringkasan", hint: "Kondisi pasar 1H & 4H, grafik harga berpita kondisi, riwayat kondisi." },
+  { group: "Pasar", key: "analisis", href: "/analisis", label: "Analisis Aset", hint: "Identifikasi regime untuk pair atau ticker lain (Binance, Yahoo)." },
+  { group: "Pasar", key: "teknikal", href: "/analisa-teknikal", label: "Analisa Teknikal", hint: "Tarik garis, fibonacci, dan indikator (TradingView)." },
+  { group: "Pasar", key: "orderflow", href: "/orderflow-live", label: "Order Flow Live", hint: "Heatmap order book, footprint, delta, dan CVD." },
+  { group: "Identifikasi", key: "evaluasi", href: "/evaluasi-identifikasi", label: "Hasil Uji Identifikasi", hint: "Berapa persen identifikasi model yang benar, per kelas dan per tahap." },
+  { group: "Identifikasi", key: "hurst_dfa", href: "/regime-explorer", label: "Hurst-DFA Klasik", hint: "Label konsensus Hurst R/S dan DFA, perpindahan, dan durasi." },
+  { group: "Identifikasi", key: "banding_tf", href: "/timeframe-comparison", label: "Hurst-DFA 1H vs 4H", hint: "Perbandingan kondisi klasik pada dua skala waktu." },
+  { group: "Identifikasi", key: "wavelet", href: "/swt", label: "Wavelet", hint: "Dekomposisi multiskala SWT." },
+  { group: "Identifikasi", key: "fokus", href: "/attention", label: "Fokus Model", hint: "Bagian riwayat harga yang paling diperhatikan model." },
+  { group: "Strategi", key: "strategi", href: "/strategi", label: "Regime → Strategi", hint: "Strategi yang cocok untuk tiap kondisi pasar." },
+  { group: "Strategi", key: "setup", href: "/setup", label: "Panduan Setup", hint: "Setup yang cocok dan dihindari; isinya perlu persetujuan admin." },
+  { group: "Strategi", key: "notifikasi", href: "/notifikasi", label: "Notifikasi Telegram", hint: "Pesan otomatis saat kondisi pasar berganti." },
 ] as const;
+
+export const EXPLORE_GROUPS = ["Pasar", "Identifikasi", "Strategi"] as const;
 
 export const CONSENT_TEXT = [
   "Kuesioner ini bagian dari penelitian skripsi tentang aplikasi identifikasi regime fraktal BTC/USDT (RFraktal).",
-  "Anda akan mencoba aplikasi secara bebas (minimal tiga halaman), lalu mengisi 10 pernyataan System Usability Scale (SUS). Perkiraan waktu 10–15 menit. Tidak ada jawaban benar atau salah; yang dinilai adalah aplikasinya, bukan Anda.",
+  "Anda akan mencoba aplikasi secara bebas (semua halaman di menu Pasar, Identifikasi, dan Strategi), lalu mengisi 10 pernyataan System Usability Scale (SUS). Perkiraan waktu 20–30 menit. Tidak ada jawaban benar atau salah; yang dinilai adalah aplikasinya, bukan Anda.",
   "Yang disimpan: kode responden (mis. R01), peran, lama pengalaman trading/analisis kripto, usia (opsional), halaman yang dibuka dari daftar, jawaban kuesioner, saran, dan waktu pengisian. Nama dan email akun tidak disimpan bersama jawaban; akun hanya dipakai agar satu orang mengisi satu kali.",
   "Jawaban tidak dapat diubah setelah dikirim. Partisipasi bersifat sukarela dan Anda dapat berhenti kapan saja sebelum mengirim.",
 ];

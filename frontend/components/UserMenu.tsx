@@ -68,7 +68,7 @@ export default function UserMenu() {
             className="flex items-center justify-between rounded px-3 py-2 text-[12.5px] text-txtDim transition-colors hover:bg-surface hover:text-txt"
           >
             Isi Kuesioner SUS
-            <span className="text-2xs text-txtMuted">±15 menit</span>
+            <span className="text-2xs text-txtMuted">±25 menit</span>
           </Link>
           {(me.admin || me.user.demo) && (
             <Link

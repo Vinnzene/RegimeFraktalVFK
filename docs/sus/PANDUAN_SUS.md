@@ -14,8 +14,10 @@ Peneliti tidak membuat, mengisi, atau mengubah jawaban.
   setuju) sampai 5 (sangat setuju).
 - Skor per responden: SUS = 2,5 × [Σ(butir ganjil − 1) + Σ(5 − butir genap)], 0–100.
 - Profil singkat: peran, lama pengalaman trading/analisis kripto (bulan), usia (opsional).
-- Sebelum kuesioner, responden mencoba aplikasi secara bebas. Ada tiga halaman yang wajib
-  dibuka: Ringkasan, Hasil Uji Identifikasi, dan Fokus Model.
+- Sebelum kuesioner, responden mencoba aplikasi. Ada 12 halaman yang wajib dibuka, yaitu semua
+  halaman di menu **Pasar** (Ringkasan, Analisis Aset, Analisa Teknikal, Order Flow Live),
+  **Identifikasi** (Hasil Uji Identifikasi, Hurst-DFA Klasik, Hurst-DFA 1H vs 4H, Wavelet,
+  Fokus Model), dan **Strategi** (Regime → Strategi, Panduan Setup, Notifikasi Telegram).
 
 ## 2. Kriteria responden
 
@@ -65,11 +67,11 @@ mengirim tidak dihitung.
 | Langkah | Yang dilakukan responden |
 |---|---|
 | 1. Persetujuan & profil | Membaca keterangan, mencentang persetujuan, memilih peran, mengisi pengalaman (bulan) dan usia (opsional), lalu menekan **Mulai**. Kode responden (R01, R02, …) diberikan otomatis. |
-| 2. Mencoba aplikasi | Membuka **Ringkasan**, **Hasil Uji Identifikasi**, dan **Fokus Model** lewat tombol "Buka di tab baru ↗", melihat isinya, lalu kembali. Boleh mencoba halaman lain lewat menu. Tombol **"Saya sudah mencoba, lanjut ke kuesioner"** aktif setelah ketiga halaman dibuka. |
+| 2. Mencoba aplikasi | Membuka 12 halaman menu Pasar, Identifikasi, dan Strategi lewat tombol "Buka di tab baru ↗", mencoba isinya, lalu kembali. Tombol **"Saya sudah mencoba, lanjut ke kuesioner"** aktif setelah semua halaman dibuka. |
 | 3. Kuesioner SUS | Menjawab 10 pernyataan (1–5) sesuai kesan pertama, mengisi saran (opsional), lalu menekan **Kirim jawaban** dan mengonfirmasi. |
 | 4. Selesai | Muncul "Terima kasih!" beserta kode responden. Jawaban tidak dapat diubah dan akun yang sama tidak dapat mengisi lagi. |
 
-Perkiraan waktu 10–15 menit. Tangkapan layar tiap langkah ada di
+Perkiraan waktu 20–30 menit. Tangkapan layar tiap langkah ada di
 `docs/naskah/cek_silang/sus.md`.
 
 **Aturan bagi peneliti selama pengisian:**
@@ -102,11 +104,11 @@ Perkiraan waktu 10–15 menit. Tangkapan layar tiap langkah ada di
 > Halo, aku lagi menyelesaikan skripsi tentang **RFraktal**, aplikasi yang mengenali kondisi
 > pasar BTC/USDT (tren berlanjut, acak, atau cenderung berbalik).
 >
-> Boleh minta bantuan isi kuesioner singkat (±10–15 menit)? Syaratnya pernah trading atau
+> Boleh minta bantuan isi kuesioner (±20–30 menit)? Syaratnya pernah trading atau
 > analisis kripto, dan bukan programmer/pengembang aplikasi.
 >
 > 1. Buka https://rfraktal.my.id/sus
 > 2. Masuk pakai akun Google (atau buat akun dengan email)
-> 3. Coba tiga halaman yang diminta, lalu isi 10 pernyataan
+> 3. Coba semua halaman yang diminta, lalu isi 10 pernyataan
 >
 > Nama dan email tidak disimpan bersama jawaban. Terima kasih banyak! 🙏

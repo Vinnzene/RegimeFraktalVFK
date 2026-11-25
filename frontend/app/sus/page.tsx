@@ -7,6 +7,7 @@ import {
   AGE_MIN,
   CONSENT_TEXT,
   EXPERIENCE_MAX_MONTHS,
+  EXPLORE_GROUPS,
   EXPLORE_PAGES,
   ROLE_OPTIONS,
   SUS_ITEMS,
@@ -53,7 +54,7 @@ export default function SusPage() {
       <header className="pt-2">
         <h1 className="text-[24px] font-bold tracking-tight text-txt">Kuesioner SUS RFraktal</h1>
         <p className="mt-1 text-[13px] text-txtMuted">
-          Persetujuan → mencoba aplikasi → 10 pernyataan System Usability Scale. Perkiraan waktu 10–15 menit.
+          Persetujuan → mencoba aplikasi → 10 pernyataan System Usability Scale. Perkiraan waktu 20–30 menit.
         </p>
         <ol className="mt-3 flex flex-wrap gap-2 text-[12px]">
           {STEPS.map((label, i) => (
@@ -215,12 +216,15 @@ function Explore({ response, onUpdate, onError }: { response: PublicSus; onUpdat
       <div>
         <h2 className="text-[17px] font-semibold text-txt">Silakan mencoba aplikasi</h2>
         <p className="mt-2 text-[13.5px] leading-relaxed text-txtDim">
-          Buka minimal tiga halaman di bawah (masing-masing di tab baru), lihat isinya, lalu kembali ke tab ini. Anda juga boleh
-          mencoba halaman lain lewat menu. Tidak ada tugas yang dinilai; yang penting kesan Anda saat memakai aplikasi.
+          Buka semua halaman di bawah (masing-masing di tab baru), coba fiturnya, lalu kembali ke tab ini. Halaman dikelompokkan
+          sesuai menu Pasar, Identifikasi, dan Strategi. Tidak ada tugas yang dinilai; yang penting kesan Anda saat memakai aplikasi.
         </p>
       </div>
+      {EXPLORE_GROUPS.map((g) => (
+      <div key={g}>
+      <h3 className="mb-2 text-[12px] font-semibold uppercase tracking-wide text-txtMuted">Menu {g}</h3>
       <ul className="space-y-2">
-        {EXPLORE_PAGES.map((p) => (
+        {EXPLORE_PAGES.filter((p) => p.group === g).map((p) => (
           <li key={p.key} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-edge px-4 py-3">
             <div>
               <div className="flex items-center gap-2 text-[13.5px] font-medium text-txt">
@@ -247,6 +251,8 @@ function Explore({ response, onUpdate, onError }: { response: PublicSus; onUpdat
           </li>
         ))}
       </ul>
+      </div>
+      ))}
       <div className="flex flex-wrap items-center gap-3 border-t border-edge pt-4">
         <button
           type="button"
