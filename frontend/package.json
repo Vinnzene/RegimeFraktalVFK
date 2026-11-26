@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node --test lib/sus.test.ts lib/indicators.test.ts"
+    "test": "node --test lib/sus.test.ts lib/indicators.test.ts lib/orderflow-vwap.test.ts lib/statistical-trailing.test.ts lib/drawings.test.ts lib/hurst-rs.test.ts lib/order-blocks.test.ts lib/volumetric-structure.test.ts"
   },
   "dependencies": {
     "@opentelemetry/api": "1.9.0",

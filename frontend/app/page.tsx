@@ -15,6 +15,7 @@ import RegimeOverview, { type RandomBand } from "@/components/RegimeOverview";
 import TimeframeToggle from "@/components/TimeframeToggle";
 import { useAppConfig } from "@/components/ConfigContext";
 import { ApiState, useApi } from "@/components/useApi";
+import ChartCredits from "@/components/ChartCredits";
 import { api } from "@/lib/api-client";
 import { REGIME_META, REGIME_PLAIN, type Regime } from "@/lib/regime";
 
@@ -153,6 +154,7 @@ export default function DashboardPage() {
                 legend={<RegimeLegend compact />}
                 indicators
                 depthSymbol={symbol}
+                abstainTau={detector?.abstain_tau ?? 0.75}
               />
             </div>
             <RegimeHistoryTable series={series} tau={detector?.abstain_tau ?? 0.75} timeframe={timeframe} />
@@ -224,6 +226,7 @@ export default function DashboardPage() {
             <div className="mt-2">
               <Disclaimer variant="fractal" />
             </div>
+            <ChartCredits className="mt-2" />
           </CollapsiblePanel>
         </>
       )}

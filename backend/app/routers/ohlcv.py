@@ -89,6 +89,24 @@ def read_ohlcv(
     return body
 
 
+@router.get("/market/candles")
+def market_candles(
+    source: str = Query("binance", pattern="^(binance|yahoo)$"),
+    symbol: str = Query(..., min_length=1, max_length=20),
+    tf: str = Query("1h"),
+    bars: int = Query(1500, ge=100, le=3000),
+) -> dict:
+    """Candle aset apa pun untuk halaman Analisa Teknikal (tidak disimpan ke data penelitian)."""
+    from app.services import market_data  # noqa: PLC0415
+    from app.services.asset_analysis import AnalysisError  # noqa: PLC0415
+
+    try:
+        rows = market_data.candles(source, symbol, tf, bars)
+    except AnalysisError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {"source": source, "symbol": symbol, "timeframe": tf, "count": len(rows), "candles": rows}
+
+
 @router.post("/data/refresh")
 def refresh_data(req: RefreshRequest | None = None) -> dict:
     """Tarik data terbaru dari exchange."""

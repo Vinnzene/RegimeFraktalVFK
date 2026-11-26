@@ -1,132 +1,90 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
-import IndicatorPicker from "@/components/IndicatorPicker";
-import { loadActive, saveActive, type IndicatorId } from "@/lib/indicators";
-import { themeColor, useTheme } from "@/lib/theme";
+import { useEffect, useRef, useState } from "react";
+import CandlestickChart from "@/components/CandlestickChart";
+import { api, type Candle } from "@/lib/api-client";
 
-// Indikator bawaan TradingView untuk tiap pilihan.
-const TV_STUDIES: Partial<Record<IndicatorId, object[]>> = {
-  trend: [
-    { id: "MASimple@tv-basicstudies", inputs: { length: 15 } },
-    { id: "MASimple@tv-basicstudies", inputs: { length: 50 } },
-  ],
-  meanrev: [{ id: "BB@tv-basicstudies", inputs: { length: 20 } }],
-};
+/** Analisa teknikal dengan chart sendiri: semua indikator RFraktal dan alat gambar dasar. */
 
-/** Analisa teknikal bebas dengan widget resmi TradingView (gratis). */
-
-type Asset = { label: string; tv: string; group: string };
+type Asset = { label: string; source: "binance" | "yahoo"; symbol: string; group: string };
 
 // 20 aset proyek (praregistrasi generalisasi §2).
 const ASSETS: Asset[] = [
-  { label: "BTC", tv: "BINANCE:BTCUSDT", group: "Kripto" },
-  { label: "ETH", tv: "BINANCE:ETHUSDT", group: "Kripto" },
-  { label: "BNB", tv: "BINANCE:BNBUSDT", group: "Kripto" },
-  { label: "SOL", tv: "BINANCE:SOLUSDT", group: "Kripto" },
-  { label: "XRP", tv: "BINANCE:XRPUSDT", group: "Kripto" },
-  { label: "ADA", tv: "BINANCE:ADAUSDT", group: "Kripto" },
-  { label: "DOGE", tv: "BINANCE:DOGEUSDT", group: "Kripto" },
-  { label: "XAU/USD", tv: "OANDA:XAUUSD", group: "Emas" },
-  { label: "PAXG", tv: "BINANCE:PAXGUSDT", group: "Emas" },
-  { label: "IHSG", tv: "IDX:COMPOSITE", group: "Saham IDX" },
-  { label: "BBCA", tv: "IDX:BBCA", group: "Saham IDX" },
-  { label: "BBRI", tv: "IDX:BBRI", group: "Saham IDX" },
-  { label: "BMRI", tv: "IDX:BMRI", group: "Saham IDX" },
-  { label: "BBNI", tv: "IDX:BBNI", group: "Saham IDX" },
-  { label: "TLKM", tv: "IDX:TLKM", group: "Saham IDX" },
-  { label: "ASII", tv: "IDX:ASII", group: "Saham IDX" },
-  { label: "ANTM", tv: "IDX:ANTM", group: "Saham IDX" },
-  { label: "UNVR", tv: "IDX:UNVR", group: "Saham IDX" },
-  { label: "ICBP", tv: "IDX:ICBP", group: "Saham IDX" },
-  { label: "ADRO", tv: "IDX:ADRO", group: "Saham IDX" },
+  { label: "BTC", source: "binance", symbol: "BTCUSDT", group: "Kripto" },
+  { label: "ETH", source: "binance", symbol: "ETHUSDT", group: "Kripto" },
+  { label: "BNB", source: "binance", symbol: "BNBUSDT", group: "Kripto" },
+  { label: "SOL", source: "binance", symbol: "SOLUSDT", group: "Kripto" },
+  { label: "XRP", source: "binance", symbol: "XRPUSDT", group: "Kripto" },
+  { label: "ADA", source: "binance", symbol: "ADAUSDT", group: "Kripto" },
+  { label: "DOGE", source: "binance", symbol: "DOGEUSDT", group: "Kripto" },
+  { label: "Emas (GC=F)", source: "yahoo", symbol: "GC=F", group: "Emas" },
+  { label: "PAXG", source: "binance", symbol: "PAXGUSDT", group: "Emas" },
+  { label: "IHSG", source: "yahoo", symbol: "^JKSE", group: "Saham IDX" },
+  { label: "BBCA", source: "yahoo", symbol: "BBCA.JK", group: "Saham IDX" },
+  { label: "BBRI", source: "yahoo", symbol: "BBRI.JK", group: "Saham IDX" },
+  { label: "BMRI", source: "yahoo", symbol: "BMRI.JK", group: "Saham IDX" },
+  { label: "BBNI", source: "yahoo", symbol: "BBNI.JK", group: "Saham IDX" },
+  { label: "TLKM", source: "yahoo", symbol: "TLKM.JK", group: "Saham IDX" },
+  { label: "ASII", source: "yahoo", symbol: "ASII.JK", group: "Saham IDX" },
+  { label: "ANTM", source: "yahoo", symbol: "ANTM.JK", group: "Saham IDX" },
+  { label: "UNVR", source: "yahoo", symbol: "UNVR.JK", group: "Saham IDX" },
+  { label: "ICBP", source: "yahoo", symbol: "ICBP.JK", group: "Saham IDX" },
+  { label: "ADRO", source: "yahoo", symbol: "ADRO.JK", group: "Saham IDX" },
 ];
 const GROUPS = Array.from(new Set(ASSETS.map((a) => a.group)));
-// Widget gratis TradingView hanya menyediakan data harian ke atas untuk bursa IDX.
-const DAILY_ONLY_GROUPS = new Set(["Saham IDX"]);
-const DAILY_INTERVALS = new Set(["D", "W"]);
-
 const INTERVALS = [
-  { label: "15m", tv: "15" },
-  { label: "1H", tv: "60" },
-  { label: "4H", tv: "240" },
-  { label: "1D", tv: "D" },
-  { label: "1W", tv: "W" },
+  { label: "15m", tf: "15m" },
+  { label: "1H", tf: "1h" },
+  { label: "4H", tf: "4h" },
+  { label: "1D", tf: "1d" },
+  { label: "1W", tf: "1w" },
 ];
-
-function TradingViewChart({ symbol, interval, studies }: { symbol: string; interval: string; studies: string }) {
-  const host = useRef<HTMLDivElement>(null);
-  // Widget dibangun ulang saat tema berganti; warnanya diambil dari token tema.
-  const theme = useTheme();
-
-  useEffect(() => {
-    const el = host.current;
-    if (!el) return;
-    el.innerHTML = "";
-    const widget = document.createElement("div");
-    widget.className = "tradingview-widget-container__widget h-full w-full";
-    el.appendChild(widget);
-    const script = document.createElement("script");
-    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
-    script.async = true;
-    script.type = "text/javascript";
-    script.innerHTML = JSON.stringify({
-      autosize: true,
-      symbol,
-      interval,
-      timezone: "Asia/Jakarta",
-      theme,
-      style: "1",
-      locale: "id",
-      backgroundColor: themeColor("panel"),
-      gridColor: themeColor("edge", 0.6),
-      allow_symbol_change: true,
-      hide_side_toolbar: false,
-      withdateranges: true,
-      details: false,
-      calendar: false,
-      support_host: "https://www.tradingview.com",
-      studies: JSON.parse(studies),
-    });
-    el.appendChild(script);
-    return () => {
-      el.innerHTML = "";
-    };
-  }, [symbol, interval, theme, studies]);
-
-  return <div ref={host} className="tradingview-widget-container h-full w-full" />;
-}
+// Rentang awal yang wajar per timeframe.
+const DEFAULT_RANGE: Record<string, string> = { "15m": "1D", "1h": "1M", "4h": "3M", "1d": "1Y", "1w": "ALL" };
 
 export default function AnalisaTeknikalPage() {
   const [asset, setAsset] = useState(ASSETS[0]);
-  const [interval, setInterval] = useState("60");
+  const [tf, setTf] = useState("1h");
+  const [candles, setCandles] = useState<Candle[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [full, setFull] = useState(false);
+  const [chartH, setChartH] = useState(560);
   const shell = useRef<HTMLDivElement>(null);
-  const dailyOnly = DAILY_ONLY_GROUPS.has(asset.group);
-  const [active, setActive] = useState<IndicatorId[]>([]);
-  useEffect(() => setActive(loadActive()), []);
-  const toggle = useCallback((id: IndicatorId) => {
-    setActive((cur) => {
-      const next = cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id];
-      saveActive(next);
-      return next;
-    });
-  }, []);
-  // String stabil agar widget hanya dibangun ulang saat pilihan berubah.
-  const studies = JSON.stringify(active.flatMap((id) => TV_STUDIES[id] ?? []));
 
-  const pickAsset = (a: Asset) => {
-    setAsset(a);
-    if (DAILY_ONLY_GROUPS.has(a.group) && !DAILY_INTERVALS.has(interval)) setInterval("D");
-  };
+  useEffect(() => {
+    let stop = false;
+    setLoading(true);
+    setError(null);
+    api
+      .marketCandles(asset.source, asset.symbol, tf, 1500)
+      .then((r) => !stop && setCandles(r.candles))
+      .catch((e: Error) => {
+        if (stop) return;
+        setCandles([]);
+        setError(e.message);
+      })
+      .finally(() => !stop && setLoading(false));
+    return () => {
+      stop = true;
+    };
+  }, [asset, tf]);
+
+  // Tinggi chart mengisi layar (dihitung ulang saat ukuran jendela atau layar penuh berubah).
+  useEffect(() => {
+    // Sisakan ruang untuk navigasi, toolbar, header chart, legenda bawah, dan catatan sumber.
+    const calc = () => setChartH(Math.max(400, window.innerHeight - (document.fullscreenElement ? 170 : 360)));
+    calc();
+    window.addEventListener("resize", calc);
+    return () => window.removeEventListener("resize", calc);
+  }, [full]);
 
   useEffect(() => {
     const onChange = () => setFull(document.fullscreenElement === shell.current);
     document.addEventListener("fullscreenchange", onChange);
     return () => document.removeEventListener("fullscreenchange", onChange);
   }, []);
-
   const toggleFull = () => {
     if (document.fullscreenElement) void document.exitFullscreen().catch(() => undefined);
     else void shell.current?.requestFullscreen().catch(() => undefined);
@@ -143,14 +101,12 @@ export default function AnalisaTeknikalPage() {
               <span className="mr-0.5 text-2xs uppercase tracking-wider text-txtMuted">{g}</span>
               {ASSETS.filter((a) => a.group === g).map((a) => (
                 <button
-                  key={a.tv}
+                  key={a.symbol}
                   type="button"
-                  aria-pressed={asset.tv === a.tv}
-                  onClick={() => pickAsset(a)}
+                  aria-pressed={asset.symbol === a.symbol}
+                  onClick={() => setAsset(a)}
                   className={`shrink-0 rounded-md border px-2 py-0.5 text-[12px] font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent ${
-                    asset.tv === a.tv
-                      ? "border-accent/60 bg-accent/15 text-accent"
-                      : "border-transparent text-txtDim hover:border-edge hover:text-txt"
+                    asset.symbol === a.symbol ? "border-accent/60 bg-accent/15 text-accent" : "border-transparent text-txtDim hover:border-edge hover:text-txt"
                   }`}
                 >
                   {a.label}
@@ -160,38 +116,18 @@ export default function AnalisaTeknikalPage() {
           ))}
         </div>
         <div className="flex shrink-0 items-center gap-0.5 rounded-lg border border-edge bg-panelAlt p-0.5" role="group" aria-label="Rentang waktu">
-          {INTERVALS.map((i) => {
-            const blocked = dailyOnly && !DAILY_INTERVALS.has(i.tv);
-            return (
-              <button
-                key={i.tv}
-                type="button"
-                aria-pressed={interval === i.tv}
-                disabled={blocked}
-                title={blocked ? "Saham IDX hanya tersedia harian ke atas di TradingView gratis" : undefined}
-                onClick={() => setInterval(i.tv)}
-                className={`rounded-md px-2 py-0.5 font-mono text-[12px] transition disabled:cursor-not-allowed disabled:opacity-30 ${
-                  interval === i.tv ? "bg-accent/20 text-accent" : "text-txtDim hover:bg-surface hover:text-txt"
-                }`}
-              >
-                {i.label}
-              </button>
-            );
-          })}
+          {INTERVALS.map((i) => (
+            <button
+              key={i.tf}
+              type="button"
+              aria-pressed={tf === i.tf}
+              onClick={() => setTf(i.tf)}
+              className={`rounded-md px-2 py-0.5 font-mono text-[12px] transition ${tf === i.tf ? "bg-accent/20 text-accent" : "text-txtDim hover:bg-surface hover:text-txt"}`}
+            >
+              {i.label}
+            </button>
+          ))}
         </div>
-        <IndicatorPicker
-          active={active.filter((id) => id !== "heatmap")}
-          onToggle={toggle}
-          unavailable={{
-            heatmap: (
-              <>
-                Widget TradingView gratis tidak menyediakan heatmap order book. Buka{" "}
-                <Link href="/" className="text-accent hover:underline">Ringkasan</Link> (tombol Indikator di grafik) atau{" "}
-                <Link href="/orderflow-live" className="text-accent hover:underline">Order Flow Live</Link>.
-              </>
-            ),
-          }}
-        />
         <button
           type="button"
           onClick={toggleFull}
@@ -200,29 +136,42 @@ export default function AnalisaTeknikalPage() {
           className="flex shrink-0 items-center gap-1.5 rounded-lg border border-edge px-2.5 py-1 text-[12px] text-txtDim transition hover:border-accent/60 hover:text-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent"
         >
           <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
-            {full ? (
-              <path d="M8 3v5H3M12 3v5h5M8 17v-5H3M12 17v-5h5" />
-            ) : (
-              <path d="M3 8V3h5M17 8V3h-5M3 12v5h5M17 12v5h-5" />
-            )}
+            {full ? <path d="M8 3v5H3M12 3v5h5M8 17v-5H3M12 17v-5h5" /> : <path d="M3 8V3h5M17 8V3h-5M3 12v5h5M17 12v5h-5" />}
           </svg>
           <span className="hidden sm:inline">{full ? "Keluar" : "Layar penuh"}</span>
         </button>
       </div>
 
-      {dailyOnly && (
-        <p className="rounded-lg border border-edge bg-panel px-3 py-1.5 text-[12px] text-txtDim">
-          Saham IDX di TradingView gratis hanya tersedia dalam interval harian, mingguan, dan bulanan.
-        </p>
-      )}
-
-      <div className="min-h-0 flex-1 overflow-hidden rounded-xl border border-edge bg-panel">
-        <TradingViewChart symbol={asset.tv} interval={interval} studies={studies} />
+      <div className="min-h-0 flex-1">
+        {error ? (
+          <div className="flex h-full min-h-[420px] items-center justify-center rounded-xl border border-edge bg-panel px-4 text-center text-[13px] text-bearish">
+            Data {asset.label} {tf.toUpperCase()} gagal dimuat: {error}
+          </div>
+        ) : loading && candles.length === 0 ? (
+          <div className="flex h-full min-h-[420px] items-center justify-center rounded-xl border border-edge bg-panel text-[13px] text-txtMuted">
+            Memuat {asset.label} {tf.toUpperCase()}…
+          </div>
+        ) : (
+          <div className={loading ? "opacity-60 transition" : ""}>
+            <CandlestickChart
+              key={`${asset.symbol}-${tf}`}
+              candles={candles}
+              height={chartH}
+              showRegime={false}
+              symbol={asset.label.includes("(") ? asset.symbol : asset.source === "binance" ? asset.symbol.replace("USDT", "/USDT") : asset.label}
+              timeframe={tf}
+              defaultRange={DEFAULT_RANGE[tf] ?? "3M"}
+              indicators
+              depthSymbol={asset.source === "binance" ? asset.symbol : undefined}
+              drawingKey={`${asset.symbol}:${tf}`}
+            />
+          </div>
+        )}
       </div>
 
       {!full && (
-        <p className="shrink-0 truncate px-1 text-[11px] text-txtMuted" title="Data dan grafik milik TradingView; gambar tidak tersimpan setelah halaman ditutup.">
-          Grafik dan data dari TradingView, bukan hasil sistem regime; gambar tidak tersimpan. Hasil sistem ada di{" "}
+        <p className="shrink-0 truncate px-1 text-[11px] text-txtMuted" title="Data dari Binance (kripto, PAXG) dan Yahoo Finance (emas, saham IDX).">
+          Data dari Binance dan Yahoo Finance, maksimal 1.500 candle; bukan hasil sistem regime. Gambar tersimpan di peramban ini. Hasil sistem ada di{" "}
           <Link href="/" className="text-accent hover:underline">Ringkasan pasar</Link> dan{" "}
           <Link href="/strategi" className="text-accent hover:underline">Regime → Strategi</Link>. Bukan saran investasi.
         </p>

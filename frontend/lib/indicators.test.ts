@@ -1,7 +1,31 @@
 /** Unit test rumus indikator chart. */
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { bollinger, crosses, depthRows, sma } from "./indicators.ts";
+import { bollinger, crosses, depthRows, regimeAtCandles, regimeZSignals, sma, zscore } from "./indicators.ts";
+
+test("Z-score = (harga − SMA) / simpangan baku", () => {
+  const z = zscore([2, 4, 4, 4, 5, 5, 7, 9], 8);
+  assert.equal(z[7], 2); // (9 − 5) / 2
+  assert.equal(z[6], null);
+});
+
+test("Sinyal z hanya muncul saat regime diizinkan, keluar saat z melewati 0", () => {
+  const z = [0, -1, -2.5, -1, 0.5, 1, 2.5, 1, -0.2];
+  const anti = z.map(() => "anti_persistent");
+  assert.deepEqual(regimeZSignals(z, anti), [
+    { i: 2, kind: "buy" },
+    { i: 4, kind: "exit" },
+    { i: 6, kind: "sell" },
+    { i: 8, kind: "exit" },
+  ]);
+  // Kondisi lain: tidak ada sinyal sama sekali.
+  assert.deepEqual(regimeZSignals(z, z.map(() => "persistent")), []);
+});
+
+test("Regime tiap candle mengikuti jendela terakhir yang sudah lewat", () => {
+  const r = regimeAtCandles([1, 5, 9], [{ time: 4, regime: "anti_persistent" }, { time: 8, regime: "persistent" }]);
+  assert.deepEqual(r, [null, "anti_persistent", "persistent"]);
+});
 
 test("SMA null sampai jendela penuh lalu rata-rata bergerak", () => {
   assert.deepEqual(sma([1, 2, 3, 4, 5], 3), [null, null, 2, 3, 4]);

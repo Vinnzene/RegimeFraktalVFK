@@ -275,6 +275,14 @@ export const api = {
     get<OhlcvResponse>("/api/v1/ohlcv", { symbol, tf, limit }),
   /** Seluruh riwayat candle dalam format kolom, di-cache per aset & timeframe. */
   ohlcvHistory,
+  /** Candle aset apa pun untuk Analisa Teknikal (Binance atau Yahoo Finance). */
+  marketCandles: (source: "binance" | "yahoo", symbol: string, tf: string, bars = 1500) =>
+    get<{ source: string; symbol: string; timeframe: string; count: number; candles: Candle[] }>("/api/v1/market/candles", {
+      source,
+      symbol,
+      tf,
+      bars,
+    }),
   regime: (tf: string) =>
     get<{
       series: RegimePoint[];
