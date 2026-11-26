@@ -75,4 +75,7 @@ def fitting(x_internal_token: Optional[str] = Header(None)) -> dict:
     path = ARTIFACTS_DIR / "fit_diagnostics.json"
     if not path.exists():
         raise HTTPException(status_code=404, detail="fit_diagnostics.json belum dibuat (jalankan ml/src/fit_diagnostics.py).")
-    return json.loads(path.read_text(encoding="utf-8"))
+    out = json.loads(path.read_text(encoding="utf-8"))
+    validity = ARTIFACTS_DIR / "label_validity.json"
+    out["label_validity"] = json.loads(validity.read_text(encoding="utf-8")) if validity.exists() else None
+    return out

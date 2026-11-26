@@ -26,6 +26,9 @@ def test_fitting_membaca_artefak(monkeypatch, tmp_path) -> None:
     (tmp_path / "fit_diagnostics.json").write_text(json.dumps({"timeframes": {"1h": {}}}), encoding="utf-8")
     r = client.get("/internal/fitting", headers=hdr)
     assert r.status_code == 200 and "timeframes" in r.json()
+    assert r.json()["label_validity"] is None
+    (tmp_path / "label_validity.json").write_text(json.dumps({"btc": {}}), encoding="utf-8")
+    assert client.get("/internal/fitting", headers=hdr).json()["label_validity"] == {"btc": {}}
 
 
 def test_tidak_ada_rute_publik() -> None:

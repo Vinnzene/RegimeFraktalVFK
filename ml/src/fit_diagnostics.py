@@ -80,13 +80,19 @@ def rebuild(tf: str) -> Dict[str, Any]:
     sp = split_indices(len(positions), cfg.split.ratios, bars_to_rows(window, stride))
     train_mask = np.zeros(len(positions), dtype=bool)
     train_mask[: sp["train"][1]] = True
-    lab = label_series(
+    lab_df = label_series(
         reg, cfg.analysis.hurst_threshold, cfg.analysis.dfa_threshold, mode="quantile", quantiles=(1 / 3, 2 / 3),
         threshold_source="train_only", train_mask=train_mask, soft_consensus=True,
-    )["regime"].tolist()
+    )
+    lab = lab_df["regime"].tolist()
     y = np.array([CLASSES.index(v) if v in CLASSES else -1 for v in lab])
     rows = {k: np.array([i for i in range(*sp[k]) if y[i] >= 0], dtype=int) for k in ("train", "validation", "test")}
-    return {"PS": PS, "F": F, "y": y, "rows": rows, "split": sp}
+    thr = {
+        "hurst": [float(lab_df["hurst_lower"].iloc[0]), float(lab_df["hurst_upper"].iloc[0])],
+        "dfa": [float(lab_df["dfa_lower"].iloc[0]), float(lab_df["dfa_upper"].iloc[0])],
+    }
+    return {"PS": PS, "F": F, "y": y, "rows": rows, "split": sp, "thresholds": thr,
+            "hurst": reg["hurst"].to_numpy(dtype=float), "dfa": reg["dfa_alpha"].to_numpy(dtype=float)}
 
 
 def predict(models: List[Any], sc: Dict[str, Any], PS: np.ndarray, F: np.ndarray) -> np.ndarray:

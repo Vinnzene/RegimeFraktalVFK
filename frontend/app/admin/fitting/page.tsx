@@ -7,6 +7,7 @@ import {
   BarChart,
   CartesianGrid,
   ComposedChart,
+  ErrorBar,
   Legend,
   Line,
   LineChart,
@@ -38,6 +39,27 @@ type Payload = {
   source: string;
   timeframes: Record<string, TfDiag>;
   learning_curve: Record<string, { folds: Fold[]; pooled_pct_ensemble: number; backtest_pct: number }>;
+  label_validity?: LabelValidity | null;
+};
+type Zone = {
+  band: string;
+  n: number;
+  share_pct?: number;
+  accuracy?: number;
+  ci95?: [number, number];
+  majority_baseline?: number;
+  majority_class?: string;
+  per_class?: Record<string, { n: number; recall: number | null }>;
+};
+type Errors = { n: number; benar_pct: number; salah_tetangga_pct: number; salah_jauh_pct: number; salah_jauh_n: number };
+type ValSplit = { n: number; accuracy: number; qwk: number; qwk_ci95: [number, number]; errors: Errors; zones: Zone[] };
+type SynRun = { labeled_pct: number; accuracy: number; recall: Record<string, number>; qwk: number };
+type LabelValidity = {
+  generated_at: string;
+  source: string;
+  n_boot: number;
+  btc: Record<string, { thresholds: { hurst: number[]; dfa: number[] }; splits: Record<string, ValSplit> }>;
+  synthetic: { scenario: string; rs_only: { accuracy: number }; dfa_only: { accuracy: number }; hard_consensus: SynRun; soft_consensus_er: SynRun }[];
 };
 
 const C = { train: "#3b82f6", val: "#a78bfa", test: "#f59e0b", mlp: "#94a3b8", good: "#22c55e", bad: "#ef4444" };
@@ -269,6 +291,206 @@ function ConfusionMatrices({ d }: { d: TfDiag }) {
   );
 }
 
+const SCENARIO_LABEL: Record<string, string> = {
+  S1: "S1 · fGn murni",
+  S4: "S4 · ekor gemuk + volatilitas + lonjakan",
+  S4k: "S4k · dikalibrasi ke BTC",
+};
+
+function ZoneChart({ s }: { s: ValSplit }) {
+  const rows = s.zones
+    .filter((z) => z.n > 0)
+    .map((z) => ({
+      band: z.band,
+      akurasi: 100 * (z.accuracy ?? 0),
+      err: [100 * ((z.accuracy ?? 0) - (z.ci95?.[0] ?? 0)), 100 * ((z.ci95?.[1] ?? 0) - (z.accuracy ?? 0))],
+      mayoritas: 100 * (z.majority_baseline ?? 0),
+    }));
+  return (
+    <div className="h-[260px]">
+      <ResponsiveContainer>
+        <BarChart data={rows} margin={{ top: 10, right: 10, bottom: 18, left: 0 }}>
+          <CartesianGrid stroke={GRID_STROKE} vertical={false} />
+          <XAxis dataKey="band" tick={AXIS_TICK} label={{ value: "jarak ke ambang Hurst/DFA terdekat", position: "insideBottom", offset: -8, fontSize: 11, fill: "rgb(var(--c-txt-muted))" }} />
+          <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} tick={AXIS_TICK} width={40} />
+          <Tooltip
+            contentStyle={TOOLTIP_STYLE}
+            labelStyle={TOOLTIP_LABEL_STYLE}
+            formatter={(v: number | number[], k: string) => (Array.isArray(v) ? [null, null] : [`${v.toLocaleString("id-ID", { maximumFractionDigits: 1 })}%`, k])}
+          />
+          <Legend wrapperStyle={LEGEND_STYLE} verticalAlign="top" align="right" />
+          <Bar dataKey="akurasi" name="Akurasi model (CI95)" fill={C.train} radius={[3, 3, 0, 0]} isAnimationActive={false}>
+            <ErrorBar dataKey="err" width={8} strokeWidth={1.5} stroke="rgb(var(--c-txt))" />
+          </Bar>
+          <Bar dataKey="mayoritas" name="Tebak kelas mayoritas" fill={C.mlp} radius={[3, 3, 0, 0]} isAnimationActive={false} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+function ErrorStack({ v }: { v: Record<string, ValSplit> }) {
+  const rows = (["test", "validation"] as const)
+    .filter((k) => v[k])
+    .map((k) => ({
+      split: `${SPLIT_LABEL[k]} · QWK ${v[k].qwk.toLocaleString("id-ID", { maximumFractionDigits: 2 })}`,
+      benar: v[k].errors.benar_pct,
+      tetangga: v[k].errors.salah_tetangga_pct,
+      jauh: v[k].errors.salah_jauh_pct,
+    }));
+  return (
+    <div className="h-[150px]">
+      <ResponsiveContainer>
+        <BarChart data={rows} layout="vertical" margin={{ top: 6, right: 16, bottom: 0, left: 10 }}>
+          <XAxis type="number" domain={[0, 100]} ticks={[0, 25, 50, 75, 100]} allowDataOverflow tickFormatter={(x) => `${x}%`} tick={AXIS_TICK} />
+          <YAxis type="category" dataKey="split" width={150} tick={AXIS_TICK} />
+          <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL_STYLE} formatter={(x: number, k: string) => [`${x.toLocaleString("id-ID")}%`, k]} />
+          <Legend wrapperStyle={LEGEND_STYLE} />
+          <Bar dataKey="benar" name="Benar" stackId="e" fill={C.good} isAnimationActive={false} />
+          <Bar dataKey="tetangga" name="Salah ke kelas tetangga" stackId="e" fill={C.test} isAnimationActive={false} />
+          <Bar dataKey="jauh" name="Salah jauh (persistent ↔ anti)" stackId="e" fill={C.bad} isAnimationActive={false} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+function LabelValiditySection({ lv, tf }: { lv: LabelValidity; tf: string }) {
+  const [split, setSplit] = useState<"test" | "validation">("test");
+  const v = lv.btc[tf];
+  if (!v) return null;
+  const s = v.splits[split];
+  const syn = lv.synthetic.map((r) => ({
+    sc: r.scenario,
+    "R/S saja": 100 * r.rs_only.accuracy,
+    "DFA saja": 100 * r.dfa_only.accuracy,
+    "Konsensus keras": 100 * r.hard_consensus.accuracy,
+    "Soft consensus + ER": 100 * r.soft_consensus_er.accuracy,
+  }));
+  return (
+    <>
+      <section className={card}>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-[15px] font-semibold text-txt">Akurasi per zona jarak ke ambang {tf.toUpperCase()}</h2>
+          <div className="flex rounded-lg border border-edge p-0.5 text-[12px]">
+            {(["test", "validation"] as const).map((k) => (
+              <button
+                key={k}
+                type="button"
+                onClick={() => setSplit(k)}
+                className={`rounded-md px-3 py-1 font-semibold ${split === k ? "bg-txt text-panel" : "text-txtDim hover:text-txt"}`}
+              >
+                {SPLIT_LABEL[k]}
+              </button>
+            ))}
+          </div>
+        </div>
+        <p className="mt-1 text-[12px] text-txtMuted">
+          Jarak = selisih terkecil H ke ambang H ({v.thresholds.hurst.map((x) => x.toLocaleString("id-ID")).join("; ")}) atau α ke ambang DFA (
+          {v.thresholds.dfa.map((x) => x.toLocaleString("id-ID")).join("; ")}). CI95 dari block bootstrap {lv.n_boot}×.
+        </p>
+        <div className="mt-3 grid gap-4 lg:grid-cols-2">
+          <ZoneChart s={s} />
+          <div className="overflow-x-auto">
+            <table className="w-full text-[12.5px]">
+              <thead className="text-txtMuted">
+                <tr className="border-b border-edge">
+                  <th className="py-1.5 text-left font-medium">Zona</th>
+                  <th className="py-1.5 text-right font-medium">Jendela</th>
+                  <th className="py-1.5 text-right font-medium">Akurasi [CI95]</th>
+                  <th className="py-1.5 text-right font-medium">Mayoritas</th>
+                  <th className="py-1.5 text-right font-medium">Recall P / R / A</th>
+                </tr>
+              </thead>
+              <tbody className="text-txtDim">
+                {s.zones.map((z) => (
+                  <tr key={z.band} className="border-b border-edge/50">
+                    <td className="py-1.5 font-semibold text-txt">{z.band}</td>
+                    <td className="py-1.5 text-right font-mono">
+                      {z.n.toLocaleString("id-ID")} ({(z.share_pct ?? 0).toLocaleString("id-ID")}%)
+                    </td>
+                    <td className="py-1.5 text-right font-mono text-txt">
+                      {z.n ? `${pct(z.accuracy ?? 0)} [${pct(z.ci95?.[0] ?? 0, 0)}–${pct(z.ci95?.[1] ?? 0, 0)}]` : "–"}
+                    </td>
+                    <td className="py-1.5 text-right font-mono">{z.n ? pct(z.majority_baseline ?? 0) : "–"}</td>
+                    <td className="py-1.5 text-right font-mono">
+                      {z.per_class
+                        ? Object.keys(CLASS_LABEL)
+                            .map((c) => {
+                              const pc = z.per_class![c];
+                              return pc.recall == null ? "–" : `${pct(pc.recall, 0)} (${pc.n})`;
+                            })
+                            .join(" / ")
+                        : "–"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="mt-2 text-2xs text-txtMuted">Semua jendela random-like berada di zona terdekat karena pita kelasnya sempit.</p>
+          </div>
+        </div>
+        <h3 className="mt-4 text-[13px] font-semibold text-txtDim">Jenis kesalahan (ordinal: anti &lt; random &lt; persistent)</h3>
+        <ErrorStack v={v.splits} />
+      </section>
+
+      <section className={card}>
+        <h2 className="text-[15px] font-semibold text-txt">Seberapa benar label Hurst/DFA? Uji pada data sintetis</h2>
+        <p className="mt-1 text-[12px] text-txtMuted">
+          Deret dengan H sebenarnya diketahui (benchmark Fase 1, n = 500). Aturan label yang sama dengan BTC dibandingkan dengan kelas sebenarnya.
+          Ini mengukur kebenaran label, bukan kecocokan model dengan label.
+        </p>
+        <div className="mt-3 grid gap-4 lg:grid-cols-2">
+          <div className="h-[260px]">
+            <ResponsiveContainer>
+              <BarChart data={syn} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>
+                <CartesianGrid stroke={GRID_STROKE} vertical={false} />
+                <XAxis dataKey="sc" tick={AXIS_TICK} />
+                <YAxis domain={[0, 100]} tickFormatter={(x) => `${x}%`} tick={AXIS_TICK} width={40} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL_STYLE} formatter={(x: number, k: string) => [`${x.toLocaleString("id-ID", { maximumFractionDigits: 1 })}%`, k]} />
+                <Legend wrapperStyle={LEGEND_STYLE} />
+                <ReferenceLine y={33.33} stroke={C.bad} strokeDasharray="4 4" />
+                <Bar dataKey="R/S saja" fill={C.mlp} radius={[3, 3, 0, 0]} isAnimationActive={false} />
+                <Bar dataKey="DFA saja" fill={C.val} radius={[3, 3, 0, 0]} isAnimationActive={false} />
+                <Bar dataKey="Konsensus keras" fill={C.test} radius={[3, 3, 0, 0]} isAnimationActive={false} />
+                <Bar dataKey="Soft consensus + ER" fill={C.train} radius={[3, 3, 0, 0]} isAnimationActive={false} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-[12.5px]">
+              <thead className="text-txtMuted">
+                <tr className="border-b border-edge">
+                  <th className="py-1.5 text-left font-medium">Skenario</th>
+                  <th className="py-1.5 text-right font-medium">Label benar</th>
+                  <th className="py-1.5 text-right font-medium">Berlabel</th>
+                  <th className="py-1.5 text-right font-medium">Recall random-like</th>
+                  <th className="py-1.5 text-right font-medium">QWK</th>
+                </tr>
+              </thead>
+              <tbody className="text-txtDim">
+                {lv.synthetic.map((r) => (
+                  <tr key={r.scenario} className="border-b border-edge/50">
+                    <td className="py-1.5 text-txt">{SCENARIO_LABEL[r.scenario] ?? r.scenario}</td>
+                    <td className="py-1.5 text-right font-mono text-txt">{pct(r.soft_consensus_er.accuracy)}</td>
+                    <td className="py-1.5 text-right font-mono">{r.soft_consensus_er.labeled_pct.toLocaleString("id-ID")}%</td>
+                    <td className="py-1.5 text-right font-mono">{pct(r.soft_consensus_er.recall.random_like)}</td>
+                    <td className="py-1.5 text-right font-mono">{r.soft_consensus_er.qwk.toLocaleString("id-ID", { maximumFractionDigits: 3 })}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="mt-2 text-2xs text-txtMuted">Kolom tabel memakai aturan soft consensus + ER (aturan yang dipakai pada BTC).</p>
+          </div>
+        </div>
+        <p className="mt-3 text-2xs text-txtMuted">
+          {lv.source}, {lv.generated_at}
+        </p>
+      </section>
+    </>
+  );
+}
+
 function LearningCurve({ lc }: { lc: Payload["learning_curve"][string] }) {
   const rows = lc.folds.map((f) => ({ ...f, label: `F${f.fold} · ${f.n_train.toLocaleString("id-ID")}` }));
   return (
@@ -357,6 +579,8 @@ export default function FittingPage() {
           </section>
 
           <ConfusionMatrices d={d} />
+
+          {data?.label_validity && <LabelValiditySection lv={data.label_validity} tf={tf} />}
 
           <section className={card}>
             <h2 className="text-[15px] font-semibold text-txt">Kurva belajar walk-forward {tf.toUpperCase()}</h2>
