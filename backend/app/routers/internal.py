@@ -59,3 +59,20 @@ def robustness(x_internal_token: Optional[str] = Header(None)) -> dict:
     from app.routers.model import load_robustness
 
     return load_robustness()
+
+
+fitting_router = APIRouter(prefix="/internal/fitting", tags=["internal"])
+
+
+@fitting_router.get("")
+def fitting(x_internal_token: Optional[str] = Header(None)) -> dict:
+    """Diagnosis overfitting/underfitting untuk halaman admin `/admin/fitting`."""
+    _check_token(x_internal_token)
+    import json
+
+    from app.core.config import ARTIFACTS_DIR
+
+    path = ARTIFACTS_DIR / "fit_diagnostics.json"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="fit_diagnostics.json belum dibuat (jalankan ml/src/fit_diagnostics.py).")
+    return json.loads(path.read_text(encoding="utf-8"))

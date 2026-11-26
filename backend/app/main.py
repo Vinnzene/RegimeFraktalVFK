@@ -70,6 +70,7 @@ async def model_unavailable_handler(_: Request, exc: ModelUnavailable) -> JSONRe
 app.include_router(meta.router)
 app.include_router(internal.router)
 app.include_router(internal.robustness_router)
+app.include_router(internal.fitting_router)
 app.include_router(ohlcv.router)
 app.include_router(analysis.router)
 app.include_router(model.router)

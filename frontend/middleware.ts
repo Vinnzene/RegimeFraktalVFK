@@ -10,6 +10,7 @@ const ADMIN_ONLY = [
   "/order-flow",
   "/methodology",
   "/about",
+  "/admin/fitting",
 ];
 
 function isAdminEmail(email: string | null): boolean {
