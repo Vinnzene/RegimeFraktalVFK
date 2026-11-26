@@ -1,0 +1,555 @@
+{
+  "generated_at": "2026-11-26 19:46:38",
+  "source": "ml/src/wavelet_label_study.py",
+  "wavelet": "db4",
+  "dwt_octaves": [
+    1,
+    5
+  ],
+  "swt_levels": 4,
+  "synthetic": [
+    {
+      "scenario": "S1",
+      "n_eval": 1500,
+      "estimators": {
+        "R/S": {
+          "spearman_true_h": 0.8554,
+          "thresholds": [
+            0.5549,
+            0.6293
+          ],
+          "labeled_pct": 100.0,
+          "accuracy": 0.7253,
+          "balanced_accuracy": 0.7253,
+          "recall": {
+            "persistent": 0.762,
+            "random_like": 0.596,
+            "anti_persistent": 0.818
+          },
+          "qwk": 0.7709
+        },
+        "DFA": {
+          "spearman_true_h": 0.8487,
+          "thresholds": [
+            0.4453,
+            0.5478
+          ],
+          "labeled_pct": 100.0,
+          "accuracy": 0.7147,
+          "balanced_accuracy": 0.7147,
+          "recall": {
+            "persistent": 0.766,
+            "random_like": 0.598,
+            "anti_persistent": 0.78
+          },
+          "qwk": 0.7664
+        },
+        "Wavelet DWT (Abry-Veitch)": {
+          "spearman_true_h": 0.9326,
+          "thresholds": [
+            0.4501,
+            0.551
+          ],
+          "labeled_pct": 100.0,
+          "accuracy": 0.8207,
+          "balanced_accuracy": 0.8207,
+          "recall": {
+            "persistent": 0.866,
+            "random_like": 0.72,
+            "anti_persistent": 0.876
+          },
+          "qwk": 0.862
+        },
+        "Wavelet SWT (energi per level)": {
+          "spearman_true_h": 0.9169,
+          "thresholds": [
+            0.438,
+            0.5509
+          ],
+          "labeled_pct": 100.0,
+          "accuracy": 0.796,
+          "balanced_accuracy": 0.796,
+          "recall": {
+            "persistent": 0.822,
+            "random_like": 0.726,
+            "anti_persistent": 0.84
+          },
+          "qwk": 0.8359
+        }
+      },
+      "combos": {
+        "R/S + DFA sepakat (konsensus keras)": {
+          "labeled_pct": 86.0,
+          "accuracy": 0.7589,
+          "balanced_accuracy": 0.7525,
+          "recall": {
+            "persistent": 0.8013,
+            "random_like": 0.6253,
+            "anti_persistent": 0.8308
+          },
+          "qwk": 0.81
+        },
+        "Soft consensus + ER (aturan penelitian)": {
+          "labeled_pct": 93.7,
+          "accuracy": 0.7354,
+          "balanced_accuracy": 0.7305,
+          "recall": {
+            "persistent": 0.8466,
+            "random_like": 0.5134,
+            "anti_persistent": 0.8316
+          },
+          "qwk": 0.7922
+        },
+        "R/S + DFA + wavelet, ≥ 2 dari 3 sepakat": {
+          "labeled_pct": 99.1,
+          "accuracy": 0.7626,
+          "balanced_accuracy": 0.7621,
+          "recall": {
+            "persistent": 0.7876,
+            "random_like": 0.6714,
+            "anti_persistent": 0.8273
+          },
+          "qwk": 0.8059
+        },
+        "R/S + DFA + wavelet, 3 dari 3 sepakat": {
+          "labeled_pct": 62.5,
+          "accuracy": 0.9179,
+          "balanced_accuracy": 0.9064,
+          "recall": {
+            "persistent": 0.938,
+            "random_like": 0.8373,
+            "anti_persistent": 0.9439
+          },
+          "qwk": 0.9468
+        }
+      }
+    },
+    {
+      "scenario": "S4",
+      "n_eval": 1500,
+      "estimators": {
+        "R/S": {
+          "spearman_true_h": 0.8062,
+          "thresholds": [
+            0.5524,
+            0.6155
+          ],
+          "labeled_pct": 100.0,
+          "accuracy": 0.648,
+          "balanced_accuracy": 0.648,
+          "recall": {
+            "persistent": 0.722,
+            "random_like": 0.526,
+            "anti_persistent": 0.696
+          },
+          "qwk": 0.6859
+        },
+        "DFA": {
+          "spearman_true_h": 0.6563,
+          "thresholds": [
+            0.4313,
+            0.5333
+          ],
+          "labeled_pct": 100.0,
+          "accuracy": 0.5753,
+          "balanced_accuracy": 0.5753,
+          "recall": {
+            "persistent": 0.65,
+            "random_like": 0.446,
+            "anti_persistent": 0.63
+          },
+          "qwk": 0.5737
+        },
+        "Wavelet DWT (Abry-Veitch)": {
+          "spearman_true_h": 0.8045,
+          "thresholds": [
+            0.4432,
+            0.5383
+          ],
+          "labeled_pct": 100.0,
+          "accuracy": 0.6893,
+          "balanced_accuracy": 0.6893,
+          "recall": {
+            "persistent": 0.762,
+            "random_like": 0.544,
+            "anti_persistent": 0.762
+          },
+          "qwk": 0.7248
+        },
+        "Wavelet SWT (energi per level)": {
+          "spearman_true_h": 0.7718,
+          "thresholds": [
+            0.4413,
+            0.5385
+          ],
+          "labeled_pct": 100.0,
+          "accuracy": 0.644,
+          "balanced_accuracy": 0.644,
+          "recall": {
+            "persistent": 0.736,
+            "random_like": 0.502,
+            "anti_persistent": 0.694
+          },
+          "qwk": 0.6683
+        }
+      },
+      "combos": {
+        "R/S + DFA sepakat (konsensus keras)": {
+          "labeled_pct": 65.1,
+          "accuracy": 0.7083,
+          "balanced_accuracy": 0.6935,
+          "recall": {
+            "persistent": 0.815,
+            "random_like": 0.5036,
+            "anti_persistent": 0.7619
+          },
+          "qwk": 0.7716
+        },
+        "Soft consensus + ER (aturan penelitian)": {
+          "labeled_pct": 84.3,
+          "accuracy": 0.6582,
+          "balanced_accuracy": 0.6462,
+          "recall": {
+            "persistent": 0.853,
+            "random_like": 0.3291,
+            "anti_persistent": 0.7565
+          },
+          "qwk": 0.7066
+        },
+        "R/S + DFA + wavelet, ≥ 2 dari 3 sepakat": {
+          "labeled_pct": 94.2,
+          "accuracy": 0.6872,
+          "balanced_accuracy": 0.6844,
+          "recall": {
+            "persistent": 0.7578,
+            "random_like": 0.5578,
+            "anti_persistent": 0.7375
+          },
+          "qwk": 0.7375
+        },
+        "R/S + DFA + wavelet, 3 dari 3 sepakat": {
+          "labeled_pct": 43.7,
+          "accuracy": 0.8521,
+          "balanced_accuracy": 0.8093,
+          "recall": {
+            "persistent": 0.931,
+            "random_like": 0.5954,
+            "anti_persistent": 0.9015
+          },
+          "qwk": 0.9029
+        }
+      }
+    },
+    {
+      "scenario": "S4k",
+      "n_eval": 1500,
+      "estimators": {
+        "R/S": {
+          "spearman_true_h": 0.8297,
+          "thresholds": [
+            0.5561,
+            0.6212
+          ],
+          "labeled_pct": 100.0,
+          "accuracy": 0.6853,
+          "balanced_accuracy": 0.6853,
+          "recall": {
+            "persistent": 0.792,
+            "random_like": 0.506,
+            "anti_persistent": 0.758
+          },
+          "qwk": 0.7408
+        },
+        "DFA": {
+          "spearman_true_h": 0.7576,
+          "thresholds": [
+            0.4353,
+            0.5372
+          ],
+          "labeled_pct": 100.0,
+          "accuracy": 0.634,
+          "balanced_accuracy": 0.634,
+          "recall": {
+            "persistent": 0.724,
+            "random_like": 0.484,
+            "anti_persistent": 0.694
+          },
+          "qwk": 0.6548
+        },
+        "Wavelet DWT (Abry-Veitch)": {
+          "spearman_true_h": 0.8712,
+          "thresholds": [
+            0.4332,
+            0.5552
+          ],
+          "labeled_pct": 100.0,
+          "accuracy": 0.7387,
+          "balanced_accuracy": 0.7387,
+          "recall": {
+            "persistent": 0.744,
+            "random_like": 0.68,
+            "anti_persistent": 0.792
+          },
+          "qwk": 0.7822
+        },
+        "Wavelet SWT (energi per level)": {
+          "spearman_true_h": 0.8421,
+          "thresholds": [
+            0.4305,
+            0.5567
+          ],
+          "labeled_pct": 100.0,
+          "accuracy": 0.7067,
+          "balanced_accuracy": 0.7067,
+          "recall": {
+            "persistent": 0.734,
+            "random_like": 0.624,
+            "anti_persistent": 0.762
+          },
+          "qwk": 0.7388
+        }
+      },
+      "combos": {
+        "R/S + DFA sepakat (konsensus keras)": {
+          "labeled_pct": 72.7,
+          "accuracy": 0.7397,
+          "balanced_accuracy": 0.7241,
+          "recall": {
+            "persistent": 0.8438,
+            "random_like": 0.5064,
+            "anti_persistent": 0.822
+          },
+          "qwk": 0.8009
+        },
+        "Soft consensus + ER (aturan penelitian)": {
+          "labeled_pct": 87.7,
+          "accuracy": 0.6996,
+          "balanced_accuracy": 0.684,
+          "recall": {
+            "persistent": 0.8661,
+            "random_like": 0.3763,
+            "anti_persistent": 0.8095
+          },
+          "qwk": 0.7399
+        },
+        "R/S + DFA + wavelet, ≥ 2 dari 3 sepakat": {
+          "labeled_pct": 96.3,
+          "accuracy": 0.726,
+          "balanced_accuracy": 0.7237,
+          "recall": {
+            "persistent": 0.7927,
+            "random_like": 0.5914,
+            "anti_persistent": 0.7869
+          },
+          "qwk": 0.7763
+        },
+        "R/S + DFA + wavelet, 3 dari 3 sepakat": {
+          "labeled_pct": 51.1,
+          "accuracy": 0.8827,
+          "balanced_accuracy": 0.8622,
+          "recall": {
+            "persistent": 0.9233,
+            "random_like": 0.7564,
+            "anti_persistent": 0.9068
+          },
+          "qwk": 0.9206
+        }
+      }
+    }
+  ],
+  "btc": {
+    "1h": {
+      "thresholds": {
+        "wavelet": [
+          0.4552,
+          0.5062
+        ],
+        "hurst": [
+          0.5718,
+          0.5985
+        ],
+        "dfa": [
+          0.4778,
+          0.5207
+        ]
+      },
+      "spearman": {
+        "wavelet_vs_rs": 0.2009,
+        "wavelet_vs_dfa": 0.151,
+        "rs_vs_dfa": 0.5626
+      },
+      "test": {
+        "n": 2005,
+        "wavelet_agrees_with_label_pct": 36.1,
+        "label_vs_wavelet_matrix": [
+          [
+            358,
+            517,
+            53
+          ],
+          [
+            95,
+            68,
+            22
+          ],
+          [
+            229,
+            365,
+            298
+          ]
+        ],
+        "model_accuracy": 0.81,
+        "model_when_wavelet_agrees": {
+          "n": 724,
+          "accuracy": 0.8881
+        },
+        "model_when_wavelet_disagrees": {
+          "n": 1281,
+          "accuracy": 0.7658
+        },
+        "model_when_all_three_agree": {
+          "n": 599,
+          "accuracy": 0.8815
+        },
+        "model_otherwise": {
+          "n": 1406,
+          "accuracy": 0.7795
+        },
+        "all_three_agree_pct": 29.9
+      }
+    },
+    "4h": {
+      "thresholds": {
+        "wavelet": [
+          0.4754,
+          0.5131
+        ],
+        "hurst": [
+          0.5891,
+          0.6135
+        ],
+        "dfa": [
+          0.4797,
+          0.5271
+        ]
+      },
+      "spearman": {
+        "wavelet_vs_rs": 0.1549,
+        "wavelet_vs_dfa": -0.0035,
+        "rs_vs_dfa": 0.557
+      },
+      "test": {
+        "n": 761,
+        "wavelet_agrees_with_label_pct": 30.5,
+        "label_vs_wavelet_matrix": [
+          [
+            181,
+            84,
+            132
+          ],
+          [
+            26,
+            19,
+            24
+          ],
+          [
+            150,
+            113,
+            32
+          ]
+        ],
+        "model_accuracy": 0.7464,
+        "model_when_wavelet_agrees": {
+          "n": 232,
+          "accuracy": 0.8103
+        },
+        "model_when_wavelet_disagrees": {
+          "n": 529,
+          "accuracy": 0.7183
+        },
+        "model_when_all_three_agree": {
+          "n": 142,
+          "accuracy": 0.7606
+        },
+        "model_otherwise": {
+          "n": 619,
+          "accuracy": 0.7431
+        },
+        "all_three_agree_pct": 18.7
+      }
+    }
+  },
+  "rs_dfa_agreement": {
+    "sintetis_S1": 0.9685,
+    "sintetis_S4": 0.7764,
+    "sintetis_S4k": 0.88,
+    "btc_1h": 0.5626,
+    "btc_4h": 0.557
+  },
+  "scale_sensitivity": [
+    {
+      "octaves": [
+        1,
+        5
+      ],
+      "approx_bars": [
+        2,
+        64
+      ],
+      "S1_vs_true_h": 0.9326,
+      "S4k_vs_true_h": 0.8712,
+      "btc_1h_vs_rs": 0.2009,
+      "btc_1h_vs_dfa": 0.151,
+      "btc_4h_vs_rs": 0.1549,
+      "btc_4h_vs_dfa": -0.0035
+    },
+    {
+      "octaves": [
+        2,
+        5
+      ],
+      "approx_bars": [
+        4,
+        64
+      ],
+      "S1_vs_true_h": 0.8386,
+      "S4k_vs_true_h": 0.7129,
+      "btc_1h_vs_rs": 0.2185,
+      "btc_1h_vs_dfa": 0.2381,
+      "btc_4h_vs_rs": 0.1829,
+      "btc_4h_vs_dfa": 0.14
+    },
+    {
+      "octaves": [
+        2,
+        6
+      ],
+      "approx_bars": [
+        4,
+        128
+      ],
+      "S1_vs_true_h": 0.8706,
+      "S4k_vs_true_h": 0.7606,
+      "btc_1h_vs_rs": 0.3393,
+      "btc_1h_vs_dfa": 0.3935,
+      "btc_4h_vs_rs": 0.3274,
+      "btc_4h_vs_dfa": 0.3395
+    },
+    {
+      "octaves": [
+        3,
+        6
+      ],
+      "approx_bars": [
+        8,
+        128
+      ],
+      "S1_vs_true_h": 0.6845,
+      "S4k_vs_true_h": 0.5408,
+      "btc_1h_vs_rs": 0.3171,
+      "btc_1h_vs_dfa": 0.36,
+      "btc_4h_vs_rs": 0.3758,
+      "btc_4h_vs_dfa": 0.4983
+    }
+  ]
+}

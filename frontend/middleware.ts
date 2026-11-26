@@ -11,6 +11,7 @@ const ADMIN_ONLY = [
   "/methodology",
   "/about",
   "/admin/fitting",
+  "/admin/wavelet",
 ];
 
 function isAdminEmail(email: string | null): boolean {

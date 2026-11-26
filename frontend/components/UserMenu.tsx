@@ -100,6 +100,16 @@ export default function UserMenu() {
               <span className="text-2xs text-accent">admin</span>
             </Link>
           )}
+          {me.admin && (
+            <Link
+              href="/admin/wavelet"
+              onClick={() => setOpen(false)}
+              className="flex items-center justify-between rounded px-3 py-2 text-[12.5px] text-txtDim transition-colors hover:bg-surface hover:text-txt"
+            >
+              Tahap 2 · Penduga wavelet
+              <span className="text-2xs text-accent">admin</span>
+            </Link>
+          )}
           <button
             type="button"
             onClick={() => void signOutEverywhere()}

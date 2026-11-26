@@ -79,3 +79,20 @@ def fitting(x_internal_token: Optional[str] = Header(None)) -> dict:
     validity = ARTIFACTS_DIR / "label_validity.json"
     out["label_validity"] = json.loads(validity.read_text(encoding="utf-8")) if validity.exists() else None
     return out
+
+
+wavelet_router = APIRouter(prefix="/internal/wavelet", tags=["internal"])
+
+
+@wavelet_router.get("")
+def wavelet(x_internal_token: Optional[str] = Header(None)) -> dict:
+    """Studi penduga wavelet (Tahap 2) untuk halaman admin `/admin/wavelet`."""
+    _check_token(x_internal_token)
+    import json
+
+    from app.core.config import ARTIFACTS_DIR
+
+    path = ARTIFACTS_DIR / "wavelet_label_study.json"
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="wavelet_label_study.json belum dibuat (jalankan ml/src/wavelet_label_study.py).")
+    return json.loads(path.read_text(encoding="utf-8"))
