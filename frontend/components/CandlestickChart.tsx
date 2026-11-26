@@ -8,9 +8,21 @@ import {
   LineStyle,
   type IChartApi,
   type ISeriesApi,
+  type SeriesMarker,
   type Time,
 } from "lightweight-charts";
+import IndicatorPicker from "@/components/IndicatorPicker";
 import type { Candle, RegimePoint } from "@/lib/api-client";
+import {
+  INDICATOR_COLORS,
+  bollinger,
+  crosses,
+  depthRows,
+  loadActive,
+  saveActive,
+  sma,
+  type IndicatorId,
+} from "@/lib/indicators";
 import { REGIME_META, REGIME_PLAIN, SEGMENT_META, type Regime } from "@/lib/regime";
 import { themeColor, useTheme } from "@/lib/theme";
 
@@ -64,6 +76,8 @@ export default function CandlestickChart({
   showToolbar = true,
   defaultRange = "ALL",
   legend,
+  indicators = false,
+  depthSymbol,
 }: {
   candles: Candle[];
   regimes?: RegimePoint[];
@@ -76,16 +90,38 @@ export default function CandlestickChart({
   /** Rentang yang terlihat saat pertama tampil. Seluruh data tetap dimuat. */
   defaultRange?: string;
   legend?: React.ReactNode;
+  /** Tampilkan tombol Indikator (MA 15 + MA 50, Bollinger, liquidity heatmap). */
+  indicators?: boolean;
+  /** Simbol Binance spot untuk liquidity heatmap, mis. "BTCUSDT". */
+  depthSymbol?: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const seriesRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
   const bandRef = useRef<ISeriesApi<"Histogram"> | null>(null);
   const volumeRef = useRef<ISeriesApi<"Histogram"> | null>(null);
+  const lineRefs = useRef<Record<string, ISeriesApi<"Line">>>({});
+  const overlayRef = useRef<HTMLCanvasElement>(null);
+  const depthRef = useRef<{ bids: [number, number][]; asks: [number, number][]; at: number } | null>(null);
   const regimeByTime = useRef<Map<number, string>>(new Map());
 
   const [hover, setHover] = useState<HoverInfo | null>(null);
   const [activeRange, setActiveRange] = useState<string>(defaultRange);
+  const [active, setActive] = useState<IndicatorId[]>([]);
+  const [depthStatus, setDepthStatus] = useState<string | null>(null);
+
+  // Pilihan indikator dibaca setelah mount agar tidak beda dengan render server.
+  useEffect(() => {
+    if (indicators) setActive(loadActive());
+  }, [indicators]);
+  const toggleIndicator = useCallback((id: IndicatorId) => {
+    setActive((cur) => {
+      const next = cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id];
+      saveActive(next);
+      return next;
+    });
+  }, []);
+  const show = (id: IndicatorId) => indicators && active.includes(id) && (id !== "heatmap" || Boolean(depthSymbol));
 
   // Efek 1 — membuat chart.
   useEffect(() => {
@@ -169,6 +205,24 @@ export default function CandlestickChart({
     });
     volumeRef.current = volume;
 
+    // Garis indikator; kosong sampai diaktifkan.
+    const line = (color: string, width: 1 | 2, style: LineStyle = LineStyle.Solid) =>
+      chart.addLineSeries({
+        color,
+        lineWidth: width,
+        lineStyle: style,
+        priceLineVisible: false,
+        lastValueVisible: false,
+        crosshairMarkerVisible: false,
+      });
+    lineRefs.current = {
+      ma15: line(INDICATOR_COLORS.ma15, 2),
+      ma50: line(INDICATOR_COLORS.ma50, 2),
+      bbUpper: line(hexToRgba(INDICATOR_COLORS.bb, 0.75), 1),
+      bbMid: line(INDICATOR_COLORS.bb, 1, LineStyle.Dashed),
+      bbLower: line(hexToRgba(INDICATOR_COLORS.bb, 0.75), 1),
+    };
+
     const observer = new ResizeObserver(() => {
       if (containerRef.current) {
         chart.applyOptions({ width: containerRef.current.clientWidth });
@@ -183,6 +237,7 @@ export default function CandlestickChart({
       seriesRef.current = null;
       bandRef.current = null;
       volumeRef.current = null;
+      lineRefs.current = {};
     };
   }, [height]);
 
@@ -288,24 +343,167 @@ export default function CandlestickChart({
     }
     regimeByTime.current = lookup;
 
-    series.setMarkers(
-      segments
-        .filter((s) => s.segment !== "train")
-        .map((s) => ({
-          time: s.start_time as Time,
-          position: "aboveBar" as const,
-          color: s.segment.startsWith("purge") ? "#f6465d" : "#f0b90b",
-          shape: "arrowDown" as const,
-          text: SEGMENT_META[s.segment.replace(/_\d+$/, "")]?.label ?? s.segment,
-        }))
-    );
-
     // Tanpa fitContent di sini: overlay.
     const last = candles[candles.length - 1];
     setHover((h) =>
       h && h.time !== last.time ? h : { ...(h ?? last), regime: lookup.get(last.time) }
     );
   }, [candles, regimes, segments, showRegime]);
+
+  const showTrend = show("trend");
+  const showMeanrev = show("meanrev");
+  const showHeatmap = show("heatmap");
+
+  // Efek 2c — garis indikator dan penanda (split + persilangan MA).
+  useEffect(() => {
+    const series = seriesRef.current;
+    const L = lineRefs.current;
+    if (!series || !L.ma15 || candles.length === 0) return;
+    const closes = candles.map((c) => c.close);
+    const toLine = (vals: (number | null)[]) =>
+      vals.flatMap((v, i) => (v == null ? [] : [{ time: candles[i].time as Time, value: v }]));
+
+    const ma15 = sma(closes, 15);
+    const ma50 = sma(closes, 50);
+    L.ma15.setData(showTrend ? toLine(ma15) : []);
+    L.ma50.setData(showTrend ? toLine(ma50) : []);
+    const bb = showMeanrev ? bollinger(closes, 20, 2) : null;
+    L.bbUpper.setData(bb ? toLine(bb.upper) : []);
+    L.bbMid.setData(bb ? toLine(bb.mid) : []);
+    L.bbLower.setData(bb ? toLine(bb.lower) : []);
+
+    const markers: SeriesMarker<Time>[] = segments
+      .filter((s) => s.segment !== "train")
+      .map((s) => ({
+        time: s.start_time as Time,
+        position: "aboveBar" as const,
+        color: s.segment.startsWith("purge") ? "#f6465d" : "#f0b90b",
+        shape: "arrowDown" as const,
+        text: SEGMENT_META[s.segment.replace(/_\d+$/, "")]?.label ?? s.segment,
+      }));
+    if (showTrend) {
+      // Hanya persilangan terbaru agar chart tidak penuh panah.
+      for (const x of crosses(ma15, ma50).slice(-12)) {
+        markers.push({
+          time: candles[x.i].time as Time,
+          position: x.dir === "up" ? "belowBar" : "aboveBar",
+          color: x.dir === "up" ? "#2ebd85" : "#f6465d",
+          shape: x.dir === "up" ? "arrowUp" : "arrowDown",
+          size: 0.6,
+        });
+      }
+    }
+    markers.sort((a, b) => (a.time as number) - (b.time as number));
+    series.setMarkers(markers);
+  }, [candles, segments, showTrend, showMeanrev]);
+
+  // Efek 2d — liquidity heatmap: ambil order book Binance tiap 15 detik.
+  useEffect(() => {
+    if (!showHeatmap || !depthSymbol) {
+      depthRef.current = null;
+      setDepthStatus(null);
+      return;
+    }
+    let stop = false;
+    const load = async () => {
+      try {
+        const res = await fetch(`https://data-api.binance.vision/api/v3/depth?symbol=${encodeURIComponent(depthSymbol)}&limit=5000`, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const snap = await res.json();
+        const bids: [number, number][] = snap.bids.map((x: string[]) => [Number(x[0]), Number(x[1])]);
+        const asks: [number, number][] = snap.asks.map((x: string[]) => [Number(x[0]), Number(x[1])]);
+        if (stop || !bids.length || !asks.length) return;
+        depthRef.current = { bids, asks, at: Date.now() };
+        const lo = bids[bids.length - 1][0], hi = asks[asks.length - 1][0];
+        setDepthStatus(
+          `order book ${lo.toLocaleString("en-US", { maximumFractionDigits: 2 })}–${hi.toLocaleString("en-US", { maximumFractionDigits: 2 })} · ${new Date().toLocaleTimeString("id-ID")}`,
+        );
+      } catch (e: any) {
+        if (!stop) setDepthStatus(`order book gagal dimuat (${e?.message ?? "jaringan"})`);
+      }
+    };
+    void load();
+    const id = window.setInterval(load, 15000);
+    return () => {
+      stop = true;
+      window.clearInterval(id);
+    };
+  }, [showHeatmap, depthSymbol]);
+
+  // Efek 2e — gambar heatmap di kanvas di atas chart, mengikuti skala harga.
+  useEffect(() => {
+    const canvas = overlayRef.current;
+    if (!showHeatmap || !canvas) return;
+    let raf = 0;
+    let lastKey = "";
+    const ROW = 3; // tinggi baris heatmap (piksel)
+    const draw = () => {
+      raf = requestAnimationFrame(draw);
+      const chart = chartRef.current;
+      const series = seriesRef.current;
+      const box = containerRef.current;
+      const ctx = canvas.getContext("2d");
+      if (!chart || !series || !box || !ctx) return;
+      const data = depthRef.current;
+      const w = box.clientWidth, h = box.clientHeight;
+      const paneW = chart.timeScale().width();
+      const paneH = h - chart.timeScale().height();
+      // Gambar ulang hanya bila skala harga, ukuran, atau data berubah.
+      const key = `${series.coordinateToPrice(0)}|${series.coordinateToPrice(paneH)}|${w}|${h}|${paneW}|${data?.at ?? 0}`;
+      if (key === lastKey) return;
+      lastKey = key;
+      const dpr = window.devicePixelRatio || 1;
+      if (canvas.width !== Math.round(w * dpr) || canvas.height !== Math.round(h * dpr)) {
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+        canvas.style.width = `${w}px`;
+        canvas.style.height = `${h}px`;
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+      if (!data) return;
+      const rows = depthRows(data.bids, data.asks, (p) => series.priceToCoordinate(p), ROW, paneH);
+      const max = Math.max(...rows.map((r) => Math.max(r.bid, r.ask)), 1e-12);
+      let topBid = rows[0], topAsk = rows[0];
+      for (const r of rows) {
+        for (const side of ["bid", "ask"] as const) {
+          const q = r[side];
+          if (q <= 0) continue;
+          const s = Math.sqrt(q / max);
+          const [cr, cg, cb] = INDICATOR_COLORS[side];
+          // Pita tipis selebar chart + profil kedalaman di tepi kanan.
+          ctx.fillStyle = `rgba(${cr},${cg},${cb},${0.02 + 0.14 * s})`;
+          ctx.fillRect(0, r.y, paneW, ROW);
+          ctx.fillStyle = `rgba(${cr},${cg},${cb},${0.3 + 0.6 * s})`;
+          const len = Math.max(2, paneW * 0.25 * s);
+          ctx.fillRect(paneW - len, r.y, len, ROW);
+        }
+        if (r.bid > topBid.bid) topBid = r;
+        if (r.ask > topAsk.ask) topAsk = r;
+      }
+      ctx.font = "10px ui-monospace, SFMono-Regular, Menlo, monospace";
+      ctx.textAlign = "right";
+      for (const side of ["bid", "ask"] as const) {
+        const r = side === "bid" ? topBid : topAsk;
+        if (!r || r[side] <= 0) continue;
+        const price = side === "bid" ? r.bidPrice : r.askPrice;
+        const y = r.y + (side === "bid" ? ROW + 11 : -3);
+        if (y < 10 || y > paneH - 2) continue;
+        const [cr, cg, cb] = INDICATOR_COLORS[side];
+        const label = `${side} ${price.toLocaleString("en-US", { maximumFractionDigits: 2 })} · ${r[side].toLocaleString("en-US", { maximumFractionDigits: 1 })}`;
+        const tw = ctx.measureText(label).width;
+        ctx.fillStyle = themeColor("panel", 0.85);
+        ctx.fillRect(paneW - 10 - tw, y - 10, tw + 8, 13);
+        ctx.fillStyle = `rgb(${cr},${cg},${cb})`;
+        ctx.fillText(label, paneW - 6, y);
+      }
+    };
+    raf = requestAnimationFrame(draw);
+    return () => {
+      cancelAnimationFrame(raf);
+      canvas.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height);
+    };
+  }, [showHeatmap, theme]);
 
   // Efek 3 — legend OHLC mengikuti crosshair.
   useEffect(() => {
@@ -426,8 +624,19 @@ export default function CandlestickChart({
           </div>
         )}
 
+        {indicators && (
+          <div className="ml-auto">
+            <IndicatorPicker
+              active={active}
+              onToggle={toggleIndicator}
+              currentRegime={regimes.length ? regimes[regimes.length - 1].regime : null}
+              unavailable={depthSymbol ? {} : { heatmap: "Liquidity heatmap hanya tersedia untuk aset kripto Binance." }}
+            />
+          </div>
+        )}
+
         {showToolbar && (
-          <div className="ml-auto flex overflow-hidden rounded border border-edge">
+          <div className={`${indicators ? "" : "ml-auto "}flex overflow-hidden rounded border border-edge`}>
             {RANGES.map((r) => (
               <button
                 key={r.label}
@@ -445,7 +654,35 @@ export default function CandlestickChart({
         )}
       </div>
 
-      <div ref={containerRef} className="w-full" />
+      {(showTrend || showMeanrev || showHeatmap) && (
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-edge px-3 py-1.5 font-mono text-2xs text-txtMuted">
+          {showTrend && (
+            <span className="flex items-center gap-1.5">
+              <span className="h-0.5 w-3" style={{ background: INDICATOR_COLORS.ma15 }} />
+              MA 15
+              <span className="ml-1.5 h-0.5 w-3" style={{ background: INDICATOR_COLORS.ma50 }} />
+              MA 50 · panah = persilangan
+            </span>
+          )}
+          {showMeanrev && (
+            <span className="flex items-center gap-1.5">
+              <span className="h-0.5 w-3" style={{ background: INDICATOR_COLORS.bb }} />
+              Bollinger 20, 2σ
+            </span>
+          )}
+          {showHeatmap && (
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-3 rounded-sm" style={{ background: "linear-gradient(90deg, rgba(46,189,133,0.7), rgba(246,70,93,0.7))" }} />
+              Likuiditas: {depthStatus ?? "memuat order book…"}
+            </span>
+          )}
+        </div>
+      )}
+
+      <div className="relative w-full">
+        <div ref={containerRef} className="w-full" />
+        {showHeatmap && <canvas ref={overlayRef} className="pointer-events-none absolute left-0 top-0 z-[2]" aria-hidden />}
+      </div>
 
       {legend && <div className="border-t border-edge px-3 py-2">{legend}</div>}
     </div>

@@ -1,8 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import IndicatorPicker from "@/components/IndicatorPicker";
+import { loadActive, saveActive, type IndicatorId } from "@/lib/indicators";
 import { themeColor, useTheme } from "@/lib/theme";
+
+// Indikator bawaan TradingView untuk tiap pilihan.
+const TV_STUDIES: Partial<Record<IndicatorId, object[]>> = {
+  trend: [
+    { id: "MASimple@tv-basicstudies", inputs: { length: 15 } },
+    { id: "MASimple@tv-basicstudies", inputs: { length: 50 } },
+  ],
+  meanrev: [{ id: "BB@tv-basicstudies", inputs: { length: 20 } }],
+};
 
 /** Analisa teknikal bebas dengan widget resmi TradingView (gratis). */
 
@@ -44,7 +55,7 @@ const INTERVALS = [
   { label: "1W", tv: "W" },
 ];
 
-function TradingViewChart({ symbol, interval }: { symbol: string; interval: string }) {
+function TradingViewChart({ symbol, interval, studies }: { symbol: string; interval: string; studies: string }) {
   const host = useRef<HTMLDivElement>(null);
   // Widget dibangun ulang saat tema berganti; warnanya diambil dari token tema.
   const theme = useTheme();
@@ -76,12 +87,13 @@ function TradingViewChart({ symbol, interval }: { symbol: string; interval: stri
       details: false,
       calendar: false,
       support_host: "https://www.tradingview.com",
+      studies: JSON.parse(studies),
     });
     el.appendChild(script);
     return () => {
       el.innerHTML = "";
     };
-  }, [symbol, interval, theme]);
+  }, [symbol, interval, theme, studies]);
 
   return <div ref={host} className="tradingview-widget-container h-full w-full" />;
 }
@@ -92,6 +104,17 @@ export default function AnalisaTeknikalPage() {
   const [full, setFull] = useState(false);
   const shell = useRef<HTMLDivElement>(null);
   const dailyOnly = DAILY_ONLY_GROUPS.has(asset.group);
+  const [active, setActive] = useState<IndicatorId[]>([]);
+  useEffect(() => setActive(loadActive()), []);
+  const toggle = useCallback((id: IndicatorId) => {
+    setActive((cur) => {
+      const next = cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id];
+      saveActive(next);
+      return next;
+    });
+  }, []);
+  // String stabil agar widget hanya dibangun ulang saat pilihan berubah.
+  const studies = JSON.stringify(active.flatMap((id) => TV_STUDIES[id] ?? []));
 
   const pickAsset = (a: Asset) => {
     setAsset(a);
@@ -156,6 +179,19 @@ export default function AnalisaTeknikalPage() {
             );
           })}
         </div>
+        <IndicatorPicker
+          active={active.filter((id) => id !== "heatmap")}
+          onToggle={toggle}
+          unavailable={{
+            heatmap: (
+              <>
+                Widget TradingView gratis tidak menyediakan heatmap order book. Buka{" "}
+                <Link href="/" className="text-accent hover:underline">Ringkasan</Link> (tombol Indikator di grafik) atau{" "}
+                <Link href="/orderflow-live" className="text-accent hover:underline">Order Flow Live</Link>.
+              </>
+            ),
+          }}
+        />
         <button
           type="button"
           onClick={toggleFull}
@@ -181,7 +217,7 @@ export default function AnalisaTeknikalPage() {
       )}
 
       <div className="min-h-0 flex-1 overflow-hidden rounded-xl border border-edge bg-panel">
-        <TradingViewChart symbol={asset.tv} interval={interval} />
+        <TradingViewChart symbol={asset.tv} interval={interval} studies={studies} />
       </div>
 
       {!full && (

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "node --test lib/sus.test.ts"
+    "test": "node --test lib/sus.test.ts lib/indicators.test.ts"
   },
   "dependencies": {
     "@opentelemetry/api": "1.9.0",

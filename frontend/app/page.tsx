@@ -151,6 +151,8 @@ export default function DashboardPage() {
                 timeframe={timeframe}
                 defaultRange="3M"
                 legend={<RegimeLegend compact />}
+                indicators
+                depthSymbol={symbol}
               />
             </div>
             <RegimeHistoryTable series={series} tau={detector?.abstain_tau ?? 0.75} timeframe={timeframe} />
