@@ -29,6 +29,7 @@ type Split = {
   recall: Record<string, number>;
   per_seed_accuracy?: number[];
   mean_confidence?: number;
+  confusion_matrix?: number[][];
 };
 type TfDiag = { seeds: number[]; splits: Record<string, Split>; epochs_per_seed: number[] | null; test_matches_paper: boolean };
 type Fold = { fold: number; n_train: number; n_test: number; pct: number; balanced_pct: number; mlp_pct: number };
@@ -180,6 +181,94 @@ function ClassChart({ d }: { d: TfDiag }) {
   );
 }
 
+const CM_ORDER = ["persistent", "random_like", "anti_persistent"];
+const CM_SHORT: Record<string, string> = { persistent: "Pers", random_like: "Rand", anti_persistent: "Anti" };
+
+function Matrix({ title, s, mode }: { title: string; s: Split; mode: "pct" | "count" }) {
+  const m = s.confusion_matrix;
+  if (!m) return null;
+  return (
+    <div className="min-w-0">
+      <div className="flex items-baseline justify-between gap-2">
+        <h3 className="text-[13px] font-semibold text-txt">{title}</h3>
+        <span className="text-2xs text-txtMuted">
+          n = {s.n.toLocaleString("id-ID")} · akurasi {pct(s.accuracy)}
+        </span>
+      </div>
+      <table className="mt-2 w-full table-fixed border-separate border-spacing-1 text-center text-[12px]">
+        <thead>
+          <tr className="text-2xs text-txtMuted">
+            <th className="w-[64px] text-left font-normal">benar \ prediksi</th>
+            {CM_ORDER.map((c) => (
+              <th key={c} className="font-medium">{CM_SHORT[c]}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {m.map((row, i) => {
+            const total = row.reduce((a, b) => a + b, 0) || 1;
+            return (
+              <tr key={i}>
+                <th className="text-left text-2xs font-medium text-txtMuted">{CM_SHORT[CM_ORDER[i]]}</th>
+                {row.map((v, j) => {
+                  const share = v / total;
+                  const col = i === j ? C.good : C.bad;
+                  return (
+                    <td
+                      key={j}
+                      className="rounded-md py-2.5 font-mono"
+                      style={{ background: `${col}${Math.round(18 + share * 200).toString(16).padStart(2, "0")}` }}
+                      title={`${CLASS_LABEL[CM_ORDER[i]]} → ${CLASS_LABEL[CM_ORDER[j]]}: ${v.toLocaleString("id-ID")} (${pct(share)} dari baris)`}
+                    >
+                      <div className="font-semibold text-txt">{mode === "pct" ? pct(share, 0) : v.toLocaleString("id-ID")}</div>
+                      <div className="text-2xs text-txtDim">{mode === "pct" ? v.toLocaleString("id-ID") : pct(share, 0)}</div>
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function ConfusionMatrices({ d }: { d: TfDiag }) {
+  const [mode, setMode] = useState<"pct" | "count">("pct");
+  const parts: [string, string][] = [
+    ["train", "Latih"],
+    ["validation", "Validasi"],
+    ["test", "Uji"],
+  ];
+  if (d.splits.train_extra_eth_bnb?.confusion_matrix) parts.push(["train_extra_eth_bnb", "Latih tambahan ETH/BNB"]);
+  return (
+    <section className={card}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-[15px] font-semibold text-txt">Confusion matrix</h2>
+        <div className="flex rounded-lg border border-edge p-0.5 text-[12px]">
+          {(["pct", "count"] as const).map((k) => (
+            <button
+              key={k}
+              type="button"
+              onClick={() => setMode(k)}
+              className={`rounded-md px-3 py-1 font-semibold ${mode === k ? "bg-txt text-panel" : "text-txtDim hover:text-txt"}`}
+            >
+              {k === "pct" ? "Persen per baris" : "Jumlah"}
+            </button>
+          ))}
+        </div>
+      </div>
+      <p className="mt-1 text-[12px] text-txtMuted">Baris = label sebenarnya, kolom = prediksi model. Hijau = benar, merah = salah; makin pekat makin besar porsinya.</p>
+      <div className={`mt-3 grid gap-5 md:grid-cols-2 ${parts.length > 3 ? "xl:grid-cols-4" : "xl:grid-cols-3"}`}>
+        {parts.map(([k, label]) => (
+          <Matrix key={k} title={label} s={d.splits[k]} mode={mode} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function LearningCurve({ lc }: { lc: Payload["learning_curve"][string] }) {
   const rows = lc.folds.map((f) => ({ ...f, label: `F${f.fold} · ${f.n_train.toLocaleString("id-ID")}` }));
   return (
@@ -266,6 +355,8 @@ export default function FittingPage() {
               </div>
             </div>
           </section>
+
+          <ConfusionMatrices d={d} />
 
           <section className={card}>
             <h2 className="text-[15px] font-semibold text-txt">Kurva belajar walk-forward {tf.toUpperCase()}</h2>

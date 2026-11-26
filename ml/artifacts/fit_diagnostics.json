@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-26 18:46:58",
+  "generated_at": "2026-11-26 19:14:13",
   "source": "ml/src/fit_diagnostics.py",
   "note": "Model final (3 seed, ensemble) tidak dilatih ulang; latih = jendela BTC berlabel pada bagian latih.",
   "timeframes": {
@@ -26,6 +26,23 @@
             "random_like": 1431,
             "anti_persistent": 2943
           },
+          "confusion_matrix": [
+            [
+              3643,
+              323,
+              175
+            ],
+            [
+              556,
+              486,
+              389
+            ],
+            [
+              158,
+              210,
+              2575
+            ]
+          ],
           "per_seed_accuracy": [
             0.7652,
             0.7851,
@@ -48,6 +65,23 @@
             "random_like": 288,
             "anti_persistent": 764
           },
+          "confusion_matrix": [
+            [
+              496,
+              37,
+              175
+            ],
+            [
+              131,
+              30,
+              127
+            ],
+            [
+              110,
+              92,
+              562
+            ]
+          ],
           "per_seed_accuracy": [
             0.5955,
             0.6102,
@@ -70,6 +104,23 @@
             "random_like": 185,
             "anti_persistent": 892
           },
+          "confusion_matrix": [
+            [
+              737,
+              94,
+              97
+            ],
+            [
+              94,
+              29,
+              62
+            ],
+            [
+              22,
+              12,
+              858
+            ]
+          ],
           "per_seed_accuracy": [
             0.7965,
             0.81,
@@ -84,7 +135,7 @@
         11
       ],
       "test_matches_paper": true,
-      "seconds": 5.6
+      "seconds": 9.5
     },
     "4h": {
       "seeds": [
@@ -109,6 +160,23 @@
             "random_like": 669,
             "anti_persistent": 1444
           },
+          "confusion_matrix": [
+            [
+              1840,
+              162,
+              40
+            ],
+            [
+              274,
+              229,
+              166
+            ],
+            [
+              91,
+              125,
+              1228
+            ]
+          ],
           "per_seed_accuracy": [
             0.7856,
             0.7752,
@@ -131,6 +199,23 @@
             "random_like": 156,
             "anti_persistent": 531
           },
+          "confusion_matrix": [
+            [
+              168,
+              18,
+              58
+            ],
+            [
+              54,
+              52,
+              50
+            ],
+            [
+              19,
+              57,
+              455
+            ]
+          ],
           "per_seed_accuracy": [
             0.7218,
             0.7207,
@@ -153,6 +238,23 @@
             "random_like": 69,
             "anti_persistent": 295
           },
+          "confusion_matrix": [
+            [
+              343,
+              37,
+              17
+            ],
+            [
+              38,
+              14,
+              17
+            ],
+            [
+              66,
+              18,
+              211
+            ]
+          ],
           "per_seed_accuracy": [
             0.7306,
             0.7372,
@@ -174,7 +276,24 @@
             "persistent": 3994,
             "random_like": 1474,
             "anti_persistent": 2938
-          }
+          },
+          "confusion_matrix": [
+            [
+              3434,
+              427,
+              133
+            ],
+            [
+              410,
+              699,
+              365
+            ],
+            [
+              122,
+              289,
+              2527
+            ]
+          ]
         }
       },
       "epochs_per_seed": [
@@ -183,7 +302,7 @@
         11
       ],
       "test_matches_paper": true,
-      "seconds": 3.6
+      "seconds": 5.7
     }
   },
   "learning_curve": {

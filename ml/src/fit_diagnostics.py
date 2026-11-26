@@ -54,6 +54,8 @@ def metrics(y: np.ndarray, p: np.ndarray) -> Dict[str, Any]:
         "macro_f1": round(float(np.mean(f1)), 4),
         "recall": rec,
         "support": {name: int((y == c).sum()) for c, name in enumerate(CLASSES)},
+        # Baris = label sebenarnya, kolom = prediksi; urutan mengikuti CLASSES.
+        "confusion_matrix": [[int(((y == a) & (p == b)).sum()) for b in range(len(CLASSES))] for a in range(len(CLASSES))],
     }
 
 
