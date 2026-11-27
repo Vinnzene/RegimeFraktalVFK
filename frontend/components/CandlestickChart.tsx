@@ -43,13 +43,33 @@ const EMPTY_SEGMENTS: { segment: string; start_time: number; end_time: number }[
 
 // Rentang dinyatakan dalam DETIK, bukan jumlah bar.
 const DAY = 24 * 3600;
+// seconds 0 = seluruh data, -1 = sejak 1 Januari tahun candle terakhir (YTD).
+// compact = ikut tampil di tata letak kartu (Ringkasan); tata letak penuh menampilkan semuanya.
 const RANGES = [
-  { label: "1D", seconds: DAY },
-  { label: "1M", seconds: 30 * DAY },
-  { label: "3M", seconds: 90 * DAY },
-  { label: "1Y", seconds: 365 * DAY },
-  { label: "ALL", seconds: 0 },
+  { label: "1D", seconds: DAY, compact: true },
+  { label: "7D", seconds: 7 * DAY, compact: false },
+  { label: "1M", seconds: 30 * DAY, compact: true },
+  { label: "3M", seconds: 90 * DAY, compact: true },
+  { label: "6M", seconds: 182 * DAY, compact: false },
+  { label: "YTD", seconds: -1, compact: false },
+  { label: "1Y", seconds: 365 * DAY, compact: true },
+  { label: "ALL", seconds: 0, compact: true },
 ];
+
+/** Jam UTC di bar bawah tata letak penuh. */
+function UtcClock() {
+  const [now, setNow] = useState<Date | null>(null);
+  useEffect(() => {
+    setNow(new Date());
+    const id = window.setInterval(() => setNow(new Date()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+  return (
+    <span className="shrink-0 font-mono text-[11.5px] tabular-nums text-txtDim">
+      {now ? now.toISOString().slice(11, 19) : "--:--:--"} <span className="text-txtMuted">UTC</span>
+    </span>
+  );
+}
 
 function hexToRgba(hex: string, alpha: number): string {
   const v = hex.replace("#", "");
@@ -230,6 +250,11 @@ export default function CandlestickChart({
   depthSymbol,
   abstainTau = 0.75,
   drawingKey,
+  fill = false,
+  toolbarStart,
+  toolbarEnd,
+  footerNote,
+  emptyMessage,
 }: {
   candles: Candle[];
   regimes?: RegimePoint[];
@@ -250,6 +275,16 @@ export default function CandlestickChart({
   abstainTau?: number;
   /** Aktifkan alat gambar; gambar disimpan di peramban per kunci ini (mis. aset + timeframe). */
   drawingKey?: string;
+  /** Tata letak penuh bergaya terminal: mengisi tinggi induk, alat gambar di kiri, rentang di bawah. */
+  fill?: boolean;
+  /** Isi kiri toolbar atas pada tata letak penuh (mis. pemilih aset dan timeframe). */
+  toolbarStart?: React.ReactNode;
+  /** Isi kanan toolbar atas pada tata letak penuh (mis. tombol layar penuh). */
+  toolbarEnd?: React.ReactNode;
+  /** Catatan kecil di bar bawah tata letak penuh. */
+  footerNote?: React.ReactNode;
+  /** Pesan di area chart saat belum ada candle (tata letak penuh). */
+  emptyMessage?: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
@@ -265,6 +300,18 @@ export default function CandlestickChart({
   const vofsRef = useRef<HTMLCanvasElement>(null);
   const depthRef = useRef<{ bids: [number, number][]; asks: [number, number][]; at: number } | null>(null);
   const regimeByTime = useRef<Map<number, string>>(new Map());
+
+  // Tata letak penuh: tinggi chart mengikuti tinggi area yang tersedia.
+  const areaRef = useRef<HTMLDivElement>(null);
+  const [fillH, setFillH] = useState(0);
+  useEffect(() => {
+    if (!fill || !areaRef.current) return;
+    const el = areaRef.current;
+    const ro = new ResizeObserver(() => setFillH(Math.floor(el.clientHeight)));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [fill]);
+  const effH = fill ? Math.max(240, fillH || 480) : height;
 
   const [hover, setHover] = useState<HoverInfo | null>(null);
   const [activeRange, setActiveRange] = useState<string>(defaultRange);
@@ -312,7 +359,7 @@ export default function CandlestickChart({
     // TradingView Lightweight Charts™, Copyright (c) TradingView, Inc. https://www.tradingview.com/
     // Logo di chart dimatikan; atribusi dan tautan ke tradingview.com ada di komponen ChartCredits.
     const chart = createChart(containerRef.current, {
-      height,
+      height: effH,
       layout: {
         attributionLogo: false,
         background: { type: ColorType.Solid, color: "#131518" },
@@ -482,7 +529,13 @@ export default function CandlestickChart({
       hurstRef.current = null;
       lineRefs.current = {};
     };
-  }, [height]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fill ? 0 : height]);
+
+  // Tata letak penuh: ubah tinggi tanpa membuat ulang chart (zoom dan geser tetap).
+  useEffect(() => {
+    if (fill) chartRef.current?.applyOptions({ height: effH });
+  }, [fill, effH]);
 
   // Efek 1b — warna mengikuti tema.
   const theme = useTheme();
@@ -497,8 +550,19 @@ export default function CandlestickChart({
       crosshair: { vertLine: { labelBackgroundColor: label }, horzLine: { labelBackgroundColor: label } },
       rightPriceScale: { borderColor: edge },
       timeScale: { borderColor: edge },
+      // Tanda air nama aset di tengah chart (tata letak penuh saja).
+      watermark: {
+        visible: fill,
+        text: `${symbol} · ${timeframe.toUpperCase()}`,
+        fontSize: 44,
+        fontFamily: "ui-sans-serif, system-ui, sans-serif",
+        fontStyle: "600",
+        color: themeColor("txt-muted", 0.09),
+        horzAlign: "center",
+        vertAlign: "center",
+      },
     });
-  }, [theme, height]);
+  }, [theme, height, fill, symbol, timeframe]);
 
   // Rentang aktif dibaca lewat ref.
   const rangeRef = useRef(activeRange);
@@ -514,7 +578,12 @@ export default function CandlestickChart({
       const spec = RANGES.find((r) => r.label === label);
       const lastIdx = candles.length - 1;
       const last = candles[lastIdx].time;
-      const from = spec && spec.seconds > 0 ? last - spec.seconds : null;
+      const from =
+        spec && spec.seconds > 0
+          ? last - spec.seconds
+          : spec?.seconds === -1
+            ? Date.UTC(new Date(last * 1000).getUTCFullYear(), 0, 1) / 1000
+            : null;
       let fromIdx = 0;
       if (from !== null && from > candles[0].time) {
         fromIdx = candles.findIndex((c) => c.time >= from);
@@ -1448,7 +1517,8 @@ export default function CandlestickChart({
     [showRange]
   );
 
-  if (candles.length === 0) {
+  const empty = candles.length === 0;
+  if (empty && !fill) {
     return (
       <div
         className="flex items-center justify-center rounded border border-edge text-xs text-txtMuted"
@@ -1465,144 +1535,163 @@ export default function CandlestickChart({
   const fmt = (v: number) =>
     v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  return (
-    <div className="overflow-hidden rounded-md border border-edge bg-panel">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 border-b border-edge bg-surface/40 px-3 py-2">
-        <div className="flex items-center gap-2">
-          <span className="font-sans text-[13px] font-semibold tracking-tight text-txt">
-            {symbol}
-          </span>
-          <span className="rounded bg-edge px-1.5 py-0.5 font-mono text-2xs text-txtDim">
-            {timeframe.toUpperCase()}
-          </span>
-        </div>
+  // Nilai OHLC candle di bawah kursor.
+  const ohlcValues = hover && (
+    <>
+      {(
+        [
+          ["O", hover.open],
+          ["H", hover.high],
+          ["L", hover.low],
+          ["C", hover.close],
+        ] as [string, number][]
+      ).map(([k, v]) => (
+        <span key={k} className="text-txtMuted">
+          {k}
+          <span className={`ml-1 ${up ? "text-bullish" : "text-bearish"}`}>{fmt(v)}</span>
+        </span>
+      ))}
+      <span className={up ? "badge-up" : "badge-down"}>
+        {up ? "+" : ""}
+        {fmt(change)} ({up ? "+" : ""}
+        {changePct.toFixed(2)}%)
+      </span>
+      <span className="text-txtMuted">
+        Vol<span className="ml-1 text-txtDim">{hover.volume.toFixed(2)}</span>
+      </span>
+      {hover.regime && (
+        <span
+          className="rounded px-1.5 py-0.5 text-2xs font-medium"
+          style={{
+            backgroundColor: hexToRgba(REGIME_META[hover.regime as Regime]?.color ?? "#252c37", 0.16),
+            color: REGIME_META[hover.regime as Regime]?.color ?? "#8b949e",
+          }}
+        >
+          {REGIME_PLAIN[hover.regime as Regime]?.name ?? hover.regime}
+        </span>
+      )}
+    </>
+  );
+  // Baris pertama legenda dalam chart pada tata letak penuh: aset, timeframe, OHLC.
+  const ohlcRow = (
+    <div className="flex flex-wrap items-center gap-x-2.5 gap-y-0.5 tabular-nums">
+      <span className="font-sans text-[12.5px] font-semibold text-txt">{symbol}</span>
+      <span className="font-sans text-[12px] text-txtMuted">{timeframe.toUpperCase()}</span>
+      {ohlcValues}
+    </div>
+  );
 
-        {hover && (
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] tabular-nums">
-            {(
-              [
-                ["O", hover.open],
-                ["H", hover.high],
-                ["L", hover.low],
-                ["C", hover.close],
-              ] as [string, number][]
-            ).map(([k, v]) => (
-              <span key={k} className="text-txtMuted">
-                {k}
-                <span className={`ml-1 ${up ? "text-bullish" : "text-bearish"}`}>{fmt(v)}</span>
-              </span>
-            ))}
-            <span className={up ? "badge-up" : "badge-down"}>
-              {up ? "+" : ""}
-              {fmt(change)} ({up ? "+" : ""}
-              {changePct.toFixed(2)}%)
-            </span>
-            <span className="text-txtMuted">
-              Vol<span className="ml-1 text-txtDim">{hover.volume.toFixed(2)}</span>
-            </span>
-            {hover.regime && (
-              <span
-                className="rounded px-1.5 py-0.5 text-2xs font-medium"
-                style={{
-                  backgroundColor: hexToRgba(
-                    REGIME_META[hover.regime as Regime]?.color ?? "#252c37",
-                    0.16
-                  ),
-                  color: REGIME_META[hover.regime as Regime]?.color ?? "#8b949e",
-                }}
-              >
-                {REGIME_PLAIN[hover.regime as Regime]?.name ?? hover.regime}
-              </span>
-            )}
-          </div>
+  const toolBtn = (on: boolean) =>
+    `rounded-md p-1.5 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent ${
+      on ? "bg-accent/20 text-accent" : "text-txtMuted hover:bg-surface hover:text-txt"
+    }`;
+  const drawButtons = (vertical: boolean) => {
+    const icon = vertical ? "h-[18px] w-[18px]" : "h-3.5 w-3.5";
+    return (
+      <>
+        {vertical && (
+          <button
+            type="button"
+            title="Kursor"
+            aria-label="Kursor"
+            aria-pressed={tool === null}
+            onClick={() => {
+              pendingRef.current = null;
+              setTool(null);
+            }}
+            className={toolBtn(tool === null)}
+          >
+            <svg viewBox="0 0 20 20" className={icon} fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
+              <path d="M5 3 L5 16 L8.5 12.5 L11 17.5 L13 16.5 L10.5 11.5 L15 11.5 Z" strokeLinejoin="round" />
+            </svg>
+          </button>
         )}
+        {DRAW_TOOLS.map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            title={t.label}
+            aria-label={t.label}
+            aria-pressed={tool === t.id}
+            onClick={() => {
+              pendingRef.current = null;
+              setTool((cur) => (cur === t.id ? null : t.id));
+            }}
+            className={toolBtn(tool === t.id)}
+          >
+            <svg viewBox="0 0 20 20" className={icon} fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden>
+              {t.id === "trend" && <path d="M3 16 L17 4 M3 16 h0 M17 4 h0" strokeLinecap="round" />}
+              {t.id === "hline" && <path d="M2 10 H18" />}
+              {t.id === "fib" && <path d="M2 4 H18 M2 8 H18 M2 12 H18 M2 16 H18" strokeWidth="1.3" />}
+            </svg>
+          </button>
+        ))}
+        <span className={vertical ? "my-1 h-px w-5 bg-edge" : "mx-0.5 h-4 w-px bg-edge"} aria-hidden />
+        <button
+          type="button"
+          title="Batalkan gambar terakhir"
+          aria-label="Batalkan gambar terakhir"
+          disabled={!drawings.length}
+          onClick={() => commit(drawings.slice(0, -1))}
+          className={`${toolBtn(false)} disabled:opacity-30`}
+        >
+          <svg viewBox="0 0 20 20" className={icon} fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden>
+            <path d="M7 5 L3 9 L7 13 M3 9 H12 a5 5 0 0 1 0 10 H9" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          title="Hapus semua gambar"
+          aria-label="Hapus semua gambar"
+          disabled={!drawings.length}
+          onClick={() => commit([])}
+          className={`${toolBtn(false)} disabled:opacity-30`}
+        >
+          <svg viewBox="0 0 20 20" className={icon} fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden>
+            <path d="M4 6 H16 M8 6 V4 H12 V6 M6 6 L7 17 H13 L14 6" />
+          </svg>
+        </button>
+      </>
+    );
+  };
 
-        {drawingKey && (
-          <div className="ml-auto flex items-center gap-0.5 rounded border border-edge p-0.5" role="group" aria-label="Alat gambar">
-            {DRAW_TOOLS.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                title={t.label}
-                aria-label={t.label}
-                aria-pressed={tool === t.id}
-                onClick={() => {
-                  pendingRef.current = null;
-                  setTool((cur) => (cur === t.id ? null : t.id));
-                }}
-                className={`rounded px-1.5 py-1 transition ${tool === t.id ? "bg-accent/20 text-accent" : "text-txtMuted hover:bg-surface hover:text-txt"}`}
-              >
-                <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden>
-                  {t.id === "trend" && <path d="M3 16 L17 4 M3 16 h0 M17 4 h0" strokeLinecap="round" />}
-                  {t.id === "hline" && <path d="M2 10 H18" />}
-                  {t.id === "fib" && <path d="M2 4 H18 M2 8 H18 M2 12 H18 M2 16 H18" strokeWidth="1.3" />}
-                </svg>
-              </button>
-            ))}
-            <span className="mx-0.5 h-4 w-px bg-edge" aria-hidden />
-            <button
-              type="button"
-              title="Batalkan gambar terakhir"
-              aria-label="Batalkan gambar terakhir"
-              disabled={!drawings.length}
-              onClick={() => commit(drawings.slice(0, -1))}
-              className="rounded px-1.5 py-1 text-txtMuted transition hover:bg-surface hover:text-txt disabled:opacity-30"
-            >
-              <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden>
-                <path d="M7 5 L3 9 L7 13 M3 9 H12 a5 5 0 0 1 0 10 H9" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              title="Hapus semua gambar"
-              aria-label="Hapus semua gambar"
-              disabled={!drawings.length}
-              onClick={() => commit([])}
-              className="rounded px-1.5 py-1 text-txtMuted transition hover:bg-surface hover:text-txt disabled:opacity-30"
-            >
-              <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden>
-                <path d="M4 6 H16 M8 6 V4 H12 V6 M6 6 L7 17 H13 L14 6" />
-              </svg>
-            </button>
-          </div>
-        )}
+  const picker = indicators && (
+    <IndicatorPicker
+      active={active}
+      onToggle={toggleIndicator}
+      currentRegime={confidentRegimes.length ? confidentRegimes[confidentRegimes.length - 1].regime : null}
+      unavailable={{
+        ...(depthSymbol ? {} : { heatmap: "Liquidity heatmap hanya tersedia untuk aset kripto Binance." }),
+        ...(regimes.length
+          ? {}
+          : { zregime: "Indikator ini butuh hasil identifikasi kondisi pasar dari model, yang hanya ada di Ringkasan (BTC/USDT 1H dan 4H)." }),
+      }}
+    />
+  );
 
-        {indicators && (
-          <div className={drawingKey ? "" : "ml-auto"}>
-            <IndicatorPicker
-              active={active}
-              onToggle={toggleIndicator}
-              currentRegime={confidentRegimes.length ? confidentRegimes[confidentRegimes.length - 1].regime : null}
-              unavailable={{
-                ...(depthSymbol ? {} : { heatmap: "Liquidity heatmap hanya tersedia untuk aset kripto Binance." }),
-                ...(regimes.length
-                  ? {}
-                  : { zregime: "Indikator ini butuh hasil identifikasi kondisi pasar dari model, yang hanya ada di Ringkasan (BTC/USDT 1H dan 4H)." }),
-              }}
-            />
-          </div>
-        )}
+  const rangeButtons = (compact: boolean) =>
+    RANGES.filter((r) => !compact || r.compact).map((r) => (
+      <button
+        key={r.label}
+        type="button"
+        onClick={() => applyRange(r.label)}
+        aria-pressed={activeRange === r.label}
+        className={
+          compact
+            ? `px-2.5 py-1 font-mono text-2xs transition ${
+                activeRange === r.label ? "bg-accent/20 text-accent" : "text-txtMuted hover:bg-surface hover:text-txtDim"
+              }`
+            : `rounded px-2 py-0.5 font-mono text-[12px] transition ${
+                activeRange === r.label ? "bg-accent/15 text-accent" : "text-txtDim hover:bg-surface hover:text-txt"
+              }`
+        }
+      >
+        {r.label}
+      </button>
+    ));
 
-        {showToolbar && (
-          <div className={`${indicators ? "" : "ml-auto "}flex overflow-hidden rounded border border-edge`}>
-            {RANGES.map((r) => (
-              <button
-                key={r.label}
-                onClick={() => applyRange(r.label)}
-                className={`px-2.5 py-1 font-mono text-2xs transition ${
-                  activeRange === r.label
-                    ? "bg-accent/20 text-accent"
-                    : "text-txtMuted hover:bg-surface hover:text-txtDim"
-                }`}
-              >
-                {r.label}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="relative w-full">
+  const area = (
+      <div ref={areaRef} className={fill ? "relative min-h-0 flex-1 overflow-hidden" : "relative w-full"}>
         <div ref={containerRef} className="w-full" />
         {showHeatmap && <canvas ref={overlayRef} className="pointer-events-none absolute left-0 top-0 z-[2]" aria-hidden />}
         {showOb && <canvas ref={obRef} className="pointer-events-none absolute left-0 top-0 z-[2]" aria-hidden />}
@@ -1625,8 +1714,9 @@ export default function CandlestickChart({
         )}
 
         {/* Legenda ringkas di dalam chart: nama, nilai di posisi kursor, sembunyikan, hapus. */}
-        {(indicators || (showRegime && regimes.length > 0)) && (
+        {(fill || indicators || (showRegime && regimes.length > 0)) && (
           <div className="pointer-events-none absolute left-2 top-1.5 z-[4] flex max-w-[78%] flex-col gap-0.5 rounded-md bg-panel/80 px-1.5 py-1 font-mono text-[11px] backdrop-blur-[2px]">
+            {fill && ohlcRow}
             {showRegime && regimes.length > 0 && (
               <LegendRow name="Pita kondisi pasar" hidden={!showBand} onHide={() => toggleHidden("regime")} />
             )}
@@ -1755,7 +1845,75 @@ export default function CandlestickChart({
             )}
           </div>
         )}
+        {fill && empty && (
+          <div className="absolute inset-0 z-[6] flex items-center justify-center px-4 text-center text-[13px] text-txtMuted">
+            {emptyMessage ?? "Tidak ada data candle."}
+          </div>
+        )}
+        {fill && showTrail && trailStats && (
+          <div className="absolute bottom-9 left-2 z-[4] max-w-[calc(100%-90px)] rounded-md border border-edge bg-panel/95 shadow-panel">
+            <TrailStatsTable stats={trailStats} />
+          </div>
+        )}
       </div>
+  );
+
+  if (fill) {
+    return (
+      <div className="flex h-full min-h-0 flex-col overflow-hidden bg-panel">
+        <div className="flex h-11 shrink-0 items-center gap-1 border-b border-edge px-2">
+          {toolbarStart}
+          {picker && (
+            <>
+              <span className="mx-1 h-5 w-px bg-edge" aria-hidden />
+              {picker}
+            </>
+          )}
+          <div className="ml-auto flex items-center gap-1">{toolbarEnd}</div>
+        </div>
+        <div className="flex min-h-0 flex-1">
+          {drawingKey && (
+            <div className="flex w-11 shrink-0 flex-col items-center gap-1 border-r border-edge py-2" role="group" aria-label="Alat gambar">
+              {drawButtons(true)}
+            </div>
+          )}
+          {area}
+        </div>
+        <div className="flex h-9 shrink-0 items-center gap-3 border-t border-edge px-2">
+          <div className="flex shrink-0 items-center gap-0.5" role="group" aria-label="Rentang tampilan">
+            {rangeButtons(false)}
+          </div>
+          <div className="min-w-0 flex-1 truncate text-[11px] text-txtMuted">{footerNote}</div>
+          <UtcClock />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="overflow-hidden rounded-md border border-edge bg-panel">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 border-b border-edge bg-surface/40 px-3 py-2">
+        <div className="flex items-center gap-2">
+          <span className="font-sans text-[13px] font-semibold tracking-tight text-txt">{symbol}</span>
+          <span className="rounded bg-edge px-1.5 py-0.5 font-mono text-2xs text-txtDim">{timeframe.toUpperCase()}</span>
+        </div>
+
+        {hover && <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[11px] tabular-nums">{ohlcValues}</div>}
+
+        {drawingKey && (
+          <div className="ml-auto flex items-center gap-0.5 rounded border border-edge p-0.5" role="group" aria-label="Alat gambar">
+            {drawButtons(false)}
+          </div>
+        )}
+
+        {picker && <div className={drawingKey ? "" : "ml-auto"}>{picker}</div>}
+
+        {showToolbar && (
+          <div className={`${indicators ? "" : "ml-auto "}flex overflow-hidden rounded border border-edge`}>{rangeButtons(true)}</div>
+        )}
+      </div>
+
+      {area}
 
       {showTrail && trailStats && <TrailStatsTable stats={trailStats} />}
 

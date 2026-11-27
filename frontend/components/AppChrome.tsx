@@ -11,6 +11,8 @@ import { UserProvider } from "@/components/UserContext";
 export default function AppChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   if (pathname === "/login" || pathname === "/welcome") return <>{children}</>;
+  // Halaman chart penuh: tanpa bar ticker BTC dan tanpa padding, agar chart mengisi layar.
+  const fullBleed = pathname === "/analisa-teknikal";
 
   return (
     <UserProvider>
@@ -18,9 +20,9 @@ export default function AppChrome({ children }: { children: React.ReactNode }) {
         <div className="flex h-screen flex-col overflow-hidden">
           <div className="relative z-40 shrink-0">
             <TopNav />
-            <TopBar />
+            {!fullBleed && <TopBar />}
           </div>
-          <main className="flex-1 overflow-y-auto p-3">{children}</main>
+          <main className={fullBleed ? "min-h-0 flex-1 overflow-hidden" : "flex-1 overflow-y-auto p-3"}>{children}</main>
         </div>
         <GuidedTour />
       </ConfigProvider>
